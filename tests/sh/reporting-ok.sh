@@ -15,6 +15,25 @@ module=reporting
 
 #####################################################################
 #
+# test: fe7017ec-8c26-463b-bf6f-9c2d3cd83220
+# desc: console output
+rm -f $OUTPUT_DIR/*
+test_name=console-output
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --reports balance balance-group register \
+    > $OUTPUT_DIR/${test_name}.stdout.txt 2> $OUTPUT_DIR/${test_name}.stderr.txt
+
+echo -n "check:"
+cmp_result $module $test_name txt stdout
+cmp_result $module $test_name txt stderr
+echo ": ok"
+
+#####################################################################
+#
 # test: 0f862997-95b1-4e06-bc5f-bc170c7594ff
 rm -f $OUTPUT_DIR/*
 test_name=big-01
