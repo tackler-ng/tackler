@@ -16,6 +16,8 @@ New features:
     *** link:https://tackler.e257.fi/docs/price/current-market-value/[Current Market Value]
     *** link:https://tackler.e257.fi/docs/price/historic-market-value/[Historic Market Value]
     *** link:https://tackler.e257.fi/docs/price/variable-market-value/[Variable Market Value]
+* Full coverage of Tackler-Mk1 CLI test
+
 
 Changed functionality:
 
@@ -26,11 +28,11 @@ Changed functionality:
 
 Fixes in this release:
 
- * Don't accept invalid cli input arg combinations
- * Warn if exports are used without cli output arguments
- * Enforce blank line between transactions (Tackler-mk1 / ANTLR)
- * Print error message if repository contains links (Tackler-mk1)
- * Print error message if transaction set is empty (Tackler-mk1)
+ * Don't accept invalid CLI input arg combinations
+ * Warn if exports are used without CLI output arguments
+ * Enforce blank line between transactions (Tackler-Mk1 / ANTLR)
+ * Print error message if repository contains links (Tackler-Mk1)
+ * Print error message if transaction set is empty (Tackler-Mk1)
  * Check equity account name when strict mode is on (Tackler-Mk1)
 
 ==== Contributions
