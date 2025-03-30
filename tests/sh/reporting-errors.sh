@@ -50,3 +50,18 @@ $TACKLER_SH \
 
 echo "check: ok"
 
+#####################################################################
+#
+# test: 33c4fd0b-03c7-48bc-b4cd-0aac72e11beb
+# desc: console output with export
+rm -f $OUTPUT_DIR/*
+test_name=console-output-with-export
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --exports identity \
+    2>&1 | grep 'error: .* required arguments were not provided'
+
+echo "check: ok"

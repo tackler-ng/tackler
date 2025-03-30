@@ -314,7 +314,9 @@ pub(crate) struct DefaultModeArgs {
         value_parser([
             PossibleValue::new("identity"),
             PossibleValue::new("equity"),
-        ])
+        ]),
+        requires("output_directory"),
+        requires("output_name"),
     )]
     pub(crate) exports: Option<Vec<String>>,
 

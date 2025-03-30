@@ -46,6 +46,8 @@ $TACKLER_SH \
 
 echo "check:"
 $TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
     --config $journal_path/conf/tackler.toml \
     --exports equity \
     --strict.mode true
