@@ -10,6 +10,7 @@ pub mod metadata;
 
 pub mod filters;
 pub mod location;
+pub mod reports;
 pub mod txn_header;
 pub mod txn_ts;
 

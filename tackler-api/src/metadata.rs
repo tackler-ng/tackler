@@ -11,10 +11,11 @@ use items::MetadataItem;
 use items::MetadataItems;
 use items::Text;
 use jiff::tz::TimeZone;
+use serde::Serialize;
 
 /// Metadata of Inputs, Txn Set, Reporting parameters, etc.
 ///
-#[derive(Debug, Clone, Default)]
+#[derive(Serialize, Debug, Clone, Default)]
 pub struct Metadata {
     // todo: fix pub access
     #[doc(hidden)]
@@ -75,7 +76,7 @@ impl Metadata {
 }
 
 /// Generic checksum value
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Checksum {
     /// used hash algorithm
     pub algorithm: String,

@@ -11,6 +11,7 @@ use crate::metadata::Checksum;
 use crate::txn_ts;
 use jiff::Zoned;
 use jiff::tz::TimeZone;
+use serde::Serialize;
 
 #[doc(hidden)]
 pub type MetadataItems = Vec<MetadataItem>;
@@ -23,7 +24,7 @@ pub trait Text: std::fmt::Debug {
 }
 
 #[doc(hidden)]
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub enum MetadataItem {
     #[doc(hidden)]
     TxnSetChecksum(TxnSetChecksum),
@@ -51,7 +52,7 @@ impl Text for MetadataItem {
 }
 
 /// Txn Set Checksum metadata item
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct TxnSetChecksum {
     /// size of transaction set
     pub size: usize,
@@ -71,7 +72,7 @@ impl Text for TxnSetChecksum {
 }
 
 /// Account Selector Checksum item
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct AccountSelectorChecksum {
     /// Hash of selector Checksum
     pub hash: Checksum,
@@ -88,7 +89,7 @@ impl Text for AccountSelectorChecksum {
 }
 
 /// Report timezone item
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct ReportTimezone {
     /// Timezone name
     pub timezone: String,
@@ -104,7 +105,7 @@ impl Text for ReportTimezone {
 }
 /// Metadata information about active Txn Filters
 ///
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct TxnFilterDescription {
     #[doc(hidden)]
     txn_filter_def: FilterDefinition,
@@ -138,7 +139,7 @@ impl Text for TxnFilterDescription {
 
 /// Metadata information about Git Txn input
 ///
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct GitInputReference {
     /// commit id
     pub commit: String,
@@ -173,7 +174,7 @@ impl Text for GitInputReference {
 }
 
 /// Metadata item for one commodity conversion
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct PriceRecord {
     /// Time of price record
     pub ts: Option<Zoned>,
@@ -206,7 +207,7 @@ impl Text for PriceRecord {
     }
 }
 /// Metadata information of used commodity conversions
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct PriceRecords {
     /// Collection of used commodity conversions prices / rates
     pub rates: Vec<PriceRecord>,

@@ -16,6 +16,7 @@ use rust_decimal::prelude::Zero;
 use rust_decimal::{Decimal, RoundingStrategy};
 use std::cmp::max;
 use std::io;
+use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
 
 #[derive(Debug, Clone)]
 pub struct BalanceReporter {
@@ -192,6 +193,42 @@ impl BalanceReporter {
     }
 }
 
+#[allow(dead_code)]
+fn btn_to_api(btn: &BalanceTreeNode) -> BalanceItem {
+    BalanceItem {
+        account_sum: btn.account_sum.to_string(), // TODO: scaleFormat(btn.accountSum),
+        account_tree_sum: btn.sub_acc_tree_sum.to_string(), // TODO: scaleFormat(btn.subAccTreeSum),
+        account: btn.acctn.atn.account.clone(),
+        commodity: if btn.acctn.comm.is_any() {
+            Some(btn.acctn.comm.name.clone())
+        } else {
+            None
+        },
+    }
+}
+
+#[allow(dead_code)]
+fn balance_to_api(bal: &Balance) -> BalanceReport {
+    let balances = bal.bal.iter().map(btn_to_api).collect::<Vec<BalanceItem>>();
+
+    let deltas = bal
+        .deltas
+        .iter()
+        .map(|(c, v)| Delta {
+            commodity: c.as_ref().map(|c| c.name.clone()),
+            delta: v.to_string(),
+        })
+        // todo: .sorted(OrderByDelta)
+        .collect::<Vec<Delta>>();
+
+    BalanceReport {
+        metadata: None,
+        title: bal.title.clone(),
+        balances,
+        deltas,
+    }
+}
+
 impl Report for BalanceReporter {
     fn write_txt_report<W: io::Write + ?Sized>(
         &self,
@@ -224,6 +261,8 @@ impl Report for BalanceReporter {
             bal_acc_sel.as_ref(),
             cfg,
         )?;
+
+        //serde_json::to_writer_pretty(&mut *writer, &balance_to_api(&bal_report))?;
 
         BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?;
         Ok(())
