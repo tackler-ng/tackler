@@ -13,8 +13,12 @@ use crate::report::{Report, write_acc_sel_checksum, write_report_timezone};
 use crate::tackler;
 use jiff::tz::TimeZone;
 use std::io;
+use tackler_api::metadata::Metadata;
+use tackler_api::reports::balance_group_report::BalanceGroupReport;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::GroupBy;
+use crate::kernel::balance::Balance;
+use crate::report::balance_reporter::balance_to_api;
 
 #[derive(Debug, Clone)]
 pub struct BalanceGroupReporter {
@@ -46,7 +50,20 @@ impl BalanceGroupReporter {
             }),
         }
     }
+
+    #[allow(dead_code)]
+    fn to_api(&self, metadata: Option<Metadata>, bal_groups: &[Balance]) -> BalanceGroupReport {
+        let groups = bal_groups.iter().map(balance_to_api).collect();
+
+        BalanceGroupReport {
+            metadata,
+            title: self.report_settings.title.clone(),
+            groups,
+        }
+    }
+
 }
+
 
 impl Report for BalanceGroupReporter {
     fn write_txt_report<W: io::Write + ?Sized>(
@@ -95,6 +112,10 @@ impl Report for BalanceGroupReporter {
         for bal in &bal_groups {
             BalanceReporter::txt_report(writer, bal, &bal_settings)?
         }
+
+        //serde_json::to_writer_pretty(&mut *writer, &self.to_api(None, &bal_groups))?;
+        //writeln!(writer)?;
+
         Ok(())
     }
 }

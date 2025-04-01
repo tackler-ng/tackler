@@ -7,3 +7,6 @@
 
 /// Balance Report API objects
 pub mod balance_report;
+
+/// Balance Group Report API objects
+pub mod balance_group_report;

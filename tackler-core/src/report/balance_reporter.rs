@@ -208,7 +208,7 @@ fn btn_to_api(btn: &BalanceTreeNode) -> BalanceItem {
 }
 
 #[allow(dead_code)]
-fn balance_to_api(bal: &Balance) -> BalanceReport {
+pub(crate) fn balance_to_api(bal: &Balance) -> BalanceReport {
     let balances = bal.bal.iter().map(btn_to_api).collect::<Vec<BalanceItem>>();
 
     let deltas = bal
@@ -262,9 +262,11 @@ impl Report for BalanceReporter {
             cfg,
         )?;
 
-        //serde_json::to_writer_pretty(&mut *writer, &balance_to_api(&bal_report))?;
-
         BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?;
+
+        //serde_json::to_writer_pretty(&mut *writer, &balance_to_api(&bal_report))?;
+        //writeln!(writer)?;
+
         Ok(())
     }
 }
