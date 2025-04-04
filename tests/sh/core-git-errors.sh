@@ -92,10 +92,6 @@ echo "check: ok"
 test_name=git-ref-dosnt-resolve
 echo "test: $module/$test_name: $mode"
 
-#
-# see: 14b7e8eb-d168-48b2-86e7-8d922f306ad0,
-# original version triggers bug in Gix
-#
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "^HEAD" \
@@ -117,24 +113,21 @@ $TACKLER_SH \
 
 echo "check: ok"
 
-## THIS TRIGGERS BUG IN GIX
-##   thread 'main' panicked at ~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/gix-0.70.0/src/revision/spec/parse/error.rs:108:9:
-##   assertion failed: !errors.is_empty()
-######################################################################
-##
-## test: 14b7e8eb-d168-48b2-86e7-8d922f306ad0
-## desc: ref format is invalid
-#test_name=invalid-ref-format
-#echo "test: $module/$test_name: $mode"
+#####################################################################
 #
-#$TACKLER_SH \
-#    --output.dir $OUTPUT_DIR \
-#    --output.prefix $test_name \
-#    --config $SUITE_PATH/$module/git-ok.toml \
-#    --input.git.ref "^^^" \
-#    2>&1 #| grep 'Tackler error: .*' # TODO
-#
-#echo "check: ok"
+# test: 14b7e8eb-d168-48b2-86e7-8d922f306ad0
+# desc: ref format is invalid
+test_name=invalid-ref-format
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/$module/git-ok.toml \
+    --input.git.ref "^^^" \
+    2>&1 | grep 'Tackler error: Txn Data: Tried to navigate .* anchor first'
+
+echo "check: ok"
 
 #####################################################################
 #

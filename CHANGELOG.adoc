@@ -45,6 +45,7 @@ and helping with Commodity Price Support feature
 
 Updated dependencies (major or minor version):
 
+* gix: 0.71
 * itertools: 0.14
 * jiff: v0.2
 * rust_decimal: 1.37
