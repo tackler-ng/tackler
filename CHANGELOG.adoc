@@ -10,6 +10,53 @@
 
 New features:
 
+* ...
+  ** ...
+
+Changed functionality:
+
+* ...
+  ** ...
+
+
+==== Fixes
+
+Fixes in this release ...
+
+
+==== Development
+
+Updated dependencies (major or minor version):
+
+* ...
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | TODO: XX.YY.Z
+|tackler-core | TODO: No changes
+|tackler-api  | TODO: No changes
+|tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+
+=== Tackler release 25.04.1
+
+==== New features and changes
+
+New features:
+
 * New feature: link:https://tackler.e257.fi/docs/price/[Support for Commodity Price data] (link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1015.adoc[TEP-1015])
   ** PriceDB support
   ** Support for various commodity price (Mark-to-Market) models:
@@ -63,10 +110,10 @@ MSRV:: 1.85.0
 |===
 |Component    | Version
 
-|Tackler CLI  | TODO: XX.YY.Z
-|tackler-core | TODO: No changes
-|tackler-api  | TODO: No changes
-|tackler-rs   | TODO: No changes
+|Tackler CLI  | 25.04.1
+|tackler-core | 0.9.0
+|tackler-api  | 0.9.0
+|tackler-rs   | 0.9.0
 |===
 
 
