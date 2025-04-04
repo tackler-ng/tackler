@@ -1,17 +1,6 @@
 
 === Tackler release XX.YY.Z
 
-[cols="1,2",width=50%]
-|===
-|Component    | Version
-
-|Tackler CLI  | TODO: XX.YY.Z
-|tackler-core | TODO: No changes
-|tackler-api  | TODO: No changes
-|tackler-rs   | TODO: No changes
-|===
-
-
 ==== New features and changes
 
 New features:
@@ -32,17 +21,27 @@ Fixes in this release ...
 
 ==== Development
 
-Updated deps and tools:
+Updated dependencies (major or minor version):
 
-* Dependencies
-  ** ...
+* ...
 
 ===== Rust toolchain
 
-MSRV: X.YY.Z
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | TODO: XX.YY.Z
+|tackler-core | TODO: No changes
+|tackler-api  | TODO: No changes
+|tackler-rs   | TODO: No changes
+|===
 
 
 '''
-
-
 
