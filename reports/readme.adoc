@@ -1,0 +1,40 @@
+= Tackler PDF Reports
+
+[NOTE]
+====
+This is under development feature of Tackler
+====
+
+This folder contains link:https://github.com/typst/typst[Typst] templates
+for Tackler reports.
+
+The data folder has example reports in text and json format and `report-bal.typ`
+is currently proof-of-concept, prototype Typst report for the balance report.
+
+If you would like to contribute for default report templates, that would be highly appreciated.
+
+== How to generate PDF reports
+
+You will need link:https://github.com/typst/typst[Typst] tool, then run:
+
+----
+typst compile report-bal.typ
+----
+
+
+== Documentation
+
+* Tackler Examples: link:https://github.com/tackler-ng/tackler/tree/main/examples#readme[In this repo, under examples]
+* Tackler Documentation: link:https://tackler.e257.fi/docs/[Tackler's site]
+
+=== Documentation for Reports
+
+* link:https://tackler.e257.fi/docs/report-balance/[Balance Report]
+* link:https://tackler.e257.fi/docs/report-balance-group/[Balance Group Report]
+* link:https://tackler.e257.fi/docs/report-register/[Register Report]
+
+== Test data
+
+Currently the JSON format is under development for Tackler-NG, but Tackler's
+link:https://github.com/tackler-ng/tackler-tests[test suite] contains many more report examples.
+

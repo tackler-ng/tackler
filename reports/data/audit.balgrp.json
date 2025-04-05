@@ -1,0 +1,60 @@
+{
+  "metadata" : {
+    "items" : [
+      {
+        "GitInputReference" : {
+          "commit" : "4aa4e9797501c1aefc92f32dff30ab462dae5545",
+          "ref" : "txns-1E1",
+          "dir" : "txns",
+          "suffix" : ".txn",
+          "message" : "txns-1E1: 2016/12"
+        }
+      },
+      {
+        "TxnSetChecksum" : {
+          "size" : 10,
+          "hash" : {
+            "algorithm" : "SHA-256",
+            "value" : "9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76"
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum" : {
+          "hash" : {
+            "algorithm" : "SHA-256",
+            "value" : "d1227257ad0ae6872b23d8ba48934f6bf54766afd8e7daf6e35a919bbb01867b"
+          }
+        }
+      },
+      {
+        "TimeZoneInfo" : {
+          "zoneId" : "Europe/Helsinki"
+        }
+      }
+    ]
+  },
+  "title" : "BALANCE GROUPS",
+  "groups" : [
+    {
+      "title" : "2016-07",
+      "balances" : [
+        {
+          "accountSum" : "-1.0000001",
+          "accountTreeSum" : "-1.0000001",
+          "account" : "a:ay2016:am07"
+        },
+        {
+          "accountSum" : "1.0000001",
+          "accountTreeSum" : "1.0000001",
+          "account" : "e:ey2016:em07:ed01"
+        }
+      ],
+      "deltas" : [
+        {
+          "delta" : "0.0000000"
+        }
+      ]
+    }
+  ]
+}

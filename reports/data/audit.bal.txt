@@ -1,0 +1,21 @@
+Git Storage
+         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
+      reference : txns-1E1
+      directory : txns
+         suffix : .txn
+        message : txns-1E1: 2016/12
+
+Txn Set Checksum
+        SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+       Set size : 10
+
+Account Selector Checksum
+        SHA-256 : cb5b67e3283b6dd95317dac2bd8bca339b3d1c20cb614e2de692e038d4b0e58a
+
+
+BALANCE
+-------
+           -6.0000001   -6.0000001  a:ay2016:am02
+            6.0000001    6.0000001  e:ey2016:em02:ed06
+=====================
+            0.0000000
