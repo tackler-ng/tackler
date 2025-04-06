@@ -1,0 +1,25 @@
+Git Storage
+         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
+      reference : txns-1E1
+      directory : txns
+         suffix : .txn
+        message : txns-1E1: 2016/12
+
+Txn Set Checksum
+        SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+       Set size : 10
+
+Account Selector Checksum
+        SHA-256 : a6ecb49f49e5492f5b161ef187a2e98e90602e1685a87ad431492f906bb2bfac
+
+Report Time Zone
+        TZ name : Europe/Helsinki
+
+
+REGISTER
+--------
+2016-10-19 (#0000008) '1E1 txn-8
+            # uuid: 618dc8a7-9a88-3227-a6ce-85ccb5f54633
+            a:ay2016:am10                           -19.0000001        -19.0000001
+            e:ey2016:em10:ed19                       19.0000001         19.0000001
+----------------------------------------------------------------------------------

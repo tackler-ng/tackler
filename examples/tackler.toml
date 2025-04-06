@@ -140,6 +140,23 @@ dir = "txns"
 ### Suffix of file names which are processed as transactions.
 suffix = "txn"
 
+### Commodity Price Settings
+[price]
+### Path to price database file
+###
+### If the path is relative, then it's based on this file.
+###
+### Set the value to "none", if this feature is not in use
+###   CLI: --pricedb
+db-path = "tackler/txns/price.db"
+### Commodity Price lookup type
+###
+### Commodity Price functionality is not activated when this is 'none'
+### See also 'report.commodity'.
+### Valid options are: "none", "txn-time", "last-price", "given-time"
+### CLI: --price.lookup-type
+lookup-type = "none"
+
 ############################################################################
 
 ### Transaction Data Configuration
@@ -150,7 +167,7 @@ suffix = "txn"
 ###
 ### If the path is relative, then it's based on this file.
 ###
-### Set the value to string "none", to disable the Chart of Accounts.
+### Set the value to "none", to disable the Chart of Accounts.
 path = "tackler/conf/accounts.toml"
 
 [transaction.commodities]
@@ -158,7 +175,7 @@ path = "tackler/conf/accounts.toml"
 ###
 ### If the path is relative, then it's based on this file.
 ###
-### Set the value to string "none", to disable the Chart of Commodities,
+### Set the value to "none", to disable the Chart of Commodities,
 ### in that case, empty commodities are allowed by default.
 path = "tackler/conf/commodities.toml"
 
@@ -167,7 +184,7 @@ path = "tackler/conf/commodities.toml"
 ###
 ### If the path is relative, then it's based on this file.
 ###
-### Set the value to string "none", to disable the Chart of Tags
+### Set the value to "none", to disable the Chart of Tags
 path = "tackler/conf/tags.toml"
 
 ############################################################################
@@ -186,6 +203,12 @@ path = "tackler/conf/tags.toml"
 ###   "GMT", "UTC", "Europe/Helsinki"
 report-timezone = "Europe/Helsinki"
 
+### Report Commodity
+### Report commodity when Commodity Price is activated.
+### If strict mode is on 'kernel.strict = true', then this
+### commodity has to be defined in Chart of Commodities.
+commodity = "name"
+
 ### Reports to generate
 ###
 ### This is a list of report targets to generate.
@@ -193,6 +216,7 @@ report-timezone = "Europe/Helsinki"
 ### Valid options are: "balance", "balance-group", "register"
 ### CLI: --reports
 targets = [ "balance", "balance-group", "register" ]
+
 ### Account selector for Reports and Exports
 ###
 ### This is default, global list of report accounts. It can be
@@ -237,6 +261,14 @@ scale = { min = 2, max = 7 }
 [report.balance]
 ### Report title
 title = "Balance Report"
+### Balance Report type
+###
+### This defines report type:
+###   "flat" means that only leaf account sums are reported
+###   "tree" means that full account tree is reported from leaf to root
+### If you are coming from other PTA tools, start with "flat"
+### Valid options are: "flat" or "tree"
+type = "flat"
 ### Account selector for Balance Report
 ###
 ### If set, this will override 'report.accounts'
@@ -247,6 +279,14 @@ title = "Balance Report"
 ### Balance Group Report
 [report.balance-group]
 title = "Balance Group Report"
+### Balance Group Report type
+###
+### This defines report type:
+###   "flat" means that only leaf account sums are reported
+###   "tree" means that full account tree is reported from leaf to root
+### If you are coming from other PTA tools, start with "flat"
+### Valid options are: "flat" or "tree"
+type = "flat"
 ### Group by criteria
 ###
 ### Group by balances based on selected criteria.

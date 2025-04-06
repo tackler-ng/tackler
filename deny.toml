@@ -94,7 +94,8 @@ version = 2
 # [possible values: any SPDX 3.11 short identifier (+ optional exception)].
 allow = [
     "CC0-1.0",
-    "BSD-3-Clause",
+    # Not encountered at the moment
+    # "BSD-3-Clause",
     "MIT",
     "MIT-0",
     "Apache-2.0",

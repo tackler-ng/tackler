@@ -34,8 +34,15 @@ where
         .into_iter()
         // .par // todo: par-map
         .map(|(group_by_key, bal_grp_txns)| {
-            Balance::from_iter(&group_by_key, bal_grp_txns, price_lookup_ctx, ras, settings)
-                .expect("Logic error with Balance Group: inner balance failed")
+            Balance::from_iter(
+                &group_by_key,
+                bal_grp_txns,
+                price_lookup_ctx,
+                ras,
+                settings,
+                settings.report.balance_group.bal_type.clone(),
+            )
+            .expect("Logic error with Balance Group: inner balance failed")
         })
         .filter(|bal| !bal.is_empty())
         .sorted_by_key(|bal| bal.title.clone())
