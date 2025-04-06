@@ -12,50 +12,66 @@ Tracking issue: link:https://github.com/tackler-ng/tackler/issues/86[GH-86]
 
 Summary of changes
 
-* Sub-change 1
-* Sub-change 2
+* Flat Balance
+* Flat Balance Group
+* Configuration option to select balance type (`tree` or `flat`)
 
-Longer description with high level explanation of this change
+At the moment tackler generates balance family reports with additional tree balance column.
+The tree balance is that second column in the report below.
 
+----
+BALANCE (TREE)
+--------------
+                 0.00   -2.00  Assets
+                -2.00   -2.00  Assets:Cash
+                 0.00    2.00  Expenses
+                 2.00    2.00  Expenses:Ice_cream
+=====================
+                 0.00
+----
 
-=== Sub-change 1
+Implement flat balance so that the balance is reported only for the leaf accounts.
 
-Lorem ipsum ...
+This is semantically more similar to other PTA tool's balance reports.
 
-
-=== Sub-change 2
-
-Lorem ipsum ...
+----
+BALANCE (FLAT)
+--------------
+                -2.00  Assets:Cash
+                 2.00  Expenses:Ice_cream
+=====================
+                 0.00
+----
 
 
 == Journal File Format
 
-Journal file format changes, if any
+No changes to journal file format.
 
 
 == Implementation
 
 === CLI Changes
 
-Changes to command line interface
-
-* [ ] item
-
+No changes to CLI - this will be config only feature.
 
 === CONF Changes
 
-Changes to conf-settings
+Add optional configuration option `report.balance.type`, with possible values `tree` and `flat`.
+If the option is missing, then `tree`-type is used.
 
-* [ ] item
+* [ ] `report.balance.type`
+* [ ] `report.balance-group.type`
 
 === Filtering Changes
 
+No changes to filtering.
 
 === Machinery
 
 Changes to machinery
 
-* [ ] item
+* [ ] flat balance builder
 
 
 ==== API Changes
@@ -67,24 +83,25 @@ Api changes to server or client interfaces.
 
 Changes to server API
 
-* [ ] item
+* [ ] Change `model::balance_tree_node::BalanceTreeNode` field `sub_acc_tree_sum` to optional.
 
 
 ===== Client API Changes
 
 Changes to client API or JSON model
 
-* [ ] item
+* [ ] Eventually change JSON to have optional `accountTreeSum` field.
 
 ===== JSON Model
 
 Changes to JSON model
 
-* [ ] Metadata
 * [ ] JSON Reports
 ** [ ] BalanceReport
+*** [ ] optional `accountTreeSum` field
 ** [ ] BalanceGroupReport
-** [ ] RegisterReport
+*** [ ] optional `accountTreeSum` field
+
 
 
 ==== New Dependencies
@@ -108,22 +125,19 @@ Changes to reports or reporting
 
 Changes to balance report
 
-* [ ] item
+* [ ] New report content: Flat Balance
 
 
 ==== Balance Group Report
 
 Changes to balance group report
 
-* [ ] item
+* [ ] New report content: Flat Balance Group
 
 
 ==== Register Report
 
-Changes to register report
-
-* [ ] item
-
+No changes to register report
 
 === Exporting
 
@@ -131,21 +145,16 @@ Changes to exports or exporting
 
 ==== Equity Export
 
-Changes to equity export
-
-* [ ] item
-
+No changes to equity export
 
 ==== Identity Export
 
-Changes to identity export
-
-* [ ] item
+No changes to identity export
 
 
 === Documentation
 
-* [ ] xref:./readme.adoc[]: Update TEP index
+* [x] xref:./readme.adoc[]: Update TEP index
 * [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
 * [ ] link:../../CHANGELOG[]: add new item
 * [ ] Does it warrant own T3DB file?
@@ -154,16 +163,11 @@ Changes to identity export
 ** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
 * [ ] User docs
 ** [ ] User Manual
-*** [ ] cli-arguments
-**** [ ] `--arg-1`
-**** [ ] `--arg-2`
 ** [ ] tackler.toml
-*** [ ] `setting-1`
-*** [ ] `setting-2`
-** [ ] accounts.toml
-** [ ] commodities.toml
-** [ ] tags.toml
+*** [ ] `report.balance.type`
+*** [ ] `report.balance-group.type`
 ** [ ] examples
+*** [ ] Update `tackler new`
 * [ ] Developer docs
 ** [ ] API changes
 *** [ ] Server API changes
@@ -173,30 +177,42 @@ Changes to identity export
 
 === Future Plans and Postponed (PP) Features
 
-How and where to go from here?
+Possibly expose option to select balance type from CLI.
+
+In the future, maybe turn this into mandatory option (with grace period).
 
 ==== Postponed (PP) Features
-
-Anything which wasn't implemented?
 
 
 === Tests
 
 Normal, ok-case tests to validate functionality:
 
-* [ ] test
+* [ ] balance report
+** [ ] type is not set
+** [ ] type is set to flat
+** [ ] type is set to tree
+
+* [ ] balance group report
+** [ ] type is not set
+** [ ] type is set to flat
+** [ ] type is set to tree
+
+* [ ] balance and balance group has different type setting
+
 
 ==== Errors
 
 Various error cases:
 
-* [ ] e: error test
+* [ ] e: unknown balance type
+* [ ] e: unknown balance-group type
+
 
 ==== Perf
 
-Is there need to run or create new perf tests?
 
-* [ ] perf test
+* [ ] Update perf tests with flat balance
 
 ==== Feature and Test Coverage Tracking
 
@@ -204,8 +220,8 @@ Is there need to run or create new perf tests?
 
 Feature-id::
 
-* name: <Feature name / subject-line>
-* uuid: <UUID>
+* name: Flat Balance
+* uuid: cb7f968e-61f4-43d2-b2d8-d08f179d5fd7
 
 
 link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
@@ -216,13 +232,18 @@ link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
 ....
 features:
   - feature:
-      id: uuid
-      subject: "todo: one-line description of main feature"
+      id: cb7f968e-61f4-43d2-b2d8-d08f179d5fd7
+      subject: "Flat Balance"
 
   - feature:
-      id: uuid
-      parent: uuid-of-parent
-      subject: "todo: one-line description of sub feature"
+      id: 55cbf642-7d2b-4a68-9eed-4cd97066b2be
+      parent: cb7f968e-61f4-43d2-b2d8-d08f179d5fd7
+      subject: "Flat Balance Report"
+
+  - feature:
+      id: eac0e587-2232-42ed-9569-d1026d762e60
+      parent: cb7f968e-61f4-43d2-b2d8-d08f179d5fd7
+      subject: "Flat Balance Group Report"
       tests:
         errors:
           - error:
