@@ -15,6 +15,7 @@ module=audit
 #####################################################################
 #
 # test: 8d9b68a7-32f6-451d-ab74-08f03016f7c7
+# desc: bal.type = flat, balgrp.type = tree
 rm -f $OUTPUT_DIR/*
 test_name=tep1016-01
 echo "test: $module/$test_name: "
@@ -40,6 +41,7 @@ echo ": ok"
 #####################################################################
 #
 # test: 4bf2653c-7772-45fe-a613-11617215ad2b
+# desc: bal.type = tree, balgrp.type = flat
 rm -f $OUTPUT_DIR/*
 test_name=tep1016-02
 echo "test: $module/$test_name: "

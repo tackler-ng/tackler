@@ -48,7 +48,7 @@ and beyond of the old Scala code base. It's basis of all Tackler development.
 
 [NOTE]
 ====
-*Tackler-NG is tested with 408
+*Tackler-NG is tested with 414
 link:https://github.com/tackler-ng/tackler-t3db[tracked test vectors]*
 ====
 

@@ -6,7 +6,21 @@ for actual TEP-1016 content.
 
 Implement flat balance as an alternative for tree balance reports.
 
-Tracking issue: link:https://github.com/tackler-ng/tackler/issues/86[GH-86]
+Tracking issue:: link:https://github.com/tackler-ng/tackler/issues/86[GH-86]
+
+Status:: Implemented
+
+== How to Test
+
+There is new optional `report.balance.type` and `report.balance-group.type`
+configuration settings with `flat` or `tree` values.
+
+----
+# development version of tackler will generate above config keys
+tackler new demo
+tackler --config demo/conf/tackler.toml
+----
+
 
 == Summary
 
@@ -106,15 +120,7 @@ Changes to JSON model
 
 ==== New Dependencies
 
-* [ ] link / url of new dependency
-** [ ] Add and check licenses: link / url
-** [ ] Is there NOTICE file(s)?
-** [ ] Add license under link:../licenses/[doc/licenses]
-*** [ ] Add NOTICES under link:../licenses/[doc/licenses]
-** [ ] Add link of license to xref:../readme.adoc[index]
-** [ ] Add link to Site credits
-** [ ] Add license material to binary distribution
-
+No new dependencies were added.
 
 === Reporting
 
@@ -155,18 +161,19 @@ No changes to identity export
 === Documentation
 
 * [x] xref:./readme.adoc[]: Update TEP index
-* [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
-* [ ] link:../../CHANGELOG[]: add new item
-* [ ] Does it warrant own T3DB file?
-** [ ] update xref:../../suite/tests.adoc[]
-** [ ] update xref:../../suite/check-tests.sh[]
-** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+* [x] link:../../CHANGELOG[]: add new item
+* [x] Does it warrant own T3DB file?
+** [x] update xref:../../suite/tests.adoc[]
+** [x] update xref:../../suite/check-tests.sh[]
+** [x] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-1016.yml: TEP-1016 T3DB]
 * [ ] User docs
 ** [ ] Balance Report
 ** [ ] Balance Group Report
 ** [ ] tackler.toml
-*** [ ] `report.balance.type`
-*** [ ] `report.balance-group.type`
+*** [ ] site
+*** [x] examples
+*** [x] `report.balance.type`
+*** [x] `report.balance-group.type`
 ** [x] examples
 *** [x] Update `tackler new`
 * [ ] Developer docs
@@ -249,24 +256,6 @@ features:
       id: eac0e587-2232-42ed-9569-d1026d762e60
       parent: cb7f968e-61f4-43d2-b2d8-d08f179d5fd7
       subject: "Flat Balance Group Report"
-      tests:
-        errors:
-          - error:
-              id: uuid
-              name: "todo: name of test class/method or test description file"
-              desc: "todo: description"
-        operations:
-          - test:
-              id: uuid
-              name: "todo: name of test class/method or test description file"
-              descriptions:
-                - desc: "todo: description"
-              references:
-                - ref: balance
-                - ref: balance-group
-                - ref: register
-                - ref: identity
-                - ref: equity
 ....
 
 

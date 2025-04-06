@@ -10,8 +10,8 @@
 
 New features:
 
-* ...
-  ** ...
+* New flat balance report option for Balance and Balance Group Reports
+  ** link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1016.adoc[TEP-1016]
 
 Changed functionality:
 

@@ -75,6 +75,9 @@ echo ": ok"
 # audit-1E2-01
 #
 # test: 4e8e1d79-bbb5-4e6f-9072-d7e3c5b8c7ea
+#
+# test: cdd2d0a0-3e6d-42e3-9cae-b4797a23fe66
+# desc: Flat Balance compatibility guardian
 rm -f $OUTPUT_DIR/*
 test_name=audit-1E2-01
 echo "test: $module/$test_name: "

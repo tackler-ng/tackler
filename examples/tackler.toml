@@ -261,6 +261,14 @@ scale = { min = 2, max = 7 }
 [report.balance]
 ### Report title
 title = "Balance Report"
+### Balance Report type
+###
+### This defines report type:
+###   "flat" means that only leaf account sums are reported
+###   "tree" means that full account tree is reported from leaf to root
+### If you are coming from other PTA tools, start with "flat"
+### Valid options are: "flat" or "tree"
+type = "flat"
 ### Account selector for Balance Report
 ###
 ### If set, this will override 'report.accounts'
@@ -271,6 +279,14 @@ title = "Balance Report"
 ### Balance Group Report
 [report.balance-group]
 title = "Balance Group Report"
+### Balance Group Report type
+###
+### This defines report type:
+###   "flat" means that only leaf account sums are reported
+###   "tree" means that full account tree is reported from leaf to root
+### If you are coming from other PTA tools, start with "flat"
+### Valid options are: "flat" or "tree"
+type = "flat"
 ### Group by criteria
 ###
 ### Group by balances based on selected criteria.
