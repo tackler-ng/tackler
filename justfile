@@ -17,6 +17,10 @@ alias qa := release-qa
 alias db := debug-build
 alias rb := release-build
 
+# Install development version
+install:
+    cargo install --locked --path tackler-cli
+
 # clean the workspace
 clean:
     cargo clean
