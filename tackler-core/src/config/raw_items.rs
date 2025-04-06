@@ -146,6 +146,8 @@ pub(super) struct ScaleRaw {
 #[derive(Debug, Clone, Deserialize)]
 pub(super) struct BalanceRaw {
     pub(super) title: String,
+    #[serde(rename = "type")]
+    pub(super) bal_type: Option<String>,
     #[serde(rename = "accounts")]
     pub(super) acc_sel: Option<AccountSelectors>,
 }
@@ -153,6 +155,8 @@ pub(super) struct BalanceRaw {
 #[derive(Debug, Clone, Deserialize)]
 pub(super) struct BalanceGroupRaw {
     pub(super) title: String,
+    #[serde(rename = "type")]
+    pub(super) bal_type: Option<String>,
     #[serde(rename = "group-by")]
     pub(super) group_by: String,
     #[serde(rename = "accounts")]

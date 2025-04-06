@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+use crate::config::BalanceType;
 use crate::kernel::balance::{BTNs, Balance, Deltas};
 use crate::kernel::report_item_selector::{
     BalanceAllSelector, BalanceByAccountSelector, BalanceSelector,
@@ -133,24 +134,43 @@ impl BalanceReporter {
                 let prec_1 = bal_settings.scale.get_precision(&btn.account_sum);
                 let prec_2 = bal_settings.scale.get_precision(&btn.sub_acc_tree_sum);
 
-                writeln!(
-                    writer,
-                    "{left_ruler}{:>asl$.prec_1$}{:>width$}{:>satsl$.prec_2$}{}{}",
-                    btn.account_sum.round_dp_with_strategy(
-                        prec_1 as u32,
-                        RoundingStrategy::MidpointAwayFromZero
-                    ),
-                    "",
-                    btn.sub_acc_tree_sum.round_dp_with_strategy(
-                        prec_2 as u32,
-                        RoundingStrategy::MidpointAwayFromZero
-                    ),
-                    make_commodity_field(comm_max_len, btn),
-                    btn.acctn.atn,
-                    asl = left_sum_len,
-                    satsl = sub_acc_tree_sum_len,
-                    width = filler_field_len,
-                )?;
+                match bal_settings.bal_type {
+                    BalanceType::Tree => {
+                        writeln!(
+                            writer,
+                            "{left_ruler}{:>asl$.prec_1$}{:>width$}{:>satsl$.prec_2$}{}{}",
+                            btn.account_sum.round_dp_with_strategy(
+                                prec_1 as u32,
+                                RoundingStrategy::MidpointAwayFromZero
+                            ),
+                            "",
+                            btn.sub_acc_tree_sum.round_dp_with_strategy(
+                                prec_2 as u32,
+                                RoundingStrategy::MidpointAwayFromZero
+                            ),
+                            make_commodity_field(comm_max_len, btn),
+                            btn.acctn.atn,
+                            asl = left_sum_len,
+                            satsl = sub_acc_tree_sum_len,
+                            width = filler_field_len,
+                        )?;
+                    }
+                    BalanceType::Flat => {
+                        writeln!(
+                            writer,
+                            "{left_ruler}{:>asl$.prec_1$}{:>width$}{}{}",
+                            btn.account_sum.round_dp_with_strategy(
+                                prec_1 as u32,
+                                RoundingStrategy::MidpointAwayFromZero
+                            ),
+                            "",
+                            make_commodity_field(comm_max_len, btn),
+                            btn.acctn.atn,
+                            asl = left_sum_len,
+                            width = filler_field_len,
+                        )?;
+                    }
+                }
             }
 
             writeln!(

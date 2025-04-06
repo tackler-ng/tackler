@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 pub(crate) use items::AccountSelectors;
+pub use items::BalanceType;
 pub use items::Config;
 pub(crate) use items::Export;
 pub use items::ExportType;

@@ -2,7 +2,7 @@
  * Tackler-NG 2025
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::Scale;
+use crate::config::{BalanceType, Scale};
 use crate::kernel::Settings;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::model::Commodity;
@@ -14,6 +14,7 @@ use tackler_api::txn_ts::{GroupBy, TimestampStyle};
 #[derive(Debug, Clone)]
 pub struct BalanceSettings {
     pub(crate) title: String,
+    pub(crate) bal_type: BalanceType,
     pub(crate) ras: Vec<String>,
     pub(crate) scale: Scale,
     pub(crate) report_commodity: Option<Arc<Commodity>>,
@@ -26,6 +27,7 @@ impl TryFrom<&Settings> for BalanceSettings {
     fn try_from(settings: &Settings) -> Result<Self, Self::Error> {
         Ok(BalanceSettings {
             title: settings.report.balance.title.clone(),
+            bal_type: settings.report.balance.bal_type.clone(),
             ras: settings.get_balance_ras(),
             scale: settings.report.scale.clone(),
             report_commodity: settings.get_report_commodity(),
@@ -37,6 +39,7 @@ impl TryFrom<&Settings> for BalanceSettings {
 #[derive(Debug, Clone)]
 pub struct BalanceGroupSettings {
     pub title: String,
+    pub bal_type: BalanceType,
     pub ras: Vec<String>,
     pub group_by: GroupBy,
     pub report_tz: TimeZone,
@@ -51,6 +54,7 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
     fn try_from(settings: &Settings) -> Result<Self, Self::Error> {
         let bgs = BalanceGroupSettings {
             title: settings.report.balance_group.title.clone(),
+            bal_type: settings.report.balance_group.bal_type.clone(),
             ras: settings.get_balance_group_ras(),
             group_by: settings.report.balance_group.group_by,
             report_tz: settings.report.report_tz.clone(),
