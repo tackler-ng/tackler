@@ -248,7 +248,14 @@ impl Balance {
     where
         T: BalanceSelector + ?Sized,
     {
-        Self::from_iter(title, &txn_set.txns, price_lookup_ctx, accounts, settings)
+        Self::from_iter(
+            title,
+            &txn_set.txns,
+            price_lookup_ctx,
+            accounts,
+            settings,
+            settings.report.balance.bal_type.clone(),
+        )
     }
 
     pub(crate) fn from_iter<'a, I, T>(
@@ -257,12 +264,13 @@ impl Balance {
         price_lookup_ctx: &PriceLookupCtx<'_>,
         accounts: &T,
         settings: &Settings,
+        bal_type: BalanceType,
     ) -> Result<Balance, tackler::Error>
     where
         T: BalanceSelector + ?Sized,
         I: IntoIterator<Item = &'a &'a Transaction>,
     {
-        let bal = match settings.report.balance.bal_type {
+        let bal = match bal_type {
             BalanceType::Tree => {
                 Balance::balance_tree(txns.into_iter(), price_lookup_ctx, settings)?
             }

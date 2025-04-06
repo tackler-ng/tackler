@@ -189,26 +189,29 @@ In the future, maybe turn this into mandatory option (with grace period).
 
 Normal, ok-case tests to validate functionality:
 
-* [ ] balance report
-** [ ] type is not set
-** [ ] type is set to flat
-** [ ] type is set to tree
+* [x] balance report
+** [x] type is not set
+** [x] type is set to flat
+** [x] type is set to tree
 
-* [ ] balance group report
-** [ ] type is not set
-** [ ] type is set to flat
-** [ ] type is set to tree
+* [x] balance group report
+** [x] type is not set
+** [x] type is set to flat
+** [x] type is set to tree
 
-* [ ] balance and balance group has different type setting
+* [x] balance and balance group has different type setting
+
+* [x] verify that reports are not changed with `tree`
 
 * [ ] test flat balance sorting order
+
 
 ==== Errors
 
 Various error cases:
 
-* [ ] e: unknown balance type
-* [ ] e: unknown balance-group type
+* [x] e: unknown balance type
+* [x] e: unknown balance-group type
 
 
 ==== Perf

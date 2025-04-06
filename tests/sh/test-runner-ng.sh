@@ -39,6 +39,8 @@ source $TEST_DIR/lib/utils.sh
 
 check_suite
 
+$TEST_DIR/tep-1016.sh
+$TEST_DIR/tep-1016-errors.sh
 $TEST_DIR/accumulator.sh
 $TEST_DIR/audit.sh
 $TEST_DIR/audit-errors.sh
