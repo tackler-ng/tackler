@@ -4,10 +4,12 @@
  */
 
 use crate::kernel::accumulator::TxnGroupByOp;
+use crate::kernel::balance::Balance;
 use crate::kernel::report_item_selector::BalanceSelector;
 use crate::kernel::{BalanceGroupSettings, accumulator};
 use crate::kernel::{BalanceSettings, Settings};
 use crate::model::{Transaction, TxnSet};
+use crate::report::balance_reporter::balance_to_api;
 use crate::report::{BalanceReporter, write_price_metadata};
 use crate::report::{Report, write_acc_sel_checksum, write_report_timezone};
 use crate::tackler;
@@ -17,8 +19,6 @@ use tackler_api::metadata::Metadata;
 use tackler_api::reports::balance_group_report::BalanceGroupReport;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::GroupBy;
-use crate::kernel::balance::Balance;
-use crate::report::balance_reporter::balance_to_api;
 
 #[derive(Debug, Clone)]
 pub struct BalanceGroupReporter {
@@ -61,9 +61,7 @@ impl BalanceGroupReporter {
             groups,
         }
     }
-
 }
-
 
 impl Report for BalanceGroupReporter {
     fn write_txt_report<W: io::Write + ?Sized>(
