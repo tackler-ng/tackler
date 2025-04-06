@@ -11,6 +11,7 @@ None at the moment.
 
 === TEPs in planning phase
 
+* xref:./tep-1016.adoc[TEP-1016: Flat Balance]
 * xref:./tep-1003.adoc[TEP-1003: Profit and Loss (PnL)]
 
 

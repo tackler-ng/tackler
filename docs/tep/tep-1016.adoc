@@ -1,0 +1,250 @@
+= TEP-1016: Flat Balance
+
+See branch
+link:https://github.com/tackler-ng/tackler/tree/tep/tep-1016-flat-balance/docs/tep/tep-1016.adoc[/tep/tep-1016-flat-balance]
+for actual TEP-1016 content.
+
+Implement flat balance as an alternative for tree balance reports.
+
+Tracking issue: link:https://github.com/tackler-ng/tackler/issues/86[GH-86]
+
+== Summary
+
+Summary of changes
+
+* Sub-change 1
+* Sub-change 2
+
+Longer description with high level explanation of this change
+
+
+=== Sub-change 1
+
+Lorem ipsum ...
+
+
+=== Sub-change 2
+
+Lorem ipsum ...
+
+
+== Journal File Format
+
+Journal file format changes, if any
+
+
+== Implementation
+
+=== CLI Changes
+
+Changes to command line interface
+
+* [ ] item
+
+
+=== CONF Changes
+
+Changes to conf-settings
+
+* [ ] item
+
+=== Filtering Changes
+
+
+=== Machinery
+
+Changes to machinery
+
+* [ ] item
+
+
+==== API Changes
+
+Api changes to server or client interfaces.
+
+
+===== Server API Changes
+
+Changes to server API
+
+* [ ] item
+
+
+===== Client API Changes
+
+Changes to client API or JSON model
+
+* [ ] item
+
+===== JSON Model
+
+Changes to JSON model
+
+* [ ] Metadata
+* [ ] JSON Reports
+** [ ] BalanceReport
+** [ ] BalanceGroupReport
+** [ ] RegisterReport
+
+
+==== New Dependencies
+
+* [ ] link / url of new dependency
+** [ ] Add and check licenses: link / url
+** [ ] Is there NOTICE file(s)?
+** [ ] Add license under link:../licenses/[doc/licenses]
+*** [ ] Add NOTICES under link:../licenses/[doc/licenses]
+** [ ] Add link of license to xref:../readme.adoc[index]
+** [ ] Add link to Site credits
+** [ ] Add license material to binary distribution
+
+
+=== Reporting
+
+Changes to reports or reporting
+
+
+==== Balance Report
+
+Changes to balance report
+
+* [ ] item
+
+
+==== Balance Group Report
+
+Changes to balance group report
+
+* [ ] item
+
+
+==== Register Report
+
+Changes to register report
+
+* [ ] item
+
+
+=== Exporting
+
+Changes to exports or exporting
+
+==== Equity Export
+
+Changes to equity export
+
+* [ ] item
+
+
+==== Identity Export
+
+Changes to identity export
+
+* [ ] item
+
+
+=== Documentation
+
+* [ ] xref:./readme.adoc[]: Update TEP index
+* [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
+* [ ] link:../../CHANGELOG[]: add new item
+* [ ] Does it warrant own T3DB file?
+** [ ] update xref:../../suite/tests.adoc[]
+** [ ] update xref:../../suite/check-tests.sh[]
+** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+* [ ] User docs
+** [ ] User Manual
+*** [ ] cli-arguments
+**** [ ] `--arg-1`
+**** [ ] `--arg-2`
+** [ ] tackler.toml
+*** [ ] `setting-1`
+*** [ ] `setting-2`
+** [ ] accounts.toml
+** [ ] commodities.toml
+** [ ] tags.toml
+** [ ] examples
+* [ ] Developer docs
+** [ ] API changes
+*** [ ] Server API changes
+*** [ ] Client API changes
+*** [ ] JSON Examples
+
+
+=== Future Plans and Postponed (PP) Features
+
+How and where to go from here?
+
+==== Postponed (PP) Features
+
+Anything which wasn't implemented?
+
+
+=== Tests
+
+Normal, ok-case tests to validate functionality:
+
+* [ ] test
+
+==== Errors
+
+Various error cases:
+
+* [ ] e: error test
+
+==== Perf
+
+Is there need to run or create new perf tests?
+
+* [ ] perf test
+
+==== Feature and Test Coverage Tracking
+
+
+
+Feature-id::
+
+* name: <Feature name / subject-line>
+* uuid: <UUID>
+
+
+link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+
+
+==== Metadata template for Feature and Test Coverage Tracking
+
+....
+features:
+  - feature:
+      id: uuid
+      subject: "todo: one-line description of main feature"
+
+  - feature:
+      id: uuid
+      parent: uuid-of-parent
+      subject: "todo: one-line description of sub feature"
+      tests:
+        errors:
+          - error:
+              id: uuid
+              name: "todo: name of test class/method or test description file"
+              desc: "todo: description"
+        operations:
+          - test:
+              id: uuid
+              name: "todo: name of test class/method or test description file"
+              descriptions:
+                - desc: "todo: description"
+              references:
+                - ref: balance
+                - ref: balance-group
+                - ref: register
+                - ref: identity
+                - ref: equity
+....
+
+
+'''
+Tackler is distributed on an *"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND*, either express or implied.
+See the link:../../LICENSE[License] for the specific language governing permissions and limitations under
+the link:../../LICENSE[License].
