@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+use crate::config::BalanceType;
 use crate::kernel::Settings;
 use crate::kernel::price_lookup::PriceLookupCtx;
 use crate::kernel::report_item_selector::BalanceSelector;
@@ -137,6 +138,35 @@ impl Balance {
         }
     }
 
+    /// Calculate sum of postings for each account.
+    ///
+    /// Input size: is "big",    ~ all transactions
+    /// Output size: is "small", ~ size of CoA
+    fn calculate_account_sums<'a, I>(
+        txns: I,
+        price_lookup_ctx: &PriceLookupCtx<'_>,
+    ) -> Vec<(TxnAccount, Decimal)>
+    where
+        I: Iterator<Item = &'a &'a Transaction>,
+    {
+        // Calculate sum of postings for each account.
+        //
+        // Input size: is "big",    ~ all transactions
+        // Output size: is "small", ~ size of CoA
+        txns.flat_map(|txn| price_lookup_ctx.convert_prices(txn))
+            .sorted_by_key(|(acctn, _, _)| acctn.clone())
+            .chunk_by(|(acctn, _, _)| acctn.clone())
+            .into_iter()
+            .map(|(_, postings)| {
+                let mut ps = postings.peekable();
+                // unwrap: ok: this is inside map, hence there must be at least one element
+                let acctn = ps.peek().unwrap(/*:ok:*/).0.clone();
+                let acc_sum = ps.map(|(_, amount, _)| amount).sum::<Decimal>();
+                (acctn, acc_sum)
+            })
+            .collect()
+    }
+
     /// Calculate balance items
     ///
     /// * Input size is "big";     ~ all transactions
@@ -144,7 +174,7 @@ impl Balance {
     ///
     /// * `txns` sequence of transactions
     /// * `returns` unfiltered sequence of BalanceTreeNodes
-    fn balance<'a, I>(
+    fn balance_tree<'a, I>(
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
         settings: &Settings,
@@ -156,19 +186,8 @@ impl Balance {
         //
         // Input size: is "big",    ~ all transactions
         // Output size: is "small", ~ size of CoA
-        let account_sums: Vec<(TxnAccount, Decimal)> = txns
-            .flat_map(|txn| price_lookup_ctx.convert_prices(txn))
-            .sorted_by_key(|(acctn, _, _)| acctn.clone())
-            .chunk_by(|(acctn, _, _)| acctn.clone())
-            .into_iter()
-            .map(|(_, postings)| {
-                let mut ps = postings.peekable();
-                // unwrap: ok: this is inside map, hence there must be at least one element
-                let acctn = ps.peek().unwrap(/*:ok:*/).0.clone();
-                let acc_sum = ps.map(|(_, amount, _)| amount).sum::<Decimal>();
-                (acctn, acc_sum)
-            })
-            .collect();
+        let account_sums: Vec<(TxnAccount, Decimal)> =
+            Self::calculate_account_sums(txns, price_lookup_ctx);
 
         // From every account bubble up and insert missing parent AccTNs.
         //
@@ -243,7 +262,14 @@ impl Balance {
         T: BalanceSelector + ?Sized,
         I: IntoIterator<Item = &'a &'a Transaction>,
     {
-        let bal = Balance::balance(txns.into_iter(), price_lookup_ctx, settings)?;
+        let bal = match settings.report.balance.bal_type {
+            BalanceType::Tree => {
+                Balance::balance_tree(txns.into_iter(), price_lookup_ctx, settings)?
+            }
+            BalanceType::Flat => {
+                Balance::balance_flat(txns.into_iter(), price_lookup_ctx, settings)?
+            }
+        };
 
         let filt_bal: Vec<_> = bal.into_iter().filter(|b| accounts.eval(b)).collect();
 
@@ -270,5 +296,29 @@ impl Balance {
                 deltas,
             })
         }
+    }
+
+    fn balance_flat<'a, I>(
+        txns: I,
+        price_lookup_ctx: &PriceLookupCtx<'_>,
+        _settings: &Settings,
+    ) -> Result<Vec<BalanceTreeNode>, tackler::Error>
+    where
+        I: Iterator<Item = &'a &'a Transaction>,
+    {
+        let account_sums: Vec<(TxnAccount, Decimal)> =
+            Self::calculate_account_sums(txns, price_lookup_ctx);
+
+        let mut v: Vec<BalanceTreeNode> = account_sums
+            .into_iter()
+            .map(|(acctn, acc_sum)| BalanceTreeNode {
+                acctn: acctn.clone(),
+                sub_acc_tree_sum: Decimal::ZERO,
+                account_sum: acc_sum,
+            })
+            .collect();
+
+        v.sort_by(ord_by_btn);
+        Ok(v)
     }
 }

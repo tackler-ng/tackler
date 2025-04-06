@@ -60,8 +60,8 @@ No changes to CLI - this will be config only feature.
 Add optional configuration option `report.balance.type`, with possible values `tree` and `flat`.
 If the option is missing, then `tree`-type is used.
 
-* [ ] `report.balance.type`
-* [ ] `report.balance-group.type`
+* [x] `report.balance.type`
+* [x] `report.balance-group.type`
 
 === Filtering Changes
 
@@ -71,7 +71,7 @@ No changes to filtering.
 
 Changes to machinery
 
-* [ ] flat balance builder
+* [x] flat balance builder
 
 
 ==== API Changes
@@ -83,7 +83,7 @@ Api changes to server or client interfaces.
 
 Changes to server API
 
-* [ ] Change `model::balance_tree_node::BalanceTreeNode` field `sub_acc_tree_sum` to optional.
+* [-] Change `model::balance_tree_node::BalanceTreeNode` field `sub_acc_tree_sum` to optional. This was implemented with Zero value
 
 
 ===== Client API Changes
@@ -125,14 +125,14 @@ Changes to reports or reporting
 
 Changes to balance report
 
-* [ ] New report content: Flat Balance
+* [x] New report content: Flat Balance
 
 
 ==== Balance Group Report
 
 Changes to balance group report
 
-* [ ] New report content: Flat Balance Group
+* [x] New report content: Flat Balance Group
 
 
 ==== Register Report
@@ -162,12 +162,13 @@ No changes to identity export
 ** [ ] update xref:../../suite/check-tests.sh[]
 ** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
 * [ ] User docs
-** [ ] User Manual
+** [ ] Balance Report
+** [ ] Balance Group Report
 ** [ ] tackler.toml
 *** [ ] `report.balance.type`
 *** [ ] `report.balance-group.type`
-** [ ] examples
-*** [ ] Update `tackler new`
+** [x] examples
+*** [x] Update `tackler new`
 * [ ] Developer docs
 ** [ ] API changes
 *** [ ] Server API changes
@@ -200,6 +201,7 @@ Normal, ok-case tests to validate functionality:
 
 * [ ] balance and balance group has different type setting
 
+* [ ] test flat balance sorting order
 
 ==== Errors
 

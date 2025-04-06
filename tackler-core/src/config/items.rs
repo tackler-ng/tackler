@@ -121,6 +121,22 @@ impl ExportType {
     }
 }
 
+#[derive(Debug, Clone, Default)]
+pub enum BalanceType {
+    #[default]
+    Tree,
+    Flat,
+}
+impl BalanceType {
+    fn from(r: &str) -> Result<Self, tackler::Error> {
+        match r {
+            "tree" => Ok(BalanceType::Tree),
+            "flat" => Ok(BalanceType::Flat),
+            _ => Err(format!("Unknown balance type {r}").into()),
+        }
+    }
+}
+
 enum Timezone {}
 
 pub(crate) type AccountSelectors = Vec<String>;
@@ -572,6 +588,7 @@ impl Register {
 #[derive(Debug, Clone, Default)]
 pub(crate) struct BalanceGroup {
     pub title: String,
+    pub bal_type: BalanceType,
     pub group_by: GroupBy,
     pub acc_sel: AccountSelectors,
 }
@@ -583,6 +600,10 @@ impl BalanceGroup {
     ) -> Result<BalanceGroup, tackler::Error> {
         Ok(BalanceGroup {
             title: balgrp_raw.title.clone(),
+            bal_type: match &balgrp_raw.bal_type {
+                Some(t) => BalanceType::from(t.as_str())?,
+                None => BalanceType::default(),
+            },
             group_by: GroupBy::from(balgrp_raw.group_by.as_str())?,
             acc_sel: get_account_selector(&balgrp_raw.acc_sel, report),
         })
@@ -592,6 +613,7 @@ impl BalanceGroup {
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Balance {
     pub title: String,
+    pub bal_type: BalanceType,
     pub acc_sel: AccountSelectors,
 }
 
@@ -599,6 +621,10 @@ impl Balance {
     fn from(bal_raw: &BalanceRaw, report: &ReportRaw) -> Result<Balance, tackler::Error> {
         Ok(Balance {
             title: bal_raw.title.clone(),
+            bal_type: match &bal_raw.bal_type {
+                Some(t) => BalanceType::from(t.as_str())?,
+                None => BalanceType::default(),
+            },
             acc_sel: get_account_selector(&bal_raw.acc_sel, report),
         })
     }

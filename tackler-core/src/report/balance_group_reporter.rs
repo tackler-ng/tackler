@@ -87,6 +87,7 @@ impl Report for BalanceGroupReporter {
 
         let bal_settings = BalanceSettings {
             title: String::default(),
+            bal_type: self.report_settings.bal_type.clone(),
             ras: vec![],
             scale: self.report_settings.scale.clone(),
             report_commodity: self.report_settings.report_commodity.clone(),

@@ -57,8 +57,8 @@ targets = [ "balance", "register" ]
 ###    CLI: --report.commodity CAD
 commodity = "CAD"
 
-balance       = { title = "Balance Report" }
-balance-group = { title = "Balance Group Report", group-by = "month" }
+balance       = { title = "Balance Report", type = "flat" }
+balance-group = { title = "Balance Group Report", type = "flat", group-by = "month" }
 register      = { title = "Register Report", accounts = [ "Welcome(:.*)?", ]}
 
 
