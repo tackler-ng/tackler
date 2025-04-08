@@ -109,17 +109,48 @@ impl BalanceReporter {
         };
         let filler_field_len = filler_field.chars().count();
 
-        fn make_commodity_field(comm_max_len: usize, btn: &BalanceTreeNode) -> String {
+        fn make_commodity_field(
+            comm_max_len: usize,
+            btn: &BalanceTreeNode,
+            bal_settings: &BalanceSettings,
+        ) -> String {
             if comm_max_len.is_zero() {
-                // always separate with two spaces
-                " ".repeat(2)
+                // This is the space between acc_tree_sum (ACCTS), commodity, account
+                match bal_settings.bal_type {
+                    BalanceType::Tree => {
+                        // -> always separate with two spaces ACCTS and account
+                        " ".repeat(2)
+                    }
+                    BalanceType::Flat => {
+                        // no need to separate, as there is filler before account field
+                        String::default()
+                    }
+                }
             } else {
                 let comm = &btn.acctn.comm;
                 match &comm.is_any() {
                     true => {
-                        format!(" {: <cl$}  ", comm.name, cl = comm_max_len)
+                        match bal_settings.bal_type {
+                            BalanceType::Tree => {
+                                format!(" {: <cl$}  ", comm.name, cl = comm_max_len)
+                            }
+                            BalanceType::Flat => {
+                                // there is filler before this field
+                                format!("{: <cl$}  ", comm.name, cl = comm_max_len)
+                            }
+                        }
                     }
-                    false => format!(" {}  ", " ".repeat(comm_max_len)),
+                    false => {
+                        match bal_settings.bal_type {
+                            BalanceType::Tree => {
+                                format!(" {}  ", " ".repeat(comm_max_len))
+                            }
+                            BalanceType::Flat => {
+                                // there is filler before this field
+                                format!("{}  ", " ".repeat(comm_max_len))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -148,7 +179,7 @@ impl BalanceReporter {
                                 prec_2 as u32,
                                 RoundingStrategy::MidpointAwayFromZero
                             ),
-                            make_commodity_field(comm_max_len, btn),
+                            make_commodity_field(comm_max_len, btn, bal_settings),
                             btn.acctn.atn,
                             asl = left_sum_len,
                             satsl = sub_acc_tree_sum_len,
@@ -164,7 +195,7 @@ impl BalanceReporter {
                                 RoundingStrategy::MidpointAwayFromZero
                             ),
                             "",
-                            make_commodity_field(comm_max_len, btn),
+                            make_commodity_field(comm_max_len, btn, bal_settings),
                             btn.acctn.atn,
                             asl = left_sum_len,
                             width = filler_field_len,
