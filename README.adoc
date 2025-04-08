@@ -48,7 +48,7 @@ and beyond of the old Scala code base. It's basis of all Tackler development.
 
 [NOTE]
 ====
-*Tackler-NG is tested with 414
+*Tackler-NG is tested with 417
 link:https://github.com/tackler-ng/tackler-t3db[tracked test vectors]*
 ====
 
@@ -91,13 +91,27 @@ Or build it from the source.
 
 == Build the Source Code
 
-The `main` branch should link:https://github.com/tackler-ng/tackler/actions/workflows/ci.yml[build and pass] all tests:
+The `main` branch should link:https://github.com/tackler-ng/tackler/actions/workflows/ci.yml[build and pass] 
+all tests all the time.
+
+You have clone tackler source code with git submodules, 
+as [tests vectors](https://github.com/tackler-ng/tackler-tests) are located in a separate repository.
 
 ----
 git clone --recurse-submodules https://github.com/tackler-ng/tackler
 ----
 
-Then build the tackler binary:
+
+Then build the tackler binary, if you have [just](https://github.com/casey/just) installed,
+it's just:
+
+----
+just release-build
+
+# the binary will be located at 'target/release/tackler'
+----
+
+Or with plain cargo commands:
 
 ----
 cd tackler-ng
