@@ -52,12 +52,18 @@ unit-test:
 # run integration tests (the shell runner)
 integration-test: (_build "debug") (_integration-test "debug")
 
+# run examples
+examples: (_build "debug") (_examples-test "debug")
+
 _integration-test target:
     bash tests/sh/test-runner-ng.sh --{{target}}
 
 _examples-test target: (_build target)
     target/{{ target }}/tackler --config "{{justfile_directory()}}/examples/simple.toml"
     target/{{ target }}/tackler --config "{{justfile_directory()}}/examples/audit.toml"
+    target/{{ target }}/tackler --config examples/maple.toml
+    target/{{ target }}/tackler --config examples/solar.toml
+    target/{{ target }}/tackler --config examples/solar.toml --pricedb examples/solar/txns/se-sold.db
 
 _build target:
     @if [ "debug" = "{{ target }}" ]; then cargo build --bin tackler; else cargo build --release --bin tackler; fi

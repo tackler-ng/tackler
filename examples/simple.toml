@@ -27,8 +27,8 @@ scale = { min = 2, max = 2 }
 accounts = [ "Expenses(:.*)?" ]
 targets = [ "balance", "balance-group", "register" ]
 
-balance       = { title = "Balance Report" }
-balance-group = { title = "Balance Group Report", group-by = "month" }
+balance       = { title = "Balance Report", type = "tree" }
+balance-group = { title = "Balance Group Report", type = "tree", group-by = "month" }
 register      = { title = "Register Report", accounts = [ "Assets:.*", "Expenses:.*", "Income:.*" ]}
 
 
