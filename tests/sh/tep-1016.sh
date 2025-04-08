@@ -8,7 +8,7 @@ set -e -o pipefail
 source $TEST_DIR/lib/utils.sh
 
 ###
-### TEP-1016: FLAT BALANCE
+### TEP-1016: FLAT BALANCE / AUDIT
 ###
 module=audit
 
@@ -63,3 +63,45 @@ cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
 cmp_result $module $test_name txn equity
 echo ": ok"
+
+###
+### TEP-1016: FLAT BALANCE / COMMODITY
+###
+module=commodity
+
+tep1016_commodity_test () {
+    local test_name=$1
+
+    echo "test: $module/tep1016-${test_name}: "
+
+    rm -f $OUTPUT_DIR/*
+    $TACKLER_SH \
+        --config $SUITE_PATH/$module/tep1016.toml \
+        --output.dir $OUTPUT_DIR \
+        --output.prefix "tep1016-${test_name}" \
+        --input.file $SUITE_PATH/$module/ok/$test_name.txn
+
+    echo -n "check:"
+    cmp_result $module "tep1016-${test_name}" txt bal
+    cmp_result $module "tep1016-${test_name}" txt balgrp
+    cmp_result $module "tep1016-${test_name}" txn equity
+    echo ": ok"
+}
+
+#####################################################################
+#
+# valpos
+#
+
+# test: 895d913f-649d-4779-82dd-5da27ff48423
+# desc: flat with commodity (valpos-01)
+tep1016_commodity_test valpos-01
+
+# test: a5d7770b-1680-4f90-a7cd-7de38dbb1487
+# desc: flat with commodity (valpos-02)
+tep1016_commodity_test valpos-02
+
+# test: e2eadf49-1ac4-4b7a-84b3-fa600d628ad6
+# desc: flat with commodity (valpos-03)
+tep1016_commodity_test valpos-03
+
