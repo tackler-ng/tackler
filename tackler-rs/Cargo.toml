@@ -5,7 +5,7 @@
 #
 [package]
 name = "tackler-rs"
-version = "0.9.1-dev"
+version = "0.9.0"
 description = "Rusty Services for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
