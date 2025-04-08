@@ -81,13 +81,18 @@ See `tackler --help`, link:https://tackler.e257.fi/docs/[Documentation] and  lin
 
 == Installation
 
-You can install tackler binary by cargo:
+You can install tackler binary directly by https://www.rust-lang.org/tools/install[cargo],
+even without cloning the repo:
 
 ----
+# Latest released version
 cargo install --locked tackler
+
+# Latest development version
+cargo install --locked --git https://github.com/tackler-ng/tackler tackler
 ----
 
-Or build it from the source.
+Or build it from the local source code.
 
 == Build the Source Code
 
@@ -95,32 +100,31 @@ The `main` branch should link:https://github.com/tackler-ng/tackler/actions/work
 all tests all the time.
 
 You have clone tackler source code with git submodules, 
-as [tests vectors](https://github.com/tackler-ng/tackler-tests) are located in a separate repository.
+as link:https://github.com/tackler-ng/tackler-tests[tests vectors] are located in a separate repository.
 
 ----
 git clone --recurse-submodules https://github.com/tackler-ng/tackler
 ----
 
 
-Then build the tackler binary, if you have [just](https://github.com/casey/just) installed,
+Then build the tackler binary - if you have link:https://github.com/casey/just[just] installed,
 it's just:
 
 ----
 just release-build
-
-# the binary will be located at 'target/release/tackler'
 ----
 
-Or with plain cargo commands:
+Tackler binary will be located at `target/release/tackler`
+
+Or with plain cargo command:
 
 ----
 cd tackler-ng
 
 # The main branch should build and pass all tests
 cargo build --release --locked --bin tackler
-
-# the binary is located at 'target/release/tackler'
 ----
+Again, the binary will be located at `target/release/tackler`
 
 == Examples
 
