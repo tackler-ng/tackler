@@ -99,7 +99,7 @@ Or build it from the local source code.
 The `main` branch should link:https://github.com/tackler-ng/tackler/actions/workflows/ci.yml[build and pass] 
 all tests all the time.
 
-You have clone tackler source code with git submodules, 
+You have to clone tackler source code with git submodules, 
 as link:https://github.com/tackler-ng/tackler-tests[tests vectors] are located in a separate repository.
 
 ----
@@ -108,13 +108,13 @@ git clone --recurse-submodules https://github.com/tackler-ng/tackler
 
 
 Then build the tackler binary - if you have link:https://github.com/casey/just[just] installed,
-it's just:
+building tackler is just:
 
 ----
 just release-build
 ----
 
-Tackler binary will be located at `target/release/tackler`
+Tackler binary will be located at `target/release/tackler`.
 
 Or with plain cargo command:
 
@@ -124,6 +124,7 @@ cd tackler-ng
 # The main branch should build and pass all tests
 cargo build --release --locked --bin tackler
 ----
+
 Again, the binary will be located at `target/release/tackler`
 
 == Examples
