@@ -1,4 +1,0 @@
-name: tikv-jemallocator
-url: https://github.com/tikv/jemallocator
-license-url: https://raw.githubusercontent.com/tikv/jemallocator/main/LICENSE-MIT
-SPDX-License-Identifier: Apache-2.0 OR MIT

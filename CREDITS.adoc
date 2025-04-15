@@ -1,6 +1,7 @@
 = Credits
 
-Tackler-NG has been written by e257.fi contributors.
+Tackler-NG has been written by e257.fi and Github contributors.
+
 Following projects have provided valuable contributions,
 feedback, inspiration and ideas for this work.
 
@@ -16,8 +17,9 @@ Components (used direclty by Tackler-NG):
 * https://github.com/dtolnay/indoc[indoc]
 * https://github.com/BurntSushi/jiff[jiff]
 * https://github.com/rust-itertools/itertools[itertools]
-* https://github.com/tikv/jemallocator[tikv-jemallocator]
 * https://github.com/rust-lang/log[log]
+* https://github.com/microsoft/mimalloc[mimalloc]
+* https://github.com/purpleprotocol/mimalloc_rust[mimalloc_rust]
 * https://github.com/rust-lang/regex[regex]
 * https://github.com/paupino/rust-decimal[rust_decimal]
 * https://github.com/serde-rs/serde[serde]
@@ -37,9 +39,10 @@ Build-tools (used to build Tackler):
 * https://github.com/rust-lang/rustfmt[rustfmt]
 * https://github.com/RustSec/rustsec/tree/main/cargo-audit[cargo audit]
 * https://github.com/EmbarkStudios/cargo-deny[cargo deny]
+* https://github.com/casey/just[just]
 
-Benchmarks, flamegraphs, etc:
+Benchmarks, flamegraphs, test tools, etc:
 
 * https://github.com/bheisler/criterion.rs[criterion]
 * https://github.com/flamegraph-rs/flamegraph[flamegraph]
-
+* https://github.com/tackler-ng/pta-generator[pta-generator]

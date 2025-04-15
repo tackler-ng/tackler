@@ -42,8 +42,7 @@ gix = { version = "0.71.0", default-features = false, features = ["max-performan
 toml = "0.8.20"
 winnow = "0.7.6"
 
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-tikv-jemallocator = { workspace = true }
+mimalloc = { workspace = true }
 
 [dev-dependencies]
 rust_decimal_macros = { workspace = true }
