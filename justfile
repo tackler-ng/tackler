@@ -3,10 +3,11 @@
 # Tackler-NG 2025
 # SPDX-License-Identifier: Apache-2.0
 #
+j := quote(just_executable())
 
-# just list all targets
+# List all targets
 default:
-    @just --list
+    @{{ j }} --list --unsorted
 
 alias c  := check
 alias ut := unit-test
@@ -17,43 +18,63 @@ alias qa := release-qa
 alias db := debug-build
 alias rb := release-build
 
-# Install development version
-install:
-    cargo install --locked --path tackler-cli
+alias help := default
 
-# clean the workspace
+# Clean workspace
 clean:
     cargo clean
 
-# run code style and linter checks
-check: clippy
-    cargo fmt --all --check -- --style-edition 2024
-
-# run clippy the linter
-clippy:
-    cargo clippy --workspace --all-targets --no-deps -- -D warnings
-
-# format code
+# Format code
 fmt:
     cargo fmt --all -- --style-edition 2024
 
-# run all tests
-test: (_test "debug")
+# Run audit checks (advisories, bans, licenses, sources)
+audit:
+    cargo deny check advisories bans licenses sources
 
-# run ci tests
-release-qa: clean check audit (_test "release")
+# Run code style and linter checks
+check: clippy
+    cargo fmt --all --check -- --style-edition 2024
 
-_test target: unit-test (_build target) (_examples-test target) (_integration-test target)
+# Run clippy the linter
+clippy:
+    cargo clippy --workspace --all-targets --no-deps -- -D warnings
 
-# run unit tests
+# Run unit tests
 unit-test:
     cargo test
 
-# run integration tests (the shell runner)
+# Run integration tests (the shell runner)
 integration-test: (_build "debug") (_integration-test "debug")
 
-# run examples
+# Run examples
 examples: (_build "debug") (_examples-test "debug")
+
+# Run all tests
+test: (_test "debug")
+
+_test target: unit-test (_build target) (_examples-test target) (_integration-test target)
+
+# Run QA target (for release)
+release-qa: clean audit check (_test "release") git-bench
+
+# Build debug target
+debug-build: (_build "debug")
+
+# Build release target
+release-build: (_build "release")
+
+
+# Install development version from working copy
+install:
+    cargo install --locked --path tackler-cli
+
+# Run all benchmarks
+bench: parser-bench git-bench
+
+# Run parser benchmarks
+parser-bench:
+    cargo bench parser
 
 _integration-test target:
     bash tests/sh/test-runner-ng.sh --{{target}}
@@ -68,20 +89,7 @@ _examples-test target: (_build target)
 _build target:
     @if [ "debug" = "{{ target }}" ]; then cargo build --bin tackler; else cargo build --release --bin tackler; fi
 
-# build the debug target
-debug-build: (_build "debug")
-
-# build the release target
-release-build: (_build "release")
-
-# run integration level benchmarks
-bench: _git_bench
-    cargo bench parser
-
-_git_bench:
+# Run git benchmark and tests
+git-bench:
     cargo run --release -p tackler-core
-
-# run audit checks (advisories, bans, licenses, sources)
-audit:
-    cargo deny check advisories bans licenses sources
 
