@@ -34,7 +34,7 @@ Register Report
 ...
 ----
 
-1) Tackler has excellent performance, it can process 250_000 - 500_000 transactions per second on modern laptop.
+1) Tackler has excellent performance, it can process 700_000 transactions per second on modern laptop.
 See link:https://tackler.e257.fi/docs/performance/[Performance] for details.
 
 2) If you don't have Rust toolchain installed,
