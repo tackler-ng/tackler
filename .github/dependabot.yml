@@ -9,6 +9,9 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "02:00"
+    groups:
+      cargo:
+        patterns: ['*']
     ignore:
         - dependency-name: "tackler-rs"
         - dependency-name: "tackler-api"

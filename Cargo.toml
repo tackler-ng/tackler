@@ -43,7 +43,7 @@ codegen-units = 1
 [workspace.dependencies]
 base64 = { version = "0.22.1" }
 indoc = "2.0.6"
-jiff = { version = "0.2.5", features = [ "serde" ]}
+jiff = { version = "0.2.6", features = [ "serde" ]}
 rust_decimal = { version = "1.37.1", features= ["serde-with-arbitrary-precision" ]}
 rust_decimal_macros = { version = "1.37.1" }
 uuid = { version = "1.16.0", default-features = false, features = [ "serde" ] }
@@ -52,4 +52,4 @@ regex =  { version = "1.11.1" }
 serde = { version = "1.0.219", default-features = false }
 serde_json = { version = "1.0.140" , default-features = false, features = [ "std", "arbitrary_precision" ] }
 itertools = "0.14.0"
-tikv-jemallocator = "0.6.0"
+mimalloc = { version = "0.1.46" }

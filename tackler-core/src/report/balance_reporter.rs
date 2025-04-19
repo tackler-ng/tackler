@@ -9,12 +9,13 @@ use crate::kernel::report_item_selector::{
     BalanceAllSelector, BalanceByAccountSelector, BalanceSelector,
 };
 use crate::kernel::{BalanceSettings, Settings};
+use crate::math::format::format_with_scale;
 use crate::model::{BalanceTreeNode, TxnSet};
 use crate::report::{Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone};
 use crate::tackler;
 use itertools::Itertools;
+use rust_decimal::Decimal;
 use rust_decimal::prelude::Zero;
-use rust_decimal::{Decimal, RoundingStrategy};
 use std::cmp::max;
 use std::io;
 use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
@@ -108,19 +109,49 @@ impl BalanceReporter {
         } else {
             " ".repeat(4 + comm_max_len)
         };
-        let filler_field_len = filler_field.chars().count();
 
-        fn make_commodity_field(comm_max_len: usize, btn: &BalanceTreeNode) -> String {
+        fn make_commodity_field(
+            comm_max_len: usize,
+            btn: &BalanceTreeNode,
+            bal_settings: &BalanceSettings,
+        ) -> String {
             if comm_max_len.is_zero() {
-                // always separate with two spaces
-                " ".repeat(2)
+                // This is the space between acc_tree_sum (ACCTS), commodity, account
+                match bal_settings.bal_type {
+                    BalanceType::Tree => {
+                        // -> always separate with two spaces ACCTS and account
+                        " ".repeat(2)
+                    }
+                    BalanceType::Flat => {
+                        // no need to separate, as there is filler before account field
+                        String::default()
+                    }
+                }
             } else {
                 let comm = &btn.acctn.comm;
                 match &comm.is_any() {
                     true => {
-                        format!(" {: <cl$}  ", comm.name, cl = comm_max_len)
+                        match bal_settings.bal_type {
+                            BalanceType::Tree => {
+                                format!(" {: <cl$}  ", comm.name, cl = comm_max_len)
+                            }
+                            BalanceType::Flat => {
+                                // there is filler before this field
+                                format!("{: <cl$}  ", comm.name, cl = comm_max_len)
+                            }
+                        }
                     }
-                    false => format!(" {}  ", " ".repeat(comm_max_len)),
+                    false => {
+                        match bal_settings.bal_type {
+                            BalanceType::Tree => {
+                                format!(" {}  ", " ".repeat(comm_max_len))
+                            }
+                            BalanceType::Flat => {
+                                // there is filler before this field
+                                format!("{}  ", " ".repeat(comm_max_len))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -132,44 +163,25 @@ impl BalanceReporter {
 
         if !bal_report.is_empty() {
             for btn in &bal_report.bal {
-                let prec_1 = bal_settings.scale.get_precision(&btn.account_sum);
-                let prec_2 = bal_settings.scale.get_precision(&btn.sub_acc_tree_sum);
+                let acc_sum =
+                    format_with_scale(left_sum_len, &btn.account_sum, &bal_settings.scale);
+                let comm = make_commodity_field(comm_max_len, btn, bal_settings);
+                let atn = &btn.acctn.atn;
 
                 match bal_settings.bal_type {
                     BalanceType::Tree => {
                         writeln!(
                             writer,
-                            "{left_ruler}{:>asl$.prec_1$}{:>width$}{:>satsl$.prec_2$}{}{}",
-                            btn.account_sum.round_dp_with_strategy(
-                                prec_1 as u32,
-                                RoundingStrategy::MidpointAwayFromZero
-                            ),
-                            "",
-                            btn.sub_acc_tree_sum.round_dp_with_strategy(
-                                prec_2 as u32,
-                                RoundingStrategy::MidpointAwayFromZero
-                            ),
-                            make_commodity_field(comm_max_len, btn),
-                            btn.acctn.atn,
-                            asl = left_sum_len,
-                            satsl = sub_acc_tree_sum_len,
-                            width = filler_field_len,
+                            "{left_ruler}{acc_sum}{filler_field}{acc_tree_sum}{comm}{atn}",
+                            acc_tree_sum = format_with_scale(
+                                sub_acc_tree_sum_len,
+                                &btn.sub_acc_tree_sum,
+                                &bal_settings.scale
+                            )
                         )?;
                     }
                     BalanceType::Flat => {
-                        writeln!(
-                            writer,
-                            "{left_ruler}{:>asl$.prec_1$}{:>width$}{}{}",
-                            btn.account_sum.round_dp_with_strategy(
-                                prec_1 as u32,
-                                RoundingStrategy::MidpointAwayFromZero
-                            ),
-                            "",
-                            make_commodity_field(comm_max_len, btn),
-                            btn.acctn.atn,
-                            asl = left_sum_len,
-                            width = filler_field_len,
-                        )?;
+                        writeln!(writer, "{left_ruler}{acc_sum}{filler_field}{comm}{atn}")?;
                     }
                 }
             }
@@ -193,19 +205,14 @@ impl BalanceReporter {
                     .map_or(String::default(), |comm| comm.name.clone())
             });
             for delta in deltas {
-                let prec = bal_settings.scale.get_precision(delta.1);
                 writeln!(
                     writer,
-                    "{left_ruler}{:>width$.prec$}{}",
-                    delta.1.round_dp_with_strategy(
-                        prec as u32,
-                        RoundingStrategy::MidpointAwayFromZero
-                    ),
+                    "{left_ruler}{}{}",
+                    format_with_scale(left_sum_len, delta.1, &bal_settings.scale),
                     delta
                         .0
                         .as_ref()
                         .map_or(String::default(), |c| format!(" {}", &c.name)),
-                    width = left_sum_len,
                 )?;
             }
         }

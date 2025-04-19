@@ -20,12 +20,10 @@ use tackler_core::config::Config;
 
 use crate::cli_args::{Commands, DefaultModeArgs};
 use tackler_core::kernel::settings::InputSettings;
-#[cfg(not(target_env = "msvc"))]
-use tikv_jemallocator::Jemalloc;
 
-#[cfg(not(target_env = "msvc"))]
+use mimalloc::MiMalloc;
 #[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
+static GLOBAL: MiMalloc = MiMalloc;
 
 fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
     let cfg = match Config::from(cli.conf_path.as_ref().unwrap()) {

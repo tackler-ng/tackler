@@ -10,13 +10,16 @@
 
 New features:
 
-* New flat balance report option for Balance and Balance Group Reports
-  ** link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1016.adoc[TEP-1016]
+* ...
+  ** ...
 
 Changed functionality:
 
-* ...
-  ** ...
+* Change default allocator
+  ** Replace `tikv-jemallocator` with `mimalloc`
+     *** Mimalloc is available on Linux, Windows and MacOS
+     *** It's ~20% faster on Linux and Windows, but on MacOS difference is only about 5%
+     *** Memory usage increases about 30% an all platforms
 
 
 ==== Fixes
@@ -45,6 +48,52 @@ MSRV:: 1.85.0
 |tackler-core | TODO: No changes
 |tackler-api  | TODO: No changes
 |tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+=== Tackler release 25.04.2
+
+==== New features and changes
+
+New features:
+
+* New flat balance report option for Balance and Balance Group Reports
+  ** link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1016.adoc[TEP-1016]
+  ** link:https://tackler.e257.fi/docs/report-balance/[Flat Balance] report
+  ** link:https://tackler.e257.fi/docs/report-balance-group/[Flat Balance Group] report
+
+Changed functionality:
+
+* New optional configuration key `report.balance.type` and `report.balance-group.type`,
+  default is tackler's original balance report type tree.
+
+
+==== Fixes
+
+None
+
+==== Development
+
+No major updates
+
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | 25.04.2
+|tackler-core | 0.10.0
+|tackler-api  | 0.9.1
+|tackler-rs   | No changes
 |===
 
 

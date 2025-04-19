@@ -524,18 +524,27 @@ pub struct Scale {
     max: u32,
 }
 impl Scale {
-    fn from(scale_raw: &ScaleRaw) -> Result<Scale, tackler::Error> {
+    pub fn try_from(min: u32, max: u32) -> Result<Scale, tackler::Error> {
+        Self::check_range(min, max)?;
+        Ok(Scale { min, max })
+    }
+
+    fn check_range(min: u32, max: u32) -> Result<(), tackler::Error> {
         let max_scale = 28;
-        if scale_raw.min > max_scale || scale_raw.max > max_scale {
+        if min > max_scale || max > max_scale {
             let msg = format!(
                 "scale error: too large value - maximum scale value for min or max is {max_scale}"
             );
             return Err(msg.into());
         }
-        if scale_raw.max < scale_raw.min {
+        if max < min {
             let msg = "scale error: 'min' can't be greater than 'max'";
             return Err(msg.into());
         }
+        Ok(())
+    }
+    fn from(scale_raw: &ScaleRaw) -> Result<Scale, tackler::Error> {
+        Self::check_range(scale_raw.min, scale_raw.max)?;
         Ok(Scale {
             min: scale_raw.min,
             max: scale_raw.max,

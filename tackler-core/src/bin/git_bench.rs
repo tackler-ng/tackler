@@ -10,12 +10,10 @@ use tackler_core::model::TxnData;
 use tackler_core::parser::GitInputSelector;
 use tackler_core::{parser, tackler};
 
-#[cfg(not(target_env = "msvc"))]
-use tikv_jemallocator::Jemalloc;
+use mimalloc::MiMalloc;
 
-#[cfg(not(target_env = "msvc"))]
 #[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
+static GLOBAL: MiMalloc = MiMalloc;
 
 const REPO_PATH: &str = "suite/audit/audit-repo.git/";
 const TXN_SET_1E1_CHECKSUM: &str =
@@ -69,10 +67,10 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
 // test: 33d85471-a04c-49b9-b7a0-9d7f7f5762eb
 #[allow(non_snake_case)]
 fn test_10_loops_with_txns_1E5() {
-    eprintln!("\n\nMake 10 loops with txns-1E5:");
+    eprintln!("\n\nMake 5 loops with txns-1E5:");
     let mut settings = Settings::default_audit();
     let mut all_txns_per_s = 0.0;
-    for i in 0..10 {
+    for i in 1..=5 {
         let ts_start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap(/*:test:*/);
         let result = parser::git_to_txns(
             Path::new(REPO_PATH),
@@ -86,17 +84,18 @@ fn test_10_loops_with_txns_1E5() {
 
         let txn_per_s = 100_000.0 / ((ts_end.as_millis() - ts_start.as_millis()) as f64 / 1000.0);
 
-        eprintln!("Done: {i:10} of 10 loops {txn_per_s:.0} txn/s");
+        eprintln!("Done: {i:10} of 5 loops {txn_per_s:.0} txn/s");
         all_txns_per_s += txn_per_s;
     }
-    let txn_per_s_ave = all_txns_per_s / 10.0;
+    let txn_per_s_ave = all_txns_per_s / 5.0;
 
-    let txn_per_s_scala = 40000.0;
+    let txn_per_s_reference = 100_000.0;
 
-    eprintln!("\nOn average {txn_per_s_ave:.0} txn/s");
     eprintln!(
-        "Reference implementation:  {txn_per_s_scala:.0} txn/s ({:>+6.0} txn/s)",
-        txn_per_s_ave - txn_per_s_scala
+        "
+On average: {txn_per_s_ave:8>.0} txn/s
+Reference:  {txn_per_s_reference:8>.0} txn/s ({:>+6.0} txn/s)",
+        txn_per_s_ave - txn_per_s_reference
     );
 }
 

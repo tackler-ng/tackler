@@ -5,7 +5,7 @@
 #
 [package]
 name = "tackler-core"
-version = "0.9.0"
+version = "0.10.0"
 description = "Core components for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
@@ -25,7 +25,7 @@ name = "tackler_core"
 path = "src/lib.rs"
 
 [dependencies]
-tackler-api =  { path = "../tackler-api",  version = "0.9.0" }
+tackler-api =  { path = "../tackler-api",  version = "0.9.1" }
 tackler-rs =   { path = "../tackler-rs",   version = "0.9.0" }
 jiff = { workspace = true }
 log = { workspace = true }
@@ -41,10 +41,9 @@ digest = "0.10.7"
 
 gix = { version = "0.71.0", default-features = false, features = ["max-performance-safe", "revision"] }
 toml = "0.8.20"
-winnow = "0.7.4"
+winnow = "0.7.6"
 
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-tikv-jemallocator = { workspace = true }
+mimalloc = { workspace = true }
 
 [dev-dependencies]
 rust_decimal_macros = { workspace = true }

@@ -35,7 +35,8 @@ Register Report
 ...
 ````
 
-1) Tackler can process 120_000 - 250_000 transactions per second on modern laptop. See [Tackler Performance](https://tackler.e257.fi/docs/performance/) for details.
+1) Tackler has excellent performance, it can process 700_000 transactions per second on modern laptop. 
+See [Tackler Performance](https://tackler.e257.fi/docs/performance/) for details.
 
 
 ## Project Status
@@ -43,7 +44,7 @@ Register Report
 Tackler-NG is in [feature](https://tackler.e257.fi/features/) parity with and beyond of the old Scala code base.
 It's basis of all Tackler development.
 
-**NOTE: Tackler-NG is tested with 414 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
+**NOTE: Tackler-NG is tested with 423 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
 [Tackler Journal Format](https://tackler.e257.fi/docs/journal/format/), 
@@ -73,24 +74,46 @@ See `tackler --help` and [Tackler Configuration](https://github.com/tackler-ng/t
 
 ## Installation
 
-You can install tackler binary by cargo:
+You can install tackler binary directly by cargo:
 
 ````bash
+# Latest released version
 cargo install --locked tackler
+
+# Latest development version
+cargo install --locked --git https://github.com/tackler-ng/tackler tackler
 ````
+
 Or build it from the source.
 
 ### Build the Source Code
 
-The `main` branch should [build and pass](https://github.com/tackler-ng/tackler/actions/workflows/ci.yml) all tests:
+The `main` branch should [build and pass](https://github.com/tackler-ng/tackler/actions/workflows/ci.yml) 
+all tests all the time.
+
+You have to clone the tackler source code with git submodules, 
+as [test vectors](https://github.com/tackler-ng/tackler-tests) are located in a separate repository.
 
 ````bash
 git clone --recurse-submodules https://github.com/tackler-ng/tackler
+````
 
+Then build the tackler binary - if you have [`just`](https://github.com/casey/just) installed,
+building tackler is just:
+
+````bash
 cd tackler
+just release-build
+````
 
+Or with plain cargo command:
+
+````bash
+cd tackler
 cargo build --release --locked --bin tackler
 ````
+
+Tackler binary will be located at `target/release/tackler`
 
 ## Examples
 
@@ -192,17 +215,16 @@ Account Selector Checksum
 
 Balance Report
 --------------
-                 0.00   -161.00  a:ay2016
-                -6.00     -6.00  a:ay2016:am02
-               -14.00    -14.00  a:ay2016:am03
-               -19.00    -19.00  a:ay2016:am04
-               -26.00    -26.00  a:ay2016:am05
-                -1.00     -1.00  a:ay2016:am07
-                -7.00     -7.00  a:ay2016:am08
-               -13.00    -13.00  a:ay2016:am09
-               -19.00    -19.00  a:ay2016:am10
-               -25.00    -25.00  a:ay2016:am11
-               -31.00    -31.00  a:ay2016:am12
+                -6.00   a:ay2016:am02
+               -14.00   a:ay2016:am03
+               -19.00   a:ay2016:am04
+               -26.00   a:ay2016:am05
+                -1.00   a:ay2016:am07
+                -7.00   a:ay2016:am08
+               -13.00   a:ay2016:am09
+               -19.00   a:ay2016:am10
+               -25.00   a:ay2016:am11
+               -31.00   a:ay2016:am12
 =====================
               -161.00
 ##################################################################################
@@ -238,19 +260,18 @@ Account Selector Checksum
 
 Balance Report
 --------------
-                     0.00   -1574609.01  a:ay2016
-               -135600.00    -135600.00  a:ay2016:am01
-               -118950.00    -118950.00  a:ay2016:am02
-               -135631.00    -135631.00  a:ay2016:am03
-               -127137.00    -127137.00  a:ay2016:am04
-               -135616.00    -135616.00  a:ay2016:am05
-               -127154.00    -127154.00  a:ay2016:am06
-               -135600.00    -135600.00  a:ay2016:am07
-               -135603.00    -135603.00  a:ay2016:am08
-               -127140.00    -127140.00  a:ay2016:am09
-               -135619.00    -135619.00  a:ay2016:am10
-               -127126.00    -127126.00  a:ay2016:am11
-               -133433.00    -133433.00  a:ay2016:am12
+               -135600.00   a:ay2016:am01
+               -118950.00   a:ay2016:am02
+               -135631.00   a:ay2016:am03
+               -127137.00   a:ay2016:am04
+               -135616.00   a:ay2016:am05
+               -127154.00   a:ay2016:am06
+               -135600.00   a:ay2016:am07
+               -135603.00   a:ay2016:am08
+               -127140.00   a:ay2016:am09
+               -135619.00   a:ay2016:am10
+               -127126.00   a:ay2016:am11
+               -133433.00   a:ay2016:am12
 =========================
               -1574609.01
 ##################################################################################
@@ -299,8 +320,7 @@ Account Selector Checksum
 
 Balance Report
 --------------
-                    0.00   -133433.00  a:ay2016
-              -133433.00   -133433.00  a:ay2016:am12
+              -133433.00   a:ay2016:am12
 ========================
               -133433.00
 ##################################################################################

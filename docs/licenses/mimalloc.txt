@@ -1,0 +1,4 @@
+name: mimalloc
+url: https://github.com/microsoft/mimalloc
+license-url: https://raw.githubusercontent.com/microsoft/mimalloc/refs/heads/main/LICENSE
+SPDX-License-Identifier: MIT

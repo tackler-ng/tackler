@@ -27,8 +27,8 @@ targets = [ "balance", "register" ]
 commodity = "c" # Euro cent
 accounts = [ "SolarPanels:Array:.*" ]
 
-balance       = { title = "Balance Report" }
-balance-group = { title = "Balance Group Report", group-by = "month" }
+balance       = { title = "Balance Report", type = "flat" }
+balance-group = { title = "Balance Group Report", type = "flat", group-by = "month" }
 register      = { title = "Register Report", timestamp-style = "seconds" }
 
 

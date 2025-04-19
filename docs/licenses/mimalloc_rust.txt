@@ -1,0 +1,4 @@
+name: mimalloc_rust
+url: https://github.com/purpleprotocol/mimalloc_rust
+license-url: https://raw.githubusercontent.com/purpleprotocol/mimalloc_rust/refs/heads/master/LICENSE.txt
+SPDX-License-Identifier: MIT

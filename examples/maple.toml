@@ -26,8 +26,8 @@ targets = [ "balance", "register" ]
 commodity = "CAD"
 accounts = [ ]
 
-balance       = { title = "Balance Report" }
-balance-group = { title = "Balance Group Report", group-by = "month" }
+balance       = { title = "Balance Report", type = "tree" }
+balance-group = { title = "Balance Group Report", type = "tree", group-by = "month" }
 register      = { title = "Register Report", accounts = [ "Assets:.*", "Expenses:.*", "Income:.*" ]}
 
 
