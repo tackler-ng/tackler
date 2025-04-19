@@ -7,4 +7,5 @@ use rust_decimal::Decimal;
 
 pub type TacklerReal = Decimal;
 
+pub mod format;
 pub mod tackler_real;

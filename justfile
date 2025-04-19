@@ -40,9 +40,13 @@ check: clippy
 clippy:
     cargo clippy --workspace --all-targets --no-deps -- -D warnings
 
+# Fix with clippy the linter
+fix *ARGS:
+    cargo clippy --workspace --all-targets --no-deps --fix {{ARGS}}
+
 # Run unit tests
-unit-test:
-    cargo test
+unit-test *ARGS:
+    cargo test {{ARGS}}
 
 # Run integration tests (the shell runner)
 integration-test: (_build "debug") (_integration-test "debug")

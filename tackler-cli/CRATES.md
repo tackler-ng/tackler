@@ -35,7 +35,8 @@ Register Report
 ...
 ````
 
-1) Tackler can process 120_000 - 250_000 transactions per second on modern laptop. See [Tackler Performance](https://tackler.e257.fi/docs/performance/) for details.
+1) Tackler has excellent performance, it can process 700_000 transactions per second on modern laptop. 
+See [Tackler Performance](https://tackler.e257.fi/docs/performance/) for details.
 
 
 ## Project Status
@@ -43,7 +44,7 @@ Register Report
 Tackler-NG is in [feature](https://tackler.e257.fi/features/) parity with and beyond of the old Scala code base.
 It's basis of all Tackler development.
 
-**NOTE: Tackler-NG is tested with 417 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
+**NOTE: Tackler-NG is tested with 423 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
 [Tackler Journal Format](https://tackler.e257.fi/docs/journal/format/), 

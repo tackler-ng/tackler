@@ -6,10 +6,11 @@
 use crate::config::Scale;
 use crate::kernel::RegisterSettings;
 use crate::kernel::price_lookup::PriceLookup;
+use crate::math::format::format_with_scale;
 use crate::model::{Commodity, Posting, Transaction};
 use jiff::Zoned;
 use jiff::tz::TimeZone;
-use rust_decimal::{Decimal, RoundingStrategy};
+use rust_decimal::Decimal;
 use std::cmp::{Ordering, max};
 use std::fmt::Write;
 use std::fmt::{Display, Formatter};
@@ -73,12 +74,7 @@ impl RegisterEntry<'_> {
         reg_cfg: &RegisterSettings,
     ) -> String {
         fn amount_to_string(amount: &Decimal, scale: &Scale, width: usize) -> String {
-            let prec = scale.get_precision(amount);
-            let amount_txt = format!(
-                "{:.prec$}",
-                amount.round_dp_with_strategy(prec as u32, RoundingStrategy::MidpointAwayFromZero)
-            );
-
+            let amount_txt = format_with_scale(0, amount, scale);
             if amount.is_sign_positive() && amount_txt.chars().count() >= width {
                 format!(" {}", amount_txt)
             } else {
