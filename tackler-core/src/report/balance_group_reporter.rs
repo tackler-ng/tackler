@@ -14,7 +14,6 @@ use crate::report::{BalanceReporter, FormatWriter, report_timezone};
 use crate::tackler;
 use crate::tackler::Error;
 use jiff::tz::TimeZone;
-use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
 use tackler_api::metadata::items::MetadataItem;
@@ -140,15 +139,5 @@ impl Report for BalanceGroupReporter {
             }
         }
         Ok(())
-    }
-
-    fn write_txt_report<'w, W: io::Write + ?Sized + 'w>(
-        &self,
-        cfg: &Settings,
-        writer: &'w mut W,
-        txn_data: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error> {
-        let mut writers: Vec<FormatWriter<'_>> = vec![FormatWriter::TxtFormat(Box::new(writer))];
-        self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
     }
 }

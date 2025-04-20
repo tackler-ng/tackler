@@ -30,8 +30,11 @@ pub trait Report {
         &self,
         cfg: &Settings,
         w: &'w mut W,
-        txns: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error>;
+        txn_data: &TxnSet<'_>,
+    ) -> Result<(), tackler::Error> {
+        let mut writers: Vec<FormatWriter<'_>> = vec![FormatWriter::TxtFormat(Box::new(w))];
+        self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
+    }
 
     fn write_reports<W: io::Write + ?Sized>(
         &self,

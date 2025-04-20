@@ -334,14 +334,4 @@ impl Report for BalanceReporter {
         }
         Ok(())
     }
-
-    fn write_txt_report<'w, W: io::Write + ?Sized + 'w>(
-        &self,
-        cfg: &Settings,
-        writer: &'w mut W,
-        txn_data: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error> {
-        let mut writers: Vec<FormatWriter<'_>> = vec![FormatWriter::TxtFormat(Box::new(writer))];
-        self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
-    }
 }
