@@ -8,7 +8,7 @@ use crate::config::raw_items::{
     RegisterRaw, ReportRaw, ScaleRaw, TagsPathRaw, TagsRaw, TimestampRaw, TimezoneRaw,
     TransactionRaw,
 };
-use crate::config::{to_export_targets, to_report_targets};
+use crate::config::{to_export_targets, to_report_formats, to_report_targets};
 use crate::kernel::hash::Hash;
 use crate::model::Commodity;
 use crate::tackler;
@@ -133,6 +133,33 @@ impl BalanceType {
             "tree" => Ok(BalanceType::Tree),
             "flat" => Ok(BalanceType::Flat),
             _ => Err(format!("Unknown balance type {r}").into()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub enum FormatType {
+    #[default]
+    Txt,
+    Json,
+}
+impl FormatType {
+    const TXT: &'static str = "txt";
+    const JSON: &'static str = "json";
+}
+impl TryFrom<&str> for FormatType {
+    type Error = tackler::Error;
+
+    fn try_from(t: &str) -> Result<Self, tackler::Error> {
+        match t {
+            FormatType::TXT => Ok(FormatType::Txt),
+            FormatType::JSON => Ok(FormatType::Json),
+            _ => Err(format!(
+                "Unknown report output format type: '{t}'. Valid options are: \"{}\", \"{}\"",
+                FormatType::TXT,
+                FormatType::JSON
+            )
+            .into()),
         }
     }
 }
@@ -474,6 +501,7 @@ impl Tags {
 pub(crate) struct Report {
     pub report_tz: TimeZone,
     pub targets: Vec<ReportType>,
+    pub formats: Vec<FormatType>,
     pub scale: Scale,
     pub commodity: Option<Arc<Commodity>>,
     pub register: Register,
@@ -486,6 +514,7 @@ impl Default for Report {
         Report {
             report_tz: jiff::tz::TimeZone::UTC,
             targets: Vec::new(),
+            formats: Vec::new(),
             scale: Scale::default(),
             commodity: None,
             register: Register::default(),
@@ -497,10 +526,13 @@ impl Default for Report {
 
 impl Report {
     fn from(report_raw: &ReportRaw) -> Result<Report, tackler::Error> {
-        let trgs = to_report_targets(&report_raw.targets)?;
+        let targets = to_report_targets(&report_raw.targets)?;
+        let formats = to_report_formats(report_raw.formats.as_deref())?;
+
         Ok(Report {
             report_tz: TimeZone::get(report_raw.report_tz.as_str())?,
-            targets: trgs,
+            targets,
+            formats,
             scale: Scale::from(&report_raw.scale)?,
             commodity: match &report_raw.commodity {
                 Some(c) => Some(Arc::new(Commodity::from(c.clone())?)),

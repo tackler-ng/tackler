@@ -2,7 +2,7 @@
  * Tackler-NG 2023-2025
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::ReportType;
+use crate::config::{FormatType, ReportType};
 use crate::kernel::price_lookup::PriceLookupCtx;
 use crate::kernel::report_item_selector::ReportItemSelector;
 use crate::kernel::{BalanceGroupSettings, RegisterSettings, Settings};
@@ -114,61 +114,78 @@ fn report_writers<'w>(
     output_dir: &Path,
     output_prefix: &str,
     report_type: &ReportType,
-    _settings: &Settings,
+    settings: &Settings,
 ) -> Result<ReportWriters<'w>, tackler::Error> {
     match report_type {
         ReportType::Balance => {
-            let (txt_writer, txt_path) =
-                create_output_file(output_dir, output_prefix, "bal", "txt")?;
+            let mut writers = Vec::new();
+            let mut paths = Vec::new();
 
-            let (json_writer, json_path) =
-                create_output_file(output_dir, output_prefix, "bal", "json")?;
+            for rt in &settings.report.formats {
+                match rt {
+                    FormatType::Txt => {
+                        let (txt_writer, txt_path) =
+                            create_output_file(output_dir, output_prefix, "bal", "txt")?;
 
-            let writers = vec![
-                FormatWriter::TxtFormat(Box::new(txt_writer)),
-                FormatWriter::JsonFormat(Box::new(json_writer)),
-            ];
+                        writers.push(FormatWriter::TxtFormat(Box::new(txt_writer)));
+                        paths.push(("TEXT".to_string(), txt_path));
+                    }
+                    FormatType::Json => {
+                        let (json_writer, json_path) =
+                            create_output_file(output_dir, output_prefix, "bal", "json")?;
 
-            let paths = vec![
-                ("TEXT".to_string(), txt_path),
-                ("JSON".to_string(), json_path),
-            ];
+                        writers.push(FormatWriter::JsonFormat(Box::new(json_writer)));
+                        paths.push(("JSON".to_string(), json_path));
+                    }
+                }
+            }
             Ok((writers, paths))
         }
         ReportType::BalanceGroup => {
-            let (txt_writer, txt_path) =
-                create_output_file(output_dir, output_prefix, "balgrp", "txt")?;
+            let mut writers = Vec::new();
+            let mut paths = Vec::new();
 
-            let (json_writer, json_path) =
-                create_output_file(output_dir, output_prefix, "balgrp", "json")?;
+            for rt in &settings.report.formats {
+                match rt {
+                    FormatType::Txt => {
+                        let (txt_writer, txt_path) =
+                            create_output_file(output_dir, output_prefix, "balgrp", "txt")?;
 
-            let writers = vec![
-                FormatWriter::TxtFormat(Box::new(txt_writer)),
-                FormatWriter::JsonFormat(Box::new(json_writer)),
-            ];
+                        writers.push(FormatWriter::TxtFormat(Box::new(txt_writer)));
+                        paths.push(("TEXT".to_string(), txt_path));
+                    }
+                    FormatType::Json => {
+                        let (json_writer, json_path) =
+                            create_output_file(output_dir, output_prefix, "balgrp", "json")?;
 
-            let paths = vec![
-                ("TEXT".to_string(), txt_path),
-                ("JSON".to_string(), json_path),
-            ];
+                        writers.push(FormatWriter::JsonFormat(Box::new(json_writer)));
+                        paths.push(("JSON".to_string(), json_path));
+                    }
+                }
+            }
             Ok((writers, paths))
         }
         ReportType::Register => {
-            let (txt_writer, txt_path) =
-                create_output_file(output_dir, output_prefix, "reg", "txt")?;
+            let mut writers = Vec::new();
+            let mut paths = Vec::new();
 
-            //let (json_writer, json_path) =
-            //    create_output_file(output_dir, output_prefix, "balgrp", "json")?;
+            for rt in &settings.report.formats {
+                match rt {
+                    FormatType::Txt => {
+                        let (txt_writer, txt_path) =
+                            create_output_file(output_dir, output_prefix, "reg", "txt")?;
 
-            let writers = vec![
-                FormatWriter::TxtFormat(Box::new(txt_writer)),
-                //FormatWriter::JsonFormat(Box::new(json_writer)),
-            ];
-
-            let paths = vec![
-                ("TEXT".to_string(), txt_path),
-                //("JSON".to_string(), json_path)
-            ];
+                        writers.push(FormatWriter::TxtFormat(Box::new(txt_writer)));
+                        paths.push(("TEXT".to_string(), txt_path));
+                    }
+                    FormatType::Json => {
+                        //let (json_writer, json_path) =
+                        //    create_output_file(output_dir, output_prefix, "reg", "json")?;
+                        //writers.push(FormatWriter::JsonFormat(Box::new(json_writer)));
+                        //paths.push(("JSON".to_string(), json_path));
+                    }
+                }
+            }
             Ok((writers, paths))
         }
     }

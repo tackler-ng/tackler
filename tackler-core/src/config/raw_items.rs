@@ -141,6 +141,7 @@ pub(super) struct ReportRaw {
     #[serde(rename = "report-timezone")]
     pub(super) report_tz: String,
     pub(super) targets: Vec<String>,
+    pub(super) formats: Option<Vec<String>>,
     pub(super) accounts: Option<Vec<String>>,
     pub(super) scale: ScaleRaw,
     pub(super) commodity: Option<String>,
