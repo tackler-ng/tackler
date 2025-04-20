@@ -12,7 +12,8 @@ use crate::kernel::{BalanceSettings, Settings};
 use crate::math::format::format_with_scale;
 use crate::model::{BalanceTreeNode, TxnSet};
 use crate::report::{
-    FormatWriter, Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone,
+    FormatWriter, Report, report_timezone, write_acc_sel_checksum, write_price_metadata,
+    write_report_timezone,
 };
 use crate::tackler;
 use crate::tackler::Error;
@@ -315,6 +316,19 @@ impl Report for BalanceReporter {
                     BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?
                 }
                 FormatWriter::JsonFormat(writer) => {
+                    let pr_md = if !price_lookup_ctx.is_empty() {
+                        let mut md = Metadata::default();
+                        let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
+                        md.push(rtz);
+
+                        let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+                        md.push(pr);
+
+                        Some(md)
+                    } else {
+                        None
+                    };
+
                     let md = match metadata.as_ref() {
                         Some(&md) => {
                             let mut md = md.clone();
@@ -326,9 +340,14 @@ impl Report for BalanceReporter {
                                 );
                                 md.push(asc);
                             }
+                            if pr_md.is_some() {
+                                for i in pr_md.unwrap().items {
+                                    md.push(i);
+                                }
+                            }
                             Some(md)
                         }
-                        None => None,
+                        None => pr_md,
                     };
 
                     serde_json::to_writer_pretty(

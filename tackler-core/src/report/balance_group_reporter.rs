@@ -9,7 +9,7 @@ use crate::kernel::report_item_selector::BalanceSelector;
 use crate::kernel::{BalanceGroupSettings, accumulator};
 use crate::kernel::{BalanceSettings, Settings};
 use crate::model::{Transaction, TxnSet};
-use crate::report::{BalanceReporter, FormatWriter, write_price_metadata};
+use crate::report::{BalanceReporter, FormatWriter, report_timezone, write_price_metadata};
 use crate::report::{Report, write_acc_sel_checksum, write_report_timezone};
 use crate::tackler;
 use crate::tackler::Error;
@@ -17,7 +17,7 @@ use jiff::tz::TimeZone;
 use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
-use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem, TimeZoneInfo};
+use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem};
 use tackler_api::reports::balance_group_report::BalanceGroupReport;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::GroupBy;
@@ -117,16 +117,6 @@ impl Report for BalanceGroupReporter {
                     writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
 
                     let bal_settings = self.report_settings.clone().into();
-                    /*
-                        BalanceSettings {
-                        title: String::default(),
-                        bal_type: self.report_settings.bal_type.clone(),
-                        ras: vec![],
-                        scale: self.report_settings.scale.clone(),
-                        report_commodity: self.report_settings.report_commodity.clone(),
-                        price_lookup: self.report_settings.price_lookup.clone(),
-                    };
-                         */
                     for bal in &bal_groups {
                         BalanceReporter::txt_report(writer, bal, &bal_settings)?
                     }
@@ -143,16 +133,13 @@ impl Report for BalanceGroupReporter {
                         });
                         md.push(asc);
                     }
-                    let rtz = MetadataItem::TimeZoneInfo(TimeZoneInfo {
-                        zone_id: match cfg.report.report_tz.iana_name() {
-                            Some(tz) => tz.to_string(),
-                            None => {
-                                let msg = "no name for tz!?!";
-                                return Err(msg.into());
-                            }
-                        },
-                    });
+                    let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
                     md.push(rtz);
+
+                    if !price_lookup_ctx.is_empty() {
+                        let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+                        md.push(pr);
+                    }
 
                     serde_json::to_writer_pretty(
                         &mut *writer,

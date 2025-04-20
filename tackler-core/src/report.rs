@@ -44,11 +44,8 @@ pub trait Report {
     ) -> Result<(), tackler::Error>;
 }
 
-fn write_report_timezone<W: io::Write + ?Sized>(
-    cfg: &Settings,
-    writer: &mut W,
-) -> Result<(), tackler::Error> {
-    let rtz = TimeZoneInfo {
+fn report_timezone(cfg: &Settings) -> Result<TimeZoneInfo, tackler::Error> {
+    Ok(TimeZoneInfo {
         zone_id: match cfg.report.report_tz.iana_name() {
             Some(tz) => tz.to_string(),
             None => {
@@ -56,7 +53,13 @@ fn write_report_timezone<W: io::Write + ?Sized>(
                 return Err(msg.into());
             }
         },
-    };
+    })
+}
+fn write_report_timezone<W: io::Write + ?Sized>(
+    cfg: &Settings,
+    writer: &mut W,
+) -> Result<(), tackler::Error> {
+    let rtz = report_timezone(cfg)?;
     for v in rtz.text(cfg.report.report_tz.clone()) {
         writeln!(writer, "{}", &v)?;
     }

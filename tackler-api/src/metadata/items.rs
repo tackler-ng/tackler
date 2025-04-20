@@ -36,6 +36,8 @@ pub enum MetadataItem {
     GitInputReference(GitInputReference),
     #[doc(hidden)]
     TxnFilterDescription(TxnFilterDescription),
+    #[doc(hidden)]
+    PriceRecords(PriceRecords),
 }
 
 impl MetadataItem {
@@ -50,6 +52,7 @@ impl Text for MetadataItem {
             Self::TimeZoneInfo(tzinfo) => tzinfo.text(tz),
             Self::AccountSelectorChecksum(asc) => asc.text(tz),
             Self::TxnFilterDescription(tfd) => tfd.text(tz),
+            Self::PriceRecords(pr) => pr.text(tz),
         }
     }
 }
@@ -194,10 +197,12 @@ impl Text for GitInputReference {
 #[derive(Serialize, Debug, Clone)]
 pub struct PriceRecord {
     /// Time of price record
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ts: Option<Zoned>,
     /// Source (from) commodity
     pub source: String,
     /// Conversion rate (value in target commodity)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rate: Option<String>,
     /// Target (to) commodity
     pub target: String,
