@@ -73,6 +73,11 @@ impl Metadata {
             .collect::<Vec<String>>();
         ts.join("\n")
     }
+
+    /// Test if metadata is empty
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
 }
 
 /// Generic checksum value

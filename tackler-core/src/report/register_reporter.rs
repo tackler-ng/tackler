@@ -10,9 +10,7 @@ use crate::kernel::report_item_selector::{
 };
 use crate::kernel::report_settings::RegisterSettings;
 use crate::model::{RegisterEntry, TxnSet};
-use crate::report::{
-    FormatWriter, Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone,
-};
+use crate::report::{FormatWriter, Report, report_timezone};
 use crate::tackler;
 use crate::tackler::Error;
 use jiff::Zoned;
@@ -20,6 +18,7 @@ use jiff::tz::TimeZone;
 use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
+use tackler_api::metadata::items::MetadataItem;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::TimestampStyle;
 
@@ -78,22 +77,30 @@ impl Report for RegisterReporter {
             report_commodity,
             &cfg.price.price_db,
         );
+
+        let mut metadata = match metadata {
+            Some(md) => md.clone(),
+            None => Metadata::default(),
+        };
+
+        if let Some(hash) = cfg.get_hash() {
+            let asc = acc_sel.account_selector_checksum(hash)?;
+            metadata.push(asc);
+        }
+
+        let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
+        metadata.push(rtz);
+
+        if !price_lookup_ctx.is_empty() {
+            let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+            metadata.push(pr);
+        }
+
         for w in writers {
             match w {
                 FormatWriter::TxtFormat(writer) => {
-                    let md = metadata
-                        .map(|md| format!("{}\n", md.text(cfg.report.report_tz.clone())))
-                        .unwrap_or_default();
-                    write!(writer, "{}", md)?;
-
-                    write_acc_sel_checksum(cfg, writer, acc_sel.as_ref())?;
-
-                    write_report_timezone(cfg, writer)?;
-
-                    write_price_metadata(cfg, writer, &price_lookup_ctx)?;
-
-                    writeln!(writer)?;
-                    writeln!(writer)?;
+                    // There is always at least TimeZoneInfo
+                    writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
 
                     let title = &self.report_settings.title;
                     writeln!(writer, "{}", title)?;

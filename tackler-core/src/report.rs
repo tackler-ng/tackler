@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::{FormatType, ReportType};
-use crate::kernel::price_lookup::PriceLookupCtx;
-use crate::kernel::report_item_selector::ReportItemSelector;
 use crate::kernel::{BalanceGroupSettings, RegisterSettings, Settings};
 use crate::model::TxnSet;
 use crate::tackler;
@@ -15,7 +13,7 @@ use std::io;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use tackler_api::metadata::Metadata;
-use tackler_api::metadata::items::{AccountSelectorChecksum, Text, TimeZoneInfo};
+use tackler_api::metadata::items::TimeZoneInfo;
 use tackler_rs::create_output_file;
 
 mod balance_group_reporter;
@@ -54,49 +52,6 @@ fn report_timezone(cfg: &Settings) -> Result<TimeZoneInfo, tackler::Error> {
             }
         },
     })
-}
-fn write_report_timezone<W: io::Write + ?Sized>(
-    cfg: &Settings,
-    writer: &mut W,
-) -> Result<(), tackler::Error> {
-    let rtz = report_timezone(cfg)?;
-    for v in rtz.text(cfg.report.report_tz.clone()) {
-        writeln!(writer, "{}", &v)?;
-    }
-    Ok(())
-}
-
-fn write_price_metadata<W: Write + ?Sized>(
-    cfg: &Settings,
-    writer: &mut W,
-    p_ctx: &PriceLookupCtx<'_>,
-) -> Result<(), tackler::Error> {
-    let pr_metadata = p_ctx.metadata().text(cfg.report.report_tz.clone());
-
-    if !pr_metadata.is_empty() {
-        writeln!(writer)?;
-        for l in pr_metadata {
-            writeln!(writer, "{}", l)?;
-        }
-    }
-    Ok(())
-}
-
-fn write_acc_sel_checksum<W: io::Write + ?Sized, R: ReportItemSelector + ?Sized>(
-    cfg: &Settings,
-    writer: &mut W,
-    acc_sel: &R,
-) -> Result<(), tackler::Error> {
-    if let Some(hash) = cfg.get_hash() {
-        let asc = AccountSelectorChecksum {
-            hash: acc_sel.checksum(hash)?,
-        };
-        for v in asc.text(cfg.report.report_tz.clone()) {
-            writeln!(writer, "{}", &v)?;
-        }
-        writeln!(writer)?;
-    }
-    Ok(())
 }
 
 fn report_output<W: io::Write + ?Sized>(

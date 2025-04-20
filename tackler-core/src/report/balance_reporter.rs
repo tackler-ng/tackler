@@ -11,10 +11,7 @@ use crate::kernel::report_item_selector::{
 use crate::kernel::{BalanceSettings, Settings};
 use crate::math::format::format_with_scale;
 use crate::model::{BalanceTreeNode, TxnSet};
-use crate::report::{
-    FormatWriter, Report, report_timezone, write_acc_sel_checksum, write_price_metadata,
-    write_report_timezone,
-};
+use crate::report::{FormatWriter, Report, report_timezone};
 use crate::tackler;
 use crate::tackler::Error;
 use rust_decimal::Decimal;
@@ -23,7 +20,7 @@ use std::cmp::max;
 use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
-use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem};
+use tackler_api::metadata::items::MetadataItem;
 use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
 
 #[derive(Debug, Clone)]
@@ -279,7 +276,7 @@ impl Report for BalanceReporter {
         metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
     ) -> Result<(), Error> {
-        let bal_acc_sel = self.get_acc_selector()?;
+        let acc_sel = self.get_acc_selector()?;
 
         let price_lookup_ctx = self.report_settings.price_lookup.make_ctx(
             &txn_data.txns,
@@ -290,69 +287,46 @@ impl Report for BalanceReporter {
             &self.report_settings.title,
             txn_data,
             &price_lookup_ctx,
-            bal_acc_sel.as_ref(),
+            acc_sel.as_ref(),
             cfg,
         )?;
+
+        let mut metadata = match metadata {
+            Some(md) => md.clone(),
+            None => Metadata::default(),
+        };
+
+        if let Some(hash) = cfg.get_hash() {
+            let asc = acc_sel.account_selector_checksum(hash)?;
+            metadata.push(asc);
+        }
+
+        if !price_lookup_ctx.is_empty() {
+            let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
+            metadata.push(rtz);
+
+            let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+            metadata.push(pr);
+        }
 
         for w in writers {
             match w {
                 FormatWriter::TxtFormat(writer) => {
-                    let md = metadata
-                        .map(|md| format!("{}\n", md.text(cfg.report.report_tz.clone())))
-                        .unwrap_or_default();
-
-                    write!(writer, "{}", md)?;
-
-                    write_acc_sel_checksum(cfg, writer, bal_acc_sel.as_ref())?;
-
-                    if !price_lookup_ctx.is_empty() {
-                        write_report_timezone(cfg, writer)?;
+                    if !metadata.is_empty() {
+                        writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
                     }
-
-                    write_price_metadata(cfg, writer, &price_lookup_ctx)?;
-
-                    writeln!(writer)?;
 
                     BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?
                 }
                 FormatWriter::JsonFormat(writer) => {
-                    let pr_md = if !price_lookup_ctx.is_empty() {
-                        let mut md = Metadata::default();
-                        let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
-                        md.push(rtz);
-
-                        let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
-                        md.push(pr);
-
-                        Some(md)
-                    } else {
+                    let md = if metadata.is_empty() {
                         None
+                    } else {
+                        Some(&metadata)
                     };
-
-                    let md = match metadata.as_ref() {
-                        Some(&md) => {
-                            let mut md = md.clone();
-                            if let Some(hash) = cfg.get_hash() {
-                                let asc = MetadataItem::AccountSelectorChecksum(
-                                    AccountSelectorChecksum {
-                                        hash: bal_acc_sel.checksum(hash)?,
-                                    },
-                                );
-                                md.push(asc);
-                            }
-                            if pr_md.is_some() {
-                                for i in pr_md.unwrap().items {
-                                    md.push(i);
-                                }
-                            }
-                            Some(md)
-                        }
-                        None => pr_md,
-                    };
-
                     serde_json::to_writer_pretty(
                         &mut *writer,
-                        &Self::balance_to_api(md.as_ref(), &bal_report, &self.report_settings),
+                        &Self::balance_to_api(md, &bal_report, &self.report_settings),
                     )?;
                     writeln!(writer)?
                 }
