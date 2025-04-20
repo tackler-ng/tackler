@@ -97,7 +97,7 @@ pub fn git_to_txns(
         reference,
         dir: dir.to_string(),
         suffix: extension.to_string(),
-        message: object.message()?.title.to_string(),
+        message: object.message()?.title.to_string().trim().to_string(), // todo: This is bug in Gix
     };
 
     let tree = object.tree()?;

@@ -14,7 +14,8 @@ pub struct BalanceItem {
 
     /// Recursive sum of all txns for this account and all of it's children
     #[serde(rename = "accountTreeSum")]
-    pub account_tree_sum: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub account_tree_sum: Option<String>,
 
     /// Full account name
     pub account: String,

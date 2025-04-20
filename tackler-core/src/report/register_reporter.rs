@@ -10,11 +10,16 @@ use crate::kernel::report_item_selector::{
 };
 use crate::kernel::report_settings::RegisterSettings;
 use crate::model::{RegisterEntry, TxnSet};
-use crate::report::{Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone};
+use crate::report::{
+    FormatWriter, Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone,
+};
 use crate::tackler;
+use crate::tackler::Error;
 use jiff::Zoned;
 use jiff::tz::TimeZone;
 use std::io;
+use std::io::Write;
+use tackler_api::metadata::Metadata;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::TimestampStyle;
 
@@ -58,12 +63,13 @@ fn reg_entry_txt_writer<W: io::Write + ?Sized>(
 }
 
 impl Report for RegisterReporter {
-    fn write_txt_report<W: io::Write + ?Sized>(
+    fn write_reports<W: Write + ?Sized>(
         &self,
         cfg: &Settings,
-        writer: &mut W,
+        writers: &mut Vec<FormatWriter<'_>>,
+        metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error> {
+    ) -> Result<(), Error> {
         let acc_sel = self.get_acc_selector()?;
 
         let report_commodity = self.report_settings.report_commodity.clone();
@@ -72,30 +78,53 @@ impl Report for RegisterReporter {
             report_commodity,
             &cfg.price.price_db,
         );
+        for w in writers {
+            match w {
+                FormatWriter::TxtFormat(writer) => {
+                    let md = metadata
+                        .map(|md| format!("{}\n", md.text(cfg.report.report_tz.clone())))
+                        .unwrap_or_default();
+                    write!(writer, "{}", md)?;
 
-        write_acc_sel_checksum(cfg, writer, acc_sel.as_ref())?;
+                    write_acc_sel_checksum(cfg, writer, acc_sel.as_ref())?;
 
-        write_report_timezone(cfg, writer)?;
+                    write_report_timezone(cfg, writer)?;
 
-        write_price_metadata(cfg, writer, &price_lookup_ctx)?;
+                    write_price_metadata(cfg, writer, &price_lookup_ctx)?;
 
-        writeln!(writer)?;
-        writeln!(writer)?;
+                    writeln!(writer)?;
+                    writeln!(writer)?;
 
-        let title = &self.report_settings.title;
-        writeln!(writer, "{}", title)?;
-        writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
+                    let title = &self.report_settings.title;
+                    writeln!(writer, "{}", title)?;
+                    writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
 
-        let ras = self.get_acc_selector()?;
+                    let ras = self.get_acc_selector()?;
 
-        accumulator::register_engine(
-            &txn_data.txns,
-            &price_lookup_ctx,
-            ras.as_ref(),
-            writer,
-            reg_entry_txt_writer,
-            &self.report_settings,
-        )?;
+                    accumulator::register_engine(
+                        &txn_data.txns,
+                        &price_lookup_ctx,
+                        ras.as_ref(),
+                        writer,
+                        reg_entry_txt_writer,
+                        &self.report_settings,
+                    )?;
+                }
+                FormatWriter::JsonFormat(_writer) => {
+                    unimplemented!();
+                }
+            }
+        }
         Ok(())
+    }
+
+    fn write_txt_report<'w, W: io::Write + ?Sized + 'w>(
+        &self,
+        cfg: &Settings,
+        writer: &'w mut W,
+        txn_data: &TxnSet<'_>,
+    ) -> Result<(), tackler::Error> {
+        let mut writers: Vec<FormatWriter<'_>> = vec![FormatWriter::TxtFormat(Box::new(writer))];
+        self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
     }
 }

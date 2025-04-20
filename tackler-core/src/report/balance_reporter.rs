@@ -11,13 +11,18 @@ use crate::kernel::report_item_selector::{
 use crate::kernel::{BalanceSettings, Settings};
 use crate::math::format::format_with_scale;
 use crate::model::{BalanceTreeNode, TxnSet};
-use crate::report::{Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone};
+use crate::report::{
+    FormatWriter, Report, write_acc_sel_checksum, write_price_metadata, write_report_timezone,
+};
 use crate::tackler;
-use itertools::Itertools;
+use crate::tackler::Error;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::Zero;
 use std::cmp::max;
 use std::io;
+use std::io::Write;
+use tackler_api::metadata::Metadata;
+use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem};
 use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
 
 #[derive(Debug, Clone)]
@@ -200,11 +205,7 @@ impl BalanceReporter {
                 )
             )?;
 
-            let deltas = bal_report.deltas.iter().sorted_by_key(|i| {
-                i.0.as_ref()
-                    .map_or(String::default(), |comm| comm.name.clone())
-            });
-            for delta in deltas {
+            for delta in &bal_report.deltas {
                 writeln!(
                     writer,
                     "{left_ruler}{}{}",
@@ -218,51 +219,65 @@ impl BalanceReporter {
         }
         Ok(())
     }
-}
 
-#[allow(dead_code)]
-fn btn_to_api(btn: &BalanceTreeNode) -> BalanceItem {
-    BalanceItem {
-        account_sum: btn.account_sum.to_string(), // TODO: scaleFormat(btn.accountSum),
-        account_tree_sum: btn.sub_acc_tree_sum.to_string(), // TODO: scaleFormat(btn.subAccTreeSum),
-        account: btn.acctn.atn.account.clone(),
-        commodity: if btn.acctn.comm.is_any() {
-            Some(btn.acctn.comm.name.clone())
-        } else {
-            None
-        },
+    fn btn_to_api(btn: &BalanceTreeNode, report_settings: &BalanceSettings) -> BalanceItem {
+        let acc_sum = match report_settings.bal_type {
+            BalanceType::Tree => Some(format_with_scale(
+                0,
+                &btn.sub_acc_tree_sum,
+                &report_settings.scale,
+            )),
+            BalanceType::Flat => None,
+        };
+        BalanceItem {
+            account_sum: format_with_scale(0, &btn.account_sum, &report_settings.scale),
+            account_tree_sum: acc_sum,
+            account: btn.acctn.atn.account.clone(),
+            commodity: if btn.acctn.comm.is_any() {
+                Some(btn.acctn.comm.name.clone())
+            } else {
+                None
+            },
+        }
     }
-}
 
-#[allow(dead_code)]
-pub(crate) fn balance_to_api(bal: &Balance) -> BalanceReport {
-    let balances = bal.bal.iter().map(btn_to_api).collect::<Vec<BalanceItem>>();
+    pub fn balance_to_api(
+        metadata: Option<&Metadata>,
+        bal: &Balance,
+        report_settings: &BalanceSettings,
+    ) -> BalanceReport {
+        let balances = bal
+            .bal
+            .iter()
+            .map(|btn| Self::btn_to_api(btn, report_settings))
+            .collect::<Vec<BalanceItem>>();
 
-    let deltas = bal
-        .deltas
-        .iter()
-        .map(|(c, v)| Delta {
-            commodity: c.as_ref().map(|c| c.name.clone()),
-            delta: v.to_string(),
-        })
-        // todo: .sorted(OrderByDelta)
-        .collect::<Vec<Delta>>();
+        let deltas = bal
+            .deltas
+            .iter()
+            .map(|(c, v)| Delta {
+                commodity: c.as_ref().map(|c| c.name.clone()),
+                delta: format_with_scale(0, v, &report_settings.scale),
+            })
+            .collect::<Vec<Delta>>();
 
-    BalanceReport {
-        metadata: None,
-        title: bal.title.clone(),
-        balances,
-        deltas,
+        BalanceReport {
+            metadata: metadata.cloned(),
+            title: bal.title.clone(),
+            balances,
+            deltas,
+        }
     }
 }
 
 impl Report for BalanceReporter {
-    fn write_txt_report<W: io::Write + ?Sized>(
+    fn write_reports<W: Write + ?Sized>(
         &self,
         cfg: &Settings,
-        writer: &mut W,
+        writers: &mut Vec<FormatWriter<'_>>,
+        metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error> {
+    ) -> Result<(), Error> {
         let bal_acc_sel = self.get_acc_selector()?;
 
         let price_lookup_ctx = self.report_settings.price_lookup.make_ctx(
@@ -270,17 +285,6 @@ impl Report for BalanceReporter {
             self.report_settings.report_commodity.clone(),
             &cfg.price.price_db,
         );
-
-        write_acc_sel_checksum(cfg, writer, bal_acc_sel.as_ref())?;
-
-        if !price_lookup_ctx.is_empty() {
-            write_report_timezone(cfg, writer)?;
-        }
-
-        write_price_metadata(cfg, writer, &price_lookup_ctx)?;
-
-        writeln!(writer)?;
-
         let bal_report = Balance::from(
             &self.report_settings.title,
             txn_data,
@@ -289,11 +293,62 @@ impl Report for BalanceReporter {
             cfg,
         )?;
 
-        BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?;
+        for w in writers {
+            match w {
+                FormatWriter::TxtFormat(writer) => {
+                    let md = metadata
+                        .map(|md| format!("{}\n", md.text(cfg.report.report_tz.clone())))
+                        .unwrap_or_default();
 
-        //serde_json::to_writer_pretty(&mut *writer, &balance_to_api(&bal_report))?;
-        //writeln!(writer)?;
+                    write!(writer, "{}", md)?;
 
+                    write_acc_sel_checksum(cfg, writer, bal_acc_sel.as_ref())?;
+
+                    if !price_lookup_ctx.is_empty() {
+                        write_report_timezone(cfg, writer)?;
+                    }
+
+                    write_price_metadata(cfg, writer, &price_lookup_ctx)?;
+
+                    writeln!(writer)?;
+
+                    BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?
+                }
+                FormatWriter::JsonFormat(writer) => {
+                    let md = match metadata.as_ref() {
+                        Some(&md) => {
+                            let mut md = md.clone();
+                            if let Some(hash) = cfg.get_hash() {
+                                let asc = MetadataItem::AccountSelectorChecksum(
+                                    AccountSelectorChecksum {
+                                        hash: bal_acc_sel.checksum(hash)?,
+                                    },
+                                );
+                                md.push(asc);
+                            }
+                            Some(md)
+                        }
+                        None => None,
+                    };
+
+                    serde_json::to_writer_pretty(
+                        &mut *writer,
+                        &Self::balance_to_api(md.as_ref(), &bal_report, &self.report_settings),
+                    )?;
+                    writeln!(writer)?
+                }
+            }
+        }
         Ok(())
+    }
+
+    fn write_txt_report<'w, W: io::Write + ?Sized + 'w>(
+        &self,
+        cfg: &Settings,
+        writer: &'w mut W,
+        txn_data: &TxnSet<'_>,
+    ) -> Result<(), tackler::Error> {
+        let mut writers: Vec<FormatWriter<'_>> = vec![FormatWriter::TxtFormat(Box::new(writer))];
+        self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
     }
 }

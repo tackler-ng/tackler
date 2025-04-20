@@ -12,12 +12,11 @@ use crate::model::{BalanceTreeNode, Commodity, Transaction, TxnAccount, TxnSet};
 use crate::tackler;
 use itertools::Itertools;
 use rust_decimal::Decimal;
-use std::{
-    collections::{HashMap, HashSet},
-    sync::Arc,
-};
+use std::collections::BTreeMap;
+use std::{collections::HashSet, sync::Arc};
 
-pub type Deltas = HashMap<Option<Arc<Commodity>>, Decimal>;
+// Deltas must be sorted by Commodity on reports, use BTreeMap
+pub type Deltas = BTreeMap<Option<Arc<Commodity>>, Decimal>;
 pub type BTNs = Vec<BalanceTreeNode>;
 #[derive(Debug)]
 pub struct Balance {

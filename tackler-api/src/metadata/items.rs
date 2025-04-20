@@ -29,6 +29,8 @@ pub enum MetadataItem {
     #[doc(hidden)]
     TxnSetChecksum(TxnSetChecksum),
     #[doc(hidden)]
+    TimeZoneInfo(TimeZoneInfo),
+    #[doc(hidden)]
     AccountSelectorChecksum(AccountSelectorChecksum),
     #[doc(hidden)]
     GitInputReference(GitInputReference),
@@ -45,6 +47,7 @@ impl Text for MetadataItem {
         match self {
             Self::GitInputReference(gif) => gif.text(tz),
             Self::TxnSetChecksum(tscs) => tscs.text(tz),
+            Self::TimeZoneInfo(tzinfo) => tzinfo.text(tz),
             Self::AccountSelectorChecksum(asc) => asc.text(tz),
             Self::TxnFilterDescription(tfd) => tfd.text(tz),
         }
@@ -71,6 +74,17 @@ impl Text for TxnSetChecksum {
     }
 }
 
+/*
+/// Report timezone information
+
+#[derive(Serialize, Debug, Clone)]
+pub struct TimeZoneInfo {
+    #[serde(rename = "zoneId")]
+    /// IANA ZoneID
+    pub zone_id: String,
+}
+*/
+
 /// Account Selector Checksum item
 #[derive(Serialize, Debug, Clone)]
 pub struct AccountSelectorChecksum {
@@ -90,16 +104,17 @@ impl Text for AccountSelectorChecksum {
 
 /// Report timezone item
 #[derive(Serialize, Debug, Clone)]
-pub struct ReportTimezone {
+pub struct TimeZoneInfo {
     /// Timezone name
-    pub timezone: String,
+    #[serde(rename = "zoneId")]
+    pub zone_id: String,
 }
-impl Text for ReportTimezone {
+impl Text for TimeZoneInfo {
     fn text(&self, _tz: TimeZone) -> Vec<String> {
         let pad = MetadataItem::ITEM_PAD;
         vec![
             "Report Time Zone".to_string(),
-            format!("{:>pad$} : {}", "TZ name", &self.timezone),
+            format!("{:>pad$} : {}", "TZ name", &self.zone_id),
         ]
     }
 }
@@ -108,6 +123,7 @@ impl Text for ReportTimezone {
 #[derive(Serialize, Debug, Clone)]
 pub struct TxnFilterDescription {
     #[doc(hidden)]
+    #[serde(rename = "txnFilterDef")]
     txn_filter_def: FilterDefinition,
 }
 
@@ -144,6 +160,7 @@ pub struct GitInputReference {
     /// commit id
     pub commit: String,
     /// git symbolic reference `main`, `Y2023`, etc.
+    #[serde(rename = "ref")]
     pub reference: Option<String>,
     /// Git directory inside repository
     pub dir: String,
@@ -168,7 +185,7 @@ impl Text for GitInputReference {
             ),
             format!("{:>pad$} : {}", "directory", self.dir),
             format!("{:>pad$} : .{}", "suffix", self.suffix),
-            format!("{:>pad$} : {}", "message", self.message.trim()),
+            format!("{:>pad$} : {}", "message", self.message),
         ]
     }
 }
