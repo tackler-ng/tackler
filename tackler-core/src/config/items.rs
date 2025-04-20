@@ -142,7 +142,6 @@ enum Timezone {}
 pub(crate) type AccountSelectors = Vec<String>;
 
 #[derive(Debug)]
-#[allow(dead_code)]
 pub struct Config {
     pub(crate) kernel: Kernel,
     pub(crate) price: Price,
@@ -167,7 +166,6 @@ impl Config {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Kernel {
     pub(crate) strict: bool,
@@ -241,7 +239,6 @@ impl Timezone {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Audit {
     pub(crate) hash: Hash,
@@ -257,7 +254,6 @@ impl Audit {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub struct Input {
     pub storage: StorageType,
@@ -445,7 +441,6 @@ impl Commodities {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Tags {
     pub(crate) names: Vec<String>,
