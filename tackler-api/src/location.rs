@@ -7,17 +7,19 @@
 //!
 use crate::tackler;
 use rust_decimal::Decimal;
+use serde::Serialize;
 use std::fmt::{Display, Formatter};
 
 /// Geo Point
 ///
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct GeoPoint {
     /// Latitude in decimal format
     pub lat: Decimal,
     /// Longitude in decimal format
     pub lon: Decimal,
     /// optional depth/altitude, in meters
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub alt: Option<Decimal>,
 }
 

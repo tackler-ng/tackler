@@ -164,6 +164,7 @@ pub struct GitInputReference {
     pub commit: String,
     /// git symbolic reference `main`, `Y2023`, etc.
     #[serde(rename = "ref")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
     /// Git directory inside repository
     pub dir: String,

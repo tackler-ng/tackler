@@ -9,6 +9,7 @@ use crate::kernel::report_item_selector::{
     RegisterAllSelector, RegisterByAccountSelector, RegisterSelector,
 };
 use crate::kernel::report_settings::RegisterSettings;
+use crate::math::format::format_with_scale;
 use crate::model::{RegisterEntry, TxnSet};
 use crate::report::{FormatWriter, Report, report_timezone};
 use crate::tackler;
@@ -19,6 +20,7 @@ use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
 use tackler_api::metadata::items::MetadataItem;
+use tackler_api::reports::register_report::{RegisterPosting, RegisterReport, RegisterTxn};
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::TimestampStyle;
 
@@ -61,6 +63,50 @@ fn reg_entry_txt_writer<W: io::Write + ?Sized>(
     Ok(())
 }
 
+fn register_entry_to_api(
+    re: &RegisterEntry<'_>,
+    register_settings: &RegisterSettings,
+) -> Option<RegisterTxn> {
+    if re.posts.is_empty() {
+        return None;
+    }
+
+    let ts_style = register_settings.timestamp_style;
+    let report_tz = register_settings.report_tz.clone();
+
+    let fmt: fn(&Zoned, TimeZone) -> String = match ts_style {
+        TimestampStyle::Date => txn_ts::as_tz_date,
+        TimestampStyle::Secodns => txn_ts::as_tz_seconds,
+        TimestampStyle::Full => txn_ts::as_tz_full,
+    };
+
+    let txn = re.txn;
+
+    let r = re
+        .posts
+        .iter()
+        .map(|rp| {
+            let commodity = if rp.post.txn_commodity.name.is_empty() {
+                None
+            } else {
+                Some(rp.post.txn_commodity.name.clone())
+            };
+            RegisterPosting {
+                account: rp.post.acctn.atn.account.clone(),
+                amount: format_with_scale(0, &rp.post.amount, &register_settings.scale),
+                running_total: format_with_scale(0, &rp.amount, &register_settings.scale),
+                commodity,
+            }
+        })
+        .collect();
+
+    Some(RegisterTxn {
+        display_time: fmt(&txn.header.timestamp, report_tz),
+        txn: txn.header.clone(),
+        postings: r,
+    })
+}
+
 impl Report for RegisterReporter {
     fn write_reports<W: Write + ?Sized>(
         &self,
@@ -96,6 +142,11 @@ impl Report for RegisterReporter {
             metadata.push(pr);
         }
 
+        let ras = self.get_acc_selector()?;
+
+        let register =
+            accumulator::register_engine(&txn_data.txns, &price_lookup_ctx, ras.as_ref())?;
+
         for w in writers {
             match w {
                 FormatWriter::TxtFormat(writer) => {
@@ -106,19 +157,23 @@ impl Report for RegisterReporter {
                     writeln!(writer, "{}", title)?;
                     writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
 
-                    let ras = self.get_acc_selector()?;
-
-                    accumulator::register_engine(
-                        &txn_data.txns,
-                        &price_lookup_ctx,
-                        ras.as_ref(),
-                        writer,
-                        reg_entry_txt_writer,
-                        &self.report_settings,
-                    )?;
+                    for re in &register {
+                        reg_entry_txt_writer(writer, re, &self.report_settings)?;
+                    }
                 }
-                FormatWriter::JsonFormat(_writer) => {
-                    unimplemented!();
+                FormatWriter::JsonFormat(writer) => {
+                    let transactions = register
+                        .iter()
+                        .filter_map(|re| register_entry_to_api(re, &self.report_settings))
+                        .collect();
+
+                    let rr = RegisterReport {
+                        metadata: Some(metadata.clone()), // at least TimeZoneInfo
+                        title: self.report_settings.title.clone(),
+                        transactions,
+                    };
+                    serde_json::to_writer_pretty(&mut *writer, &rr)?;
+                    writeln!(writer)?
                 }
             }
         }

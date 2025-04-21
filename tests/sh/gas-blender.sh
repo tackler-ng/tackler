@@ -51,6 +51,7 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
+cmp_result $module $test_name json bal
 echo ": ok"
 
 #####################################################################
@@ -71,6 +72,7 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
+cmp_result $module $test_name json bal
 echo ": ok"
 
 #####################################################################
@@ -89,5 +91,6 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
+cmp_result $module $test_name json bal
 echo ": ok"
 

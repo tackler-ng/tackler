@@ -140,10 +140,11 @@ fn report_writers<'w>(
                         paths.push(("TEXT".to_string(), txt_path));
                     }
                     FormatType::Json => {
-                        //let (json_writer, json_path) =
-                        //    create_output_file(output_dir, output_prefix, "reg", "json")?;
-                        //writers.push(FormatWriter::JsonFormat(Box::new(json_writer)));
-                        //paths.push(("JSON".to_string(), json_path));
+                        let (json_writer, json_path) =
+                            create_output_file(output_dir, output_prefix, "reg", "json")?;
+
+                        writers.push(FormatWriter::JsonFormat(Box::new(json_writer)));
+                        paths.push(("JSON".to_string(), json_path));
                     }
                 }
             }
