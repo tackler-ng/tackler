@@ -49,6 +49,9 @@ echo -n "check:"
 cmp_result $module ${test_name} txt bal
 cmp_result $module ${test_name} txt balgrp
 cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} json bal
+cmp_result $module ${test_name} json balgrp
+cmp_result $module ${test_name} json reg
 cmp_result $module ${test_name} txn equity
 cmp_result $module ${test_name} txn identity
 echo ": ok"
@@ -70,6 +73,9 @@ echo -n "check:"
 cmp_result $module ${test_name}-ng txt bal
 cmp_result $module ${test_name}-ng txt balgrp
 cmp_result $module ${test_name}-ng txt reg
+cmp_result $module ${test_name}-ng json bal
+cmp_result $module ${test_name}-ng json balgrp
+cmp_result $module ${test_name}-ng json reg
 cmp_result $module ${test_name}-ng txn equity
 cmp_result $module ${test_name}-ng txn identity
 echo ": ok"
@@ -91,6 +97,9 @@ echo -n "check:"
 cmp_result $module ${test_name} txt bal
 cmp_result $module ${test_name} txt balgrp
 cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} json bal
+cmp_result $module ${test_name} json balgrp
+cmp_result $module ${test_name} json reg
 cmp_result $module ${test_name} txn equity
 cmp_result $module ${test_name} txn identity
 echo ": ok"
@@ -111,6 +120,8 @@ $TACKLER_SH \
 echo -n "check:"
 cmp_result $module ${test_name} txt balgrp
 cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} json balgrp
+cmp_result $module ${test_name} json reg
 cmp_result $module ${test_name} txn equity
 cmp_result $module ${test_name} txn identity
 echo ": ok"
@@ -125,6 +136,7 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module ${test_name}-ng txt bal
+cmp_result $module ${test_name}-ng json bal
 echo ": ok"
 
 
@@ -221,6 +233,9 @@ echo -n "check:"
 cmp_result $module ${test_name} txt bal
 cmp_result $module ${test_name} txt balgrp
 cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} json bal
+cmp_result $module ${test_name} json balgrp
+cmp_result $module ${test_name} json reg
 cmp_result $module ${test_name} txn equity
 cmp_result $module ${test_name} txn identity
 echo ": ok"

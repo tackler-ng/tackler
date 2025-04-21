@@ -31,6 +31,8 @@ $TACKLER_SH \
 echo -n "check:"
 cmp_result $module $test_name-ng txt balgrp "."
 cmp_result $module $test_name-ng txt reg "."
+cmp_result $module $test_name-ng json balgrp "."
+cmp_result $module $test_name-ng json reg "."
 echo ": ok"
 
 #####################################################################
@@ -68,6 +70,8 @@ $TACKLER_SH \
 echo -n "check:"
 cmp_result $module $test_name txt balgrp "."
 cmp_result $module $test_name txt reg "."
+cmp_result $module $test_name json balgrp "."
+cmp_result $module $test_name json reg "."
 echo ": ok"
 
 #####################################################################
@@ -87,6 +91,8 @@ $TACKLER_SH \
 echo -n "check:"
 cmp_result $module $test_name txt balgrp "."
 cmp_result $module $test_name txt reg "."
+cmp_result $module $test_name json balgrp "."
+cmp_result $module $test_name json reg "."
 echo ": ok"
 
 
@@ -107,5 +113,7 @@ $TACKLER_SH \
 echo -n "check:"
 cmp_result $module $test_name-ng txt balgrp "."
 cmp_result $module $test_name-ng txt reg "."
+cmp_result $module $test_name-ng json balgrp "."
+cmp_result $module $test_name-ng json reg "."
 echo ": ok"
 
