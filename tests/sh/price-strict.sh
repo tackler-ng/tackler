@@ -35,10 +35,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result_ref $module price $test_name txn identity
 cmp_result_ref $module price $test_name txn equity
 echo ": ok"
@@ -71,10 +72,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result_ref $module price $test_name txn identity
 cmp_result_ref $module price $test_name txn equity
 echo ": ok"
@@ -99,10 +101,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result_ref $module price $test_name txn identity
 cmp_result_ref $module price $test_name txn equity
 echo ": ok"
@@ -129,10 +132,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn identity
 cmp_result $module $test_name txn equity
 echo ": ok"
@@ -160,10 +164,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn identity
 cmp_result $module $test_name txn equity
 echo ": ok"
@@ -189,10 +194,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result_ref $module price $test_name txn identity
 cmp_result_ref $module price $test_name txn equity
 echo ": ok"
@@ -218,10 +224,11 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result_ref $module price $test_name txn identity
 cmp_result_ref $module price $test_name txn equity
 echo ": ok"
@@ -249,10 +256,11 @@ $TACKLER_SH \
 echo -n "check:"
 # Result is same as with price-02
 cmp_result $module price-02 txt bal
-cmp_result $module price-02 json bal
 cmp_result $module price-02 txt balgrp
-cmp_result $module price-02 json balgrp
 cmp_result $module price-02 txt reg
+cmp_result $module price-02 json bal
+cmp_result $module price-02 json balgrp
+cmp_result $module price-02 json reg
 cmp_result_ref $module price price-02 txn identity
 cmp_result_ref $module price price-02 txn equity
 echo ": ok"

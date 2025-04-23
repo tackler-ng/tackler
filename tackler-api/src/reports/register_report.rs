@@ -12,16 +12,31 @@ pub struct RegisterPosting {
     /// Account for register posting
     pub account: String,
 
-    /// Amount of that txn
+    /// Amount of posting
+    ///
+    /// Commodity Conversion: Original amount before conversion in base_commodity
     pub amount: String,
 
     /// Running total for that account
+    ///
+    /// Commodity Conversion: In target commodity
     #[serde(rename = "runningTotal")]
     pub running_total: String,
 
-    /// Posting
+    /// Posting commodity
+    ///
+    /// Commodity Conversion: Target commodity
     #[serde(skip_serializing_if = "Option::is_none")]
     pub commodity: Option<String>,
+
+    /// Commodity Conversion: Rate if valuation is based on Txn Time
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rate: Option<String>,
+
+    /// Commodity Conversion: Original (source) commodity
+    #[serde(rename = "baseCommodity")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub base_commodity: Option<String>,
 }
 
 /// Register transaction API object
@@ -34,7 +49,7 @@ pub struct RegisterTxn {
     /// Transaction header
     pub txn: TxnHeader,
 
-    /// Txn postings
+    /// Register Txn (entry) postings
     pub postings: Vec<RegisterPosting>,
 }
 

@@ -25,7 +25,7 @@ pub struct RegisterPosting<'a> {
 }
 
 impl RegisterPosting<'_> {
-    fn is_commodity_conv(&self) -> bool {
+    pub fn is_commodity_conv(&self) -> bool {
         self.target_commodity != self.post.acctn.comm
     }
 }

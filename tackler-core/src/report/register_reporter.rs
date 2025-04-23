@@ -71,6 +71,7 @@ fn register_entry_to_api(
         return None;
     }
 
+    let scale = &register_settings.scale;
     let ts_style = register_settings.timestamp_style;
     let report_tz = register_settings.report_tz.clone();
 
@@ -85,17 +86,25 @@ fn register_entry_to_api(
     let r = re
         .posts
         .iter()
-        .map(|rp| {
-            let commodity = if rp.post.txn_commodity.name.is_empty() {
-                None
+        .map(|p| {
+            let commodity = if p.target_commodity.is_any() {
+                Some(p.target_commodity.name.clone())
             } else {
-                Some(rp.post.txn_commodity.name.clone())
+                None
             };
+            let base_commodity = if p.is_commodity_conv() {
+                Some(p.post.acctn.comm.name.clone())
+            } else {
+                None
+            };
+
             RegisterPosting {
-                account: rp.post.acctn.atn.account.clone(),
-                amount: format_with_scale(0, &rp.post.amount, &register_settings.scale),
-                running_total: format_with_scale(0, &rp.amount, &register_settings.scale),
+                account: p.post.acctn.atn.account.clone(),
+                amount: format_with_scale(0, &p.post.amount, scale),
+                running_total: format_with_scale(0, &p.amount, scale),
                 commodity,
+                rate: p.rate.map(|r| format_with_scale(0, &r, scale)),
+                base_commodity,
             }
         })
         .collect();
