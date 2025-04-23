@@ -35,6 +35,22 @@ typst compile report-bal.typ
 
 == Test data
 
-Currently the JSON format is under development for Tackler-NG, but Tackler's
+Tackler has support for JSON output, it can be activated with configuration setting:
+
+----
+[report]
+formats = [ "txt", "json" ]
+----
+
+and then running the reports with `--output.dir path/to/output` and
+`--output.prefix filename` CLI arguments.
+This will generate JSON output alongside TXT format.
+
+Tackler's
 link:https://github.com/tackler-ng/tackler-tests[test suite] contains many more report examples.
 
+=== Examples
+
+Tackler https://github.com/tackler-ng/tackler/tree/main/examples#audit-and-account-auditing-setup[Audit]
+(journal audit data) and https://github.com/tackler-ng/tackler/tree/main/examples#commodity-prices[Mapple]
+(commodity prices) examples have JSON output activated already.
