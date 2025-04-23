@@ -23,6 +23,7 @@ tags        = { path = "none" }
 [report]
 report-timezone = "Europe/Helsinki"
 scale = { min = 2, max = 2 }
+formats = [ "txt" ]
 targets = [ "balance", "register" ]
 commodity = "c" # Euro cent
 accounts = [ "SolarPanels:Array:.*" ]

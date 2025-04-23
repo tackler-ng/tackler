@@ -67,7 +67,10 @@ Other notable features are:
   * [Variable Market Value](https://tackler.e257.fi/docs/price/variable-market-value/)
 * [Transaction Filters](https://tackler.e257.fi/docs/txn-filters/) for powerfull selectors of accounting data
 * Real transaction [timestamps up to nanosecond](https://tackler.e257.fi/docs/journal/format/#timestamps) resolution and with timezone information
+  * Plain dates are also supported
+  * Also Civil date times without zone information
 * Accounting based on [Geo Location](https://tackler.e257.fi/docs/gis/txn-geo-location/) and [Transaction GIS Filters](https://tackler.e257.fi/docs/gis/txn-geo-filters/)
+* Optional [JSON Output](https://tackler.e257.fi/docs/output-formats/)
 
 See `tackler --help` and [Tackler Configuration](https://github.com/tackler-ng/tackler/blob/main/examples/tackler.toml) how to use tackler-ng.
 
@@ -138,7 +141,7 @@ This setup doesn't have any checks enabled and it uses plain filesystem as trans
 
 ````
 2024-03-20 'Lucky Day!
-   Assets:Bank:Acme_Inc  420
+   Assets:Bank:Acme_Inc  100
    Income:Lottery
 
 2024-06-20 'Sweet'n Sour Candies

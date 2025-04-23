@@ -10,8 +10,8 @@
 
 New features:
 
-* ...
-  ** ...
+* New output format JSON
+  ** Optional configuration key `report.formats` to specify output formats.
 
 Changed functionality:
 
