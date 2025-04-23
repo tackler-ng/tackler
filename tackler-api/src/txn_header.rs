@@ -7,6 +7,7 @@
 //!
 use jiff::Zoned;
 use jiff::tz::TimeZone;
+use serde::Serialize;
 use std::cmp::Ordering;
 use std::fmt::Write;
 use std::sync::Arc;
@@ -25,21 +26,27 @@ use crate::location::GeoPoint;
 
 /// Transaction Header Structure
 ///
-#[derive(Debug, Default)]
+#[derive(Serialize, Debug, Clone, Default)]
 pub struct TxnHeader {
     /// Txn timestamp with Zone information
     pub timestamp: Zoned,
     /// Txn Code field, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub code: Option<String>,
     /// Txn Description, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// Txn UUID, if any. This is mandatory, if audit-mode is on
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub uuid: Option<Uuid>,
     /// Txn location, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<GeoPoint>,
     /// Txn tags, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub tags: Option<Tags>,
     /// Txn comments, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub comments: Option<Comments>,
 }
 

@@ -209,6 +209,14 @@ report-timezone = "Europe/Helsinki"
 ### commodity has to be defined in Chart of Commodities.
 commodity = "name"
 
+### Report output formats
+###
+###   This is a list of output formats. Actual output
+###   is activated with CLI output options (`--output.*`).
+###
+###   Valid options are one or both of: "txt", "json"
+formats = [ "txt" ]
+
 ### Reports to generate
 ###
 ### This is a list of report targets to generate.

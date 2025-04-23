@@ -9,10 +9,17 @@ use crate::model::{BalanceTreeNode, RegisterPosting};
 use crate::tackler;
 use regex::RegexSet;
 use tackler_api::metadata::Checksum;
+use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem};
 use tackler_rs::regex::{new_full_haystack_regex_set, peeled_patterns};
 
 pub trait ReportItemSelector {
     fn checksum(&self, _: Hash) -> Result<Checksum, tackler::Error>;
+    fn account_selector_checksum(&self, hash: Hash) -> Result<MetadataItem, tackler::Error> {
+        let asc = MetadataItem::AccountSelectorChecksum(AccountSelectorChecksum {
+            hash: self.checksum(hash)?,
+        });
+        Ok(asc)
+    }
 }
 
 pub trait BalanceItemSelector: Predicate<BalanceTreeNode> {}

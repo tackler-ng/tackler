@@ -66,6 +66,19 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
     }
 }
 
+impl From<BalanceGroupSettings> for BalanceSettings {
+    fn from(bgs: BalanceGroupSettings) -> BalanceSettings {
+        BalanceSettings {
+            title: String::default(),
+            bal_type: bgs.bal_type.clone(),
+            ras: bgs.ras.clone(),
+            scale: bgs.scale.clone(),
+            report_commodity: bgs.report_commodity.clone(),
+            price_lookup: bgs.price_lookup.clone(),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct RegisterSettings {
     pub title: String,

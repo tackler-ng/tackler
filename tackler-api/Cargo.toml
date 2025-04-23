@@ -29,7 +29,7 @@ base64 = { workspace = true }
 jiff = { workspace = true }
 regex = { workspace = true }
 rust_decimal = { workspace = true }
-serde = { workspace = true, features = [ "derive"] }
+serde = { workspace = true, features = [ "derive", "rc" ] }
 serde_json = { workspace = true }
 tackler-rs = { path = "../tackler-rs", version = "0.9.0" }
 uuid = { workspace = true }

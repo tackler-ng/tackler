@@ -4,15 +4,20 @@
  */
 
 use crate::kernel::accumulator::TxnGroupByOp;
+use crate::kernel::balance::Balance;
 use crate::kernel::report_item_selector::BalanceSelector;
 use crate::kernel::{BalanceGroupSettings, accumulator};
 use crate::kernel::{BalanceSettings, Settings};
 use crate::model::{Transaction, TxnSet};
-use crate::report::{BalanceReporter, write_price_metadata};
-use crate::report::{Report, write_acc_sel_checksum, write_report_timezone};
+use crate::report::Report;
+use crate::report::{BalanceReporter, FormatWriter, report_timezone};
 use crate::tackler;
+use crate::tackler::Error;
 use jiff::tz::TimeZone;
-use std::io;
+use std::io::Write;
+use tackler_api::metadata::Metadata;
+use tackler_api::metadata::items::MetadataItem;
+use tackler_api::reports::balance_group_report::BalanceGroupReport;
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::GroupBy;
 
@@ -46,16 +51,32 @@ impl BalanceGroupReporter {
             }),
         }
     }
+
+    #[allow(dead_code)]
+    fn to_api(&self, metadata: Option<&Metadata>, bal_groups: &[Balance]) -> BalanceGroupReport {
+        let bal_settings: BalanceSettings = self.report_settings.clone().into();
+        let groups = bal_groups
+            .iter()
+            .map(|bg| BalanceReporter::balance_to_api(None, bg, &bal_settings))
+            .collect();
+
+        BalanceGroupReport {
+            metadata: metadata.cloned(),
+            title: self.report_settings.title.clone(),
+            groups,
+        }
+    }
 }
 
 impl Report for BalanceGroupReporter {
-    fn write_txt_report<W: io::Write + ?Sized>(
+    fn write_reports<W: Write + ?Sized>(
         &self,
         cfg: &Settings,
-        writer: &mut W,
+        writers: &mut Vec<FormatWriter<'_>>,
+        metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
-    ) -> Result<(), tackler::Error> {
-        let bal_acc_sel = self.get_acc_selector()?;
+    ) -> Result<(), Error> {
+        let acc_sel = self.get_acc_selector()?;
 
         let price_lookup_ctx = self.report_settings.price_lookup.make_ctx(
             &txn_data.txns,
@@ -68,33 +89,54 @@ impl Report for BalanceGroupReporter {
             &txn_data.txns,
             group_by_op,
             &price_lookup_ctx,
-            bal_acc_sel.as_ref(),
+            acc_sel.as_ref(),
             cfg,
         );
 
-        write_acc_sel_checksum(cfg, writer, bal_acc_sel.as_ref())?;
-
-        write_report_timezone(cfg, writer)?;
-
-        write_price_metadata(cfg, writer, &price_lookup_ctx)?;
-
-        writeln!(writer)?;
-        writeln!(writer)?;
-
-        let title = &self.report_settings.title;
-        writeln!(writer, "{}", title)?;
-        writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
-
-        let bal_settings = BalanceSettings {
-            title: String::default(),
-            bal_type: self.report_settings.bal_type.clone(),
-            ras: vec![],
-            scale: self.report_settings.scale.clone(),
-            report_commodity: self.report_settings.report_commodity.clone(),
-            price_lookup: self.report_settings.price_lookup.clone(),
+        let mut metadata = match metadata {
+            Some(md) => md.clone(),
+            None => Metadata::default(),
         };
-        for bal in &bal_groups {
-            BalanceReporter::txt_report(writer, bal, &bal_settings)?
+
+        if let Some(hash) = cfg.get_hash() {
+            let asc = acc_sel.account_selector_checksum(hash)?;
+            metadata.push(asc);
+        }
+
+        let rtz = MetadataItem::TimeZoneInfo(report_timezone(cfg)?);
+        metadata.push(rtz);
+
+        if !price_lookup_ctx.is_empty() {
+            let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+            metadata.push(pr);
+        }
+
+        for w in writers {
+            match w {
+                FormatWriter::TxtFormat(writer) => {
+                    // There is always at least TimeZoneInfo
+                    writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
+
+                    let title = &self.report_settings.title;
+                    writeln!(writer, "{}", title)?;
+                    writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
+
+                    let bal_settings = self.report_settings.clone().into();
+                    for bal in &bal_groups {
+                        BalanceReporter::txt_report(writer, bal, &bal_settings)?
+                    }
+                }
+                FormatWriter::JsonFormat(writer) => {
+                    let md = if metadata.is_empty() {
+                        None
+                    } else {
+                        Some(&metadata)
+                    };
+
+                    serde_json::to_writer_pretty(&mut *writer, &self.to_api(md, &bal_groups))?;
+                    writeln!(writer)?;
+                }
+            }
         }
         Ok(())
     }

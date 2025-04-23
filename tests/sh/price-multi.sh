@@ -36,6 +36,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn identity
 cmp_result $module $test_name txn equity
 echo ": ok"
@@ -59,6 +62,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -82,6 +88,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -106,6 +115,7 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -130,6 +140,9 @@ echo -n "check:"
 cmp_result_ref $module multi-02 $test_name txt bal
 cmp_result_ref $module multi-02 $test_name txt balgrp
 cmp_result_ref $module multi-02 $test_name txt reg
+cmp_result_ref $module multi-02 $test_name json bal
+cmp_result_ref $module multi-02 $test_name json balgrp
+cmp_result_ref $module multi-02 $test_name json reg
 echo ": ok"
 
 
@@ -152,6 +165,9 @@ echo -n "check:"
 cmp_result_ref $module multi-01 $test_name txt bal
 cmp_result_ref $module multi-01 $test_name txt balgrp
 cmp_result_ref $module multi-01 $test_name txt reg
+cmp_result_ref $module multi-01 $test_name json bal
+cmp_result_ref $module multi-01 $test_name json balgrp
+cmp_result_ref $module multi-01 $test_name json reg
 echo ": ok"
 
 #
@@ -173,6 +189,9 @@ echo -n "check:"
 cmp_result_ref $module multi-01 $test_name txt bal
 cmp_result_ref $module multi-01 $test_name txt balgrp
 cmp_result_ref $module multi-01 $test_name txt reg
+cmp_result_ref $module multi-01 $test_name json bal
+cmp_result_ref $module multi-01 $test_name json balgrp
+cmp_result_ref $module multi-01 $test_name json reg
 echo ": ok"
 
 #
@@ -194,6 +213,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -215,6 +237,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -238,6 +263,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 #
@@ -260,4 +288,5 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json reg
 echo ": ok"

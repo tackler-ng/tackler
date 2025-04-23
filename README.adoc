@@ -75,7 +75,10 @@ Other notable features are:
 
 * link:https://tackler.e257.fi/docs/txn-filters/[Transaction Filters] for powerful selectors of used accounting data
 * Real transaction link:https://tackler.e257.fi/docs/journal/format/#timestamps[timestamps up to nanosecond] resolution and with timezone information
+** Plain dates are supported too
+** Also Civil date and time without zone is supported
 * Accounting based on link:https://tackler.e257.fi/docs/gis/txn-geo-location[Geo Location] and link:https://tackler.e257.fi/docs/gis/txn-geo-filters/[Transaction GIS Filters]
+* Optional link:https://tackler.e257.fi/docs/output-formats/[JSON output] format
 
 See `tackler --help`, link:https://tackler.e257.fi/docs/[Documentation] and  link:examples/tackler.toml[Tackler Configuration] how to use tackler-ng.
 

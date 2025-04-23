@@ -41,6 +41,14 @@ tags        = { path = "tags.toml" }
 report-timezone = "UTC"
 scale = { min = 2, max = 2 }
 
+### Report output formats
+###
+###   This is a list of output formats. Actual output 
+###   is activated with CLI output options (`--output.*`). 
+###
+###   Valid options are one or both of: "txt", "json"
+formats = [ "txt" ]
+
 ### Report accounts
 ###   This is a list of accounts (full match regex)
 ###   to be included in the reports

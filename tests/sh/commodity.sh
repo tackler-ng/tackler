@@ -31,26 +31,40 @@ commodity_test () {
     cmp_result $module $test_name txt reg
     cmp_result $module $test_name txn equity
     cmp_result $module $test_name txn identity
-    echo ": ok"
 }
 
 # test: a5318e06-309e-4c52-996b-b07aefac4c46
 commodity_test basic-01
+echo ": ok"
 
 # test: 04af8049-355d-4c6c-ac63-c153b0141c48
 commodity_test basic-02
+echo ": ok"
 
 # test: 8a7a8c60-aab9-4700-b081-9804c1ec537f
 commodity_test basic-03
+cmp_result $module basic-03 json bal
+cmp_result $module basic-03 json balgrp
+cmp_result $module basic-03 json reg
+echo ": ok"
 
 # test: c5493e99-d0f3-49b3-8450-3ae6ef970b10
 commodity_test basic-04
+cmp_result $module basic-04 json bal
+cmp_result $module basic-04 json balgrp
+cmp_result $module basic-04 json reg
+echo ": ok"
 
 # test: aeffbcc2-bcc4-40f3-9b37-03dbca3bff88
 commodity_test basic-05
+echo ": ok"
 
 # test: 0dae7dfd-c816-4a77-afff-a372e1802026
 commodity_test basic-06
+cmp_result $module basic-06 json bal
+cmp_result $module basic-06 json balgrp
+cmp_result $module basic-06 json reg
+echo ": ok"
 
 #####################################################################
 #
@@ -75,7 +89,9 @@ $TACKLER_SH \
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
+cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
 cmp_result $module $test_name txn equity
 cmp_result $module $test_name txn identity
@@ -117,12 +133,15 @@ echo ": ok"
 
 # test: 54cb6baa-6c3d-4196-94bc-b6fd37ed0b57
 commodity_test valpos-01
+echo ": ok"
 
 # test: 2501f96c-46d8-4711-9e7e-dc70e4af329d
 commodity_test valpos-02
+echo ": ok"
 
 # test: d0dd6b75-238e-49cf-a048-a77baafba9bd
 commodity_test valpos-03
+echo ": ok"
 
 #####################################################################
 #
@@ -208,12 +227,15 @@ commodity_filter_test () {
 
 # test: 1df0fb31-6604-4679-9ec4-7a1d65e49574
 commodity_filter_test "01"
+echo ": ok"
 
 # test: 633da495-ef30-4484-8b14-fbd1fdcc9684
 commodity_filter_test "02"
+echo ": ok"
 
 # test: 09e9a673-4730-4a03-b73a-5959730450f6
 commodity_filter_test "03"
+echo ": ok"
 
 #####################################################################
 #

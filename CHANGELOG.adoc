@@ -10,8 +10,8 @@
 
 New features:
 
-* ...
-  ** ...
+* New output format JSON
+  ** Optional configuration key `report.formats` to specify output formats.
 
 Changed functionality:
 
@@ -20,6 +20,7 @@ Changed functionality:
      *** Mimalloc is available on Linux, Windows and MacOS
      *** It's ~20% faster on Linux and Windows, but on MacOS difference is only about 5%
      *** Memory usage increases about 30% an all platforms
+* Reject unknown configuration keys
 
 
 ==== Fixes

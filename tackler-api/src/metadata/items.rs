@@ -11,6 +11,7 @@ use crate::metadata::Checksum;
 use crate::txn_ts;
 use jiff::Zoned;
 use jiff::tz::TimeZone;
+use serde::Serialize;
 
 #[doc(hidden)]
 pub type MetadataItems = Vec<MetadataItem>;
@@ -23,16 +24,20 @@ pub trait Text: std::fmt::Debug {
 }
 
 #[doc(hidden)]
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub enum MetadataItem {
     #[doc(hidden)]
     TxnSetChecksum(TxnSetChecksum),
+    #[doc(hidden)]
+    TimeZoneInfo(TimeZoneInfo),
     #[doc(hidden)]
     AccountSelectorChecksum(AccountSelectorChecksum),
     #[doc(hidden)]
     GitInputReference(GitInputReference),
     #[doc(hidden)]
     TxnFilterDescription(TxnFilterDescription),
+    #[doc(hidden)]
+    PriceRecords(PriceRecords),
 }
 
 impl MetadataItem {
@@ -44,14 +49,16 @@ impl Text for MetadataItem {
         match self {
             Self::GitInputReference(gif) => gif.text(tz),
             Self::TxnSetChecksum(tscs) => tscs.text(tz),
+            Self::TimeZoneInfo(tzinfo) => tzinfo.text(tz),
             Self::AccountSelectorChecksum(asc) => asc.text(tz),
             Self::TxnFilterDescription(tfd) => tfd.text(tz),
+            Self::PriceRecords(pr) => pr.text(tz),
         }
     }
 }
 
 /// Txn Set Checksum metadata item
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct TxnSetChecksum {
     /// size of transaction set
     pub size: usize,
@@ -70,8 +77,19 @@ impl Text for TxnSetChecksum {
     }
 }
 
+/*
+/// Report timezone information
+
+#[derive(Serialize, Debug, Clone)]
+pub struct TimeZoneInfo {
+    #[serde(rename = "zoneId")]
+    /// IANA ZoneID
+    pub zone_id: String,
+}
+*/
+
 /// Account Selector Checksum item
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct AccountSelectorChecksum {
     /// Hash of selector Checksum
     pub hash: Checksum,
@@ -88,25 +106,27 @@ impl Text for AccountSelectorChecksum {
 }
 
 /// Report timezone item
-#[derive(Debug, Clone)]
-pub struct ReportTimezone {
+#[derive(Serialize, Debug, Clone)]
+pub struct TimeZoneInfo {
     /// Timezone name
-    pub timezone: String,
+    #[serde(rename = "zoneId")]
+    pub zone_id: String,
 }
-impl Text for ReportTimezone {
+impl Text for TimeZoneInfo {
     fn text(&self, _tz: TimeZone) -> Vec<String> {
         let pad = MetadataItem::ITEM_PAD;
         vec![
             "Report Time Zone".to_string(),
-            format!("{:>pad$} : {}", "TZ name", &self.timezone),
+            format!("{:>pad$} : {}", "TZ name", &self.zone_id),
         ]
     }
 }
 /// Metadata information about active Txn Filters
 ///
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct TxnFilterDescription {
     #[doc(hidden)]
+    #[serde(rename = "txnFilterDef")]
     txn_filter_def: FilterDefinition,
 }
 
@@ -138,11 +158,13 @@ impl Text for TxnFilterDescription {
 
 /// Metadata information about Git Txn input
 ///
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct GitInputReference {
     /// commit id
     pub commit: String,
     /// git symbolic reference `main`, `Y2023`, etc.
+    #[serde(rename = "ref")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
     /// Git directory inside repository
     pub dir: String,
@@ -167,19 +189,21 @@ impl Text for GitInputReference {
             ),
             format!("{:>pad$} : {}", "directory", self.dir),
             format!("{:>pad$} : .{}", "suffix", self.suffix),
-            format!("{:>pad$} : {}", "message", self.message.trim()),
+            format!("{:>pad$} : {}", "message", self.message),
         ]
     }
 }
 
 /// Metadata item for one commodity conversion
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct PriceRecord {
     /// Time of price record
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ts: Option<Zoned>,
     /// Source (from) commodity
     pub source: String,
     /// Conversion rate (value in target commodity)
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rate: Option<String>,
     /// Target (to) commodity
     pub target: String,
@@ -206,7 +230,7 @@ impl Text for PriceRecord {
     }
 }
 /// Metadata information of used commodity conversions
-#[derive(Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct PriceRecords {
     /// Collection of used commodity conversions prices / rates
     pub rates: Vec<PriceRecord>,

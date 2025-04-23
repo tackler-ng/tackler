@@ -11,11 +11,3 @@
 # desc: report type specific max scale settings
 # status: not supported
 
-# test: 426f6950-4da0-40a5-970f-4e2a05ee141b
-# desc: no active report-timezone: timestamp-style
-# status: not supported
-
-
-# test: 973d19f4-a9b8-4cc5-8cdc-19c01c0edb17
-# desc: report-timezone as offset
-# status: not supported
