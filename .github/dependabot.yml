@@ -5,6 +5,9 @@ version: 2
 updates:
   - package-ecosystem: "cargo"
     directory: "/"
+    allow:
+      # Allow both direct and indirect updates for all packages.
+      - dependency-type: "all"
     schedule:
       interval: "weekly"
       day: "sunday"
