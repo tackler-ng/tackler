@@ -35,3 +35,24 @@ mod txn_location;
 mod txn_metadata;
 mod txn_tags;
 mod txn_uuid;
+
+#[cfg(test)]
+pub(crate) fn content_data() -> Vec<String> {
+    let data = [
+        r##" !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"##, // this has to be first for txn code test
+        r##"!"#$%&*+,-./:;=?@\^_`|~"##,
+        r##"azAZ09"##,
+        r##"äöåÄÖÅèé"##,
+        r##"¼£$€¥"##,
+        r##"¡¿·"##,
+        r##"μ"##,
+        r##"─├└"##,
+        "a b\tc",
+        r##"アイスクリーム"##,
+        r##"風空"##,
+        r##"мороженое"##,
+        r##"🦀🦀🦀"##,
+    ];
+
+    data.iter().map(|t| t.to_string()).collect()
+}
