@@ -3,21 +3,19 @@
 # Tackler-NG 2025
 # SPDX-License-Identifier: Apache-2.0
 #
+
 j := quote(just_executable())
 
 # List all targets
 default:
     @{{ j }} --list --unsorted
 
-alias c  := check
+alias c := check
 alias ut := unit-test
 alias it := integration-test
-
 alias qa := release-qa
-
 alias db := debug-build
 alias rb := release-build
-
 alias help := default
 
 # Clean workspace
@@ -26,6 +24,7 @@ clean:
 
 # Format code
 fmt:
+    {{ j }} --fmt --unstable
     cargo fmt --all -- --style-edition 2024
 
 # Run audit checks (advisories, bans, licenses, sources)
@@ -42,11 +41,11 @@ clippy:
 
 # Fix with clippy the linter
 fix *ARGS:
-    cargo clippy --workspace --all-targets --no-deps --fix {{ARGS}}
+    cargo clippy --workspace --all-targets --no-deps --fix {{ ARGS }}
 
 # Run unit tests
 unit-test *ARGS:
-    cargo test {{ARGS}}
+    cargo test {{ ARGS }}
 
 # Run integration tests (the shell runner)
 integration-test: (_build "debug") (_integration-test "debug")
@@ -68,7 +67,6 @@ debug-build: (_build "debug")
 # Build release target
 release-build: (_build "release")
 
-
 # Install development version from working copy
 install:
     cargo install --locked --path tackler-cli
@@ -81,11 +79,11 @@ parser-bench:
     cargo bench parser
 
 _integration-test target:
-    bash tests/sh/test-runner-ng.sh --{{target}}
+    bash tests/sh/test-runner-ng.sh --{{ target }}
 
 _examples-test target: (_build target)
-    target/{{ target }}/tackler --config "{{justfile_directory()}}/examples/simple.toml"
-    target/{{ target }}/tackler --config "{{justfile_directory()}}/examples/audit.toml"
+    target/{{ target }}/tackler --config "{{ justfile_directory() }}/examples/simple.toml"
+    target/{{ target }}/tackler --config "{{ justfile_directory() }}/examples/audit.toml"
     target/{{ target }}/tackler --config examples/maple.toml
     target/{{ target }}/tackler --config examples/solar.toml
     target/{{ target }}/tackler --config examples/solar.toml --pricedb examples/solar/txns/se-sold.db
@@ -96,4 +94,3 @@ _build target:
 # Run git benchmark and tests
 git-bench:
     cargo run --release -p tackler-core
-
