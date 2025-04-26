@@ -93,10 +93,10 @@ pub fn git_to_txns(
         }
     };
 
-    let author = format!("{} <{}>", object.author()?.name, object.author()?.email);
-    let date = object
-        .author()?
-        .time
+    let signature = object.author()?;
+    let author = format!("{} <{}>", signature.name, signature.email);
+    let date = signature
+        .time()?
         .format(CustomFormat::new("%Y-%m-%d %H:%M:%S %z"))
         .to_string();
 
