@@ -4,7 +4,7 @@
 # Tackler-NG 2018-2025
 # SPDX-License-Identifier: Apache-2.0
 #############################################################################
-
+#
 # Initialize test repository for tackler git backend
 #
 # Test data is generated with pta-generator
@@ -42,6 +42,10 @@ fi
 
 if [ ! -d "$repo_name" ]; then
     git init --bare "$repo_name.git"
+    touch "$repo_name.git/refs/heads/.keep"
+    touch "$repo_name.git/refs/tags/.keep"
+    touch "$repo_name.git/hooks/.keep"
+
     git clone "$repo_name.git"
     
     cd "$repo_name"
