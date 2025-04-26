@@ -13,6 +13,7 @@ use crate::model::{TxnData, Txns};
 use crate::parser::tackler_parser;
 use crate::tackler;
 use gix as git;
+use gix::date::time::CustomFormat;
 use gix::hash as gix_hash;
 use gix::objs::tree::EntryKind;
 use tackler_api::metadata::items::{GitInputReference, MetadataItem};
@@ -92,12 +93,21 @@ pub fn git_to_txns(
         }
     };
 
+    let author = format!("{} <{}>", object.author()?.name, object.author()?.email);
+    let date = object
+        .author()?
+        .time
+        .format(CustomFormat::new("%Y-%m-%d %H:%M:%S %z"))
+        .to_string();
+
     let gitmd = GitInputReference {
         commit: object.id.to_string(),
         reference,
         dir: dir.to_string(),
-        suffix: extension.to_string(),
-        message: object.message()?.title.to_string().trim().to_string(), // todo: This is bug in Gix
+        extension: extension.to_string(),
+        subject: object.message()?.summary().to_string(),
+        author,
+        date,
     };
 
     let tree = object.tree()?;

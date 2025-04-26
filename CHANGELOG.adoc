@@ -15,6 +15,12 @@ New features:
 
 Changed functionality:
 
+* Change and Add more information to the "Git Storage" metadata
+  ** New fields: "author", "date"
+  ** Fix name of "message" to "subject" (the content of that field has been git subject all the time)
+  ** Change field "suffix" to "extension", don't print the '.'
+  ** Change the order of fields (move commit after extension)
+
 * Change default allocator
   ** Replace `tikv-jemallocator` with `mimalloc`
      *** Mimalloc is available on Linux, Windows and MacOS

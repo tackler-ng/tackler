@@ -201,11 +201,13 @@ target/release/tackler \
 
 ````
 Git Storage
-         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
       reference : txns-1E1
       directory : txns
-         suffix : .txn
-        message : txns-1E1: 2016/12
+      extension : txn
+         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
+         author : tackler <accounting@example.com>
+           date : 2019-03-18 21:03:30 +0200
+        subject : txns-1E1: 2016/12
 
 Txn Set Checksum
         SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
@@ -247,11 +249,13 @@ target/release/tackler \
 
 ````
 Git Storage
-         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
       reference : txns-1E5
       directory : txns
-         suffix : .txn
-        message : txns-1E5: 2016/12
+      extension : txn
+         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
+         author : tackler <accounting@example.com>
+           date : 2019-03-18 21:05:38 +0200
+        subject : txns-1E5: 2016/12
 
 Txn Set Checksum
         SHA-256 : 27060dc1ebde35bebd8f7af2fd9815bc9949558d3e3c85919813cd80748c99a7
@@ -304,11 +308,13 @@ base64:eyJ0eG5GaWx0ZXIiOnsiVHhuRmlsdGVyUG9zdGluZ0FjY291bnQiOnsicmVnZXgiOiJhOmF5M
 
 ````
 Git Storage
-         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
       reference : txns-1E5
       directory : txns
-         suffix : .txn
-        message : txns-1E5: 2016/12
+      extension : txn
+         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
+         author : tackler <accounting@example.com>
+           date : 2019-03-18 21:05:38 +0200
+        subject : txns-1E5: 2016/12
 
 Txn Set Checksum
         SHA-256 : 51faa6d2133d22d3ff8b60aff57722d1869fc4677911b13161dce558e7498073

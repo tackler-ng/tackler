@@ -162,16 +162,26 @@ impl Text for TxnFilterDescription {
 pub struct GitInputReference {
     /// commit id
     pub commit: String,
-    /// git symbolic reference `main`, `Y2023`, etc.
+
+    /// Symbolic git reference `main`, `Y2023`, etc.
     #[serde(rename = "ref")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reference: Option<String>,
-    /// Git directory inside repository
+
+    /// Transaction directory ("journal") inside repository
     pub dir: String,
-    /// filename suffix of journal files
-    pub suffix: String,
-    /// Git commit message of selected commit
-    pub message: String,
+
+    /// Extension of journal filenames
+    pub extension: String,
+
+    /// Commit author
+    pub author: String,
+
+    /// Commit date
+    pub date: String,
+
+    /// Subject line of selected commit
+    pub subject: String,
 }
 
 impl Text for GitInputReference {
@@ -179,7 +189,6 @@ impl Text for GitInputReference {
         let pad = MetadataItem::ITEM_PAD;
         vec![
             format!("Git Storage"),
-            format!("{:>pad$} : {}", "commit", self.commit),
             format!(
                 "{:>pad$} : {}",
                 "reference",
@@ -188,8 +197,11 @@ impl Text for GitInputReference {
                     .unwrap_or(&"FIXED by commit".to_string())
             ),
             format!("{:>pad$} : {}", "directory", self.dir),
-            format!("{:>pad$} : .{}", "suffix", self.suffix),
-            format!("{:>pad$} : {}", "message", self.message),
+            format!("{:>pad$} : {}", "extension", self.extension),
+            format!("{:>pad$} : {}", "commit", self.commit),
+            format!("{:>pad$} : {}", "author", self.author),
+            format!("{:>pad$} : {}", "date", self.date),
+            format!("{:>pad$} : {}", "subject", self.subject),
         ]
     }
 }
