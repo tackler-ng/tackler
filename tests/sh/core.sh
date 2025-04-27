@@ -472,9 +472,11 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/ok.toml \
     --input.file $SUITE_PATH/${module}/ok/time-nano.txn \
     --output.dir $OUTPUT_DIR \
-    --output.prefix $test_name
+    --output.prefix $test_name \
+    --reports register
 
 echo -n "check:"
+cmp_result $module $test_name txt reg
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn identity
 echo ": ok"
-
