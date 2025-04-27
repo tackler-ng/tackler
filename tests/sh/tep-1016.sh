@@ -26,17 +26,18 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-01.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "1E2 txn-(1|17|100)$" }}}'
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn equity
 echo ": ok"
 
@@ -54,17 +55,18 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-02.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "1E2 txn-(1|17|100)$" }}}'
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
-cmp_result $module $test_name json bal
 cmp_result $module $test_name txt balgrp
-cmp_result $module $test_name json balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn equity
 echo ": ok"
 
@@ -87,8 +89,8 @@ tep1016_commodity_test () {
 
     echo -n "check:"
     cmp_result $module "tep1016-${test_name}" txt bal
-    cmp_result $module "tep1016-${test_name}" json bal
     cmp_result $module "tep1016-${test_name}" txt balgrp
+    cmp_result $module "tep1016-${test_name}" json bal
     cmp_result $module "tep1016-${test_name}" json balgrp
     cmp_result $module "tep1016-${test_name}" txn equity
     echo ": ok"

@@ -29,11 +29,11 @@ use tackler_core::parser::GitInputSelector;
 //     """.stripMargin)
 
 const REPO_PATH: &str = "../suite/audit/audit-repo.git/";
-const TXN_SET_1E1_CHECKSUM: &str = "9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76";
-const TXN_SET_1E1_COMMIT_ID: &str = "4aa4e9797501c1aefc92f32dff30ab462dae5545";
+const TXN_SET_1E1_CHECKSUM: &str = "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3";
+const TXN_SET_1E1_COMMIT_ID: &str = "ed6e4b10de2daea8d143569c473d14a9b09c3270";
 
-const TXN_SET_1E5_CHECKSUM: &str = "27060dc1ebde35bebd8f7af2fd9815bc9949558d3e3c85919813cd80748c99a7";
-const TXN_SET_1E5_COMMIT_ID: &str = "cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5";
+const TXN_SET_1E5_CHECKSUM: &str = "2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7";
+const TXN_SET_1E5_COMMIT_ID: &str = "4648a2994b41ed341b544a148b3060fd2d267d79";
 
 #[rustfmt::skip]
 fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksum: &str) {
@@ -79,7 +79,7 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
 fn id_ce2e6523_ee83_46e7_a767_441c5b9f2802__normal_txns_1E1() {
     let result = parser::git_to_txns(Path::new(REPO_PATH), "txns/2016",
                                      "txn",
-                                     GitInputSelector::Reference("txns-1E1".to_string()),
+                                     GitInputSelector::Reference("set-1e1".to_string()),
                                      &mut Settings::default_audit());
     verify_git_run(result, TXN_SET_1E1_COMMIT_ID, TXN_SET_1E1_CHECKSUM);
 }
@@ -91,7 +91,7 @@ fn id_074f5549_346c_4780_90a1_07d60ae0e79d__normal_txns_1E5() {
     let result = parser::git_to_txns(Path::new(REPO_PATH),
                                      "txns/2016",
                                      "txn",
-                                     GitInputSelector::Reference("txns-1E5".to_string()),
+                                     GitInputSelector::Reference("set-1e5".to_string()),
                                      &mut Settings::default_audit());
 
     verify_git_run(result, TXN_SET_1E5_COMMIT_ID, TXN_SET_1E5_CHECKSUM);
@@ -101,20 +101,28 @@ fn id_074f5549_346c_4780_90a1_07d60ae0e79d__normal_txns_1E5() {
 // test: a6cfe3b6-feec-4422-afbf-faeca5baf752
 // desc: "report reasonable details in case of audit error"
 fn test_git_error_reporting() {
-    // """GIT: Error while processing git object
-    //   |   commit id: 63014ea235b23aa7330511a25bcba0b62cd33c6f
-    //   |   object id: d87737611e7a2bc551117c77fadd06dbc2c848d8
-    //   |   path: txns/2016/04/01/20160401T115935-25.txn
-    //   |   msg : Configuration setting 'auditing.txn-set-checksum' is activated and there is txn without UUID.""".stripMargin
-
+    // See txn_header.rs::parse_txn_header
+    //
+    // GIT: Error while processing git object
+    //      commit id: c984f946d1b76e3a175a07542859baf09be18c89
+    //      object id: 82d58a5c5b2928baee5e93f1143e88a442087ebe
+    //      path: txns/2016/04/01/20160401T120000-26.txn
+    //      msg : Audit mode is activated and there is a txn without UUID ...
+    //
     let result = parser::git_to_txns(Path::new(REPO_PATH), "txns/2016",
                                      "txn",
-                                     GitInputSelector::Reference("errs-1E2".to_string()),
+                                     GitInputSelector::Reference("err-1e2".to_string()),
                                      &mut Settings::default_audit());
 
     assert!(result.is_err());
     let msg = result.err().unwrap(/*:test:*/).to_string();
-    assert!(msg.contains("63014ea235b23aa7330511a25bcba0b62cd33c6f"));
-    assert!(msg.contains("d87737611e7a2bc551117c77fadd06dbc2c848d8"));
+    assert!(msg.contains("c984f946d1b76e3a175a07542859baf09be18c89"));
+    // git ls-tree \
+    //    c984f946d1b76e3a175a07542859baf09be18c89 \
+    //    txns/2016/04/01/20160401T120000-26.txn
+    assert!(msg.contains("82d58a5c5b2928baee5e93f1143e88a442087ebe"));
     assert!(msg.contains("without UUID"));
+    assert!(msg.contains("path: txns/2016/04/01/20160401T120000-26.txn"));
+    assert!(msg.contains("txn date: 2016-04-01T12:00:00+00:00[UTC]"));
+    assert!(msg.contains("txn code: #0000026"));
 }

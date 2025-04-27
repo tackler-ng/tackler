@@ -21,7 +21,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/audit.toml \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
-    --input.git.ref errs-1E2 \
+    --input.git.ref err-1e2 \
     --input.git.dir txns/2016/04 \
     2>&1 | grep 'Semantic error: Audit .* without UUID'
 
@@ -37,8 +37,8 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/audit.toml \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
-    --input.git.ref errs-1E2 \
+    --input.git.ref err-1e2 \
     --input.git.dir txns/2016/05 \
-    2>&1 | grep 'f1e3d709-fab4-380b-bd36-fd671f7b0299'
+    2>&1 | grep 'd38ad90e-a83d-561c-a5bd-546f8ebb2472'
 
 echo "check: ok"

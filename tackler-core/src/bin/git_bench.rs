@@ -17,12 +17,12 @@ static GLOBAL: MiMalloc = MiMalloc;
 
 const REPO_PATH: &str = "suite/audit/audit-repo.git/";
 const TXN_SET_1E1_CHECKSUM: &str =
-    "9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76";
-const TXN_SET_1E1_COMMIT_ID: &str = "4aa4e9797501c1aefc92f32dff30ab462dae5545";
+    "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3";
+const TXN_SET_1E1_COMMIT_ID: &str = "ed6e4b10de2daea8d143569c473d14a9b09c3270";
 
 const TXN_SET_1E5_CHECKSUM: &str =
-    "27060dc1ebde35bebd8f7af2fd9815bc9949558d3e3c85919813cd80748c99a7";
-const TXN_SET_1E5_COMMIT_ID: &str = "cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5";
+    "2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7";
+const TXN_SET_1E5_COMMIT_ID: &str = "4648a2994b41ed341b544a148b3060fd2d267d79";
 
 #[rustfmt::skip]
 fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksum: &str) {
@@ -67,7 +67,7 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
 // test: 33d85471-a04c-49b9-b7a0-9d7f7f5762eb
 #[allow(non_snake_case)]
 fn test_10_loops_with_txns_1E5() {
-    eprintln!("\n\nMake 5 loops with txns-1E5:");
+    eprintln!("\n\nMake 5 loops with set-1e5:");
     let mut settings = Settings::default_audit();
     let mut all_txns_per_s = 0.0;
     for i in 1..=5 {
@@ -76,7 +76,7 @@ fn test_10_loops_with_txns_1E5() {
             Path::new(REPO_PATH),
             "txns/2016",
             "txn",
-            GitInputSelector::Reference("txns-1E5".to_string()),
+            GitInputSelector::Reference("set-1e5".to_string()),
             &mut settings,
         );
         let ts_end = SystemTime::now().duration_since(UNIX_EPOCH).unwrap(/*:test:*/);
@@ -105,7 +105,7 @@ Reference:  {txn_per_s_reference:8>.0} txn/s ({:>+6.0} txn/s)",
 fn test_10000_loops_with_txns_1E1() {
     let mut settings = Settings::default_audit();
     let loops = 10_000;
-    eprintln!("\n\nMake 10_000 loops with txns-1E1:");
+    eprintln!("\n\nMake 10_000 loops with set-1e1:");
     let mut r = 0;
     let mut loop_count = 0;
     for i in 1..loops + 1 {
@@ -113,7 +113,7 @@ fn test_10000_loops_with_txns_1E1() {
             Path::new(REPO_PATH),
             "txns/2016",
             "txn",
-            GitInputSelector::Reference("txns-1E1".to_string()),
+            GitInputSelector::Reference("set-1e1".to_string()),
             &mut settings,
         );
         verify_git_run(result, TXN_SET_1E1_COMMIT_ID, TXN_SET_1E1_CHECKSUM);

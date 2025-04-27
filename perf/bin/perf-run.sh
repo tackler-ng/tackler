@@ -1,9 +1,9 @@
 #!/bin/bash
 # vim: tabstop=4 shiftwidth=4 smarttab expandtab softtabstop=4 autoindent
 #
-# Tackler-NG 2018-2024
-#
+# Tackler-NG 2018-2025
 # SPDX-License-Identifier: Apache-2.0
+#
 #############################################################################
 
 
@@ -23,7 +23,7 @@ if [ "$storage" = "fs" ];then
     # This is using check out from Git, see perf.toml
 	inputSelector=""
 elif [ "$storage" = "git" ]; then
-	inputSelector="--input.git.ref txns-$trg"
+	inputSelector="--input.git.ref set-$trg"
 else
 	echo "unkonwn storage: $storage"
 	exit 1

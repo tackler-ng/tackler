@@ -1,9 +1,9 @@
 #!/bin/bash
 # vim: tabstop=4 shiftwidth=4 smarttab expandtab softtabstop=4 autoindent
 #
-# Tackler-NG 2018-2024
-#
+# Tackler-NG 2018-2025
 # SPDX-License-Identifier: Apache-2.0
+#
 #############################################################################
 
 exe_dir=$(dirname $0)
@@ -13,11 +13,11 @@ data_dir="$exe_dir/../data/perf-data"
 reports="balance balance-group register"
 #reports="balance"
 
-#sets="1E1 1E2 1E3 1E4 1E5 1E6"
-sets="1E3 1E4 1E5 1E6"
-#sets="1E3"
-#sets="1E5"
-#sets="1E6"
+#sets="1e1 1e2 1e3 1e4 1e5 1e6"
+sets="1e3 1e4 1e5 1e6"
+#sets="1e3"
+#sets="1e5"
+#sets="1e6"
 
 versions="25.01.1"
 #versions="devel"
@@ -70,4 +70,4 @@ done
 done
 done
 
-(cd $data_dir; git checkout txns-1E3)
+(cd $data_dir; git checkout set-1e3)

@@ -39,7 +39,7 @@ Audit test data has a branch with 100_000 transactions, this query will execute 
 ----
 target/release/tackler \
    --config examples/audit.toml \
-   --input.git.ref txns-1E5 \
+   --input.git.ref set-1e5 \
    --accounts 'a:ay2016:am12'
 ----
 
@@ -52,7 +52,7 @@ Filter definition as plain JSON:
 ----
 target/release/tackler \
     --config examples/audit.toml \
-    --input.git.ref txns-1E2 \
+    --input.git.ref set-1e2 \
     --reports register \
     --accounts 'a:.*' \
     --audit.mode true \
@@ -65,7 +65,7 @@ Same filter with base64 armor:
 ----
 target/release/tackler \
     --config examples/audit.toml \
-    --input.git.ref txns-1E2 \
+    --input.git.ref set-1e2 \
     --reports register \
     --accounts 'a:.*' \
     --audit.mode true \

@@ -8,10 +8,8 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
 [kernel.input]
 storage = "git"
-#fs  = { dir = "../../perf/data/perf-data/txns",  suffix = "txn" }
-#git = { repository = "../../perf/data/perf-data/.git", dir = "txns", suffix = "txn", ref = "txns-1E3" }
 fs  = { path = "../../perf/data/perf-data",      dir = "txns", suffix = "txn" }
-git = { repo = "../../perf/data/perf-data/.git", dir = "txns", suffix = "txn", ref = "txns-1E3" }
+git = { repo = "../../perf/data/perf-data/.git", dir = "txns", suffix = "txn", ref = "set-1e3" }
 
 [transaction]
 accounts    = { path = "perf-accounts.toml" }

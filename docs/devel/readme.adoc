@@ -111,5 +111,5 @@ cd tackler-cli
 CARGO_PROFILE_RELEASE_DEBUG=true \
     cargo flamegraph -- \
         --config ../examples/audit.toml \
-        --input.git.ref txns-1E5
+        --input.git.ref set-1e5
 ....

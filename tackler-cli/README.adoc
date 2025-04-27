@@ -9,7 +9,7 @@ cargo run -- \
 cargo run  -- \
     --input.git.repo ../suite/audit/audit-repo.git \
     --input.git.dir txns \
-    --input.git.ref txns-1E1 \
+    --input.git.ref set-1e1 \
     --reports balance
 ----
 
@@ -17,7 +17,7 @@ cargo run  -- \
 cargo run  -- \
     --input.git.repo ../suite/audit/audit-repo.git \
     --input.git.dir txns \
-    --input.git.ref txns-1E1 \
+    --input.git.ref set-1e1 \
     --reports balance \
     --audit.mode true
 ----
@@ -39,7 +39,7 @@ cargo run  -- \
 cargo run  -- \
 	--input.git.repo ../suite/audit/audit-repo.git \
 	--input.git.dir txns \
-	--input.git.ref txns-1E1 \
+	--input.git.ref set-1e1 \
 	--reports balance \
 	--audit.mode true \
 	--api-filter-def '{"txnFilter":{"TxnFilterPostingAccount":{"regex":"^e:ey2016:em1.*"}}}'

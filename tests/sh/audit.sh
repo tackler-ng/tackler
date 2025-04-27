@@ -23,7 +23,7 @@ $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
     --config $SUITE_PATH/audit/acc-selectors.toml \
-    --input.git.ref txns-1E1
+    --input.git.ref set-1e1
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
@@ -74,6 +74,9 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
 echo ": ok"
 
 
@@ -94,7 +97,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns/2016/01/11" \
-    --input.git.ref "txns-1E2"
+    --input.git.ref "set-1e2"
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
@@ -119,7 +122,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns/2016/01/11" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*'
 
 echo -n "check:"
@@ -128,7 +131,7 @@ cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
-cmp_result $module $test_name txt reg
+cmp_result $module $test_name json reg
 cmp_result $module $test_name txn equity
 echo ": ok"
 
@@ -148,7 +151,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "^1E2 txn-(1|17|100)$" }}}'
 
@@ -175,7 +178,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "^1E2 txn-(1|17|100)$" }}}'
@@ -203,7 +206,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts 'none-matching' \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "^1E2 txn-(1|17|100)$" }}}'
@@ -231,7 +234,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*' \
     --reports balance \
     --api-filter-def \
@@ -269,7 +272,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit-sha3_512.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
         '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "^1E2 txn-(1|17|100)$" }}}'
@@ -305,7 +308,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/audit/audit.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2" \
+    --input.git.ref "set-1e2" \
     --accounts "e:.*" \
     --api-filter-def "$filter_def"
 
@@ -335,7 +338,7 @@ $TACKLER_SH \
     --accounts "^a:.*" \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "txns-1E2^^"
+    --input.git.ref "set-1e2^^"
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
@@ -356,7 +359,7 @@ $TACKLER_SH \
     --accounts "^a:.*" \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "2da8c6a30fed6e65c06070d6c12e7dcaff84b599"
+    --input.git.ref "3e8aa1c9cfc11a8a24afa33da76b7973b93fd455"
 
 echo -n "check:"
 cmp_result $module $test_name txt bal
@@ -380,7 +383,7 @@ $TACKLER_SH \
     --accounts "^a:.*" \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
-    --input.git.ref "2da8c6a3"
+    --input.git.ref "3e8aa1c9"
 
 echo -n "check:"
 cmp_result $module $test_name txt bal

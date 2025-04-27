@@ -201,21 +201,21 @@ target/release/tackler \
 
 ````
 Git Storage
-      reference : txns-1E1
+      reference : set-1e1
       directory : txns
       extension : txn
-         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
+         commit : ed6e4b10de2daea8d143569c473d14a9b09c3270
          author : tackler <accounting@example.com>
-           date : 2019-03-18 21:03:30 +0200
-        subject : txns-1E1: 2016/12
+           date : 2016-11-25 09:36:00 +0000
+        subject : set-1e1: 2016-11-25
 
 Txn Set Checksum
-        SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+        SHA-256 : 4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3
        Set size : 10
 
 **********************************************************************************
 Account Selector Checksum
-        SHA-256 : 19d31a48bf9a8604a1128ccfd281511f961c5469748a97897a21fc0fa2a5f519
+        SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
 
 
 Balance Report
@@ -237,33 +237,33 @@ Balance Report
 
 #### Report with 100_000 Transactions
 
-There is git ref 'txns-1E5' inside the example audit -repository.
+There is git ref 'set-1e5' inside the example audit -repository.
 
 ````bash
 target/release/tackler \
     --config examples/audit.toml \
-    --input.git.ref txns-1E5
+    --input.git.ref set-1e5
 ````
 
 #### Output
 
 ````
 Git Storage
-      reference : txns-1E5
+      reference : set-1e5
       directory : txns
       extension : txn
-         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
+         commit : 4648a2994b41ed341b544a148b3060fd2d267d79
          author : tackler <accounting@example.com>
-           date : 2019-03-18 21:05:38 +0200
-        subject : txns-1E5: 2016/12
+           date : 2016-12-31 17:41:24 +0000
+        subject : set-1e5: 2016-12-31
 
 Txn Set Checksum
-        SHA-256 : 27060dc1ebde35bebd8f7af2fd9815bc9949558d3e3c85919813cd80748c99a7
+        SHA-256 : 2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7
        Set size : 100000
 
 **********************************************************************************
 Account Selector Checksum
-        SHA-256 : 19d31a48bf9a8604a1128ccfd281511f961c5469748a97897a21fc0fa2a5f519
+        SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
 
 Balance Report
 --------------
@@ -291,7 +291,7 @@ Balance Report
 ````bash
 target/release/tackler \
     --config examples/audit.toml \
-    --input.git.ref txns-1E5 \
+    --input.git.ref set-1e5 \
     --api-filter-def '{"txnFilter":{"TxnFilterPostingAccount":{"regex":"a:ay2016:am12"}}}'
 ````
 
@@ -308,24 +308,24 @@ base64:eyJ0eG5GaWx0ZXIiOnsiVHhuRmlsdGVyUG9zdGluZ0FjY291bnQiOnsicmVnZXgiOiJhOmF5M
 
 ````
 Git Storage
-      reference : txns-1E5
+      reference : set-1e5
       directory : txns
       extension : txn
-         commit : cb56fdcdd2b56d41fc08cc5af4a3b410896f03b5
+         commit : 4648a2994b41ed341b544a148b3060fd2d267d79
          author : tackler <accounting@example.com>
-           date : 2019-03-18 21:05:38 +0200
-        subject : txns-1E5: 2016/12
+           date : 2016-12-31 17:41:24 +0000
+        subject : set-1e5: 2016-12-31
 
 Txn Set Checksum
-        SHA-256 : 51faa6d2133d22d3ff8b60aff57722d1869fc4677911b13161dce558e7498073
-       Set size : 8406
+        SHA-256 : 8ff80f72dc8b36fd6272319d08b99c54d8cf47baff47eda3df68b69e7b7b66bc
+       Set size : 8405
 
 Filter
   Posting Account: "a:ay2016:am12"
 
 **********************************************************************************
 Account Selector Checksum
-        SHA-256 : 19d31a48bf9a8604a1128ccfd281511f961c5469748a97897a21fc0fa2a5f519
+        SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
 
 Balance Report
 --------------
