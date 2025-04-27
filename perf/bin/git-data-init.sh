@@ -70,7 +70,7 @@ if [ ! -e readme.txt ]; then
     echo " * Each test set is own branch" >> readme.txt
     echo " * Transaction directory is 'txns'" >> readme.txt
     echo " * Txn shard is by year, month and day (YYYY/MM/DD)" >> readme.txt
-    echo " * Each txn is separate file, named by timestamp and index" >> readme.txt
+    echo " * Each txn is a separate file, named by timestamp and index" >> readme.txt
     echo >> readme.txt
     echo "Available git objects" >> readme.txt
     echo " * branch for each test set" >> readme.txt
@@ -95,17 +95,29 @@ echo " * $name" >> readme.txt
 git add readme.txt
 ts="2015-12-31T14:${set_min}:00+0000"
 GIT_AUTHOR_DATE="$ts" GIT_COMMITTER_DATE="$ts" \
-    git commit -m "readme: $name" readme.txt
+    git commit -m "main: $name" readme.txt
 git push
 
 git checkout -b "$name"
 
-echo "set: $name" > "info.txt"
+echo "Tackler test repository for git storage backend" > readme.txt
+echo >> readme.txt
+echo "This is test branch: $name" >> readme.txt
+echo >> readme.txt
+echo "Structure of the journal" >> readme.txt
+echo " * Transaction directory is 'txns'" >> readme.txt
+echo " * Txn shard is by year, month and day (YYYY/MM/DD)" >> readme.txt
+echo " * Each txn is a separate file, named by timestamp and index" >> readme.txt
+echo >> readme.txt
+git add readme.txt
+
+echo "branch: $name" > "info.txt"
 git add "info.txt"
+
 ts="2016-01-01T00:00:00+0000"
 GIT_AUTHOR_DATE="$ts" GIT_COMMITTER_DATE="$ts" \
-    git commit -m "$name: init"
- 
+    git commit -m "init ($name)"
+
 mkdir -p txns
 mkdir -p txns/2016
 
