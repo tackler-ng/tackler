@@ -1,12 +1,14 @@
 Git Storage
-         commit : 4aa4e9797501c1aefc92f32dff30ab462dae5545
-      reference : txns-1E1
+      reference : set-1e1
       directory : txns
-         suffix : .txn
-        message : txns-1E1: 2016/12
+      extension : txn
+         commit : ed6e4b10de2daea8d143569c473d14a9b09c3270
+         author : tackler <accounting@example.com>
+           date : 2016-11-25 09:36:00 +0000
+        subject : set-1e1: 2016-11-25
 
 Txn Set Checksum
-        SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+        SHA-256 : 4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3
        Set size : 10
 
 Account Selector Checksum

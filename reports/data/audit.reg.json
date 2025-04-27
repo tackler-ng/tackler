@@ -1,53 +1,61 @@
 {
-  "metadata" : {
-    "items" : [
+  "metadata": {
+    "items": [
       {
-        "GitInputReference" : {
-          "commit" : "4aa4e9797501c1aefc92f32dff30ab462dae5545",
-          "ref" : "txns-1E1",
-          "dir" : "txns",
-          "suffix" : ".txn",
-          "message" : "txns-1E1: 2016/12"
+        "GitInputReference": {
+          "commit": "ed6e4b10de2daea8d143569c473d14a9b09c3270",
+          "ref": "set-1e1",
+          "dir": "txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-11-25 09:36:00 +0000",
+          "subject": "set-1e1: 2016-11-25"
         }
       },
       {
-        "TxnSetChecksum" : {
-          "size" : 10,
-          "hash" : {
-            "algorithm" : "SHA-256",
-            "value" : "9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76"
+        "TxnSetChecksum": {
+          "size": 10,
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3"
           }
         }
       },
       {
-        "AccountSelectorChecksum" : {
-          "hash" : {
-            "algorithm" : "SHA-256",
-            "value" : "a6ecb49f49e5492f5b161ef187a2e98e90602e1685a87ad431492f906bb2bfac"
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "a6ecb49f49e5492f5b161ef187a2e98e90602e1685a87ad431492f906bb2bfac"
           }
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "Europe/Helsinki"
         }
       }
     ]
   },
-  "title" : "REGISTER",
-  "transactions" : [
+  "title": "REGISTER",
+  "transactions": [
     {
-      "txn" : {
-        "timestamp" : "2016-10-19T19:11:52Z",
-        "code" : "#0000008",
-        "description" : "1E1 txn-8",
-        "uuid" : "618dc8a7-9a88-3227-a6ce-85ccb5f54633"
+      "displayTime": "2016-10-19",
+      "txn": {
+        "timestamp": "2016-10-19T19:12:00+00:00[UTC]",
+        "code": "#0000009",
+        "description": "1E1 txn-9",
+        "uuid": "09032608-18df-52e6-8e12-a31d23e9b35d"
       },
-      "postings" : [
+      "postings": [
         {
-          "account" : "a:ay2016:am10",
-          "amount" : "-19.0000001",
-          "runningTotal" : "-19.0000001"
+          "account": "a:ay2016:am10",
+          "amount": "-19.0000001",
+          "runningTotal": "-19.0000001"
         },
         {
-          "account" : "e:ey2016:em10:ed19",
-          "amount" : "19.0000001",
-          "runningTotal" : "19.0000001"
+          "account": "e:ey2016:em10:ed19",
+          "amount": "19.0000001",
+          "runningTotal": "19.0000001"
         }
       ]
     }
