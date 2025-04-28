@@ -1,25 +1,51 @@
-/// Metadata: Git Storage
+// Report Metadata Section
+//
+// Report metadata is a list of optional metadata items.
+// Metadata could be empty an empty list.
+//
+// List of all possible metadata items:
+// https://docs.rs/tackler-api/latest/tackler_api/metadata/items/index.html
+//
+
+////////////////////////////////////////////////////////////////////////////////
+// Metadata: Git Storage
+//
+// API Documentation
+// https://docs.rs/tackler-api/latest/tackler_api/metadata/items/struct.GitInputReference.html
+//
 #let md-git-storage(data) = {
   table(
     columns: 2,
-    [ commit ], data.at("commit", default: [n/a]),
-    [ ref ], data.at("ref", default: [n/a]),
-    [ dir ], data.at("dir", default: [n/a]),
-    [ suffix ], data.at("suffix", default: [n/a]),
-    [ message ], data.at("message", default: [n/a]),
+    [ Reference ], data.at("ref", default: [FIXED by commit]),
+    [ Directory ], data.at("dir"),
+    [ Extension ], data.at("extension"),
+    [ Commit ], data.at("commit"),
+    [ Author ], data.at("author"),
+    [ Date ], data.at("date"),
+    [ Summary ], data.at("subject"),
   )
 }
 
-/// Metadata: Txn Set Checksum
+////////////////////////////////////////////////////////////////////////////////
+// Metadata: Txn Set Checksum
+//
+// API Documentation
+// https://docs.rs/tackler-api/latest/tackler_api/metadata/items/struct.TxnSetChecksum.html
+//
 #let md-txn-set-checksum(data) = {
   table(
     columns: 2,
-    [ size ], [ #data.at("size", default: [n/a]) ], 
+    [ Size ], [ #data.at("size", default: [n/a]) ],
     [ #data.hash.algorithm ], [ #data.hash.value ]
   )
 }
 
-/// Metadata: Account Selector Checksum
+////////////////////////////////////////////////////////////////////////////////
+// Metadata: Account Selector Checksum
+//
+// API Documentation
+// https://docs.rs/tackler-api/latest/tackler_api/metadata/items/struct.AccountSelectorChecksum.html
+//
 #let md-acc-selector-checksum(data) = {
   table(
     columns: 2,
@@ -28,7 +54,9 @@
 }
 
 
-/// Generic JSON table 
+////////////////////////////////////////////////////////////////////////////////
+// Generic JSON table
+//
 #let json-table(data, keys) = {
   table(
     columns: keys.len(),
@@ -44,26 +72,30 @@
 
 #let bal = json("data/audit.bal.json")
 
+////////////////////////////////////////////////////////////////////////////////
 //
 // Report starts here
 //
+////////////////////////////////////////////////////////////////////////////////
 
-= Metadata 
+= Balance Report
+
+== Report Metadata
 
 #for mdi in bal.metadata.items {
   if "GitInputReference" in mdi and  mdi.at("GitInputReference") != "" {
-    [ == GIT Storage ]
+    [ === GIT Storage ]
     md-git-storage(mdi.at("GitInputReference"))
   } else if "TxnSetChecksum" in mdi and  mdi.at("TxnSetChecksum") != "" {
-    [ == Txn Set Checksum ]
+    [ === Txn Set Checksum ]
     md-txn-set-checksum(mdi.at("TxnSetChecksum")) 
   } else if "AccountSelectorChecksum" in mdi and  mdi.at("AccountSelectorChecksum") != "" {
-    [ == Account Selector Checksum ]
+    [ === Account Selector Checksum ]
     md-acc-selector-checksum(mdi.at("AccountSelectorChecksum")) 
   } 
 }
 
-= #bal.title
+== #bal.title
 
 #let keys = ("accountSum", "accountTreeSum", "account")
 #json-table(bal.balances, keys)
