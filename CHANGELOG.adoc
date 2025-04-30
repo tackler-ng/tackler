@@ -12,6 +12,7 @@ New features:
 
 * New output format JSON
   ** Optional configuration key `report.formats` to specify output formats.
+  ** New optional CLI argument `--formats` to select report formats
 
 Changed functionality:
 

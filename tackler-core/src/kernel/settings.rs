@@ -211,6 +211,11 @@ impl Settings {
             None => cfg.export.targets.clone(),
         };
 
+        let formats = match overlaps.target.formats {
+            Some(formats) => config::to_report_formats(Some(&formats))?,
+            None => cfg.report.formats.clone(),
+        };
+
         let lookup_type = overlaps.price.lookup_type.unwrap_or(cfg.price.lookup_type);
 
         let db_path = overlaps.price.db_path.unwrap_or(cfg.price.db_path.clone());
@@ -283,6 +288,7 @@ impl Settings {
             report: Report {
                 commodity: report_commodity,
                 targets: reports,
+                formats,
                 ..cfg.report
             },
             export: Export {

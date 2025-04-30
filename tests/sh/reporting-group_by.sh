@@ -28,7 +28,8 @@ $TACKLER_SH \
     --input.fs.ext "txn" \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
-    --config $SUITE_PATH/$module/date.toml 
+    --config $SUITE_PATH/$module/date.toml \
+    --formats txt json
 
 echo -n "check:"
 cmp_result $module $test_name txt bal "."
@@ -138,7 +139,8 @@ $TACKLER_SH \
     --input.fs.ext "txn" \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
-    --config $SUITE_PATH/$module/date.toml 
+    --config $SUITE_PATH/$module/date.toml \
+    --formats txt json
 
 echo -n "check:"
 cmp_result $module $test_name txt bal "."

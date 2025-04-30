@@ -16,6 +16,8 @@ use tackler_core::kernel::settings::{FileInput, FsInput, GitInput, InputSettings
 use tackler_core::parser::GitInputSelector;
 use tackler_core::{config, tackler};
 
+use tackler_core::config::FormatType;
+
 pub(crate) const PRICE_BEFORE: &str = "price.before";
 //
 // Default subcommand setup:
@@ -275,6 +277,16 @@ pub(crate) struct DefaultModeArgs {
     )]
     pub(crate) reports: Option<Vec<String>>,
 
+    #[arg(long = "formats", value_name = "type", num_args(1..),
+        value_parser([
+            PossibleValue::new(FormatType::TXT),
+            PossibleValue::new(FormatType::JSON),
+        ]),
+        requires("output_directory"),
+        requires("output_name"),
+    )]
+    pub(crate) formats: Option<Vec<String>>,
+
     /// Path to single PriceDB file
     #[arg(long = "pricedb", value_name = "path_to_pricedb-file")]
     pub(crate) pricedb_filename: Option<PathBuf>,
@@ -353,6 +365,7 @@ impl DefaultModeArgs {
             target: TargetOverlap {
                 reports: self.reports.clone(),
                 exports: self.exports.clone(),
+                formats: self.formats.clone(),
             },
         }
     }

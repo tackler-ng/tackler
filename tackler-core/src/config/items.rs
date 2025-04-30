@@ -144,8 +144,8 @@ pub enum FormatType {
     Json,
 }
 impl FormatType {
-    const TXT: &'static str = "txt";
-    const JSON: &'static str = "json";
+    pub const TXT: &'static str = "txt";
+    pub const JSON: &'static str = "json";
 }
 impl TryFrom<&str> for FormatType {
     type Error = tackler::Error;

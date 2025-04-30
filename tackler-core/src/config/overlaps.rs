@@ -67,4 +67,6 @@ pub struct TargetOverlap {
     pub reports: Option<Vec<String>>,
     /// exports
     pub exports: Option<Vec<String>>,
+    /// Report output formats
+    pub formats: Option<Vec<String>>,
 }
