@@ -14,10 +14,18 @@ source $TEST_DIR/lib/make_filter.sh
 ###
 module=audit
 
+# test: f0782d7f-1626-45ef-bbdc-86bf833eb105
+# desc: Audit metadata with console
 # test: 93651962-6b61-4fd6-941a-339abd87ec73
 rm -f $OUTPUT_DIR/*
 test_name=audit-1E1-01
 echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/audit/acc-selectors.toml \
+    --input.git.ref set-1e1 \
+     > "${OUTPUT_DIR}/${test_name}.stdout.txt" \
+     2> "${OUTPUT_DIR}/${test_name}.stderr.txt"
 
 $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
@@ -29,10 +37,15 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+
 cmp_result $module $test_name txn equity
+
+cmp_result $module $test_name txt stdout
+cmp_result $module $test_name txt stderr
 echo ": ok"
 
 #####################################################################
@@ -138,12 +151,24 @@ echo ": ok"
 
 #####################################################################
 #
+# test: 69502e1d-0c51-44bf-89e7-5f559c65f147
+# desc: audit and filter metadata with console
 # test: b2ea4102-40a2-46e5-aca3-398cf4849058
 # plain filter definition
 # test: 515ba0be-b571-4a7f-a2a3-28dc1e545228
 rm -f $OUTPUT_DIR/*
 test_name=audit-1E2-03
 echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/audit/audit.toml \
+    --input.git.repository $SUITE_PATH/audit/audit-repo.git \
+    --input.git.dir "txns" \
+    --input.git.ref "set-1e2" \
+    --api-filter-def \
+        '{ "txnFilter": { "TxnFilterTxnDescription": { "regex": "^1E2 txn-(1|17|100)$" }}}' \
+     > "${OUTPUT_DIR}/${test_name}.stdout.txt" \
+     2> "${OUTPUT_DIR}/${test_name}.stderr.txt"
 
 $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
@@ -159,10 +184,15 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+
 cmp_result $module $test_name txn equity
+
+cmp_result $module $test_name txt stdout
+cmp_result $module $test_name txt stderr
 echo ": ok"
 
 #####################################################################

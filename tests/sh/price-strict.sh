@@ -113,11 +113,24 @@ echo ": ok"
 #
 # price-03
 #
+# test: 02057635-5436-4457-b597-fa3f3e2e9df3
+# desc: price and filter metadata with console
 # test: 4075e741-605b-4e67-ab7d-0d13f38956ca
 # desc: strict, given-time, filter
 rm -f $OUTPUT_DIR/*
 test_name=price-03
 echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/price-strict.toml \
+    --accounts "e:conv" \
+    --input.file $SUITE_PATH/$module/ok/price.txn \
+    --price.lookup-type given-time \
+    --price.before 2024-04-01 \
+    --api-filter-def \
+    '{ "txnFilter": { "TxnFilterTxnTSEnd": { "end": "2024-04-01T00:00:00Z" }}}' \
+     > "${OUTPUT_DIR}/${test_name}.stdout.txt" \
+     2> "${OUTPUT_DIR}/${test_name}.stderr.txt"
 
 $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
@@ -134,11 +147,16 @@ echo -n "check:"
 cmp_result $module $test_name txt bal
 cmp_result $module $test_name txt balgrp
 cmp_result $module $test_name txt reg
+
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+
 cmp_result $module $test_name txn identity
 cmp_result $module $test_name txn equity
+
+cmp_result $module $test_name txt stdout
+cmp_result $module $test_name txt stderr
 echo ": ok"
 
 #
