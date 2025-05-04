@@ -42,9 +42,11 @@ Tackler has support for JSON output, it can be activated with configuration sett
 formats = [ "txt", "json" ]
 ----
 
-and then running the reports with `--output.dir path/to/output` and
-`--output.prefix filename` CLI arguments.
-This will generate JSON output alongside TXT format.
+or using CLI argument `--formats txt json`.
+
+Reports must be generated with file output
+(`--output.dir path/to/output` and `--output.prefix filename`),
+this will generate JSON output alongside TXT format.
 
 Tackler's
 link:https://github.com/tackler-ng/tackler-tests[test suite] contains many more report examples.
