@@ -41,12 +41,12 @@ See [Tackler Performance](https://tackler.e257.fi/docs/tackler/latest/features/p
 
 ## Project Status
 
-Tackler is reimplementation of old nearly 10 years old Scala based system, 
+Tackler is reimplementation of nearly 10 years old Scala based system,
 and it's in 
 [feature](https://tackler.e257.fi/docs/tackler/latest/features/) parity 
-with and beyond of the old Scala code base. It's basis of all Tackler 
-development. Tackler is using the same test and reference vectors as the 
-old code base.
+with and beyond of the old Scala code base. Tackler is using the same test
+and reference vectors as the tackler-mk1. This is basis of all the future
+Tackler development.
 
 
 **NOTE: Tackler is tested with 436 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
