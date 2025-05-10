@@ -23,7 +23,9 @@ pub(crate) const PRICE_BEFORE: &str = "price.before";
 // https://github.com/clap-rs/clap/issues/975
 //
 #[derive(Parser)]
-#[command(author, version=env!("VERSION"), about, long_about = None)]
+#[command(author, version=env!("VERSION"), about, long_about = None,
+after_help = "See tackler documentation for more information and examples:\nhttps://tackler.e257.fi/docs/",
+)]
 #[command(args_conflicts_with_subcommands = true)]
 pub(crate) struct Cli {
     #[command(subcommand)]
@@ -64,7 +66,7 @@ pub(crate) struct GitInputGroup {
     /// Git reference name
     #[arg(
         long = "input.git.ref",
-        value_name = "refname",
+        value_name = "reference",
         group = "git_input_group"
     )]
     pub(crate) input_git_ref: Option<String>,
@@ -72,7 +74,7 @@ pub(crate) struct GitInputGroup {
     /// Git object name (commit id)
     #[arg(
         long = "input.git.commit",
-        value_name = "sha",
+        value_name = "commit-id",
         group = "git_input_group"
     )]
     pub(crate) input_git_commit: Option<String>,
@@ -177,35 +179,48 @@ impl TypedValueParser for PriceLookupParser {
 #[derive(Clone, Subcommand)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Commands {
-    /// create new bookkeeping setup
+    /// Create a new journal and configuration setup
     New { name: String },
-    /// Initialize existing bookkeeping setup
+    /// Initialize journal at the current working directory
     Init {},
-    /// This is the default action: run specified reports and exports
+    /// Run specified reports and exports - this is the default action
     Report(DefaultModeArgs),
 }
 
+#[rustfmt::skip]
 #[derive(Debug, Clone, clap::Args)]
 pub(crate) struct DefaultModeArgs {
-    #[arg(long = "config", value_name = "path_to_config-file")]
+
+    /// The journal configuration is mandatory argument
+    #[arg(long = "config", value_name = "filename")]
     pub(crate) conf_path: Option<PathBuf>,
 
-    /// Strict txn data mode
+    /// Strict journal data mode
     ///
-    /// Turn on strict validation of transactions (accounts, commodities and tags).
-    #[arg(long = "strict.mode", value_name = "true|false")]
+    /// Turn on strict validation of transaction data
+    /// (accounts, commodities and tags).
+    #[arg(
+        long = "strict.mode",
+        value_name = "true|false",
+        verbatim_doc_comment
+    )]
     pub(crate) strict_mode: Option<bool>,
 
-    /// Txn set audit mode
+    /// Journal Audit mode
     ///
-    /// Produce checksums for transaction data and account selectors
-    #[arg(long = "audit.mode", value_name = "true|false")]
+    /// Produce checksums for transaction data
+    /// and account selectors.
+    #[arg(
+        long = "audit.mode",
+        value_name = "true|false",
+        verbatim_doc_comment
+    )]
     pub(crate) audit_mode: Option<bool>,
 
     /// Path to output directory
     #[arg(
         long = "output.dir",
-        value_name = "path_to_output-directory",
+        value_name = "directory",
         requires("output_name")
     )]
     pub(crate) output_directory: Option<PathBuf>,
@@ -213,14 +228,14 @@ pub(crate) struct DefaultModeArgs {
     /// Basename of report files
     #[arg(
         long = "output.prefix",
-        value_name = "filename-prefix",
+        value_name = "filename",
         requires("output_directory")
     )]
     pub(crate) output_name: Option<String>,
 
     /// Path to single transaction journal file
     #[arg(long="input.file",
-        value_name = "path_to_journal-file",
+        value_name = "filename",
         conflicts_with_all([
             "input_storage",
             "input_fs_path",
@@ -265,7 +280,7 @@ pub(crate) struct DefaultModeArgs {
 
     /// Txn directory inside journal
     ///
-    /// This is the root node of txn tree inside journal
+    /// This is the root node of txn tree inside journal.
     /// See also `--input.fs.path`
     #[arg(long="input.fs.dir",
         value_name = "txns-directory",
@@ -274,7 +289,8 @@ pub(crate) struct DefaultModeArgs {
             "input_git_ref",
             "input_git_commit",
             "input_git_dir"
-        ])
+        ]),
+        verbatim_doc_comment
     )]
     pub(crate) input_fs_dir: Option<String>,
 
@@ -325,17 +341,21 @@ pub(crate) struct DefaultModeArgs {
     )]
     pub(crate) input_git_ext: Option<String>,
 
-    /// Account selectors for reports and exports
+    /// List of Account Selectors for reports and exports
     ///
-    /// List of patterns (regex) for account names.
-    ///
-    /// These are full match regular expressions,
-    /// and they try to match full account name.
-    /// Use wildcard patterns `.*`, '(:.*)?', etc.
+    /// These are full match regular expressions (regex),
+    /// and they are matched against the full account name.
+    /// Use wildcard patterns e.g.
+    ///    'Assets:.*' 'Assets(:.*)?'
     /// when needed.
     ///
-    /// Use empty string "" to list all accounts
-    #[arg(long = "accounts", value_name = "regex", num_args(1..))]
+    /// Empty string "" lists all accounts
+    #[arg(
+        long = "accounts",
+        value_name = "regex",
+        num_args(1..),
+        verbatim_doc_comment
+    )]
     pub(crate) accounts: Option<Vec<String>>,
 
     /// List of Reports to generate
@@ -350,36 +370,6 @@ pub(crate) struct DefaultModeArgs {
     )]
     pub(crate) reports: Option<Vec<String>>,
 
-    #[arg(long = "formats", value_name = "type", num_args(1..),
-        value_parser([
-            PossibleValue::new(FormatType::TXT),
-            PossibleValue::new(FormatType::JSON),
-        ]),
-        requires("output_directory"),
-        requires("output_name"),
-    )]
-    pub(crate) formats: Option<Vec<String>>,
-
-    /// Path to single PriceDB file
-    #[arg(long = "pricedb", value_name = "path_to_pricedb-file")]
-    pub(crate) pricedb_filename: Option<PathBuf>,
-
-    /// Name of the commodity to do the reports in
-    #[arg(long = "report.commodity", value_name = "commodity")]
-    pub(crate) report_commodity: Option<String>,
-
-    /// Type of price lookup method
-    #[arg(
-        long = "price.lookup-type",
-        value_name = "lookup-type",
-        value_parser = PriceLookupParser
-    )]
-    pub(crate) price_lookup_type: Option<PriceLookupType>,
-
-    /// Timestamp to use for price lookup "<ISO-8066-timestamp>",
-    #[arg(long = PRICE_BEFORE, value_name = "price-before")]
-    pub(crate) price_before_ts: Option<String>,
-
     /// Group-by -selector for 'balance-group' report
     #[arg(long = "group-by", value_name = "group-by", num_args(1),
         value_parser([
@@ -391,6 +381,21 @@ pub(crate) struct DefaultModeArgs {
         ])
     )]
     pub(crate) group_by: Option<String>,
+
+    /// List of report output format types
+    ///
+    /// This has only effect when used with `--output.*`
+    ///
+    /// The list is space separated.
+    #[arg(long = "formats", value_name = "type", num_args(1..),
+        value_parser([
+            PossibleValue::new(FormatType::TXT),
+            PossibleValue::new(FormatType::JSON),
+        ]),
+        requires("output_directory"),
+        requires("output_name"),
+    )]
+    pub(crate) formats: Option<Vec<String>>,
 
     /// List of Exports to generate
     ///
@@ -404,6 +409,37 @@ pub(crate) struct DefaultModeArgs {
         requires("output_name"),
     )]
     pub(crate) exports: Option<Vec<String>>,
+
+    /// Path to PriceDB file
+    #[arg(
+        long = "pricedb",
+        value_name = "pricedb-file",
+    )]
+    pub(crate) pricedb_filename: Option<PathBuf>,
+
+    /// Name of the target commodity in reports
+    ///
+    /// This is the target commodity when commodity price
+    /// conversion is activated, and there is existing conversion
+    /// from the base commodity to this target commodity.
+    #[arg(
+        long = "report.commodity",
+        value_name = "commodity",
+        verbatim_doc_comment
+    )]
+    pub(crate) report_commodity: Option<String>,
+
+    /// Type of price lookup method
+    #[arg(
+        long = "price.lookup-type",
+        value_name = "lookup-type",
+        value_parser = PriceLookupParser
+    )]
+    pub(crate) price_lookup_type: Option<PriceLookupType>,
+
+    /// Timestamp to use for price lookup "<ISO-8066-timestamp>",
+    #[arg(long = PRICE_BEFORE, value_name = "price-before")]
+    pub(crate) price_before_ts: Option<String>,
 
     /// Txn Filter definition in JSON
     ///
