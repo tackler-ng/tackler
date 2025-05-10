@@ -1,8 +1,55 @@
 // vim: tabstop=2 shiftwidth=2 softtabstop=2 smarttab expandtab autoindent
 
-= Tackler-NG: Changelog
+= Tackler: Changelog
 
 == Releases
+
+=== Tackler release XX.YY.Z
+
+==== New features and changes
+
+New features:
+
+* ...
+** ...
+
+Changed functionality:
+
+* ...
+** ...
+
+
+==== Fixes
+
+Fixes in this release ...
+
+
+==== Development
+
+Updated dependencies (major or minor version):
+
+* ...
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | TODO: XX.YY.Z
+|tackler-core | TODO: No changes
+|tackler-api  | TODO: No changes
+|tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
 
 === Tackler release 25.05.1
 
@@ -58,14 +105,12 @@ Changed functionality:
 
 ==== Fixes
 
-Fixes in this release: ...
+Fixes in this release: None
 
 
 ==== Development
 
-Updated dependencies (major or minor version):
-
-* ...
+Updated dependencies (major or minor version): None
 
 ===== Rust toolchain
 

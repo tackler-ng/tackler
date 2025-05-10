@@ -4,7 +4,7 @@
 #
 [package]
 name = "tackler"
-version = "25.5.1"
+version = "25.5.2-dev"
 description = "Fast, reliable bookkeeping tool with native GIT SCM support for plain text accounting"
 edition.workspace = true
 license.workspace = true
