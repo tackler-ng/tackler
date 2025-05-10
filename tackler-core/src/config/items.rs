@@ -15,7 +15,7 @@ use crate::tackler;
 use jiff::fmt::strtime::BrokenDownTime;
 use jiff::tz::TimeZone;
 use rust_decimal::Decimal;
-use std::fmt::{Debug, Display};
+use std::fmt::{Debug, Display, Formatter};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::{cmp, fs};
@@ -25,11 +25,36 @@ use tackler_rs::get_abs_path;
 /// UI/CFG key value for none
 pub const NONE_VALUE: &str = "none";
 
-#[derive(Debug, Copy, Clone, Default)]
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub enum StorageType {
     #[default]
-    FS,
+    Fs,
     Git,
+}
+#[rustfmt::skip]
+impl StorageType {
+    pub const FS:   &'static str = "fs";
+    pub const GIT:  &'static str = "git";
+}
+
+impl StorageType {
+    pub fn try_from(storage: &str) -> Result<StorageType, tackler::Error> {
+        match storage {
+            StorageType::FS => Ok(StorageType::Fs),
+            StorageType::GIT => Ok(StorageType::Git),
+            _ => Err(format!("Unknown storage type: {}", storage).into()),
+        }
+    }
+}
+
+impl Display for StorageType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let s = match &self {
+            StorageType::Fs => StorageType::FS,
+            StorageType::Git => StorageType::GIT,
+        };
+        write!(f, "{}", s)
+    }
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
@@ -69,20 +94,6 @@ impl TryFrom<&str> for PriceLookupType {
             PriceLookupType::TXN_TIME => Ok(PriceLookupType::TxnTime),
             PriceLookupType::GIVEN_TIME => Ok(PriceLookupType::GivenTime),
             _ => Err(format!("Unknown price lookup type: {}", lookup).into()),
-        }
-    }
-}
-
-#[rustfmt::skip]
-impl StorageType {
-    pub const STORAGE_FS:   &'static str = "fs";
-    pub const STORAGE_GIT:  &'static str = "git";
-
-    pub(crate) fn from(storage: &str) -> Result<StorageType, tackler::Error> {
-        match storage {
-            StorageType::STORAGE_FS => Ok(StorageType::FS),
-            StorageType::STORAGE_GIT => Ok(StorageType::Git),
-            _ => Err(format!("Unknown storage type: {}", storage).into()),
         }
     }
 }
@@ -170,6 +181,7 @@ pub(crate) type AccountSelectors = Vec<String>;
 
 #[derive(Debug)]
 pub struct Config {
+    config_path: PathBuf,
     pub(crate) kernel: Kernel,
     pub(crate) price: Price,
     pub(crate) transaction: Transaction,
@@ -178,18 +190,22 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from<P: AsRef<Path>>(cfg_path: P) -> Result<Config, tackler::Error> {
+    pub fn try_from<P: AsRef<Path>>(cfg_path: P) -> Result<Config, tackler::Error> {
         let cfg_raw: ConfigRaw = toml::from_str(fs::read_to_string(&cfg_path)?.as_str())?;
 
         Ok(Config {
-            kernel: Kernel::from(&cfg_raw.kernel)?,
+            config_path: cfg_path.as_ref().to_path_buf(),
+            kernel: Kernel::try_from(&cfg_raw.kernel)?,
             price: cfg_raw.price.map_or(Ok(Price::default()), |raw_price| {
                 Price::try_from(&cfg_path, &raw_price)
             })?,
-            transaction: Transaction::from(cfg_path, &cfg_raw.transaction)?,
+            transaction: Transaction::from(&cfg_path, &cfg_raw.transaction)?,
             report: Report::from(&cfg_raw.report)?,
             export: { Export::from(&cfg_raw.export, &cfg_raw.report)? },
         })
+    }
+    pub fn path(&self) -> PathBuf {
+        self.config_path.clone()
     }
 }
 
@@ -201,12 +217,12 @@ pub(crate) struct Kernel {
     pub input: Input,
 }
 impl Kernel {
-    fn from(k_raw: &KernelRaw) -> Result<Kernel, tackler::Error> {
+    fn try_from(k_raw: &KernelRaw) -> Result<Kernel, tackler::Error> {
         let k = Kernel {
             strict: k_raw.strict,
             timestamp: Timestamp::from(&k_raw.timestamp)?,
             audit: Audit::from(&k_raw.audit)?,
-            input: Input::from(&k_raw.input)?,
+            input: Input::try_from(&k_raw.input)?,
         };
         Ok(k)
     }
@@ -288,16 +304,16 @@ pub struct Input {
     pub git: Option<Git>,
 }
 impl Input {
-    fn from(input_raw: &InputRaw) -> Result<Input, tackler::Error> {
+    fn try_from(input_raw: &InputRaw) -> Result<Input, tackler::Error> {
         // todo: checks
         let i = Input {
-            storage: StorageType::from(input_raw.storage.as_str())?,
+            storage: StorageType::try_from(input_raw.storage.as_str())?,
             fs: match &input_raw.fs {
-                Some(fs) => Some(FS::from(fs)?),
+                Some(fs) => Some(FS::try_from(fs)?),
                 None => None,
             },
             git: match &input_raw.git {
-                Some(git) => Some(Git::from(git)?),
+                Some(git) => Some(Git::try_from(git)?),
                 None => None,
             },
         };
@@ -307,18 +323,37 @@ impl Input {
 
 #[derive(Debug, Clone, Default)]
 pub struct FS {
+    pub path: String,
     pub dir: String,
-    pub suffix: String,
+    pub ext: String,
 }
 impl FS {
-    fn from(fs_raw: &FsRaw) -> Result<FS, tackler::Error> {
-        let dir = match &fs_raw.path {
-            Some(path) => format!("{}/{}", path, fs_raw.dir),
-            None => fs_raw.dir.clone(),
+    fn try_from(fs_raw: &FsRaw) -> Result<FS, tackler::Error> {
+        let extension = match &fs_raw.ext {
+            Some(ext) => {
+                if fs_raw.suffix.is_some() {
+                    let msg = "FS has both 'suffix' and 'ext' keys defined";
+                    return Err(msg.into());
+                }
+                ext.clone()
+            }
+            None => match &fs_raw.suffix {
+                Some(ext) => ext.clone(),
+                None => {
+                    let msg = "FS is missing 'ext' key";
+                    return Err(msg.into());
+                }
+            },
         };
+
+        let ext = extension
+            .strip_prefix('.')
+            .unwrap_or(extension.as_str())
+            .to_string();
         Ok(FS {
-            dir,
-            suffix: fs_raw.suffix.clone(),
+            path: fs_raw.path.clone().unwrap_or_default(),
+            dir: fs_raw.dir.clone(),
+            ext,
         })
     }
 }
@@ -328,12 +363,18 @@ pub struct Git {
     pub repo: String,
     pub git_ref: String,
     pub dir: String,
-    pub suffix: String,
+    pub ext: String,
 }
 impl Git {
-    fn from(git_raw: &GitRaw) -> Result<Git, tackler::Error> {
+    fn try_from(git_raw: &GitRaw) -> Result<Git, tackler::Error> {
         let repo = match &git_raw.repo {
-            Some(repo) => repo.clone(),
+            Some(repo) => {
+                if git_raw.repository.is_some() {
+                    let msg = "Git has both 'repo' and 'repository' keys defined";
+                    return Err(msg.into());
+                }
+                repo.clone()
+            }
             None => match &git_raw.repository {
                 Some(repo) => repo.clone(),
                 None => {
@@ -342,11 +383,31 @@ impl Git {
                 }
             },
         };
+        let extension = match &git_raw.ext {
+            Some(ext) => {
+                if git_raw.suffix.is_some() {
+                    let msg = "Git has both 'suffix' and 'ext' keys defined";
+                    return Err(msg.into());
+                }
+                ext.clone()
+            }
+            None => match &git_raw.suffix {
+                Some(ext) => ext.clone(),
+                None => {
+                    let msg = "Git is missing 'ext' key";
+                    return Err(msg.into());
+                }
+            },
+        };
+        let ext = extension
+            .strip_prefix('.')
+            .unwrap_or(extension.as_str())
+            .to_string();
         Ok(Git {
             repo,
             git_ref: git_raw.git_ref.clone(),
             dir: git_raw.dir.clone(),
-            suffix: git_raw.suffix.clone(),
+            ext,
         })
     }
 }

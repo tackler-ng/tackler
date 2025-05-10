@@ -6,6 +6,18 @@
 
 === Tackler release XX.YY.Z
 
+[WARNING]
+.Semantic change with `input.git.dir` and `input.git.ext`
+====
+This releases fixes the functionality of `input.git.dir` and `input.git.ext` so
+that it is identical how `input.fs.dir` and `input.fs.ext` work. +
+ +
+With previous releases of tackler, `input.git.dir` and `input.git.ext` acted as
+a glob pattern (prefix and suffix). Now `input.git.dir` will match the full
+directory name (no glob at the end)  and `input.git.ext` will match the full
+extension of the filename (no prefix glob).
+====
+
 ==== New features and changes
 
 New features:
@@ -15,6 +27,10 @@ New features:
   ** New optional CLI argument `--formats` to select report formats
 
 Changed functionality:
+
+* Git SCM Storage
+  ** Enforce that `input.git.dir` is matched as a directory (not as a glob)
+  ** Enforce that `input.git.ext` is matched as a file extension (not as a glob)
 
 * Add account selectors as text into Account Selector Checksum metadata
 
@@ -27,14 +43,22 @@ Changed functionality:
 * Change default allocator
   ** Replace `tikv-jemallocator` with `mimalloc`
      *** Mimalloc is available on Linux, Windows and MacOS
-     *** It's ~20% faster on Linux and Windows, but on MacOS difference is only about 5%
+     *** It's about 20% faster on Linux and Windows, but on MacOS difference is only about 5%
      *** Memory usage increases about 30% an all platforms
+
 * Reject unknown configuration keys
+
+* Add new default configuration key `ext` for `suffix` (for both `fs` and `git` storage). 
+  Old config wiht `suffix` key is still supported.
+* Add new CLI option `--input.fs.path`
+  ** Change the semantics of `--input.fs.dir`, it's now path inside journal (under `--input.fs.path`)
+     This is now symmetrical how `--input.git.repo` and `--input.git.dir` behave
+* Allow overriding storage options from CLI without full storage configuration
 
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release: ...
 
 
 ==== Development

@@ -26,7 +26,7 @@ use mimalloc::MiMalloc;
 static GLOBAL: MiMalloc = MiMalloc;
 
 fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
-    let cfg = match Config::from(cli.conf_path.as_ref().unwrap()) {
+    let cfg = match Config::try_from(cli.conf_path.as_ref().unwrap()) {
         Ok(cfg) => cfg,
         Err(err) => {
             let msg = format!(
@@ -38,11 +38,11 @@ fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
         }
     };
 
-    let overlaps = cli.get_overlaps();
+    let overlaps = cli.overlaps()?;
 
     let mut settings = Settings::try_from(cfg, overlaps)?;
 
-    let input_type = cli.get_input_type(&settings)?;
+    let input_type = settings.input();
 
     #[rustfmt::skip]
     let result = match input_type {
@@ -50,7 +50,8 @@ fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
             parser::paths_to_txns(&[f.path], &mut settings)
         },
         InputSettings::Fs(fs) => {
-            let paths = tackler_rs::get_paths_by_ext(fs.dir.as_path(), fs.suffix.as_str())?;
+            let journal = fs.path.join(fs.dir);
+            let paths = tackler_rs::get_paths_by_ext(&journal, fs.ext.as_str())?;
             parser::paths_to_txns(&paths, &mut settings)
         }
         InputSettings::Git(git) => {

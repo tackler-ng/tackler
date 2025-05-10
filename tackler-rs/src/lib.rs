@@ -26,6 +26,23 @@ pub mod tackler {
     pub type Error = Box<dyn std::error::Error + Send + Sync>;
 }
 
+/// Normalize extension
+///
+/// This will remove single leading dot from extension
+/// # Examples
+/// ```
+/// use tackler_rs::normalize_extension;
+/// let ext = ".txt";
+/// let txt = "txt";
+/// let dot = "..dot";
+/// assert_eq!(normalize_extension(ext), "txt");
+/// assert_eq!(normalize_extension(txt), "txt");
+/// assert_eq!(normalize_extension(dot), ".dot");
+/// ```
+pub fn normalize_extension(ext: &str) -> &str {
+    ext.strip_prefix('.').unwrap_or(ext)
+}
+
 ///
 /// Get full path based on
 /// directory, filename prefix, filename and extension

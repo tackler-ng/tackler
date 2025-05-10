@@ -60,7 +60,10 @@ pub(super) struct FsRaw {
     // new key
     pub(super) path: Option<String>,
     pub(super) dir: String,
-    pub(super) suffix: String,
+    // old key
+    pub(super) suffix: Option<String>,
+    // new key
+    pub(super) ext: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -73,7 +76,10 @@ pub(super) struct GitRaw {
     #[serde(rename = "ref")]
     pub(super) git_ref: String,
     pub(super) dir: String,
-    pub(super) suffix: String,
+    // old key
+    pub(super) suffix: Option<String>,
+    // new key
+    pub(super) ext: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

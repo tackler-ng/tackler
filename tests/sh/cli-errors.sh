@@ -186,49 +186,62 @@ echo "check: ok"
 test_name=invalid-arg-combinations
 echo "test: $module/$test_name: $mode"
 
+###
 ### input.storage
+###
+
+### input.storage = git
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.file f.txn \
+    --input.storage git \
+    --input.fs.path path \
+    --input.fs.dir dir \
+    --input.fs.ext ext\
     2>&1 | grep 'cannot be used with'
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.fs.dir path \
+    --input.storage git --input.fs.dir path \
     2>&1 | grep 'cannot be used with'
+
+### input.storage = fs
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.fs.ext txn \
-    2>&1 | grep 'cannot be used with'
-$TACKLER_SH \
-    --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.git.repository path \
-    2>&1 | grep 'cannot be used with'
-$TACKLER_SH \
-    --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.git.ref main \
-    2>&1 | grep 'cannot be used with'
-$TACKLER_SH \
-    --config $SUITE_PATH/basic.toml \
-    --input.storage fs --input.git.commit abcdef \
+    --input.storage fs \
+    --input.git.repository path \
+    --input.git.dir dir \
+    --input.git.ext ext\
+    --input.git.ref ref \
     2>&1 | grep 'cannot be used with'
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.storage fs --input.git.dir path \
     2>&1 | grep 'cannot be used with'
 
+###
 ### input.file
+###
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.storage fs \
     2>&1 | grep 'cannot be used with'
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
-    --input.file f.txn --input.fs.dir path \
+    --input.file f.txn --input.storage git \
+    2>&1 | grep 'cannot be used with'
+
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.file f.txn --input.fs.path path \
+    2>&1 | grep 'cannot be used with'
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.file f.txn --input.fs.dir dir \
     2>&1 | grep 'cannot be used with'
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.fs.ext txn \
     2>&1 | grep 'cannot be used with'
+
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.git.repository path \
@@ -243,7 +256,11 @@ $TACKLER_SH \
     2>&1 | grep 'cannot be used with'
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
-    --input.file f.txn --input.git.dir path \
+    --input.file f.txn --input.git.dir dir \
+    2>&1 | grep 'cannot be used with'
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.file f.txn --input.git.ext txn \
     2>&1 | grep 'cannot be used with'
 
 ### cli dir vs. cli git

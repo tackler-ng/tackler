@@ -23,6 +23,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/repo-not-found.git \
     --input.git.ref master \
     --input.git.dir git-txns \
+    --input.git.ext txn \
     2>&1 | grep 'Tackler error: Txn Data: ".*/core/repo-not-found.git" .* not .* git repository'
 
 echo "check: ok"
@@ -39,6 +40,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/ex/not-git-repo \
     --input.git.ref master \
     --input.git.dir git-txns \
+    --input.git.ext txn \
     2>&1 | grep 'Tackler error: Txn Data: ".*/core/ex/not-git-repo" .* not .* git repository'
 
 echo "check: ok"

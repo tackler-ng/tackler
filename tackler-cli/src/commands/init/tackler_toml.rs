@@ -19,8 +19,8 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
 [kernel.input]
 storage = "fs"
-fs  = { path = "..",      dir = "txns", suffix = "txn" }
-git = { repo = "../.git", dir = "txns", suffix = "txn", ref = "main" }
+fs  = { path = "..",      dir = "txns", ext = "txn" }
+git = { repo = "../.git", dir = "txns", ext = "txn", ref = "main" }
 
 ### Commodity Price Functionality
 ###    This is an optional section

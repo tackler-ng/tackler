@@ -7,14 +7,13 @@ use clap::error::{ContextKind, ContextValue, ErrorKind};
 use clap::{CommandFactory, Parser, Subcommand};
 use std::path::PathBuf;
 use tackler_api::txn_ts;
-use tackler_core::config::PriceLookupType;
+use tackler_core::config;
 use tackler_core::config::overlaps::{
-    AuditOverlap, OverlapConfig, PriceOverlap, ReportOverlap, StrictOverlap, TargetOverlap,
+    AuditOverlap, FileInputOverlap, FsInputOverlap, GitInputOverlap, InputOverlap, OverlapConfig,
+    PriceOverlap, ReportOverlap, StorageOverlap, StrictOverlap, TargetOverlap,
 };
-use tackler_core::kernel::Settings;
-use tackler_core::kernel::settings::{FileInput, FsInput, GitInput, InputSettings};
-use tackler_core::parser::GitInputSelector;
-use tackler_core::{config, tackler};
+use tackler_core::config::{PriceLookupType, StorageType};
+use tackler_core::kernel::settings::GitInputSelector;
 
 use tackler_core::config::FormatType;
 
@@ -77,6 +76,51 @@ pub(crate) struct GitInputGroup {
         group = "git_input_group"
     )]
     pub(crate) input_git_commit: Option<String>,
+}
+#[derive(Debug, Clone, Copy)]
+struct StorageTypeParser;
+
+impl TypedValueParser for StorageTypeParser {
+    type Value = StorageType;
+
+    fn parse_ref(
+        &self,
+        cmd: &clap::Command,
+        arg: Option<&clap::Arg>,
+        value: &std::ffi::OsStr,
+    ) -> Result<Self::Value, clap::Error> {
+        let val = value
+            .to_str()
+            .ok_or_else(|| clap::Error::new(clap::error::ErrorKind::InvalidUtf8))?;
+
+        match StorageType::try_from(val) {
+            Ok(v) => Ok(v),
+            Err(_) => {
+                let mut err = clap::Error::new(ErrorKind::ValueValidation).with_cmd(cmd);
+                if let Some(arg) = arg {
+                    err.insert(
+                        ContextKind::InvalidArg,
+                        ContextValue::String(arg.to_string()),
+                    );
+                }
+                err.insert(
+                    ContextKind::InvalidValue,
+                    ContextValue::String(val.to_string()),
+                );
+                Err(err)
+            }
+        }
+    }
+
+    fn possible_values(
+        &self,
+    ) -> Option<Box<dyn Iterator<Item = clap::builder::PossibleValue> + '_>> {
+        Some(Box::new(
+            [StorageType::FS, StorageType::GIT]
+                .into_iter()
+                .map(clap::builder::PossibleValue::new),
+        ))
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -179,12 +223,15 @@ pub(crate) struct DefaultModeArgs {
         value_name = "path_to_journal-file",
         conflicts_with_all([
             "input_storage",
+            "input_fs_path",
             "input_fs_dir",
             "input_fs_ext",
             "input_git_repo",
             "input_git_ref",
             "input_git_commit",
-            "input_git_dir"])
+            "input_git_dir",
+            "input_git_ext",
+        ])
     )]
     pub(crate) input_filename: Option<PathBuf>,
 
@@ -192,40 +239,56 @@ pub(crate) struct DefaultModeArgs {
     /// Select used transaction storage
     ///
     #[arg(long="input.storage",
-        value_name = "type_of_storage",
-        value_parser([
-            PossibleValue::new(config::StorageType::STORAGE_FS),
-            PossibleValue::new(config::StorageType::STORAGE_GIT),
-        ]),
+        value_name = "fs|git",
         conflicts_with_all([
-            "input_fs_dir",
-            "input_fs_ext",
-            "input_git_repo",
-            "input_git_ref",
-            "input_git_commit",
-            "input_git_dir"])
+            "input_filename",
+        ]),
+        value_parser = StorageTypeParser
     )]
-    pub(crate) input_storage: Option<String>,
+    pub(crate) input_storage: Option<StorageType>,
 
-    /// Filsystem path to transaction directory
+    /// Filesystem path to journal directory
     ///
-    /// This could be a root or node of txn shard tree
-    #[arg(long="input.fs.dir",
-        value_name = "path_to_transaction-directory",
+    /// This is the root of journal, see also `--input.fs.dir`
+    #[arg(long="input.fs.path",
+        value_name = "path",
+        requires("input_fs_dir"),
         requires("input_fs_ext"),
         conflicts_with_all([
             "input_git_repo",
             "input_git_ref",
             "input_git_commit",
-            "input_git_dir"])
+            "input_git_dir"
+        ])
     )]
-    pub(crate) input_fs_dir: Option<PathBuf>,
+    pub(crate) input_fs_path: Option<String>,
+
+    /// Txn directory inside journal
+    ///
+    /// This is the root node of txn tree inside journal
+    /// See also `--input.fs.path`
+    #[arg(long="input.fs.dir",
+        value_name = "txns-directory",
+        conflicts_with_all([
+            "input_git_repo",
+            "input_git_ref",
+            "input_git_commit",
+            "input_git_dir"
+        ])
+    )]
+    pub(crate) input_fs_dir: Option<String>,
 
     /// Txn file extension
     #[arg(
         long = "input.fs.ext",
-        value_name = "txn_file-suffix",
-        requires("input_fs_dir")
+        value_name = "extension",
+        requires("input_fs_dir"),
+        conflicts_with_all([
+            "input_git_repo",
+            "input_git_ref",
+            "input_git_commit",
+            "input_git_dir"
+        ])
     )]
     pub(crate) input_fs_ext: Option<String>,
 
@@ -236,11 +299,13 @@ pub(crate) struct DefaultModeArgs {
     /// This could be a path to '.git' directory inside working copy
     #[arg(
         long = "input.git.repository",
+        alias = "input.git.repo",
         value_name = "path",
         requires("input_git_dir"),
+        requires("input_git_ext"),
         requires("git_input_group")
     )]
-    pub(crate) input_git_repo: Option<PathBuf>,
+    pub(crate) input_git_repo: Option<String>,
 
     #[clap(flatten)]
     git_input_selector: GitInputGroup,
@@ -248,18 +313,26 @@ pub(crate) struct DefaultModeArgs {
     /// Path (inside git repository) to transaction directory
     ///
     /// This could be a root or node of txn shard tree
-    #[arg(
-        long = "input.git.dir",
-        value_name = "path_to_transaction-directory",
-        requires("input_git_repo")
-    )]
+    #[arg(long = "input.git.dir", value_name = "txns-directory")]
     pub(crate) input_git_dir: Option<String>,
+
+    /// Txn file extension
+    #[arg(
+        long = "input.git.ext",
+        value_name = "extension",
+        requires("input_git_repo"),
+        requires("input_git_dir")
+    )]
+    pub(crate) input_git_ext: Option<String>,
 
     /// Account selectors for reports and exports
     ///
     /// List of patterns (regex) for account names.
     ///
-    /// Use anchors ('^...$') for exact match.
+    /// These are full match regular expressions,
+    /// and they try to match full account name.
+    /// Use wildcard patterns `.*`, '(:.*)?', etc.
+    /// when needed.
     ///
     /// Use empty string "" to list all accounts
     #[arg(long = "accounts", value_name = "regex", num_args(1..))]
@@ -344,13 +417,78 @@ pub(crate) struct DefaultModeArgs {
 }
 
 impl DefaultModeArgs {
-    pub(crate) fn get_overlaps(&self) -> OverlapConfig {
-        OverlapConfig {
+    fn verify_storage_mode(&self, allowed_type: StorageType) -> Result<(), clap::Error> {
+        match self.input_storage {
+            Some(st) => {
+                if st != allowed_type {
+                    let mut err = clap::Error::new(ErrorKind::ArgumentConflict);
+                    err.insert(
+                        ContextKind::InvalidArg,
+                        ContextValue::String(format!("--input.storage {}", st)),
+                    );
+                    err.insert(
+                        ContextKind::PriorArg,
+                        ContextValue::String(format!("--input.{}.*", allowed_type)),
+                    );
+                    Err(err)
+                } else {
+                    Ok(())
+                }
+            }
+            None => Ok(()),
+        }
+    }
+
+    fn input_overlap(&self) -> Result<Option<InputOverlap>, clap::Error> {
+        let git_selector = self.git_selector();
+
+        if let Some(filename) = &self.input_filename {
+            let i = FileInputOverlap {
+                path: filename.clone(),
+            };
+            Ok(Some(InputOverlap::File(i)))
+        } else if self.input_fs_path.is_some()
+            || self.input_fs_dir.is_some()
+            || self.input_fs_ext.is_some()
+        {
+            self.verify_storage_mode(StorageType::Fs)?;
+
+            let i = FsInputOverlap {
+                path: self.input_fs_path.clone(),
+                dir: self.input_fs_dir.clone(),
+                ext: self.input_fs_ext.clone(),
+            };
+            Ok(Some(InputOverlap::Fs(i)))
+        } else if self.input_git_repo.is_some()
+            || self.input_git_dir.is_some()
+            || self.input_git_ext.is_some()
+            || git_selector.is_some()
+        {
+            self.verify_storage_mode(StorageType::Git)?;
+
+            let i = GitInputOverlap {
+                repo: self.input_git_repo.clone(),
+                git_ref: git_selector,
+                dir: self.input_git_dir.clone(),
+                ext: self.input_git_ext.clone(),
+            };
+            Ok(Some(InputOverlap::Git(i)))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub(crate) fn overlaps(&self) -> Result<OverlapConfig, clap::Error> {
+        Ok(OverlapConfig {
             audit: AuditOverlap {
                 mode: self.audit_mode,
             },
             strict: StrictOverlap {
                 mode: self.strict_mode,
+            },
+            storage: StorageOverlap {
+                storage_type: self.input_storage,
+                input: self.input_overlap()?,
             },
             price: PriceOverlap {
                 db_path: self.pricedb_filename.clone(),
@@ -367,10 +505,10 @@ impl DefaultModeArgs {
                 exports: self.exports.clone(),
                 formats: self.formats.clone(),
             },
-        }
+        })
     }
 
-    fn get_git_selector(&self) -> Option<GitInputSelector> {
+    fn git_selector(&self) -> Option<GitInputSelector> {
         match (
             &self.git_input_selector.input_git_commit,
             &self.git_input_selector.input_git_ref,
@@ -379,64 +517,8 @@ impl DefaultModeArgs {
             (None, Some(git_ref)) => Some(GitInputSelector::Reference(git_ref.clone())),
             (None, None) => None,
             (Some(_), Some(_)) => {
-                panic!("IE: this should not be possible, Clap configuration is broken")
+                panic!("IE: invalid combination of git input selectors (Clap)")
             }
-        }
-    }
-
-    pub(crate) fn get_input_type(
-        &self,
-        settings: &Settings,
-    ) -> Result<InputSettings, tackler::Error> {
-        let git_selector = self.get_git_selector();
-
-        if let Some(filename) = &self.input_filename {
-            let i = FileInput {
-                path: filename.clone(),
-            };
-            Ok(InputSettings::File(i))
-        } else if self.input_fs_dir.is_some() {
-            let i = FsInput {
-                dir: self
-                    .input_fs_dir
-                    .clone()
-                    .expect("IE: This should not be possible (Clap)"),
-                suffix: self
-                    .input_fs_ext
-                    .clone()
-                    .expect("IE: This should not be possible (Clap)"),
-            };
-            Ok(InputSettings::Fs(i))
-        } else if self.input_git_repo.is_some() {
-            let i = GitInput {
-                repo: self.input_git_repo.clone().unwrap(/*:ok: is_some */),
-                git_ref: git_selector.expect("IE: This should not be possible (Clap)"),
-                dir: self
-                    .input_git_dir
-                    .clone()
-                    .expect("IE: This should not be possible (Clap)"),
-                ext: String::from("txn"),
-            };
-            Ok(InputSettings::Git(i))
-        } else if self.input_git_repo.is_none() && git_selector.is_some() {
-            match settings.get_input_settings(
-                Some(&config::StorageType::STORAGE_GIT.to_string()),
-                Some(self.conf_path.as_ref().unwrap().as_path()),
-            )? {
-                InputSettings::Git(git) => Ok(InputSettings::Git(GitInput {
-                    git_ref: git_selector.unwrap(/*:ok: is_some */),
-                    ..git
-                })),
-                _ => {
-                    let msg = "CLI Arg handling: Internal logic error";
-                    Err(msg.into())
-                }
-            }
-        } else {
-            settings.get_input_settings(
-                self.input_storage.as_ref(),
-                Some(self.conf_path.as_ref().unwrap().as_path()),
-            )
         }
     }
 }

@@ -8,9 +8,7 @@ use tackler_api::metadata::items::MetadataItem;
 use tackler_core::kernel::Settings;
 use tackler_core::model::TxnData;
 use tackler_core::{parser, tackler};
-use tackler_core::parser::GitInputSelector;
-
-
+use tackler_core::kernel::settings::GitInputSelector;
 // val cfg = ConfigFactory.parseString(
 //     """
 //       |{

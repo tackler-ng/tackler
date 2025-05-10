@@ -6,7 +6,7 @@ strict = false
 audit = { mode = false, hash = "SHA-256" }
 timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
-input = { storage = "fs", fs = { path = "maple", dir = "txns", suffix = "txn" } }
+input = { storage = "fs", fs = { path = "maple", dir = "txns", ext = "txn" } }
 
 [price]
 db-path = "maple/txns/price.db"

@@ -12,7 +12,7 @@ strict = true
 audit = { mode = true, hash = "SHA-256" }
 timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
-input = { storage = "git", git = { repo = "../suite/audit/audit-repo.git", dir = "txns", ref = "set-1e1", suffix = "txn" } }
+input = { storage = "git", git = { repo = "../suite/audit/audit-repo.git", dir = "txns", ext = "txn", ref = "set-1e1" } }
 
 [transaction]
 accounts    = { path = "audit/accounts.toml" }

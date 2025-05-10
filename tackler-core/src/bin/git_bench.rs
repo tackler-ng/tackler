@@ -7,10 +7,10 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use tackler_api::metadata::items::MetadataItem;
 use tackler_core::kernel::Settings;
 use tackler_core::model::TxnData;
-use tackler_core::parser::GitInputSelector;
 use tackler_core::{parser, tackler};
 
 use mimalloc::MiMalloc;
+use tackler_core::kernel::settings::GitInputSelector;
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;

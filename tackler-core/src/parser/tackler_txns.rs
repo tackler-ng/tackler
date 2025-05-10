@@ -9,6 +9,7 @@ use std::str;
 //use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::kernel::Settings;
+use crate::kernel::settings::GitInputSelector;
 use crate::model::{TxnData, Txns};
 use crate::parser::tackler_parser;
 use crate::tackler;
@@ -17,11 +18,6 @@ use gix::date::time::CustomFormat;
 use gix::hash as gix_hash;
 use gix::objs::tree::EntryKind;
 use tackler_api::metadata::items::{GitInputReference, MetadataItem};
-
-pub enum GitInputSelector {
-    CommitId(String),
-    Reference(String),
-}
 
 pub fn string_to_txns(
     input: &mut &str,
@@ -110,6 +106,13 @@ pub fn git_to_txns(
         date,
     };
 
+    let dir = if dir.ends_with('/') {
+        dir.to_string()
+    } else {
+        format!("{}/", dir)
+    };
+    let ext = format!(".{}", extension);
+
     let tree = object.tree()?;
     // fixme: Optimization
     //      In the future, this could be optimized with custom walker,
@@ -123,8 +126,8 @@ pub fn git_to_txns(
             use git::objs::tree::EntryKind::{Blob, Link};
             match EntryKind::from(entry.mode) {
                 Blob => {
-                    if entry.filepath.starts_with(str::as_bytes(dir))
-                        && entry.filepath.ends_with(str::as_bytes(extension))
+                    if entry.filepath.starts_with(str::as_bytes(dir.as_str()))
+                        && entry.filepath.ends_with(str::as_bytes(ext.as_str()))
                     {
                         let obj = repo.find_object(entry.oid)?;
                         // perf: let ts_par_start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap(/*:test:*/);

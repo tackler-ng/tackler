@@ -23,6 +23,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
     --input.git.ref err-1e2 \
     --input.git.dir txns/2016/04 \
+    --input.git.ext txn \
     2>&1 | grep 'Semantic error: Audit .* without UUID'
 
 echo "check: ok"
@@ -39,6 +40,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
     --input.git.ref err-1e2 \
     --input.git.dir txns/2016/05 \
+    --input.git.ext txn \
     2>&1 | grep 'd38ad90e-a83d-561c-a5bd-546f8ebb2472'
 
 echo "check: ok"

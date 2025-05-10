@@ -7,7 +7,7 @@ strict = false
 audit = { mode = false, hash = "SHA-256" }
 timestamp = { default-time = 00:00:00, timezone = { name = "Europe/Helsinki" } }
 
-input = { storage = "fs", fs = { path = "solar", dir = "txns", suffix = "txn" } }
+input = { storage = "fs", fs = { path = "solar", dir = "txns", ext = "txn" } }
 
 [price]
 db-path = "solar/txns/se-used.db"

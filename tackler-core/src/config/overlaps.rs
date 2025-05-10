@@ -6,7 +6,8 @@
 //! This module contains the overlap
 //! configuration items to be used e.g. with CLI
 
-use crate::config::PriceLookupType;
+use crate::config::{PriceLookupType, StorageType};
+use crate::kernel::settings::GitInputSelector;
 use std::path::PathBuf;
 
 /// Collections of all configuration overlaps
@@ -16,12 +17,48 @@ pub struct OverlapConfig {
     pub audit: AuditOverlap,
     /// Strict mode related overlaps
     pub strict: StrictOverlap,
+    /// input related overlaps
+    pub storage: StorageOverlap,
     /// Price DB and conversion related overlaps
     pub price: PriceOverlap,
     /// Reporting related overlaps
     pub report: ReportOverlap,
     /// Target (reports, exports) related overlaps
     pub target: TargetOverlap,
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct StorageOverlap {
+    pub storage_type: Option<StorageType>,
+    pub input: Option<InputOverlap>,
+}
+
+/// Input related overlap
+#[derive(Debug, Clone)]
+pub enum InputOverlap {
+    File(FileInputOverlap),
+    Fs(FsInputOverlap),
+    Git(GitInputOverlap),
+}
+
+#[derive(Debug, Clone)]
+pub struct FileInputOverlap {
+    pub path: PathBuf,
+}
+
+#[derive(Debug, Clone)]
+pub struct FsInputOverlap {
+    pub path: Option<String>,
+    pub dir: Option<String>,
+    pub ext: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct GitInputOverlap {
+    pub repo: Option<String>,
+    pub dir: Option<String>,
+    pub git_ref: Option<GitInputSelector>,
+    pub ext: Option<String>,
 }
 
 /// Audit mode related overlaps

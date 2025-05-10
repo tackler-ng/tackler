@@ -90,13 +90,13 @@ path = "tackler"
 ### the scanning starts from here.
 ### CLI: --input.fs.dir
 dir = "txns"
-### Filename suffix
+### Filename extension
 ###
 ### This is transaction file extension, e.g. all files with
-### this suffix are included into input.
+### this extension are included into input.
 ###
 ### CLI: --input.fs.ext
-suffix = "txn"
+ext = "txn"
 
 ### Git SCM based input storage
 [kernel.input.git]
@@ -137,8 +137,13 @@ ref = "main"
 ###
 ### CLI: --input.git.dir
 dir = "txns"
-### Suffix of file names which are processed as transactions.
-suffix = "txn"
+### Filename extension
+###
+### This is transaction file extension, e.g. all files with
+### this extension are included into input.
+###
+### CLI: --input.git.ext
+ext = "txn"
 
 ### Commodity Price Settings
 [price]

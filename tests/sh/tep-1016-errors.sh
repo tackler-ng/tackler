@@ -23,6 +23,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
     --input.git.ref errs-1E2 \
     --input.git.dir txns/2016/04 \
+    --input.git.ext txn \
     2>&1 | grep 'Tackler error: Configuration .*/tep1016-01-err.toml.*Unknown .* flatter'
 
 echo "check: ok"
@@ -39,6 +40,7 @@ $TACKLER_SH \
     --input.git.repository $SUITE_PATH/$module/audit-repo.git \
     --input.git.ref errs-1E2 \
     --input.git.dir txns/2016/04 \
+    --input.git.ext txn \
     2>&1 | grep 'Tackler error: Configuration .*/tep1016-02-err.toml.*Unknown .* bruce'
 
 echo "check: ok"

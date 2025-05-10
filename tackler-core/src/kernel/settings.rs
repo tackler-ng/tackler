@@ -2,24 +2,44 @@
  * Tackler-NG 2023-2025
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::overlaps::OverlapConfig;
+use crate::config::overlaps::{InputOverlap, OverlapConfig, StorageOverlap};
 use crate::config::{
     AccountSelectors, Config, Export, ExportType, Kernel, PriceLookupType, Report, ReportType,
+    StorageType,
 };
 use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::model::TxnAccount;
 use crate::model::price_entry::PriceDb;
 use crate::model::{AccountTreeNode, Commodity};
-use crate::parser::GitInputSelector;
 use crate::{config, parser, tackler};
 use jiff::Zoned;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::Arc;
 use tackler_api::txn_header::Tag;
 use tackler_api::txn_ts::GroupBy;
+use tackler_rs::normalize_extension;
 
+#[derive(Debug, Default, Clone)]
+pub struct FileInput {
+    pub path: PathBuf,
+}
+
+#[derive(Debug, Clone)]
+pub struct FsInput {
+    pub path: PathBuf,
+    pub dir: PathBuf,
+    pub ext: String,
+}
+
+#[derive(Debug, Clone)]
+pub enum GitInputSelector {
+    CommitId(String),
+    Reference(String),
+}
+
+#[derive(Debug, Clone)]
 pub struct GitInput {
     pub repo: PathBuf,
     pub dir: String,
@@ -27,19 +47,16 @@ pub struct GitInput {
     pub ext: String,
 }
 
-pub struct FileInput {
-    pub path: PathBuf,
-}
-
-pub struct FsInput {
-    pub dir: PathBuf,
-    pub suffix: String,
-}
-
+#[derive(Debug, Clone)]
 pub enum InputSettings {
     File(FileInput),
     Fs(FsInput),
     Git(GitInput),
+}
+impl Default for InputSettings {
+    fn default() -> Self {
+        Self::File(FileInput::default())
+    }
 }
 
 #[derive(Debug, Default)]
@@ -161,6 +178,7 @@ pub struct Settings {
     pub(crate) report: Report,
     pub(crate) export: Export,
     strict_mode: bool,
+    input_settings: InputSettings,
     kernel: Kernel,
     pub price: Price,
     price_lookup: PriceLookup,
@@ -175,6 +193,7 @@ impl Default for Settings {
         Settings {
             strict_mode: false,
             audit_mode: false,
+            input_settings: InputSettings::default(),
             report: Report::default(),
             export: Export::default(),
             kernel: Kernel::default(),
@@ -201,6 +220,8 @@ impl Settings {
     pub fn try_from(cfg: Config, overlaps: OverlapConfig) -> Result<Settings, tackler::Error> {
         let strict_mode = overlaps.strict.mode.unwrap_or(cfg.kernel.strict);
         let audit_mode = overlaps.audit.mode.unwrap_or(cfg.kernel.audit.mode);
+
+        let input_settings = Self::input_settings(&cfg, &overlaps.storage)?;
 
         let reports = match overlaps.target.reports {
             Some(reports) => config::to_report_targets(&reports)?,
@@ -282,6 +303,7 @@ impl Settings {
             strict_mode,
             audit_mode,
             kernel: cfg.kernel,
+            input_settings,
             price: Price::default(), // this is not real, see next one
             price_lookup: PriceLookup::default(), // this is not real, see next one
             global_acc_sel: overlaps.report.account_overlap,
@@ -526,50 +548,151 @@ impl Settings {
         self.price_lookup.clone()
     }
 
-    pub fn get_input_settings(
-        &self,
-        storage: Option<&String>,
-        ref_path: Option<&Path>,
-    ) -> Result<InputSettings, tackler::Error> {
-        let input = &self.kernel.input;
+    pub fn input(&self) -> InputSettings {
+        self.input_settings.clone()
+    }
 
-        let storage_type = match storage {
-            Some(storage) => config::StorageType::from(storage.as_str())?,
-            None => input.storage,
+    fn input_settings(
+        cfg: &Config,
+        storage_overlap: &StorageOverlap,
+    ) -> Result<InputSettings, tackler::Error> {
+        let cfg_input = &cfg.kernel.input;
+
+        // if input_overlap.git.repo => storage git
+        // if input_overlap.fs.path => storage fs
+
+        let storage_target = match storage_overlap.storage_type {
+            Some(storage) => storage,
+            None => cfg_input.storage,
+        };
+
+        let storage_type = if let Some(io) = &storage_overlap.input {
+            match io {
+                InputOverlap::File(f) => {
+                    // This is file based input => no need to configure storage
+                    return Ok(InputSettings::File(FileInput {
+                        path: f.path.clone(),
+                    }));
+                }
+                InputOverlap::Fs(fs) => {
+                    if fs.path.is_none() && storage_target != StorageType::Fs {
+                        let msg = "Conflicting input and storage system arguments. Targeting 'fs', but it's not activated by configuration or by cli options";
+                        return Err(msg.into());
+                    }
+                    StorageType::Fs
+                }
+                InputOverlap::Git(git) => {
+                    if git.repo.is_none() && storage_target != StorageType::Git {
+                        let msg = "Conflicting input and storage system arguments. Targeting 'git', but it's not activated by configuration or by cli options";
+                        return Err(msg.into());
+                    }
+                    StorageType::Git
+                }
+            }
+        } else {
+            storage_target
         };
 
         match storage_type {
-            config::StorageType::FS => match &input.fs {
-                Some(fs) => {
-                    let dir = fs.dir.as_str();
-                    let suffix = &fs.suffix;
-                    let i = FsInput {
-                        dir: match ref_path {
-                            Some(p) => tackler_rs::get_abs_path(p, dir)?,
-                            None => PathBuf::from(dir),
-                        },
-                        suffix: suffix.strip_prefix('.').unwrap_or(suffix.as_str()).into(),
+            StorageType::Fs => match &cfg_input.fs {
+                Some(fs_cfg) => {
+                    let i = if let Some(InputOverlap::Fs(fs_soi)) = &storage_overlap.input {
+                        // FS: Overlap + Config
+                        let path = fs_soi.path.as_ref().unwrap_or(&fs_cfg.path);
+                        let dir = fs_soi.dir.as_ref().unwrap_or(&fs_cfg.dir);
+                        let ext = fs_soi.ext.as_ref().unwrap_or(&fs_cfg.ext);
+                        FsInput {
+                            path: tackler_rs::get_abs_path(cfg.path(), path)?,
+                            dir: PathBuf::from(dir),
+                            ext: normalize_extension(ext).to_string(),
+                        }
+                    } else {
+                        // FS: No overlap, all info must come from config
+                        let ext = &fs_cfg.ext;
+                        FsInput {
+                            path: tackler_rs::get_abs_path(cfg.path(), fs_cfg.path.as_str())?,
+                            dir: PathBuf::from(&fs_cfg.dir),
+                            ext: normalize_extension(ext).to_string(),
+                        }
                     };
                     Ok(InputSettings::Fs(i))
                 }
-                None => Err("Storage type 'fs' is not configured".into()),
+                None => {
+                    // FS: No config, all info must come from overlap
+                    if let Some(InputOverlap::Fs(fs_soi)) = &storage_overlap.input {
+                        match (&fs_soi.path, &fs_soi.dir, &fs_soi.ext) {
+                            (Some(path), Some(dir), Some(ext)) => Ok(InputSettings::Fs(FsInput {
+                                path: tackler_rs::get_abs_path(cfg.path(), path)?,
+                                dir: PathBuf::from(dir),
+                                ext: normalize_extension(ext).to_string(),
+                            })),
+                            _ => {
+                                let msg = format!(
+                                    "Not enough information to configure 'fs' storage: path = '{:?}', dir = '{:?}', ext = '{:?}'",
+                                    fs_soi.path, fs_soi.dir, fs_soi.ext
+                                );
+                                Err(msg.into())
+                            }
+                        }
+                    } else {
+                        Err("Storage type 'fs' is not configured".into())
+                    }
+                }
             },
-            config::StorageType::Git => match &input.git {
-                Some(git) => {
-                    let repo = git.repo.as_str();
-                    let suffix = &git.suffix;
-                    let i = GitInput {
-                        repo: match ref_path {
-                            Some(p) => tackler_rs::get_abs_path(p, repo)?,
-                            None => PathBuf::from(repo),
-                        },
-                        git_ref: GitInputSelector::Reference(git.git_ref.clone()),
-                        dir: git.dir.clone(),
-                        ext: suffix.strip_prefix('.').unwrap_or(suffix.as_str()).into(),
+            StorageType::Git => match &cfg_input.git {
+                Some(git_cfg) => {
+                    let i = if let Some(InputOverlap::Git(git_soi)) = &storage_overlap.input {
+                        // GIT: Overlap + Config
+                        let repo = git_soi.repo.as_ref().unwrap_or(&git_cfg.repo);
+                        let dir = git_soi.dir.as_ref().unwrap_or(&git_cfg.dir);
+                        let ext = git_soi.ext.as_ref().unwrap_or(&git_cfg.ext);
+                        // reference is only option via cfg
+                        let cfg_ref = GitInputSelector::Reference(git_cfg.git_ref.clone());
+                        let git_ref = git_soi.git_ref.as_ref().unwrap_or(&cfg_ref);
+
+                        GitInput {
+                            repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
+                            git_ref: git_ref.clone(),
+                            dir: dir.clone(),
+                            ext: normalize_extension(ext).to_string(),
+                        }
+                    } else {
+                        // GIT: No overlap, all info must come from config
+                        let repo = git_cfg.repo.as_str();
+                        let ext = &git_cfg.ext;
+                        GitInput {
+                            repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
+                            git_ref: GitInputSelector::Reference(git_cfg.git_ref.clone()),
+                            dir: git_cfg.dir.clone(),
+                            ext: normalize_extension(ext).to_string(),
+                        }
                     };
                     Ok(InputSettings::Git(i))
                 }
-                None => Err("Storage type 'git' is not configured".into()),
+                None => {
+                    // GIT: No config, all info must come from overlap
+                    if let Some(InputOverlap::Git(git_soi)) = &storage_overlap.input {
+                        match (&git_soi.repo, &git_soi.dir, &git_soi.ext, &git_soi.git_ref) {
+                            (Some(repo), Some(dir), Some(ext), Some(git_ref)) => {
+                                Ok(InputSettings::Git(GitInput {
+                                    repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
+                                    git_ref: git_ref.clone(),
+                                    dir: dir.clone(),
+                                    ext: normalize_extension(ext).to_string(),
+                                }))
+                            }
+                            _ => {
+                                let msg = format!(
+                                    "Not enough information to configure 'git' storage: repo = '{:?}', dir = '{:?}', ext = '{:?}', ref = '{:?}'",
+                                    git_soi.repo, git_soi.dir, git_soi.ext, git_soi.git_ref
+                                );
+                                Err(msg.into())
+                            }
+                        }
+                    } else {
+                        Err("Storage type 'git' is not configured".into())
+                    }
+                }
             },
         }
     }

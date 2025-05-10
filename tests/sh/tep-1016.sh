@@ -26,6 +26,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-01.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
+    --input.git.ext "txn" \
     --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
@@ -55,6 +56,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-02.toml \
     --input.git.repository $SUITE_PATH/audit/audit-repo.git \
     --input.git.dir "txns" \
+    --input.git.ext "txn" \
     --input.git.ref "set-1e2" \
     --accounts '.*' \
     --api-filter-def \
