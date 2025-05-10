@@ -2095,7 +2095,7 @@ dependencies = [
 
 [[package]]
 name = "tackler"
-version = "25.4.3-dev"
+version = "25.5.1"
 dependencies = [
  "clap",
  "log",
@@ -2107,7 +2107,7 @@ dependencies = [
 
 [[package]]
 name = "tackler-api"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "base64",
  "indoc",
@@ -2123,7 +2123,7 @@ dependencies = [
 
 [[package]]
 name = "tackler-core"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "criterion",
  "digest",
@@ -2149,7 +2149,7 @@ dependencies = [
 
 [[package]]
 name = "tackler-rs"
-version = "0.9.0"
+version = "0.10.0"
 dependencies = [
  "indoc",
  "log",
