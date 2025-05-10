@@ -99,7 +99,7 @@ impl Report for BalanceGroupReporter {
         };
 
         if let Some(hash) = cfg.get_hash() {
-            let asc = acc_sel.account_selector_checksum(hash)?;
+            let asc = acc_sel.account_selector_metadata(hash)?;
             metadata.push(asc);
         }
 

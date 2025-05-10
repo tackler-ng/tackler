@@ -113,6 +113,7 @@ impl Export for EquityExporter {
         let acc_sel_checksum = match cfg.get_hash() {
             Some(hash) => Some(AccountSelectorChecksum {
                 hash: bal_acc_sel.checksum(hash)?,
+                selectors: bal_acc_sel.selectors(),
             }),
             None => None,
         };

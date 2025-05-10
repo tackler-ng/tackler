@@ -72,7 +72,7 @@ impl Text for TxnSetChecksum {
         vec![
             format!("Txn Set Checksum"),
             format!("{:>pad$} : {}", self.hash.algorithm, &self.hash.value),
-            format!("{:>pad$} : {}", "Set size", self.size),
+            format!("{:>pad$} : {}", "set size", self.size),
         ]
     }
 }
@@ -91,17 +91,37 @@ pub struct TimeZoneInfo {
 /// Account Selector Checksum item
 #[derive(Serialize, Debug, Clone)]
 pub struct AccountSelectorChecksum {
-    /// Hash of selector Checksum
+    /// Account selector checksum
     pub hash: Checksum,
+    /// Account selectors
+    pub selectors: Vec<String>,
 }
 impl Text for AccountSelectorChecksum {
     fn text(&self, _tz: TimeZone) -> Vec<String> {
         // echo -n "SHA-512/256" | wc -c => 11
         let pad = MetadataItem::ITEM_PAD;
-        vec![
+        let mut t = vec![
             format!("Account Selector Checksum"),
             format!("{:>pad$} : {}", self.hash.algorithm, &self.hash.value),
-        ]
+        ];
+        if !self.selectors.is_empty() {
+            let sel_txt = if self.selectors.len() > 1 {
+                "selectors"
+            } else {
+                "selector"
+            };
+            let l = format!(
+                "{:>pad$} : '{}'",
+                sel_txt,
+                &self.selectors.first().unwrap(/*:ok*/)
+            );
+            t.push(l);
+            for s in self.selectors.iter().skip(1) {
+                let l = format!("{:>pad$} | '{}'", "", s);
+                t.push(l);
+            }
+        }
+        t
     }
 }
 

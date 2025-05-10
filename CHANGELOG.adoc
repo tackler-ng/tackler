@@ -16,6 +16,8 @@ New features:
 
 Changed functionality:
 
+* Add account selectors as text into Account Selector Checksum metadata
+
 * Change and Add more information to the "Git Storage" metadata
   ** New fields: "author", "date"
   ** Fix name of "message" to "subject" (the content of that field has been git subject all the time)
