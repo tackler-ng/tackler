@@ -5,7 +5,7 @@ image:https://img.shields.io/badge/tackler-documentation-%23ffcb00["Tackler Docs
 image:https://img.shields.io/github/discussions/tackler-ng/tackler["GitHub Discussions", link="https://github.com/tackler-ng/tackler/discussions"]
 image:https://tackler.e257.fi/img/badge-matrix.svg["matrix: tackler", link="https://matrix.to/#/#tackler:matrix.org"]
 
-= Tackler-NG
+= Tackler
 
 link:https://tackler.e257.fi/[Tackler] is fast (1), reliable bookkeeping engine
 with native GIT SCM support for plain text accounting, written in Rust.
@@ -43,12 +43,12 @@ get it link:https://www.rust-lang.org/tools/install[from here].
 
 == Project Status
 
-Tackler-NG is in link:https://tackler.e257.fi/features/[feature] parity with
+Tackler is in link:https://tackler.e257.fi/features/[feature] parity with
 and beyond of the old Scala code base. It's basis of all Tackler development.
 
 [NOTE]
 ====
-*Tackler-NG is tested with 423
+*Tackler is tested with 436
 link:https://github.com/tackler-ng/tackler-t3db[tracked test vectors]*
 ====
 
@@ -159,6 +159,7 @@ target/release/tackler \
    --accounts 'a:ay2016:am12'
 ----
 
+.Report with Git Storage metadata
 ----
 Git Storage
       reference : set-1e5
@@ -171,32 +172,33 @@ Git Storage
 
 Txn Set Checksum
         SHA-256 : 2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7
-       Set size : 100000
+       set size : 100000
 
 **********************************************************************************
 Account Selector Checksum
         SHA-256 : abbcd1800caab82df857441d734b728ca18850f08f9a1c96602ee740b970cae0
+       selector : 'a:ay2016:am12'
 
 
 Balance Report
 --------------
-              -133433.00   -133433.00  a:ay2016:am12
+              -133402.00   a:ay2016:am12
 ========================
-              -133433.00
+              -133402.00
 ##################################################################################
 ----
 
 
 See `tackler --help`, link:examples/tackler.toml[Tackler configuration] file, tackler link:https://github.com/tackler-ng/tackler/tree/main/examples[examples] and link:tackler-cli/CRATES.md[Tackler CLI documentation] how to use the rusty version of tackler.
 
-link:docs/devel/readme.adoc[Developer's Guides] have technical information about Tackler-NG. For Tackler user manual, see the link:https://tackler.e257.fi/docs/[Tackler Documentation].
+link:docs/devel/readme.adoc[Developer's Guides] have technical information about Tackler. For Tackler user manual, see the link:https://tackler.e257.fi/docs/[Tackler Documentation].
 
 == Credits
 
 Special thanks to the Rust community for the all help and advice,
 without forgetting Clippy.
 link:https://github.com/GitoxideLabs/gitoxide[Gitoxide]
-is one of the key components which made Tackler-NG possible - Thank you!
+is one of the key components which made Tackler possible - Thank you!
 
 See link:CREDITS.adoc[CREDITS] for full details.
 
@@ -205,9 +207,9 @@ See link:CREDITS.adoc[CREDITS] for full details.
 All contributions are valued and none is too small or insignificant.
 
 See link:CONTRIBUTING.adoc[CONTRIBUTING] for details how you could participate
-with Tackler-NG development.
+with Tackler development.
 
-Following people have helped or contributed to the development of Tackler-NG:
+Following people have helped or contributed to the development of Tackler:
 
 link:https://github.com/byron[Byron],
 link:https://github.com/zamazan4ik[zamazan4ik],
@@ -219,10 +221,10 @@ Thank you!
 
 == Security
 
-If you find a security issue in Tackler-NG, please report it as outlined in
+If you find a security issue in Tackler, please report it as outlined in
 the link:./SECURITY.md[Security Policy].
 
 
 == License
 
-Tackler-NG is licensed under the link:./LICENSE[Apache License, version 2.0].
+Tackler is licensed under the link:./LICENSE[Apache License, version 2.0].

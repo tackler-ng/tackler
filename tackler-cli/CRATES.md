@@ -1,4 +1,4 @@
-# Tackler-NG: Tackler CLI Application
+# Tackler: Tackler CLI Application
 
 [![Build Status](https://github.com/tackler-ng/tackler/actions/workflows/ci.yml/badge.svg)](https://github.com/tackler-ng/tackler/actions)
 [![Github Releases](https://img.shields.io/github/v/release/tackler-ng/tackler?include_prereleases&color=%230868da)](https://github.com/tackler-ng/tackler/releases)
@@ -11,14 +11,14 @@
 [Tackler](https://tackler.e257.fi/) is fast (1), reliable bookkeeping tool
 with native GIT SCM  support for plain text accounting, written in Rust. 
 
-````bash
+```bash
 cargo install --locked tackler
 tackler new demo
 tackler --config demo/conf/tackler.toml
-````
+```
 This will produce balance and register reports for the demo journal.
 
-````text
+```text
 Balance Report
 --------------
                  0.00    17.50  Expenses
@@ -33,46 +33,52 @@ Balance Report
 Register Report
 ---------------
 ...
-````
+```
 
 1) Tackler has excellent performance, it can process 700_000 transactions per second on modern laptop. 
-See [Tackler Performance](https://tackler.e257.fi/docs/performance/) for details.
+See [Tackler Performance](https://tackler.e257.fi/docs/tackler/latest/features/performance/) for details.
 
 
 ## Project Status
 
-Tackler-NG is in [feature](https://tackler.e257.fi/features/) parity with and beyond of the old Scala code base.
-It's basis of all Tackler development.
+Tackler is reimplementation of old nearly 10 years old Scala based system, 
+and it's in 
+[feature](https://tackler.e257.fi/docs/tackler/latest/features/) parity 
+with and beyond of the old Scala code base. It's basis of all Tackler 
+development. Tackler is using the same test and reference vectors as the 
+old code base.
 
-**NOTE: Tackler-NG is tested with 423 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
+
+**NOTE: Tackler is tested with 436 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
-[Tackler Journal Format](https://tackler.e257.fi/docs/journal/format/), 
-transaction storages ([FS backend](https://tackler.e257.fi/docs/usage/#storage-selector), 
-[Gitoxide](https://github.com/GitoxideLabs/gitoxide/) based [Git backend](https://tackler.e257.fi/docs/journal/git-storage/)), 
+[Tackler Journal Format](https://tackler.e257.fi/docs/tackler/latest/journal/format/), 
+transaction storages ([FS backend](https://tackler.e257.fi/docs/tackler/latest/journal/fs-storage/), 
+[Gitoxide](https://github.com/GitoxideLabs/gitoxide/) based [Git backend](https://tackler.e257.fi/docs/tackler/latest/journal/git-storage/)), 
 all reports 
-([Balance](https://tackler.e257.fi/docs/report-balance/), 
-[Balance Group](https://tackler.e257.fi/docs/report-balance-group/), 
-[Register](https://tackler.e257.fi/docs/report-register/))
+([Balance](https://tackler.e257.fi/docs/tackler/latest/reports/report-balance/), 
+[Balance Group](https://tackler.e257.fi/docs/tackler/latest/reports/report-balance-group/), 
+[Register](https://tackler.e257.fi/docs/tackler/latest/reports/report-register/))
 and all exports 
-([Equity](https://tackler.e257.fi/docs/export-equity/), 
-[Identity](https://tackler.e257.fi/docs/export-equity/)).
+([Equity](https://tackler.e257.fi/docs/tackler/latest/reports/export-equity/), 
+[Identity](https://tackler.e257.fi/docs/tackler/latest/reports/export-identity/)).
 
 Other notable features are:
 
-* [Commodities](https://tackler.e257.fi/docs/commodities/), [Currencies and Shares](https://tackler.e257.fi/docs/currencies/)
-* [Market Value of Commodities and Shares](https://tackler.e257.fi/docs/price/), including different valuation (Mark-to-Market) methods:
-  * [Current Market Value](https://tackler.e257.fi/docs/price/current-market-value/)
-  * [Historic Market Value](https://tackler.e257.fi/docs/price/historic-market-value/)
-  * [Variable Market Value](https://tackler.e257.fi/docs/price/variable-market-value/)
-* [Transaction Filters](https://tackler.e257.fi/docs/txn-filters/) for powerfull selectors of accounting data
-* Real transaction [timestamps up to nanosecond](https://tackler.e257.fi/docs/journal/format/#timestamps) resolution and with timezone information
+* [Commodities, Currencies and Shares](https://tackler.e257.fi/docs/tackler/latest/commodities/)
+* New support for [Market Value of Commodities and Shares](https://tackler.e257.fi/docs/tackler/latest/commodities/price/), including different valuation (Mark-to-Market) methods:
+  * [Current Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/current-market-value/)
+  * [Historic Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/historic-market-value/)
+  * [Variable Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/variable-market-value/)
+* [Transaction Filters](https://tackler.e257.fi/docs/tackler/latest/usage/txn-filters/) for powerful selectors of accounting data
+* Real transaction [timestamps up to nanosecond](https://tackler.e257.fi/docs/tackler/latest/reference/timestamps/) resolution and with timezone information
   * Plain dates are also supported
   * Also Civil date times without zone information
-* Accounting based on [Geo Location](https://tackler.e257.fi/docs/gis/txn-geo-location/) and [Transaction GIS Filters](https://tackler.e257.fi/docs/gis/txn-geo-filters/)
-* Optional [JSON Output](https://tackler.e257.fi/docs/output-formats/)
+* Accounting based on [Geo Location](https://tackler.e257.fi/docs/tackler/latest/usage/gis/) and [Transaction GIS Filters](https://tackler.e257.fi/docs/tackler/latest/usage/gis/txn-geo-filters/)
+* Optional [JSON Output](https://tackler.e257.fi/docs/tackler/latest/reports/formats/)
 
-See `tackler --help` and [Tackler Configuration](https://github.com/tackler-ng/tackler/blob/main/examples/tackler.toml) how to use tackler-ng.
+
+See `tackler --help` and [Tackler Documentation](https://tackler.e257.fi/docs/tackler/latest/) how to use tackler.
 
 
 ## Installation
@@ -120,11 +126,13 @@ Tackler binary will be located at `target/release/tackler`
 
 ## Examples
 
-Check out Tackler's [repository for full list of examples](https://github.com/tackler-ng/tackler/blob/main/examples/readme.adoc).
+Tackler has multiple examples to demonstrate its functionality: 
+reporting example for [Solar Energy Value](https://tackler.e257.fi/docs/tackler/latest/examples/solar-energy-value/), 
+Accounting example for [Trimix Filling Station](https://tackler.e257.fi/docs/tackler/latest/examples/trimix-filling-station/)
 
-These examples need tackler source code and test vectors,
-so make sure you have cloned it out with submodules.
-If not, update the test suite submodule:
+Below are listed some of the simplest one. These examples need tackler 
+source code and test vectors,  so make sure you have cloned it out with 
+submodules. If you did not, update the test suite submodule:
 
 ```bash
 git submodule init
@@ -199,7 +207,7 @@ target/release/tackler \
 
 #### Output
 
-````
+```
 Git Storage
       reference : set-1e1
       directory : txns
@@ -211,43 +219,44 @@ Git Storage
 
 Txn Set Checksum
         SHA-256 : 4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3
-       Set size : 10
+       set size : 10
 
 **********************************************************************************
 Account Selector Checksum
         SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
+       selector : 'a:.*'
 
 
 Balance Report
 --------------
+                -1.00   a:ay2016:am01
                 -6.00   a:ay2016:am02
                -14.00   a:ay2016:am03
                -19.00   a:ay2016:am04
                -26.00   a:ay2016:am05
-                -1.00   a:ay2016:am07
+                -2.00   a:ay2016:am07
                 -7.00   a:ay2016:am08
                -13.00   a:ay2016:am09
                -19.00   a:ay2016:am10
                -25.00   a:ay2016:am11
-               -31.00   a:ay2016:am12
 =====================
-              -161.00
+              -132.00
 ##################################################################################
-````
+```
 
 #### Report with 100_000 Transactions
 
 There is git ref 'set-1e5' inside the example audit -repository.
 
-````bash
+```bash
 target/release/tackler \
     --config examples/audit.toml \
     --input.git.ref set-1e5
-````
+```
 
 #### Output
 
-````
+```
 Git Storage
       reference : set-1e5
       directory : txns
@@ -259,15 +268,17 @@ Git Storage
 
 Txn Set Checksum
         SHA-256 : 2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7
-       Set size : 100000
+       set size : 100000
 
 **********************************************************************************
 Account Selector Checksum
         SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
+       selector : 'a:.*'
+
 
 Balance Report
 --------------
-               -135600.00   a:ay2016:am01
+               -135601.00   a:ay2016:am01
                -118950.00   a:ay2016:am02
                -135631.00   a:ay2016:am03
                -127137.00   a:ay2016:am04
@@ -278,35 +289,35 @@ Balance Report
                -127140.00   a:ay2016:am09
                -135619.00   a:ay2016:am10
                -127126.00   a:ay2016:am11
-               -133433.00   a:ay2016:am12
+               -133402.00   a:ay2016:am12
 =========================
-              -1574609.01
+              -1574579.01
 ##################################################################################
-````
+```
 
 ### Transaction Filters
 
 #### Filter definition
 
-````bash
+```bash
 target/release/tackler \
     --config examples/audit.toml \
     --input.git.ref set-1e5 \
     --api-filter-def '{"txnFilter":{"TxnFilterPostingAccount":{"regex":"a:ay2016:am12"}}}'
-````
+```
 
 The transaction filter definition could be given also 
 as Base64 ascii armored string:
 
-````
+```
 --api-filter-def \
 base64:eyJ0eG5GaWx0ZXIiOnsiVHhuRmlsdGVyUG9zdGluZ0FjY291bnQiOnsicmVnZXgiOiJhOmF5MjAxNjphbTEyIn19fQ==
-````
+```
 
 
 #### Output
 
-````
+```
 Git Storage
       reference : set-1e5
       directory : txns
@@ -318,7 +329,7 @@ Git Storage
 
 Txn Set Checksum
         SHA-256 : 8ff80f72dc8b36fd6272319d08b99c54d8cf47baff47eda3df68b69e7b7b66bc
-       Set size : 8405
+       set size : 8405
 
 Filter
   Posting Account: "a:ay2016:am12"
@@ -326,20 +337,22 @@ Filter
 **********************************************************************************
 Account Selector Checksum
         SHA-256 : df4714ff3f5bd031a8256df95863a8085f740b436f1b47febb45c9eb9aaa9e9e
+       selector : 'a:.*'
+
 
 Balance Report
 --------------
-              -133433.00   a:ay2016:am12
+              -133402.00   a:ay2016:am12
 ========================
-              -133433.00
+              -133402.00
 ##################################################################################
-````
+```
 
 ## Further info
 
-* [Tackler Journal Format](https://tackler.e257.fi/docs/journal/format/)
-* [Txn Filters with Shell Script](https://tackler.e257.fi/docs/usage/#txn-filters-shell)
-* [Tackler-NG repository](https://github.com/tackler-ng/tackler)
+* [Tackler Journal Format](https://tackler.e257.fi/docs/tackler/latest/journal/format/)
+* [Transaction Filters](https://tackler.e257.fi/docs/tackler/latest/usage/txn-filters/)
+* [Tackler repository](https://github.com/tackler-ng/tackler)
 * [Tackler website](https://tackler.e257.fi/)
 * [Plain Text Accounting](https://plaintextaccounting.org/)
 
