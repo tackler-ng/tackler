@@ -283,9 +283,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.37"
+version = "4.5.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eccb054f56cbd38340b380d4a8e69ef1f02f1af43db2f0cc817a4774d80ae071"
+checksum = "ed93b9805f8ba930df42c2590f05453d5ec36cbb85d018868a5b24d31f6ac000"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -293,9 +293,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.37"
+version = "4.5.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efd9466fac8543255d3b1fcad4762c5e116ffe808c8a3043d4263cd4fd4862a2"
+checksum = "379026ff283facf611b0ea629334361c4211d1b12ee01024eec1591133b04120"
 dependencies = [
  "anstream",
  "anstyle",
@@ -714,9 +714,9 @@ dependencies = [
 
 [[package]]
 name = "gix-date"
-version = "0.10.1"
+version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a98593f1f1e14b9fa15c5b921b2c465e904d698b9463e21bb377be8376c3c1a"
+checksum = "139d1d52b21741e3f0c72b0fc65e1ff34d4eaceb100ef529d182725d2e09b8cb"
 dependencies = [
  "bstr",
  "itoa",
@@ -824,9 +824,9 @@ dependencies = [
 
 [[package]]
 name = "gix-index"
-version = "0.40.0"
+version = "0.40.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6d505aea7d7c4267a3153cb90c712a89970b4dd02a2cb3205be322891f530b5"
+checksum = "b38e919efd59cb8275d23ad2394b2ab9d002007b27620e145d866d546403b665"
 dependencies = [
  "bitflags",
  "bstr",
@@ -936,9 +936,9 @@ dependencies = [
 
 [[package]]
 name = "gix-path"
-version = "0.10.17"
+version = "0.10.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c091d2e887e02c3462f52252c5ea61150270c0f2657b642e8d0d6df56c16e642"
+checksum = "567f65fec4ef10dfab97ae71f26a27fd4d7fe7b8e3f90c8a58551c41ff3fb65b"
 dependencies = [
  "bstr",
  "gix-trace",
@@ -1107,9 +1107,9 @@ dependencies = [
 
 [[package]]
 name = "gix-traverse"
-version = "0.46.1"
+version = "0.46.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39094185f6d9a4d81101130fbbf7f598a06441d774ae3b3ae7930a613bbe1157"
+checksum = "b8648172f85aca3d6e919c06504b7ac26baef54e04c55eb0100fa588c102cc33"
 dependencies = [
  "bitflags",
  "gix-commitgraph",
