@@ -1,11 +1,26 @@
 = Tackler Examples
 
-These examples are supposed to be run from project root folder.
+See tackler
+link:https://tackler.e257.fi/docs/tackler/latest/examples/[ Documentation and Examples]
+for longer explanation of these examples.
+
+
+These examples are supposed to be run from project root folder after you have
+built a release version of tackler:
+
+----
+# with just
+just release-build
+
+# with cargo
+cargo build --release --bin tackler
+----
 
 == Create a new Journal Setup
 
 ----
 target/release/tackler new journal
+target/release/tackler --config journal/conf/tackler.toml
 ----
 
 
