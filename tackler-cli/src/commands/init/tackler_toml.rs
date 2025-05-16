@@ -4,10 +4,10 @@
  */
 
 pub(super) const TXT: &str = r#"#
-#Tackler-NG configuration file
+# Journal configuration for Tackler
 #
-# For full Documentation, see:
-# https://tackler.e257.fi/docs/configuration/tackler-toml/
+# For full documentation, see:
+# https://tackler.e257.fi/docs/tackler/latest/reference/tackler-toml/
 #
 [kernel]
 ### Use strict account data validation
