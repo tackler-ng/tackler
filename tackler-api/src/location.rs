@@ -44,6 +44,10 @@ impl GeoPoint {
     /// * `lat` in decimals, must be inclusive -90 -- 90
     /// * `lon` in decimals, must be inclusive -180 -- 180
     /// * `alt` in meters, must be more than -6378137 meters
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` in case of invalid coordinates
     pub fn from(
         lat: Decimal,
         lon: Decimal,

@@ -65,9 +65,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterTxnTSEnd(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterTxnTSEnd(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(
@@ -103,9 +103,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterTxnTSEnd(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterTxnTSEnd(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(
@@ -137,9 +137,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterTxnTSEnd(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterTxnTSEnd(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(

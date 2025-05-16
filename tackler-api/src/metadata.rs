@@ -60,6 +60,7 @@ impl Metadata {
 
     /// Get textual representation of Metadata
     #[must_use]
+    #[allow(clippy::needless_pass_by_value)]
     pub fn text(&self, tz: TimeZone) -> String {
         let ts = self
             .items
@@ -75,6 +76,7 @@ impl Metadata {
     }
 
     /// Test if metadata is empty
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.items.is_empty()
     }

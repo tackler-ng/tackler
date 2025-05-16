@@ -55,7 +55,7 @@ impl PriceLookupCtx<'_> {
 impl PriceLookupCtx<'_> {
     pub fn metadata(&self) -> PriceRecords {
         let rates = if let Some(target) = self.in_commodity.clone() {
-            let r = match &self.cache {
+            match &self.cache {
                 Cache::Fixed(map) => map
                     .iter()
                     .sorted_by_key(|k| *k)
@@ -76,8 +76,7 @@ impl PriceLookupCtx<'_> {
                         target: target.name.clone(),
                     })
                     .collect(),
-            };
-            r
+            }
         } else {
             Vec::new()
         };

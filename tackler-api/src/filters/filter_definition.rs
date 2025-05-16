@@ -61,6 +61,10 @@ impl FilterDefinition {
 
     /// Generate filter from JSON String
     ///
+    /// # Errors
+    ///
+    /// Return `Err` if the filter definition is not valid
+    ///
     /// # Examples
     /// ```
     /// # use tackler_api::tackler;
@@ -97,6 +101,12 @@ impl FilterDefinition {
 
     /// Generate filter from ascii armor JSON String
     ///
+    /// The ascii armor must be be prefixed with `base64`
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` if the filter definition is not valid or encoding is unknown
+    ///
     /// # Examples
     /// ```
     /// # use tackler_api::tackler;
@@ -132,7 +142,7 @@ impl FilterDefinition {
         let filt_json = match general_purpose::STANDARD.decode(filt_armor) {
             Ok(data) => data,
             Err(err) => {
-                let msg = format!("Transaction Filter Ascii Armor decoding failure: {}", err);
+                let msg = format!("Transaction Filter Ascii Armor decoding failure: {err}");
                 return Err(msg.into());
             }
         };
@@ -165,9 +175,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::NullaryTRUE(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::NullaryTRUE(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(
@@ -232,9 +242,9 @@ mod tests {
             assert!(tf_res.is_ok());
 
             let tf = tf_res.unwrap(/*:test:*/);
-            match tf.txn_filter {
-                TxnFilter::NullaryTRUE(_) => (),
-                _ => panic!(/*:test:*/),
+            if let TxnFilter::NullaryTRUE(_) = tf.txn_filter {
+            } else {
+                panic!(/*:test:*/)
             }
         }
     }

@@ -190,6 +190,7 @@ mod tests {
     use crate::{txn_header::TxnHeader, txn_ts};
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn txn_header_display() {
         let ts = strtime::parse(
             "%Y-%m-%dT%H:%M:%S%.f%:z",

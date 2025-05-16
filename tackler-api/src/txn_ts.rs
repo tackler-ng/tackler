@@ -41,17 +41,21 @@ impl TimestampStyle {
     pub const FULL: &'static str = "full";
 
     /// Get Timestamp style by name
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` if the timestamp style is unknown
     pub fn from(name: &str) -> Result<Self, tackler::Error> {
         match name {
             TimestampStyle::DATE => Ok(TimestampStyle::Date),
             TimestampStyle::SECONDS => Ok(TimestampStyle::Secodns),
             TimestampStyle::FULL => Ok(TimestampStyle::Full),
-            _ => Err(format!("Unknown timestamp style {}", name).into()),
+            _ => Err(format!("Unknown timestamp style {name}").into()),
         }
     }
 }
 
-/// Time granularity selector for GroupBy operations
+/// Time granularity selector for `GroupBy` operations
 #[derive(Debug, Clone, Copy, Default)]
 pub enum GroupBy {
     /// Group by year
@@ -85,6 +89,10 @@ impl GroupBy {
     pub const ISO_WEEK_DATE: &'static str = "iso-week-date";
 
     /// Get 'group by' -selector based on UI/CFG name
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` if group-by selector is unknown.
     pub fn from(group_by: &str) -> Result<GroupBy, tackler::Error> {
         match group_by {
             GroupBy::ISO_WEEK_DATE => Ok(GroupBy::IsoWeekDate),
@@ -107,6 +115,10 @@ impl GroupBy {
     }
 }
 /// Get zoned ts from RFC 3339 string
+///
+/// # Errors
+///
+/// Returns `Err` the string is not in valid RFC 3339 format
 pub fn rfc3339_to_zoned(rfc3339_str: &str) -> Result<Zoned, tackler::Error> {
     strtime::parse("%Y-%m-%dT%H:%M:%S%.f%:z", rfc3339_str)?
         .to_zoned()
@@ -130,6 +142,7 @@ pub fn rfc3339_to_zoned(rfc3339_str: &str) -> Result<Zoned, tackler::Error> {
 /// assert_eq!(txn_ts::rfc_3339(&ns), "2022-06-24T14:15:16.123456789+03:00");
 ///  # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn rfc_3339(ts: &Zoned) -> String {
     strtime::format("%Y-%m-%dT%H:%M:%S%.f%:z", ts)
         .unwrap_or_else(|err| format!("IE: rfc_3339, frmt error: {err}"))
@@ -152,6 +165,7 @@ pub fn rfc_3339(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::seconds_tz(&ns), "2022-06-24 14:15:16 +03:00");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn seconds_tz(ts: &Zoned) -> String {
     strtime::format("%Y-%m-%d %H:%M:%S %:z", ts)
         .unwrap_or_else(|err| format!("IE: seconds_tz, frmt error: {err}"))
@@ -174,6 +188,7 @@ pub fn seconds_tz(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::full_tz(&ns), "2022-06-24 14:15:16.123456789 +03:00");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn full_tz(ts: &Zoned) -> String {
     strtime::format("%Y-%m-%d %H:%M:%S%.f %:z", ts)
         .unwrap_or_else(|err| format!("IE: full_tz, frmt error: {err}"))
@@ -206,7 +221,7 @@ fn fmt_week(ts: &Zoned) -> String {
     let y = iso_date.year();
     let w = iso_date.week();
 
-    format!("{}-W{:02}", y, w)
+    format!("{y}-W{w:02}")
 }
 
 fn fmt_week_date(ts: &Zoned) -> String {
@@ -215,7 +230,7 @@ fn fmt_week_date(ts: &Zoned) -> String {
     let w = iso_date.week();
     let wd = iso_date.weekday().to_monday_one_offset();
 
-    format!("{}-W{:02}-{}", y, w, wd)
+    format!("{y}-W{w:02}-{wd}")
 }
 
 /// Human-readable timestamp with seconds precision in UTC zone
@@ -235,6 +250,7 @@ fn fmt_week_date(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_seconds(&ns), "2022-06-24 11:15:16");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_seconds(ts: &Zoned) -> String {
     fmt_seconds(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -257,6 +273,7 @@ pub fn as_utc_seconds(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_full(&ns), "2022-06-24 11:15:16.123456789");
 ///  # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_full(ts: &Zoned) -> String {
     fmt_full(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -276,6 +293,7 @@ pub fn as_utc_full(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_date(&ts), "2023-01-01");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_date(ts: &Zoned) -> String {
     fmt_date(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -295,6 +313,7 @@ pub fn as_utc_date(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_month(&ts), "2023-01");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_month(ts: &Zoned) -> String {
     fmt_month(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -314,6 +333,7 @@ pub fn as_utc_month(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_year(&ts), "2023");
 ///  # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_year(ts: &Zoned) -> String {
     fmt_year(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -337,6 +357,7 @@ pub fn as_utc_year(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_iso_week(&ny), "2010-W01");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_iso_week(ts: &Zoned) -> String {
     fmt_week(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -360,6 +381,7 @@ pub fn as_utc_iso_week(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_utc_iso_week_date(&ny), "2010-W01-1");
 ///# Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_utc_iso_week_date(ts: &Zoned) -> String {
     fmt_week_date(&ts.with_time_zone(TZ_UTC.to_time_zone().clone()))
 }
@@ -386,6 +408,7 @@ pub fn as_utc_iso_week_date(ts: &Zoned) -> String {
 /// assert_eq!(txn_ts::as_tz_seconds(&ns, helsinki_tz.clone()), "2022-06-24 15:15:16");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_seconds(ts: &Zoned, tz: TimeZone) -> String {
     fmt_seconds(&ts.with_time_zone(tz))
 }
@@ -412,6 +435,7 @@ pub fn as_tz_seconds(ts: &Zoned, tz: TimeZone) -> String {
 /// assert_eq!(txn_ts::as_tz_full(&ns, helsinki_tz.clone()), "2022-06-24 15:15:16.123456789");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_full(ts: &Zoned, tz: TimeZone) -> String {
     fmt_full(&ts.with_time_zone(tz))
 }
@@ -438,6 +462,7 @@ pub fn as_tz_full(ts: &Zoned, tz: TimeZone) -> String {
 /// assert_eq!(txn_ts::as_tz_date(&ns, helsinki_tz.clone()), "2022-06-24");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_date(ts: &Zoned, tz: TimeZone) -> String {
     fmt_date(&ts.with_time_zone(tz))
 }
@@ -464,6 +489,7 @@ pub fn as_tz_date(ts: &Zoned, tz: TimeZone) -> String {
 /// assert_eq!(txn_ts::as_tz_month(&ns, helsinki_tz.clone()), "2022-07");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_month(ts: &Zoned, tz: TimeZone) -> String {
     fmt_month(&ts.with_time_zone(tz))
 }
@@ -488,6 +514,7 @@ pub fn as_tz_month(ts: &Zoned, tz: TimeZone) -> String {
 ///
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_year(ts: &Zoned, tz: TimeZone) -> String {
     fmt_year(&ts.with_time_zone(tz))
 }
@@ -511,6 +538,7 @@ pub fn as_tz_year(ts: &Zoned, tz: TimeZone) -> String {
 ///
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_iso_week(ts: &Zoned, tz: TimeZone) -> String {
     fmt_week(&ts.with_time_zone(tz))
 }
@@ -534,6 +562,7 @@ pub fn as_tz_iso_week(ts: &Zoned, tz: TimeZone) -> String {
 ///
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn as_tz_iso_week_date(ts: &Zoned, tz: TimeZone) -> String {
     fmt_week_date(&ts.with_time_zone(tz))
 }

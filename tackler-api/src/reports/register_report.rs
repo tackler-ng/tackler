@@ -14,7 +14,7 @@ pub struct RegisterPosting {
 
     /// Amount of posting
     ///
-    /// Commodity Conversion: Original amount before conversion in base_commodity
+    /// Commodity Conversion: Original amount before conversion in `base_commodity`
     pub amount: String,
 
     /// Running total for that account

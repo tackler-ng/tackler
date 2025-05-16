@@ -31,6 +31,10 @@ fn peel_full_haystack_pattern(re: &str) -> &str {
 ///
 /// See `peeled_pattern_as_str` how to get back the original string
 ///
+/// # Errors
+///
+/// Will return `Err` in case of error
+///
 /// # Examples
 /// ```rust
 /// # use std::error::Error;
@@ -62,6 +66,7 @@ pub fn new_full_haystack_regex(re: &str) -> Result<Regex, regex::Error> {
 /// assert_eq!(peeled_pattern(&re_foo), r"foo.*");
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn peeled_pattern(regex: &Regex) -> &str {
     peel_full_haystack_pattern(regex.as_str())
 }
@@ -74,6 +79,10 @@ pub fn peeled_pattern(regex: &Regex) -> &str {
 /// See `Regex::RegexSet::new` for actual documentation of this method.
 ///
 /// See `peeled_pattern` how to get back the original string
+///
+/// # Errors
+///
+/// Will return `Err` in case of error
 ///
 /// # Examples
 /// ```rust
@@ -110,6 +119,7 @@ where
 /// assert_eq!(peeled_patterns(&re_set), vec!["foo", "bar"]);
 /// # Ok::<(), Box<dyn Error>>(())
 /// ```
+#[must_use]
 pub fn peeled_patterns(regex_set: &RegexSet) -> Vec<String> {
     regex_set
         .patterns()

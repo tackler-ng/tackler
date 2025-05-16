@@ -17,7 +17,7 @@ use std::io::BufWriter;
 use std::path::{Path, PathBuf};
 use walkdir::{DirEntry, WalkDir};
 
-/// Regex helpers to have full haystack matcher (JDK matches())
+/// Regex helpers to have full haystack matcher (aka - JDK matches method)
 pub mod regex;
 
 /// Generic tackler namespace
@@ -39,6 +39,7 @@ pub mod tackler {
 /// assert_eq!(normalize_extension(txt), "txt");
 /// assert_eq!(normalize_extension(dot), ".dot");
 /// ```
+#[must_use]
 pub fn normalize_extension(ext: &str) -> &str {
     ext.strip_prefix('.').unwrap_or(ext)
 }
@@ -47,24 +48,24 @@ pub fn normalize_extension(ext: &str) -> &str {
 /// Get full path based on
 /// directory, filename prefix, filename and extension
 ///
-pub fn get_path_by_parts(
-    dir: &Path,
-    prefix: &str,
-    name: &str,
-    ext: &str,
-) -> Result<PathBuf, tackler::Error> {
+#[must_use]
+pub fn path_from_parts(dir: &Path, prefix: &str, name: &str, ext: &str) -> PathBuf {
     // #[unstable(feature = "path_add_extension", issue = "127292")]
     // pub fn with_added_extension<S: AsRef<OsStr>>(&self, extension: S) -> PathBuf {
     let filename = prefix.to_string() + name + "." + ext;
-    Ok(dir.join(filename))
+    dir.join(filename)
 }
 
 /// Creates a new file
 ///
-/// output_dir, output_prefix, name and extension
+/// `dir`, `prefix`, `name` and `ext`
 ///     "dir/prefix.name.ext"
 ///
 /// See [`File::create_new`] for platform specific semantics.
+///
+/// # Errors
+///
+/// Returns `Err` if file exists or if it can't be created
 pub fn create_output_file(
     dir: &Path,
     prefix: &str,
@@ -72,12 +73,12 @@ pub fn create_output_file(
     ext: &str,
 ) -> Result<(Box<dyn io::Write>, String), tackler::Error> {
     let rpt = ".".to_string() + name;
-    let p = get_path_by_parts(dir, prefix, rpt.as_str(), ext)?;
+    let p = path_from_parts(dir, prefix, rpt.as_str(), ext);
     let f = match File::create_new(&p) {
         Ok(f) => f,
         Err(err) => {
             let msg = format!("{}: '{}'", err, p.as_path().to_string_lossy());
-            error!("{}", msg);
+            error!("{msg}");
             return Err(msg.into());
         }
     };
@@ -86,10 +87,13 @@ pub fn create_output_file(
     Ok((Box::new(bw), path))
 }
 
-///
 /// Convert path to absolute by anchor file
+///
 /// If the path is already absolute, then use the path as it is
 ///
+/// # Errors
+///
+/// Returns `Err` if `Path::canonicalize()` fails for  resulting path
 pub fn get_abs_path<P: AsRef<Path>>(anchor: P, path: &str) -> Result<PathBuf, tackler::Error> {
     let p = Path::new(path);
     if p.is_absolute() {
@@ -104,9 +108,11 @@ pub fn get_abs_path<P: AsRef<Path>>(anchor: P, path: &str) -> Result<PathBuf, ta
     Ok(abspath)
 }
 
-///
 /// Get a list of paths by base dir and file extension
 ///
+/// # Errors
+///
+/// Return `Err` if directory walks fails
 pub fn get_paths_by_ext(base_dir: &Path, extension: &str) -> Result<Vec<PathBuf>, tackler::Error> {
     fn is_txn_file(entry: &walkdir::DirEntry, extension: &str) -> bool {
         (entry.file_type().is_file() || entry.file_type().is_symlink())

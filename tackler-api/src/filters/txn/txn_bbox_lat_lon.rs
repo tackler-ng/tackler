@@ -69,9 +69,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterBBoxLatLon(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterBBoxLatLon(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(

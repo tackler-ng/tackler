@@ -38,6 +38,8 @@ impl<'de> Deserialize<'de> for Serde<Regex> {
 }
 
 /// Deserialize function, see crate docs to see how to use it
+/// # Errors
+/// Will return `Err` in case of error
 pub fn deserialize<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where
     D: Deserializer<'de>,
@@ -47,6 +49,8 @@ where
 }
 
 /// Serialize function, see crate docs to see how to use it
+/// # Errors
+/// Will return `Err` in case of error
 pub fn serialize<T, S>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,

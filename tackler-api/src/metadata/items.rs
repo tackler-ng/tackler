@@ -170,7 +170,7 @@ impl Text for TxnFilterDescription {
             }
         )
         .trim_end()
-        .split("\n")
+        .split('\n')
         .map(String::from)
         .collect::<Vec<String>>()
     }

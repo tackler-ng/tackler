@@ -45,6 +45,10 @@ use posting::TxnFilterPostingCommodity;
 ///
 pub trait IndentDisplay {
     /// format with indent
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` if formatter fails
     fn i_fmt(&self, indent: &str, _tz: TimeZone, f: &mut Formatter<'_>) -> std::fmt::Result;
 }
 
@@ -164,6 +168,7 @@ impl IndentDisplay for NullaryFALSE {
     }
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn logic_filter_indent_fmt(
     op: &str,
     indent: &str,

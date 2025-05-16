@@ -52,9 +52,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterTxnUUID(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterTxnUUID(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(

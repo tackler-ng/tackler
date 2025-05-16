@@ -71,15 +71,14 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match &tf.txn_filter {
-            TxnFilter::TxnFilterPostingAmountGreater(f) => {
-                assert!(!f.regex.is_match("foobar"));
-                assert!(!f.regex.is_match("obar"));
-                assert!(!f.regex.is_match("ooba"));
+        if let TxnFilter::TxnFilterPostingAmountGreater(f) = &tf.txn_filter {
+            assert!(!f.regex.is_match("foobar"));
+            assert!(!f.regex.is_match("obar"));
+            assert!(!f.regex.is_match("ooba"));
 
-                assert!(f.regex.is_match("oba"));
-            }
-            _ => panic!(/*:test:*/),
+            assert!(f.regex.is_match("oba"));
+        } else {
+            panic!(/*:test:*/)
         }
     }
 
@@ -101,9 +100,9 @@ mod tests {
         assert!(tf_res.is_ok());
         let tf = tf_res.unwrap(/*:test:*/);
 
-        match tf.txn_filter {
-            TxnFilter::TxnFilterPostingAmountGreater(_) => (),
-            _ => panic!(/*:test:*/),
+        if let TxnFilter::TxnFilterPostingAmountGreater(_) = tf.txn_filter {
+        } else {
+            panic!(/*:test:*/)
         }
 
         assert_eq!(
