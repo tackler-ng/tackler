@@ -53,11 +53,11 @@ pub(crate) fn exec(exe_name: &str, name: &str) -> Result<Option<String>, tackler
     }
 
     let msg = format!(
-        r#"Successfully created Tackler journal setup, you can now use it by running:
+        r"Successfully created Tackler journal setup, you can now use it by running:
 
    {exe_name} --config {}
 
-"#,
+",
         conf_dir.join(tackler_toml).display()
     );
 

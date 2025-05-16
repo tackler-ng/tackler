@@ -26,14 +26,18 @@ use mimalloc::MiMalloc;
 static GLOBAL: MiMalloc = MiMalloc;
 
 fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
-    let cfg = match Config::try_from(cli.conf_path.as_ref().unwrap()) {
+    let cfg = match Config::try_from(
+        cli.conf_path
+            .as_ref()
+            .expect("IE: logic error with CLI arguments"),
+    ) {
         Ok(cfg) => cfg,
         Err(err) => {
             let msg = format!(
                 "Configuration error with '{}': {err}",
                 cli.conf_path.as_ref().unwrap().display()
             );
-            error!("{}", msg);
+            error!("{msg}");
             return Err(msg.into());
         }
     };
@@ -69,7 +73,7 @@ fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
         Ok(txn_data) => txn_data,
         Err(err) => {
             let msg = format!("Txn Data: {err}");
-            error!("{}", msg);
+            error!("{msg}");
             return Err(msg.into());
         }
     };
@@ -92,7 +96,7 @@ fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
 
     if txn_set.is_empty() {
         let msg = "Txn Data: no transactions (txn set is empty)";
-        error!("{}", msg);
+        error!("{msg}");
         return Err(msg.into());
     }
 
@@ -149,7 +153,7 @@ fn main() {
     match res {
         Ok(msg) => {
             if let Some(msg) = msg {
-                println!("{}", msg);
+                println!("{msg}");
             }
             std::process::exit(0)
         }
