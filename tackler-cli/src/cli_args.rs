@@ -37,26 +37,25 @@ pub(crate) struct Cli {
 
 impl Cli {
     pub(crate) fn cmd(&self) -> Commands {
-        let command = self
-            .command
-            .clone()
-            .unwrap_or(Commands::Report(self.args.clone()));
-        match self.command {
-            Some(_) => command,
-            None => {
-                if self.args.conf_path.is_none() {
-                    let mut cmd = Cli::command();
-                    let msg = format!(
-                        "config file is not provided, use: \n\n{} --config <path/to/config-file>",
-                        cmd.get_name()
-                    );
+        let cmd = if let Some(cmd) = &self.command {
+            cmd.clone()
+        } else {
+            Commands::Report(self.args.clone())
+        };
 
-                    cmd.error(ErrorKind::MissingRequiredArgument, msg.as_str())
-                        .exit();
-                }
-                command
+        if let Commands::Report(report_cmd) = &cmd {
+            if report_cmd.conf_path.is_none() {
+                let mut cmd = Cli::command();
+                let msg = format!(
+                    "config file is not provided, use: \n\n{} --config <path/to/config-file>",
+                    cmd.get_name()
+                );
+
+                cmd.error(ErrorKind::MissingRequiredArgument, msg.as_str())
+                    .exit();
             }
         }
+        cmd
     }
 }
 
@@ -95,22 +94,21 @@ impl TypedValueParser for StorageTypeParser {
             .to_str()
             .ok_or_else(|| clap::Error::new(clap::error::ErrorKind::InvalidUtf8))?;
 
-        match StorageType::try_from(val) {
-            Ok(v) => Ok(v),
-            Err(_) => {
-                let mut err = clap::Error::new(ErrorKind::ValueValidation).with_cmd(cmd);
-                if let Some(arg) = arg {
-                    err.insert(
-                        ContextKind::InvalidArg,
-                        ContextValue::String(arg.to_string()),
-                    );
-                }
+        if let Ok(v) = StorageType::try_from(val) {
+            Ok(v)
+        } else {
+            let mut err = clap::Error::new(ErrorKind::ValueValidation).with_cmd(cmd);
+            if let Some(arg) = arg {
                 err.insert(
-                    ContextKind::InvalidValue,
-                    ContextValue::String(val.to_string()),
+                    ContextKind::InvalidArg,
+                    ContextValue::String(arg.to_string()),
                 );
-                Err(err)
             }
+            err.insert(
+                ContextKind::InvalidValue,
+                ContextValue::String(val.to_string()),
+            );
+            Err(err)
         }
     }
 
@@ -141,22 +139,21 @@ impl TypedValueParser for PriceLookupParser {
             .to_str()
             .ok_or_else(|| clap::Error::new(clap::error::ErrorKind::InvalidUtf8))?;
 
-        match PriceLookupType::try_from(val) {
-            Ok(v) => Ok(v),
-            Err(_) => {
-                let mut err = clap::Error::new(ErrorKind::ValueValidation).with_cmd(cmd);
-                if let Some(arg) = arg {
-                    err.insert(
-                        ContextKind::InvalidArg,
-                        ContextValue::String(arg.to_string()),
-                    );
-                }
+        if let Ok(v) = PriceLookupType::try_from(val) {
+            Ok(v)
+        } else {
+            let mut err = clap::Error::new(ErrorKind::ValueValidation).with_cmd(cmd);
+            if let Some(arg) = arg {
                 err.insert(
-                    ContextKind::InvalidValue,
-                    ContextValue::String(val.to_string()),
+                    ContextKind::InvalidArg,
+                    ContextValue::String(arg.to_string()),
                 );
-                Err(err)
             }
+            err.insert(
+                ContextKind::InvalidValue,
+                ContextValue::String(val.to_string()),
+            );
+            Err(err)
         }
     }
 
@@ -198,7 +195,7 @@ pub(crate) struct DefaultModeArgs {
     /// Strict journal data mode
     ///
     /// Turn on strict validation of transaction data
-    /// (accounts, commodities and tags).
+    /// (accounts, commodities, and tags).
     #[arg(
         long = "strict.mode",
         value_name = "true|false",
@@ -410,7 +407,7 @@ pub(crate) struct DefaultModeArgs {
     )]
     pub(crate) exports: Option<Vec<String>>,
 
-    /// Path to PriceDB file
+    /// Path to `PriceDB` file
     #[arg(
         long = "pricedb",
         value_name = "pricedb-file",
@@ -456,19 +453,19 @@ impl DefaultModeArgs {
     fn verify_storage_mode(&self, allowed_type: StorageType) -> Result<(), clap::Error> {
         match self.input_storage {
             Some(st) => {
-                if st != allowed_type {
+                if st == allowed_type {
+                    Ok(())
+                } else {
                     let mut err = clap::Error::new(ErrorKind::ArgumentConflict);
                     err.insert(
                         ContextKind::InvalidArg,
-                        ContextValue::String(format!("--input.storage {}", st)),
+                        ContextValue::String(format!("--input.storage {st}")),
                     );
                     err.insert(
                         ContextKind::PriorArg,
-                        ContextValue::String(format!("--input.{}.*", allowed_type)),
+                        ContextValue::String(format!("--input.{allowed_type}.*")),
                     );
                     Err(err)
-                } else {
-                    Ok(())
                 }
             }
             None => Ok(()),
@@ -566,6 +563,6 @@ mod tests {
     #[test]
     fn verify_cli() {
         use clap::CommandFactory;
-        Cli::command().debug_assert()
+        Cli::command().debug_assert();
     }
 }

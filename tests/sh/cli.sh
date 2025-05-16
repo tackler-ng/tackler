@@ -31,6 +31,26 @@ cmp_result $module $test_name txn identity
 echo ": ok"
 
 #
+# test: 50e18830-07dc-4666-ab44-d2968865421e
+# desc: report command
+rm -f $OUTPUT_DIR/*
+test_name=report_command
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    report \
+    --config $SUITE_PATH/basic.toml \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --input.file $SUITE_PATH/$module/ok/console-txns/id-chars.txn \
+    --reports balance
+
+echo -n "check:"
+cmp_result_ref $module console-03 $test_name txt bal
+echo ": ok"
+
+
+#
 # test: fd250432-9b13-4cdd-83a1-1aedff1593ed
 # desc: UTF-8 output
 rm -f $OUTPUT_DIR/*

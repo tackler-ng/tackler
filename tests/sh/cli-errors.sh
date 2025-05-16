@@ -41,6 +41,19 @@ echo "check: ok"
 
 #####################################################################
 #
+# test: e00bd60a-dc39-4d36-ac1e-243efc8489b2
+# desc: missing config with command
+test_name=missing-config
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    report \
+    2>&1 | grep 'config file is not provided'
+
+echo "check: ok"
+
+#####################################################################
+#
 # test: a11c536e-ce20-4e2b-8abf-cd8a47cdaf07
 # desc: unknown account
 test_name=unknown-account
