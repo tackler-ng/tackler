@@ -1,11 +1,11 @@
-= Tackler-NG
+= Tackler
 
 Tackler’s operations and results must always be correct and
 trustworthy. If there are any errors with journal, then it will fail
 fast and hard and won’t process dubious input as valid one.
 
-Tackler-NG will strive for the same
-link:https://tackler.e257.fi/docs/reliability/[reliability level as Tackler].
+Tackler will strive for the same
+link:https://tackler.fi/docs/tackler/latest/features/reliability/[reliability level as Tackler].
 
 Tackler test vectors and Tackler Test Tracking Database (T3DB) are located here:
 

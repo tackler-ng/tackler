@@ -4,10 +4,10 @@
  */
 
 pub(super) const TXT: &str = r#"#
-# Tackler-NG journal tag definitions
+# Tackler journal tag definitions
 #
 # For full documentation, see:
-# https://tackler.e257.fi/docs/configuration/tags-toml/
+# https://tackler.fi/docs/tackler/latest/reference/tags-toml/
 #
 tags = [
     "travel:ice·cream·spree",

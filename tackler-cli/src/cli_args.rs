@@ -24,7 +24,7 @@ pub(crate) const PRICE_BEFORE: &str = "price.before";
 //
 #[derive(Parser)]
 #[command(author, version=env!("VERSION"), about, long_about = None,
-after_help = "See tackler documentation for more information and examples:\nhttps://tackler.e257.fi/docs/",
+after_help = "See tackler documentation for more information and examples:\nhttps://tackler.fi/docs/",
 )]
 #[command(args_conflicts_with_subcommands = true)]
 pub(crate) struct Cli {

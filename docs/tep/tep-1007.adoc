@@ -6,7 +6,7 @@ that generated reports are using correct and known inputs.
 == Summary
 
 For overal information, see 
-link:https://tackler.e257.fi/docs/auditing/[Accounting Auditing]
+link:https://tackler.fi/docs/tackler/latest/auditing/[Accounting Auditing]
 and example reports listed below:
 
 * Reports with audit metadata
@@ -27,7 +27,7 @@ and proof of presence of transactions which are used to do accounting calculatio
 
 Txn set checksum is based on UUID of Txn, and it is hash function's result of those UUIDs.
 Hash is calculated so that it is possible to verify it easily with external tools.
-See link:https://tackler.e257.fi/docs/journal/[Journal Format] and description of Transaction metadata.
+See link:https://tackler.fi/docs/tackler/latest/journal/[Journal Format] and description of Transaction metadata.
 
 Txn set checksum is calculated based on following algorithm:
 
@@ -46,15 +46,15 @@ Each transaction must have unique UUID. Presence of UUID and uniqueness are enfo
 
 Txn set checksum verifies that same set of transactions (UUIDs) is used for calculations,
 but it does *not* verify actual content of used transactions.  If and when content verification is needed,
-then link:https://tackler.e257.fi/docs/journal/git-storage/[Tackler's git storage backend] could be used for that.  In that case,
+then link:https://tackler.fi/docs/tackler/latest/journal/git-storage/[Tackler's git storage backend] could be used for that.  In that case,
 content verification is done by combining reported git's `commit id` and `txn set checksum`.
 Together `commit id` and `txn set checksum` creates tamper proof verification of used transaction data.
 
 To re-verify previous tackler report, it is possible to use git commit id (from old report) as an input reference.
 See 
-link:https://tackler.e257.fi/docs/usage/[Usage Guide] 
+link:https://tackler.fi/docs/tackler/latest/usage/[Usage Guide] 
 and 
-link:https://tackler.e257.fi/docs/journal/git-storage/[Git Storage Guide] 
+link:https://tackler.fi/docs/tackler/latest/journal/git-storage/[Git Storage Guide] 
 for further info.
 
 
@@ -97,7 +97,7 @@ New configuration group for `core`:
 
 If `txn-set-checksum` is true, then all transactions must have valid `:uuid:`-metadata field.
 See 
-link:https://tackler.e257.fi/docs/journal/format/[Journal Format] 
+link:https://tackler.fi/docs/tackler/latest/reference/journal-reference/[Journal Format] 
 for further info.
 
 
@@ -108,7 +108,7 @@ Following changes are needed
 * [x] enforce uuid
 ** [x] Verify presence of UUID at parse time
 ** [x] Hard error if UUID is missing  during txn set checksum calculation +
-       This is either internal error or logic error within usage of link:https://tackler.e257.fi/docs/server-api/[Server API]
+       This is either internal error or logic error within usage of link:https://tackler.fi/docs/server-api/[Server API]
 * [x] calculate txn set checksum
 * [x] calculate account selector checksum
 

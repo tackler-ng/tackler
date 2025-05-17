@@ -2,8 +2,7 @@
 
 == User documentation
 
-* link:https://tackler.e257.fi/docs/commodities/[Commodities]
-* link:https://tackler.e257.fi/docs/currencies/[Currencies]
+* link:https://tackler.fi/docs/tackler/latest/commodities/[Commodities]
 
 
 == TEP docs

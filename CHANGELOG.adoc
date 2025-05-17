@@ -140,8 +140,8 @@ New features:
 
 * New flat balance report option for Balance and Balance Group Reports
   ** link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1016.adoc[TEP-1016]
-  ** link:https://tackler.e257.fi/docs/report-balance/[Flat Balance] report
-  ** link:https://tackler.e257.fi/docs/report-balance-group/[Flat Balance Group] report
+  ** link:https://tackler.fi/docs/tackler/latest/reports/report-balance/[Flat Balance] report
+  ** link:https://tackler.fi/docs/tackler/latest/reports/report-balance-group/[Flat Balance Group] report
 
 Changed functionality:
 
@@ -185,12 +185,12 @@ MSRV:: 1.85.0
 
 New features:
 
-* New feature: link:https://tackler.e257.fi/docs/price/[Support for Commodity Price data] (link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1015.adoc[TEP-1015])
+* New feature: link:https://tackler.fi/docs/tackler/latest/commodities/price/[Support for Commodity Price data] (link:https://github.com/tackler-ng/tackler/blob/main/docs/tep/tep-1015.adoc[TEP-1015])
   ** PriceDB support
   ** Support for various commodity price (Mark-to-Market) models:
-    *** link:https://tackler.e257.fi/docs/price/current-market-value/[Current Market Value]
-    *** link:https://tackler.e257.fi/docs/price/historic-market-value/[Historic Market Value]
-    *** link:https://tackler.e257.fi/docs/price/variable-market-value/[Variable Market Value]
+    *** link:https://tackler.fi/docs/tackler/latest/commodities/price/current-market-value/[Current Market Value]
+    *** link:https://tackler.fi/docs/tackler/latest/commodities/price/historic-market-value/[Historic Market Value]
+    *** link:https://tackler.fi/docs/tackler/latest/commodities/price/variable-market-value/[Variable Market Value]
 * Full coverage of Tackler-Mk1 CLI test
 
 

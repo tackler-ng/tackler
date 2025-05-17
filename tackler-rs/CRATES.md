@@ -1,6 +1,6 @@
 # Tackler-NG: Rusty Services
 
-[Tackler](https://tackler.e257.fi/) is fast, reliable bookkeeping tool 
+[Tackler](https://tackler.fi/) is fast, reliable bookkeeping tool 
 with native GIT SCM support for plain text accounting, written in Rust.
 
 These are Rusty Services for [Tackler CLI](https://crates.io/crates/tackler).

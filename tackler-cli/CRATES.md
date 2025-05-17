@@ -2,13 +2,13 @@
 
 [![Build Status](https://github.com/tackler-ng/tackler/actions/workflows/ci.yml/badge.svg)](https://github.com/tackler-ng/tackler/actions)
 [![Github Releases](https://img.shields.io/github/v/release/tackler-ng/tackler?include_prereleases&color=%230868da)](https://github.com/tackler-ng/tackler/releases)
-[![crates.io](https://tackler.e257.fi/img/badge-crates.svg)](https://crates.io/crates/tackler)
-[![Tackler Docs](https://img.shields.io/badge/tackler-documentation-%23ffcb00)](https://tackler.e257.fi/docs)
+[![crates.io](https://tackler.fi/img/badge-crates.svg)](https://crates.io/crates/tackler)
+[![Tackler Docs](https://img.shields.io/badge/tackler-documentation-%23ffcb00)](https://tackler.fi/docs)
 [![GitHub Discussions](https://img.shields.io/github/discussions/tackler-ng/tackler)](https://github.com/tackler-ng/tackler/discussions)
-[![Chat on Matrix](https://tackler.e257.fi/img/badge-matrix.svg)](https://matrix.to/#/#tackler:matrix.org)
+[![Chat on Matrix](https://tackler.fi/img/badge-matrix.svg)](https://matrix.to/#/#tackler:matrix.org)
 
 
-[Tackler](https://tackler.e257.fi/) is fast (1), reliable bookkeeping tool
+[Tackler](https://tackler.fi/) is fast (1), reliable bookkeeping tool
 with native GIT SCM  support for plain text accounting, written in Rust. 
 
 ```bash
@@ -35,15 +35,15 @@ Register Report
 ...
 ```
 
-1) Tackler has excellent performance, it can process 700_000 transactions per second on modern laptop. 
-See [Tackler Performance](https://tackler.e257.fi/docs/tackler/latest/features/performance/) for details.
+1) Tackler has excellent performance, it can process 700 000 transactions per second on modern laptop. 
+See [Tackler Performance](https://tackler.fi/docs/tackler/latest/features/performance/) for details.
 
 
 ## Project Status
 
 Tackler is reimplementation of nearly 10 years old Scala based system,
 and it's in 
-[feature](https://tackler.e257.fi/docs/tackler/latest/features/) parity 
+[feature](https://tackler.fi/docs/tackler/latest/features/) parity 
 with and beyond of the old Scala code base. Tackler is using the same test
 and reference vectors as the tackler-mk1. This is basis of all the future
 Tackler development.
@@ -52,33 +52,33 @@ Tackler development.
 **NOTE: Tackler is tested with 436 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
-[Tackler Journal Format](https://tackler.e257.fi/docs/tackler/latest/journal/format/), 
-transaction storages ([FS backend](https://tackler.e257.fi/docs/tackler/latest/journal/fs-storage/), 
-[Gitoxide](https://github.com/GitoxideLabs/gitoxide/) based [Git backend](https://tackler.e257.fi/docs/tackler/latest/journal/git-storage/)), 
+[Tackler Journal Format](https://tackler.fi/docs/tackler/latest/journal/format/), 
+transaction storages ([FS backend](https://tackler.fi/docs/tackler/latest/journal/fs-storage/), 
+[Gitoxide](https://github.com/GitoxideLabs/gitoxide/) based [Git backend](https://tackler.fi/docs/tackler/latest/journal/git-storage/)), 
 all reports 
-([Balance](https://tackler.e257.fi/docs/tackler/latest/reports/report-balance/), 
-[Balance Group](https://tackler.e257.fi/docs/tackler/latest/reports/report-balance-group/), 
-[Register](https://tackler.e257.fi/docs/tackler/latest/reports/report-register/))
+([Balance](https://tackler.fi/docs/tackler/latest/reports/report-balance/), 
+[Balance Group](https://tackler.fi/docs/tackler/latest/reports/report-balance-group/), 
+[Register](https://tackler.fi/docs/tackler/latest/reports/report-register/))
 and all exports 
-([Equity](https://tackler.e257.fi/docs/tackler/latest/reports/export-equity/), 
-[Identity](https://tackler.e257.fi/docs/tackler/latest/reports/export-identity/)).
+([Equity](https://tackler.fi/docs/tackler/latest/reports/export-equity/), 
+[Identity](https://tackler.fi/docs/tackler/latest/reports/export-identity/)).
 
 Other notable features are:
 
-* [Commodities, Currencies and Shares](https://tackler.e257.fi/docs/tackler/latest/commodities/)
-* New support for [Market Value of Commodities and Shares](https://tackler.e257.fi/docs/tackler/latest/commodities/price/), including different valuation (Mark-to-Market) methods:
-  * [Current Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/current-market-value/)
-  * [Historic Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/historic-market-value/)
-  * [Variable Market Value](https://tackler.e257.fi/docs/tackler/latest/commodities/price/variable-market-value/)
-* [Transaction Filters](https://tackler.e257.fi/docs/tackler/latest/usage/txn-filters/) for powerful selectors of accounting data
-* Real transaction [timestamps up to nanosecond](https://tackler.e257.fi/docs/tackler/latest/reference/timestamps/) resolution and with timezone information
+* [Commodities, Currencies and Shares](https://tackler.fi/docs/tackler/latest/commodities/)
+* New support for [Market Value of Commodities and Shares](https://tackler.fi/docs/tackler/latest/commodities/price/), including different valuation (Mark-to-Market) methods:
+  * [Current Market Value](https://tackler.fi/docs/tackler/latest/commodities/price/current-market-value/)
+  * [Historic Market Value](https://tackler.fi/docs/tackler/latest/commodities/price/historic-market-value/)
+  * [Variable Market Value](https://tackler.fi/docs/tackler/latest/commodities/price/variable-market-value/)
+* [Transaction Filters](https://tackler.fi/docs/tackler/latest/usage/txn-filters/) for powerful selectors of accounting data
+* Real transaction [timestamps up to nanosecond](https://tackler.fi/docs/tackler/latest/reference/timestamps/) resolution and with timezone information
   * Plain dates are also supported
   * Also Civil date times without zone information
-* Accounting based on [Geo Location](https://tackler.e257.fi/docs/tackler/latest/usage/gis/) and [Transaction GIS Filters](https://tackler.e257.fi/docs/tackler/latest/usage/gis/txn-geo-filters/)
-* Optional [JSON Output](https://tackler.e257.fi/docs/tackler/latest/reports/formats/)
+* Accounting based on [Geo Location](https://tackler.fi/docs/tackler/latest/usage/gis/) and [Transaction GIS Filters](https://tackler.fi/docs/tackler/latest/usage/gis/txn-geo-filters/)
+* Optional [JSON Output](https://tackler..fi/docs/tackler/latest/reports/formats/)
 
 
-See `tackler --help` and [Tackler Documentation](https://tackler.e257.fi/docs/tackler/latest/) how to use tackler.
+See `tackler --help` and [Tackler Documentation](https://tackler.fi/docs/tackler/latest/) how to use tackler.
 
 
 ## Installation
@@ -127,8 +127,8 @@ Tackler binary will be located at `target/release/tackler`
 ## Examples
 
 Tackler has multiple examples to demonstrate its functionality: 
-reporting example for [Solar Energy Value](https://tackler.e257.fi/docs/tackler/latest/examples/solar-energy-value/), 
-Accounting example for [Trimix Filling Station](https://tackler.e257.fi/docs/tackler/latest/examples/trimix-filling-station/)
+reporting example for [Solar Energy Value](https://tackler.fi/docs/tackler/latest/examples/solar-energy-value/), 
+Accounting example for [Trimix Filling Station](https://tackler.fi/docs/tackler/latest/examples/trimix-filling-station/)
 
 Below are listed some of the simplest one. These examples need tackler 
 source code and test vectors,  so make sure you have cloned it out with 
@@ -350,10 +350,10 @@ Balance Report
 
 ## Further info
 
-* [Tackler Journal Format](https://tackler.e257.fi/docs/tackler/latest/journal/format/)
-* [Transaction Filters](https://tackler.e257.fi/docs/tackler/latest/usage/txn-filters/)
+* [Tackler Journal Format](https://tackler.fi/docs/tackler/latest/journal/format/)
+* [Transaction Filters](https://tackler.fi/docs/tackler/latest/usage/txn-filters/)
 * [Tackler repository](https://github.com/tackler-ng/tackler)
-* [Tackler website](https://tackler.e257.fi/)
+* [Tackler website](https://tackler.fi/)
 * [Plain Text Accounting](https://plaintextaccounting.org/)
 
 

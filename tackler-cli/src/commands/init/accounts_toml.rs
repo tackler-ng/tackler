@@ -4,10 +4,10 @@
  */
 
 pub(super) const TXT: &str = r#"#
-# Tackler-NG journal account definitions
+# Tackler journal account definitions
 #
 # For full documentation, see:
-# https://tackler.e257.fi/docs/configuration/accounts-toml/
+# https://tackler.fi/docs/tackler/latest/reference/accounts-toml/
 #
 accounts = [
     "Assets:Cash",

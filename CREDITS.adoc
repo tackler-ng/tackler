@@ -1,13 +1,13 @@
 = Credits
 
-Tackler-NG has been written by e257.fi and Github contributors.
+Tackler has been written by Tackler-NG and Github contributors.
 
 Following projects have provided valuable contributions,
 feedback, inspiration and ideas for this work.
 
 Thank you for your help!
 
-Components (used direclty by Tackler-NG):
+Components (used direclty by Tackler):
 
 * https://github.com/marshallpierce/rust-base64[base64]
 * https://github.com/clap-rs/clap[clap]

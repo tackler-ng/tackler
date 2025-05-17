@@ -7,7 +7,7 @@ pub(super) const TXT: &str = r#"#
 # Journal configuration for Tackler
 #
 # For full documentation, see:
-# https://tackler.e257.fi/docs/tackler/latest/reference/tackler-toml/
+# https://tackler.fi/docs/tackler/latest/reference/tackler-toml/
 #
 [kernel]
 ### Use strict account data validation

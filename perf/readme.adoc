@@ -2,7 +2,7 @@
 
 This directory contains tools and reference results for Tackler's performance testing.
 
-See link:https://tackler.e257.fi/docs/performance/[Description of Performance]
+See link:https://tackler.fi/docs/tackler/latest/features/performance/[Description of Performance]
 for explanation of generated artificial test data.
 
 It is recommemded to put the perf data directory outside of Tackler project directory.  
@@ -19,40 +19,39 @@ Tools to run perf tests are located in link:./bin[bin].
 == Test data
 
 Test data is generated with 
-link:https://gitlab.com/e257/accounting/tackler/-/tree/main/tools/generator[generator tool], 
-version: 0.5.2
+link:https://github.com/tackler-ng/pta-generator[generator tool]
 
 
 File count of test sets:
 ----
 $ for ds in perf-1E?; do echo -n "$ds: "; find $ds -type f | wc -l; done
-perf-1E1: 10
-perf-1E2: 100
-perf-1E3: 1000
-perf-1E4: 10000
-perf-1E5: 100000
-perf-1E6: 1000000
+set-1e1: 10
+set-1e2: 100
+set-1e3: 1000
+set-1e4: 10000
+set-1e5: 100000
+set-1e6: 1000000
 ----
 
 Actual data size of test sets:
 ----
 $ for ds in perf-1E?; do echo -n "$ds: "; (find $ds -type f | xargs cat ) | wc -c; done
-perf-1E1:       1_358
-perf-1E2:      13_664
-perf-1E3:     137_598
-perf-1E4:   1_385_945
-perf-1E5:  13_959_367
-perf-1E6: 140_587_889
+set-1e1:       1_358
+set-1e2:      13_664
+set-1e3:     137_598
+set-1e4:   1_385_945
+set-1e5:  13_959_367
+set-1e6: 140_587_889
 ----
 
 Size on disk for test sets:
 ----
-perf-1E1    128K
-perf-1E2    856K
-perf-1E3    5.4M
-perf-1E4     41M
-perf-1E5    398M
-perf-1E6    3.9G
+set-1e1    128K
+set-1e2    856K
+set-1e3    5.4M
+set-1e4     41M
+set-1e5    398M
+set-1e6    3.9G
 ----
 
 === Git perf test repository

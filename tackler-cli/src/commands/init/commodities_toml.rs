@@ -4,10 +4,10 @@
  */
 
 pub(super) const TXT: &str = r#"#
-# Tackler-NG journal commodity definitions
+# Tackler journal commodity definitions
 #
 # For full documentation, see:
-# https://tackler.e257.fi/docs/configuration/commodities-toml/
+# https://tackler.fi/docs/tackler/latest/reference/commodities-toml/
 #
 permit-empty-commodity = true
 

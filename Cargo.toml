@@ -15,7 +15,7 @@ resolver = "3"
 [workspace.package]
 edition = "2024"
 license = "Apache-2.0"
-homepage = "https://tackler.e257.fi/"
+homepage = "https://tackler.fi/"
 repository = "https://github.com/tackler-ng/tackler"
 categories = [ "finance", "parser-implementations" ]
 keywords = [ "accounting", "finance" ]

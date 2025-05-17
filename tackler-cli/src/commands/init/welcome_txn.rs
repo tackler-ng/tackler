@@ -8,8 +8,8 @@ pub(crate) fn get_txt(name: &str) -> String {
         r"
 2025-01-01 'Welcome to the Tackler Accounting!
     ; See Tackler Documentation for more information:
-    ; * Documentation:  https://tackler.e257.fi/docs/
-    ; * Journal Format: https://tackler.e257.fi/docs/journal/format/
+    ; * Documentation:  https://tackler.fi/docs/
+    ; * Journal Format: https://tackler.fi/docs/tackler/latest/journal/
     ;
     ; This setup has following structure:
     ; {name}

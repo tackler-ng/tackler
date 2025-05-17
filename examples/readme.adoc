@@ -1,7 +1,7 @@
 = Tackler Examples
 
 See tackler
-link:https://tackler.e257.fi/docs/tackler/latest/examples/[ Documentation and Examples]
+link:https://tackler.fi/docs/tackler/latest/examples/[ Documentation and Examples]
 for longer explanation of these examples.
 
 
@@ -58,7 +58,9 @@ target/release/tackler \
    --accounts 'a:ay2016:am12'
 ----
 
-Structure of the test data is described in Tackler's link:https://tackler.e257.fi/docs/performance/#test_data[Performance Test] documentation.
+Structure of the test data is described in Tackler's 
+link:https://tackler.fi/docs/tackler/latest/features/performance/#test-data[Performance Test] 
+documentation.
 
 == Transaction filters
 
@@ -91,11 +93,11 @@ target/release/tackler \
 
 == Commodity Prices
 
-These are a set of examples to demonstrate link:https://tackler.e257.fi/docs/price/[commodity price functionalities].
+These are a set of examples to demonstrate link:https://tackler.fi/docs/tackler/latest/commodities/price/[commodity price functionalities].
 
 === Current Market Value
 
-The full example is on Tackler's site: link:https://tackler.e257.fi/docs/price/current-market-value/[Current Market value]
+The full example is on Tackler's site: link:https://tackler.fi/docs/tackler/latest/commodities/price/current-market-value/[Current Market value]
 
 
 ----
@@ -109,7 +111,7 @@ target/release/tackler \
 
 === Historic Market Value
 
-The full example is on Tackler's site: link:https://tackler.e257.fi/docs/price/historic-market-value/[Historic Market value]
+The full example is on Tackler's site: link:https://tackler.fi/docs/tackler/latest/commodities/price/historic-market-value/[Historic Market value]
 
 ----
 target/release/tackler \
@@ -123,7 +125,7 @@ target/release/tackler \
 
 === Solar Energy Examples
 
-The full example is on Tackler's site: link:https://tackler.e257.fi/docs/examples/solar-energy-value/[Solar Energy Value]
+The full example is on Tackler's site: link:https://tackler.fi/docs/tackler/latest/examples/solar-energy-value/[Solar Energy Value]
 
 ==== Value of the energy when used at the site
 
