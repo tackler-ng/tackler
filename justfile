@@ -37,11 +37,11 @@ check: clippy
 
 # Run clippy the linter
 clippy:
-    cargo clippy --workspace --all-targets --no-deps -- -D warnings
+    cargo clippy --workspace --all-targets --no-deps -- -D warnings -D clippy::pedantic
 
 # Fix with clippy the linter
 fix *ARGS:
-    cargo clippy --workspace --all-targets --no-deps --fix {{ ARGS }}
+    cargo clippy --workspace --all-targets --no-deps --fix {{ ARGS }} -- -D warnings -D clippy::pedantic
 
 # Run unit tests
 unit-test *ARGS:
