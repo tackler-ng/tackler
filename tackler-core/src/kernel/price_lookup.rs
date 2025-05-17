@@ -47,12 +47,14 @@ impl Default for PriceLookupCtx<'_> {
 }
 
 impl PriceLookupCtx<'_> {
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.cache.is_empty()
     }
 }
 
 impl PriceLookupCtx<'_> {
+    #[must_use]
     pub fn metadata(&self) -> PriceRecords {
         let rates = if let Some(target) = self.in_commodity.clone() {
             match &self.cache {
@@ -187,33 +189,32 @@ impl PriceLookup {
             .map(|p| p.acctn.comm.clone())
             .collect::<BTreeSet<_>>();
 
-        let cache = match lookup_timestamp {
-            Some(lookup_timestamp) => Cache::Fixed(
+        let cache = if let Some(lookup_ts) = lookup_timestamp {
+            Cache::Fixed(
                 price_db
                     .iter()
                     .filter(|e| {
                         used_commodities.contains(&e.base_commodity)
                             && e.eq_commodity == in_commodity
-                            && e.timestamp < lookup_timestamp
+                            && e.timestamp < lookup_ts
                     })
                     .map(|e| (e.base_commodity.clone(), (e.timestamp.clone(), e.eq_amount)))
                     .collect(),
-            ),
-            None => {
-                let mut cache = HashMap::new();
-                for comm in used_commodities {
-                    let comm_cache: Vec<_> = price_db
-                        .iter()
-                        .filter(|e| comm == e.base_commodity && e.eq_commodity == in_commodity)
-                        .sorted_by_key(|e| &e.timestamp) // make sure it's sorted
-                        .collect();
+            )
+        } else {
+            let mut cache = HashMap::new();
+            for comm in used_commodities {
+                let comm_cache: Vec<_> = price_db
+                    .iter()
+                    .filter(|e| comm == e.base_commodity && e.eq_commodity == in_commodity)
+                    .sorted_by_key(|e| &e.timestamp) // make sure it's sorted
+                    .collect();
 
-                    if !comm_cache.is_empty() {
-                        cache.insert(comm, comm_cache);
-                    }
+                if !comm_cache.is_empty() {
+                    cache.insert(comm, comm_cache);
                 }
-                Cache::Timed(cache)
             }
+            Cache::Timed(cache)
         };
 
         PriceLookupCtx {

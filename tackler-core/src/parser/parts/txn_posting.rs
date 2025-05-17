@@ -63,7 +63,7 @@ fn handle_posting(
     settings: &mut Settings,
 ) -> Result<Posting, tackler::Error> {
     let comm = vp.post_commodity;
-    let acctn = settings.get_or_create_txn_account(acc_id, comm.clone())?;
+    let acctn = settings.get_or_create_txn_account(acc_id, &comm)?;
 
     Posting::from(
         acctn,

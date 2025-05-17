@@ -19,6 +19,7 @@ use tackler_rs::IndocUtils;
       #[test]
       //desc: "reject invalid metadata constructions"
       #[allow(non_snake_case)]
+      #[allow(clippy::too_many_lines)]
       fn id_b88d6733_2acf_4021_a3d7_deaf58b518a6__err_metadata_parse() {
         let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
@@ -31,7 +32,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#" input ' #'"#
+          r" input ' #'"
         ),
         (indoc!(
            "|
@@ -44,7 +45,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#" input ' #'"#
+          r" input ' #'"
         ),
         (indoc!(
            "|
@@ -56,7 +57,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#" input ' "#
+          r" input ' "
         ),
         (indoc!(
            "|
@@ -68,7 +69,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#" input ' "#
+          r" input ' "
         ),
         (indoc!(
            "|
@@ -80,7 +81,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#" input ' "#
+          r" input ' "
         ),
         (indoc!(
            "|
@@ -93,7 +94,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#" input ' "#
+          r" input ' "
         ),
         (indoc!(
            "|
@@ -106,7 +107,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#" input ' "#
+          r" input ' "
         ),
         (indoc!(
            "|
@@ -119,7 +120,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#" input ' "#
+          r" input ' "
         ),
       ];
           let mut count = 0;
@@ -127,7 +128,7 @@ use tackler_rs::IndocUtils;
           for t in perr_strings {
               let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
               assert!(res.is_err(),
-                      "Testing Error: Offending test vector item: {}", count);
+                      "Testing Error: Offending test vector item: {count}");
               /*
               // todo: parser error messages, error position
               assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -222,7 +223,7 @@ use tackler_rs::IndocUtils;
         let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
         //println!("{:#?}", &t.0);
         //println!("{:#?}", res);
-        assert!(res.is_ok(), "Offending test vector item: {}", count);
+        assert!(res.is_ok(), "Offending test vector item: {count}");
           let txn_data = res.unwrap(/*:test:*/);
           let txns = txn_data.get_all().unwrap(/*:test:*/);
         let txn: &Transaction = txns.txns[0];

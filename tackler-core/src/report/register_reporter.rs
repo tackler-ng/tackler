@@ -35,8 +35,8 @@ impl RegisterReporter {
         if ras.is_empty() {
             Ok(Box::<RegisterAllSelector>::default())
         } else {
-            let s: Vec<_> = ras.iter().map(|s| s.as_str()).collect();
-            let ras = RegisterByAccountSelector::from(&s)?;
+            let s: Vec<_> = ras.iter().map(String::as_str).collect();
+            let ras = RegisterByAccountSelector::try_from(&s)?;
 
             Ok(Box::new(ras))
         }
@@ -139,7 +139,7 @@ impl Report for RegisterReporter {
         };
 
         if let Some(hash) = cfg.get_hash() {
-            let asc = acc_sel.account_selector_metadata(hash)?;
+            let asc = acc_sel.account_selector_metadata(hash);
             metadata.push(asc);
         }
 
@@ -154,16 +154,16 @@ impl Report for RegisterReporter {
         let ras = self.get_acc_selector()?;
 
         let register =
-            accumulator::register_engine(&txn_data.txns, &price_lookup_ctx, ras.as_ref())?;
+            accumulator::register_engine(&txn_data.txns, &price_lookup_ctx, ras.as_ref());
 
         for w in writers {
             match w {
                 FormatWriter::TxtFormat(writer) => {
                     // There is always at least TimeZoneInfo
-                    writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
+                    writeln!(writer, "{}\n", metadata.text(cfg.report.tz.clone()))?;
 
                     let title = &self.report_settings.title;
-                    writeln!(writer, "{}", title)?;
+                    writeln!(writer, "{title}")?;
                     writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
 
                     for re in &register {
@@ -182,7 +182,7 @@ impl Report for RegisterReporter {
                         transactions,
                     };
                     serde_json::to_writer_pretty(&mut *writer, &rr)?;
-                    writeln!(writer)?
+                    writeln!(writer)?;
                 }
             }
         }

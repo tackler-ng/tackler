@@ -43,8 +43,8 @@ impl BalanceReporter {
         if ras.is_empty() {
             Ok(Box::<BalanceAllSelector>::default())
         } else {
-            let s: Vec<_> = ras.iter().map(|s| s.as_str()).collect();
-            let ras = BalanceByAccountSelector::from(&s)?;
+            let s: Vec<_> = ras.iter().map(String::as_str).collect();
+            let ras = BalanceByAccountSelector::try_from(&s)?;
             Ok(Box::new(ras))
         }
     }
@@ -55,26 +55,16 @@ impl BalanceReporter {
 }
 
 impl BalanceReporter {
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn txt_report<W: io::Write + ?Sized>(
         writer: &mut W,
         bal_report: &Balance,
         bal_settings: &BalanceSettings,
     ) -> Result<(), tackler::Error> {
-        let get_max_sum_len = |bal: &BTNs, f: fn(&BalanceTreeNode) -> Decimal| -> usize {
-            bal.iter()
-                .map(|btn| {
-                    let d = f(btn);
-                    // include space for '+-' to the length always
-                    format!("{:+.prec$}", d, prec = bal_settings.scale.get_precision(&d))
-                        .chars()
-                        .count()
-                })
-                .fold(0, max)
-        };
         fn get_max_delta_len(deltas: &Deltas) -> usize {
             deltas
                 .iter()
-                .map(|(_, d)| format!("{}", d).chars().count())
+                .map(|(_, d)| format!("{d}").chars().count())
                 .fold(0, max)
         }
         /// Max used length of commodity could be calculated from deltas
@@ -89,29 +79,6 @@ impl BalanceReporter {
                 })
                 .fold(0, max)
         }
-
-        let delta_max_len = get_max_delta_len(&bal_report.deltas);
-        let comm_max_len = get_max_commodity_len(&bal_report.deltas);
-
-        // max of 12, max_sum_len or delta_max_len
-        let left_sum_len = max(
-            12,
-            max(
-                get_max_sum_len(&bal_report.bal, |btn| btn.account_sum),
-                delta_max_len,
-            ),
-        );
-
-        let sub_acc_tree_sum_len = get_max_sum_len(&bal_report.bal, |btn| btn.sub_acc_tree_sum);
-
-        // filler between account sums (acc and accTree sums)
-        // width of this filler is mandated by delta sum's max commodity length,
-        // because then AccTreesSum won't overlap with delta's commodity
-        let filler_field = if comm_max_len.is_zero() {
-            " ".repeat(3)
-        } else {
-            " ".repeat(4 + comm_max_len)
-        };
 
         fn make_commodity_field(
             comm_max_len: usize,
@@ -158,6 +125,41 @@ impl BalanceReporter {
                 }
             }
         }
+
+        let get_max_sum_len = |bal: &BTNs, f: fn(&BalanceTreeNode) -> Decimal| -> usize {
+            bal.iter()
+                .map(|btn| {
+                    let d = f(btn);
+                    // include space for '+-' to the length always
+                    format!("{:+.prec$}", d, prec = bal_settings.scale.get_precision(&d))
+                        .chars()
+                        .count()
+                })
+                .fold(0, max)
+        };
+
+        let delta_max_len = get_max_delta_len(&bal_report.deltas);
+        let comm_max_len = get_max_commodity_len(&bal_report.deltas);
+
+        // max of 12, max_sum_len or delta_max_len
+        let left_sum_len = max(
+            12,
+            max(
+                get_max_sum_len(&bal_report.bal, |btn| btn.account_sum),
+                delta_max_len,
+            ),
+        );
+
+        let sub_acc_tree_sum_len = get_max_sum_len(&bal_report.bal, |btn| btn.sub_acc_tree_sum);
+
+        // filler between account sums (acc and accTree sums)
+        // width of this filler is mandated by delta sum's max commodity length,
+        // because then AccTreesSum won't overlap with delta's commodity
+        let filler_field = if comm_max_len.is_zero() {
+            " ".repeat(3)
+        } else {
+            " ".repeat(4 + comm_max_len)
+        };
 
         let left_ruler = " ".repeat(9);
 
@@ -239,6 +241,7 @@ impl BalanceReporter {
         }
     }
 
+    #[must_use]
     pub fn balance_to_api(
         metadata: Option<&Metadata>,
         bal: &Balance,
@@ -297,7 +300,7 @@ impl Report for BalanceReporter {
         };
 
         if let Some(hash) = cfg.get_hash() {
-            let asc = acc_sel.account_selector_metadata(hash)?;
+            let asc = acc_sel.account_selector_metadata(hash);
             metadata.push(asc);
         }
 
@@ -313,10 +316,10 @@ impl Report for BalanceReporter {
             match w {
                 FormatWriter::TxtFormat(writer) => {
                     if !metadata.is_empty() {
-                        writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
+                        writeln!(writer, "{}\n", metadata.text(cfg.report.tz.clone()))?;
                     }
 
-                    BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?
+                    BalanceReporter::txt_report(writer, &bal_report, &self.report_settings)?;
                 }
                 FormatWriter::JsonFormat(writer) => {
                     let md = if metadata.is_empty() {
@@ -328,7 +331,7 @@ impl Report for BalanceReporter {
                         &mut *writer,
                         &Self::balance_to_api(md, &bal_report, &self.report_settings),
                     )?;
-                    writeln!(writer)?
+                    writeln!(writer)?;
                 }
             }
         }

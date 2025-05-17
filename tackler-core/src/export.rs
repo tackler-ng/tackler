@@ -18,6 +18,9 @@ mod equity_exporter;
 mod identity_exporter;
 
 pub trait Export {
+    /// Write export
+    /// # Errors
+    /// Returns `Err` in case of error
     fn write_export<W: io::Write + ?Sized>(
         &self,
         cfg: &Settings,
@@ -26,6 +29,10 @@ pub trait Export {
     ) -> Result<(), tackler::Error>;
 }
 
+/// Write all exports
+///
+/// # Errors
+/// Returns `Err` in case of error
 pub fn write_exports<ProgW: io::Write + ?Sized>(
     output_dir: &Path,
     output_name: &str,
@@ -38,7 +45,7 @@ pub fn write_exports<ProgW: io::Write + ?Sized>(
         match e {
             ExportType::Equity => {
                 let eq_exporter = EquityExporter {
-                    export_settings: EquitySettings::from(settings)?,
+                    export_settings: EquitySettings::from(settings),
                 };
 
                 let (mut out_writer, path) =

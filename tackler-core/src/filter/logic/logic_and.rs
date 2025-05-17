@@ -20,6 +20,7 @@ mod tests {
     use tackler_api::filters::{NullaryFALSE, NullaryTRUE, TxnFilter};
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn permutations() {
         let txn = Transaction::default();
 

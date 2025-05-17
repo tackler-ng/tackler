@@ -23,6 +23,10 @@ mod items;
 pub mod overlaps;
 mod raw_items;
 
+/// Converter list of strings to report formats
+///
+/// # Errors
+/// Returns `Err` in case invalid format or if same format is defined multiple times
 pub fn to_report_formats(formats: Option<&[String]>) -> Result<Vec<FormatType>, tackler::Error> {
     match formats {
         Some(formats) => {
@@ -53,12 +57,17 @@ pub fn to_report_formats(formats: Option<&[String]>) -> Result<Vec<FormatType>, 
     }
 }
 
+/// Converter list of strings to report targets
+///
+/// # Errors
+/// Returns `Err` in case invalid target or if same target is defined multiple times
 pub fn to_report_targets(targets: &[String]) -> Result<Vec<ReportType>, tackler::Error> {
     // TODO: Detect same target multiple times
-    let trgs =
-        targets.iter().try_fold(
+    let trgs = targets
+        .iter()
+        .try_fold(
             Vec::new(),
-            |mut trgs: Vec<ReportType>, trg| match ReportType::from(trg.as_str()) {
+            |mut trgs: Vec<ReportType>, trg| match ReportType::try_from(trg.as_str()) {
                 Ok(t) => {
                     trgs.push(t);
                     Ok::<Vec<ReportType>, tackler::Error>(trgs)
@@ -72,11 +81,16 @@ pub fn to_report_targets(targets: &[String]) -> Result<Vec<ReportType>, tackler:
     Ok(trgs)
 }
 
+/// Converter list of strings to export formats
+///
+/// # Errors
+/// Returns `Err` in case invalid format or if same format is defined multiple times
 pub fn to_export_targets(targets: &[String]) -> Result<Vec<ExportType>, tackler::Error> {
-    let trgs =
-        targets.iter().try_fold(
+    let trgs = targets
+        .iter()
+        .try_fold(
             Vec::new(),
-            |mut trgs: Vec<ExportType>, trg| match ExportType::from(trg.as_str()) {
+            |mut trgs: Vec<ExportType>, trg| match ExportType::try_from(trg.as_str()) {
                 Ok(t) => {
                     trgs.push(t);
                     Ok::<Vec<ExportType>, tackler::Error>(trgs)

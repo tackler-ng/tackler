@@ -18,6 +18,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "reject invalid tags metadata constructions"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_4d364251_f578_4c00_8390_9d8b5feea90b__err_tags_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
@@ -29,7 +30,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ','"#
+          r"at input ','"
         ),
         (indoc!(
            "|
@@ -40,7 +41,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"no viable alternative at input"#
+          r"no viable alternative at input"
         ),
         (indoc!(
            "|
@@ -51,7 +52,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ','"#
+          r"at input ','"
         ),
         (indoc!(
            "|
@@ -62,7 +63,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ','"#
+          r"at input ','"
         ),
         (indoc!(
            "|
@@ -73,7 +74,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -84,7 +85,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ':'"#
+          r"at input ':'"
         ),
         (indoc!(
            "|
@@ -95,7 +96,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input 'tuv'"#
+          r"at input 'tuv'"
         ),
         (indoc!(
            "|
@@ -106,7 +107,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input 'tu'"#
+          r"at input 'tu'"
         ),
 
         (indoc!(
@@ -119,7 +120,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#"at input ' #'"#
+          r"at input ' #'"
         ),
         (indoc!(
            "|
@@ -132,7 +133,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#"at input ' #'"#
+          r"at input ' #'"
         ),
         (indoc!(
            "|
@@ -144,7 +145,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 4",
-          r#"at input ' "#
+          r"at input ' "
         ),
         (indoc!(
            "|
@@ -157,7 +158,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#"at input ' "#
+          r"at input ' "
         ),
         (indoc!(
            "|
@@ -170,7 +171,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 5",
-          r#"at input ' "#
+          r"at input ' "
         ),
       ];
         let mut count = 0;
@@ -178,7 +179,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -210,7 +211,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -224,6 +225,7 @@ use tackler_rs::IndocUtils;
      #[test]
      //desc: "accepts tags metadata"
      #[allow(non_snake_case)]
+     #[allow(clippy::too_many_lines)]
      fn id_df593f17_2c74_4657_8da9_afc9ba445755__ok_tags() {
        #[allow(clippy::type_complexity)]
        let  pok_strings: Vec<(String, i32, Vec<(&str, fn(&Transaction) -> String)>)> = vec![
@@ -348,7 +350,7 @@ use tackler_rs::IndocUtils;
              let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
              //println!("{:#?}", &t.0);
              //println!("{:#?}", res);
-             assert!(res.is_ok(), "Offending test vector item: {}", count);
+             assert!(res.is_ok(), "Offending test vector item: {count}");
              let txn_data = res.unwrap(/*:test:*/);
              let txns = txn_data.get_all().unwrap(/*:test:*/);
              let txn: &Transaction = txns.txns[0];

@@ -44,7 +44,7 @@ mod tests {
             (make_posts_txn("e:the:abc", 4, "a:the:def"), false),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             assert_eq!(tf.eval(&t.0), t.1);
         }
 

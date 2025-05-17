@@ -20,6 +20,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "check invalid timestamp constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_4ff959f7_c2bd_4750_8664_f46ce50a7c7b__err_timestamp_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
 
@@ -31,7 +32,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017'"#
+          r"at input '2017'"
         ),
         (indoc!(
            "|
@@ -41,7 +42,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-1'"#
+          r"at input '2017-1'"
         ),
         (indoc!(
            "|
@@ -51,7 +52,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01'"#
+          r"at input '2017-01'"
         ),
         (indoc!(
           "|
@@ -61,7 +62,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-1-1'"#
+          r"at input '2017-1-1'"
         ),
         (indoc!(
            "|
@@ -71,7 +72,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-1'"#
+          r"at input '2017-01-1'"
         ),
         (indoc!(
            "|
@@ -81,7 +82,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '+'"#
+          r"at input '+'"
         ),
         (indoc!(
            "|
@@ -91,7 +92,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-01T14'"#
+          r"at input '2017-01-01T14'"
         ),
         (indoc!(
            "|
@@ -101,7 +102,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-01T14'"#
+          r"at input '2017-01-01T14'"
         ),
         (indoc!(
            "|
@@ -111,7 +112,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '+'"#
+          r"at input '+'"
         ),
         (indoc!(
            "|
@@ -121,7 +122,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-01-04'"#
+          r"at input '2017-01-01-04'"
         ),
         (indoc!(
            "|
@@ -131,7 +132,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-01T14-04'"#
+          r"at input '2017-01-01T14-04'"
         ),
         (indoc!(
            "|
@@ -141,7 +142,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '2017-01-01T14'"#
+          r"at input '2017-01-01T14'"
         ),
         (indoc!(
            "|
@@ -151,14 +152,14 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input '-0400'"#
+          r"at input '-0400'"
         ),
       ];
         let mut count = 0;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -182,7 +183,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' Z'"#
+          r"at input ' Z'"
         ),
         (indoc!(
            "|
@@ -192,7 +193,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' +'"#
+          r"at input ' +'"
         ),
         (indoc!(
            "|
@@ -202,7 +203,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' -04'"#
+          r"at input ' -04'"
         ),
         (indoc!(
            "|
@@ -212,7 +213,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' Z'"#
+          r"at input ' Z'"
         ),
         (indoc!(
            "|
@@ -222,7 +223,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' +'"#
+          "at input ' +'"
         ),
         (indoc!(
            "|
@@ -232,7 +233,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' -04'"#
+          r"at input ' -04'"
         ),
         (indoc!(
            "|
@@ -242,7 +243,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' T'"#
+          r"at input ' T'"
         ),
         (indoc!(
            "|
@@ -252,14 +253,14 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' T'"#
+          r"at input ' T'"
         ),
       ];
         let mut count = 0;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -273,6 +274,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "accept valid timestamp constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_2c0ee1a2_1a23_4427_a6dc_6156abc36272__ok_timestamp() {
       let pok_strings: Vec<(String, &str)> = vec![
 
@@ -532,11 +534,11 @@ use tackler_rs::IndocUtils;
         let mut count = 0;
         for t in pok_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
-            assert!(res.is_ok(), "is it ok: Offending test vector item: {}", count);
+            assert!(res.is_ok(), "is it ok: Offending test vector item: {count}");
             let txn_data = res.unwrap(/*:test:*/);
             let txns = txn_data.get_all().unwrap(/*:test:*/);
             let txn: &Transaction = txns.txns[0];
-            assert_eq!(txn_ts_to_string(txn), t.1.to_string(), "Testing value: offending test vector item: {}", count);
+            assert_eq!(txn_ts_to_string(txn), t.1.to_string(), "Testing value: offending test vector item: {count}");
             count += 1;
         }
         assert_eq!(count, 27);

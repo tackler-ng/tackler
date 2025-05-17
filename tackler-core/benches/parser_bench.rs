@@ -30,7 +30,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter(|| {
             let res = string_to_txns(&mut input.as_str(), &mut settings);
             assert!(res.is_ok());
-        })
+        });
     });
 }
 

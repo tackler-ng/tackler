@@ -19,6 +19,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "check invalid header code constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_242aa119_bc5e_4562_9f4a_5feb26d1fba6__err_code_parse() {
       let perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
@@ -29,7 +30,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -39,7 +40,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ')'"#
+          r"at input ')'"
         ),
         (indoc!(
            "|
@@ -49,7 +50,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -59,7 +60,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input 'abc'"#
+          r"at input 'abc'"
         ),
         (indoc!(
            "|
@@ -69,7 +70,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input 'a'"#
+          r"at input 'a'"
         ),
         (indoc!(
            "|
@@ -79,7 +80,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -89,7 +90,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -99,7 +100,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -109,7 +110,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -119,7 +120,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -129,7 +130,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -139,7 +140,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
 
         (indoc!(
@@ -150,7 +151,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -160,7 +161,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -170,7 +171,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -180,7 +181,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -190,7 +191,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -200,7 +201,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -210,7 +211,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
 
 
@@ -222,7 +223,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -232,7 +233,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
         (indoc!(
            "|
@@ -242,7 +243,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' '"#
+          r"at input ' '"
         ),
       ];
 
@@ -250,7 +251,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -264,6 +265,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "accept valid code constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_a5450ec6_42a3_4f3b_b989_27eb2949ccad__ok_code() {
       let pok_strings: Vec<(String, &str)> = vec![
         (indoc!(
@@ -442,7 +444,7 @@ use tackler_rs::IndocUtils;
       let mut count = 0;
       for t in pok_strings {
         let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
-        assert!(res.is_ok(), "Offending test vector item: {}", count);
+        assert!(res.is_ok(), "Offending test vector item: {count}");
           let txn_data = res.unwrap(/*:test:*/);
           let txns = txn_data.get_all().unwrap(/*:test:*/);
         let txn: &Transaction = txns.txns[0];

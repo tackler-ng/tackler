@@ -51,7 +51,7 @@ mod tests {
 
         for t in &pok_tests {
             let mut settings = Settings::default();
-            let i = format!("'{}\n", t);
+            let i = format!("'{t}\n");
             let mut is = Stream {
                 input: i.as_str(),
                 state: &mut settings,

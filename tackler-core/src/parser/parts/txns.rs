@@ -44,7 +44,7 @@ fn parse_txn(is: &mut Stream<'_>) -> ModalResult<Transaction> {
         return Err(make_semantic_error(is, msg.as_str()));
     }
 
-    match Transaction::from(txn.0, txn.1) {
+    match Transaction::try_from(txn.0, txn.1) {
         Ok(txn) => Ok(txn),
         Err(err) => Err(from_error(is, err.as_ref())),
     }

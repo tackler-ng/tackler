@@ -26,12 +26,12 @@ pub struct EquitySettings {
 }
 
 impl EquitySettings {
-    pub fn from(settings: &Settings) -> Result<EquitySettings, tackler::Error> {
-        let bs = EquitySettings {
+    #[must_use]
+    pub fn from(settings: &Settings) -> EquitySettings {
+        EquitySettings {
             eqa: Some(settings.export.equity.equity_account.clone()),
             ras: settings.get_equity_ras(),
-        };
-        Ok(bs)
+        }
     }
 }
 
@@ -46,8 +46,8 @@ impl EquityExporter {
         if v.is_empty() {
             Ok(Box::new(BalanceNonZeroSelector {}))
         } else {
-            let s: Vec<_> = v.iter().map(|s| s.as_str()).collect();
-            let ras = BalanceNonZeroByAccountSelector::from(&s)?;
+            let s: Vec<_> = v.iter().map(String::as_str).collect();
+            let ras = BalanceNonZeroByAccountSelector::try_from(&s)?;
 
             Ok(Box::new(ras))
         }
@@ -55,6 +55,7 @@ impl EquityExporter {
 }
 
 impl Export for EquityExporter {
+    #[allow(clippy::too_many_lines)]
     fn write_export<W: io::Write + ?Sized>(
         &self,
         cfg: &Settings,
@@ -74,7 +75,7 @@ impl Export for EquityExporter {
         if bal.is_empty() {
             // todo: check if this is actually possible?
             return Ok(());
-        };
+        }
 
         let eq_txn_indent = "   ";
         let equity_account = "Equity:Default·Account".to_string();
@@ -84,12 +85,12 @@ impl Export for EquityExporter {
                 if c.is_empty() {
                     String::default()
                 } else {
-                    format!(" for {}", c)
+                    format!(" for {c}")
                 }
             };
             let txn_uuid_str = |uuid: Option<Uuid>| -> String {
                 match uuid {
-                    Some(u) => format!(": last txn (uuid): {}", u),
+                    Some(u) => format!(": last txn (uuid): {u}"),
                     None => String::default(),
                 }
             };
@@ -110,13 +111,10 @@ impl Export for EquityExporter {
 
         let last_txn = txn_data.txns.last();
 
-        let acc_sel_checksum = match cfg.get_hash() {
-            Some(hash) => Some(AccountSelectorChecksum {
-                hash: bal_acc_sel.checksum(hash)?,
-                selectors: bal_acc_sel.selectors(),
-            }),
-            None => None,
-        };
+        let acc_sel_checksum = cfg.get_hash().map(|hash| AccountSelectorChecksum {
+            hash: bal_acc_sel.checksum(hash),
+            selectors: bal_acc_sel.selectors(),
+        });
 
         let equity_txn_str: Vec<String> = bal
             .bal
@@ -136,7 +134,7 @@ impl Export for EquityExporter {
                         Some(eqa) => eqa,
                         None => &equity_account,
                     };
-                    format!("{}{}  {}", eq_txn_indent, ea, value)
+                    format!("{eq_txn_indent}{ea}  {value}")
                 };
                 /*
                  * equity transaction per commodity
@@ -150,10 +148,7 @@ impl Export for EquityExporter {
                             eq_txn_indent,
                             b.acctn.atn.account,
                             b.account_sum,
-                            match comm.is_any() {
-                                true => { format!(" {}", comm.name) },
-                                false => String::new(),
-                            }
+                            if comm.is_any() { format!(" {}", comm.name) } else { String::new() }
                         )
                     })
                     .collect::<Vec<String>>();
@@ -163,38 +158,38 @@ impl Export for EquityExporter {
                 eq_txn.push(hdr_str(last_txn, c));
                 if let Some(md) = &txn_data.metadata {
                         for mdi in md.items.clone() {
-                            eq_txn.extend(mdi.text(cfg.report.report_tz.clone()).iter().map(|v| {
-                                format!("{}; {}", eq_txn_indent, v)
+                            eq_txn.extend(mdi.text(cfg.report.tz.clone()).iter().map(|v| {
+                                format!("{eq_txn_indent}; {v}")
                             }).collect::<Vec<_>>());
-                            eq_txn.push(format!("{}; ", eq_txn_indent));
+                            eq_txn.push(format!("{eq_txn_indent}; "));
                         }
 
                         if let Some(asc) = &acc_sel_checksum {
-                            for v in asc.text(cfg.report.report_tz.clone()) {
+                            for v in asc.text(cfg.report.tz.clone()) {
                                 eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
                             }
-                            eq_txn.push(format!("{}; ", eq_txn_indent));
+                            eq_txn.push(format!("{eq_txn_indent}; "));
                         }
-                };
+                }
                 if dsum.is_zero() {
-                    eq_txn.push(format!("{}; WARNING:", eq_txn_indent));
-                    eq_txn.push(format!("{}; WARNING: The sum of equity transaction is zero without equity account.", eq_txn_indent));
-                    eq_txn.push(format!("{}; WARNING: Therefore there is no equity posting row, and this is probably not right.", eq_txn_indent));
-                    eq_txn.push(format!("{}; WARNING: Is the account selector correct for this Equity export?", eq_txn_indent));
-                    eq_txn.push(format!("{}; WARNING:", eq_txn_indent));
+                    eq_txn.push(format!("{eq_txn_indent}; WARNING:"));
+                    eq_txn.push(format!("{eq_txn_indent}; WARNING: The sum of equity transaction is zero without equity account."));
+                    eq_txn.push(format!("{eq_txn_indent}; WARNING: Therefore there is no equity posting row, and this is probably not right."));
+                    eq_txn.push(format!("{eq_txn_indent}; WARNING: Is the account selector correct for this Equity export?"));
+                    eq_txn.push(format!("{eq_txn_indent}; WARNING:"));
                 }
 
                 eq_txn.extend(eq_postings);
                 if !dsum.is_zero() {
                     eq_txn.push(bal_posting);
                 }
-                eq_txn.push("".to_string());
+                eq_txn.push(String::new());
                 eq_txn
             })
             .collect();
 
         for i in equity_txn_str {
-            writeln!(writer, "{}", i)?;
+            writeln!(writer, "{i}")?;
         }
 
         Ok(())

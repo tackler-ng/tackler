@@ -76,7 +76,7 @@ impl RegisterEntry<'_> {
         fn amount_to_string(amount: &Decimal, scale: &Scale, width: usize) -> String {
             let amount_txt = format_with_scale(0, amount, scale);
             if amount.is_sign_positive() && amount_txt.chars().count() >= width {
-                format!(" {}", amount_txt)
+                format!(" {amount_txt}")
             } else {
                 amount_txt
             }
@@ -88,8 +88,7 @@ impl RegisterEntry<'_> {
 
         let filler_width = match &reg_cfg.price_lookup {
             PriceLookup::AtTheTimeOfTxn => 20,
-            PriceLookup::LastPriceDbEntry => 8,
-            PriceLookup::GivenTime(_) => 8,
+            PriceLookup::LastPriceDbEntry | PriceLookup::GivenTime(_) => 8,
             PriceLookup::None => 0,
         };
 
@@ -118,7 +117,7 @@ impl RegisterEntry<'_> {
                 w = width,
             );
             line_len = max(line_len, line.chars().count());
-            let _ = writeln!(reg_entry_txt, "{}", line);
+            let _ = writeln!(reg_entry_txt, "{line}");
         }
         let _ = writeln!(reg_entry_txt, "{}", "-".repeat(line_len));
         reg_entry_txt

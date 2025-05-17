@@ -50,7 +50,7 @@ mod tests {
         };
         let a_p = Posting::from(a_txntn, a_v, a_v, false, Arc::new(Commodity::default()), None).unwrap(/*:test:*/);
 
-        Transaction::from(TxnHeader::default(), vec![e_p, a_p]).unwrap(/*:test:*/)
+        Transaction::try_from(TxnHeader::default(), vec![e_p, a_p]).unwrap(/*:test:*/)
     }
 
     #[test]
@@ -74,7 +74,7 @@ mod tests {
             (make_posts_comment_txn(Some("abc"), "a", 123, "e"), true),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             assert_eq!(tf.eval(&t.0), t.1);
         }
 

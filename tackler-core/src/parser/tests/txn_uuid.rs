@@ -30,7 +30,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ' # uid'"#
+          r"at input ' # uid'"
         ),
         (indoc!(
            "|
@@ -41,7 +41,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ' #:'"#
+          r"at input ' #:'"
         ),
         (indoc!(
            "|
@@ -52,7 +52,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ' #uuid'"#
+          r"at input ' #uuid'"
         ),
         (indoc!(
            "|
@@ -63,7 +63,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#":"#
+          r":"
         ),
         (indoc!(
            "|
@@ -74,7 +74,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input '"#
+          r"at input '"
         ),
         (indoc!(
            "|
@@ -85,14 +85,14 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ';'"#
+          r"at input ';'"
         ),
       ];
         let mut count = 0;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -162,7 +162,7 @@ use tackler_rs::IndocUtils;
       let mut count = 0;
       for t in pok_strings {
         let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
-        assert!(res.is_ok(), "Offending test vector item: {}", count);
+        assert!(res.is_ok(), "Offending test vector item: {count}");
           let txn_data = res.unwrap(/*:test:*/);
           let txns = txn_data.get_all().unwrap(/*:test:*/);
         let txn: &Transaction = txns.txns[0];

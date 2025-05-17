@@ -12,6 +12,8 @@ use rust_decimal::{Decimal, RoundingStrategy};
 /// The number is right side aligned on the field.
 ///
 /// Used rounding strategy is "midpoint away from zero"
+#[must_use]
+#[allow(clippy::cast_possible_truncation)]
 pub fn format_with_scale(width: usize, v: &Decimal, scale: &Scale) -> String {
     let prec = scale.get_precision(v);
     format!(
@@ -218,11 +220,11 @@ mod tests {
 
         assert_eq!(
             format_with_scale(32, &sc24_4, &scale),
-            format!("   {}", sc24_4_txt)
+            format!("   {sc24_4_txt}")
         );
         assert_eq!(
             format_with_scale(32, &sc5_23, &scale),
-            format!("   {}", sc5_23_txt)
+            format!("   {sc5_23_txt}")
         );
     }
 

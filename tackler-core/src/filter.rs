@@ -200,7 +200,7 @@ mod tests {
         };
         let a_p = Posting::from(a_txntn, a_v, a_v, false, Arc::new(Commodity::default()), Some("comment".to_string())).unwrap(/*:test:*/);
 
-        Transaction::from(
+        Transaction::try_from(
             TxnHeader {
                 timestamp: Zoned::default(),
                 code: None,
@@ -260,7 +260,7 @@ mod tests {
         )
         .unwrap(/*:test:*/);
 
-        Transaction::from(TxnHeader::default(), vec![e_p, a_p]).unwrap(/*:test:*/)
+        Transaction::try_from(TxnHeader::default(), vec![e_p, a_p]).unwrap(/*:test:*/)
     }
 
     #[test]

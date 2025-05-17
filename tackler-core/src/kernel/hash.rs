@@ -30,6 +30,13 @@ impl Debug for Hash {
 }
 
 impl Hash {
+    /// Hash function based on algorithm name
+    ///
+    /// Supported algorithms: "SHA-256", "SHA-512",
+    /// "SHA-512/256", "SHA3-256", "SHA3-512"
+    ///
+    /// # Errors
+    /// Returns `Err` in case of invalid hash algorithm
     pub fn from(algo: &str) -> Result<Hash, tackler::Error> {
         match algo {
             "SHA-256" => Ok(Hash {
@@ -59,7 +66,9 @@ impl Hash {
         }
     }
 
-    pub fn checksum(&self, items: &[String], separator: &[u8]) -> Result<Checksum, tackler::Error> {
+    /// Calculate checksum
+    #[must_use]
+    pub fn checksum(&self, items: &[String], separator: &[u8]) -> Checksum {
         let mut hasher = self.hasher.clone();
 
         for i in items {
@@ -68,13 +77,13 @@ impl Hash {
         }
         let hash = hasher.finalize();
 
-        Ok(Checksum {
+        Checksum {
             algorithm: self.hash_algo.clone(),
             value: hash.iter().fold(String::new(), |mut output, b| {
                 let _ = write!(output, "{b:02x}");
                 output
             }),
-        })
+        }
     }
 }
 
@@ -91,9 +100,8 @@ mod tests {
 
         // same as:
         //   echo -ne "" | sha256sum
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         );
     }
@@ -102,14 +110,13 @@ mod tests {
     fn hasher_empty_input() {
         let hash = Hash::from("SHA-256").unwrap(/*:test:*/);
 
-        let uuids = vec!["".to_string()];
+        let uuids = vec![String::new()];
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
         // same as:
         //   echo -ne "\n" | sha256sum
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         );
     }
@@ -121,17 +128,15 @@ mod tests {
         let foo = vec!["foo".to_string()];
         let cs_foo = hash.checksum(&foo, "\n".as_bytes());
 
-        assert!(cs_foo.is_ok());
         assert_eq!(
-            cs_foo.unwrap(/*:test:*/).value,
+            cs_foo.value,
             "b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c"
         );
 
         let bar = vec!["bar".to_string()];
         let cs_bar = hash.checksum(&bar, "\n".as_bytes());
-        assert!(cs_bar.is_ok());
         assert_eq!(
-            cs_bar.unwrap(/*:test:*/).value,
+            cs_bar.value,
             "7d865e959b2466918c9863afca942d0fb89d7c9ac0c99bafc3749504ded97730"
         );
     }
@@ -165,9 +170,8 @@ mod tests {
         let uuids = get_test_vector();
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "16418783ef294f830721159ee59cc3388c8b69c13afba2256cf756c6097fe687"
         );
     }
@@ -178,9 +182,8 @@ mod tests {
         let uuids = get_test_vector();
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "51a370f86b7218012c8a7a555a1ae099b32fe83ed032e82481de5fa7ea3a90baa6948a4f559668ad3696a08b0445fe4e5964dba695b45653b4e678ab200ede17"
         );
     }
@@ -192,9 +195,8 @@ mod tests {
         let uuids = get_test_vector();
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "fd5e794d47589c83ed5def2485699f232aed7e7df2869ef8b681cbf07af7cb66"
         );
     }
@@ -206,9 +208,8 @@ mod tests {
         let uuids = get_test_vector();
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "ee677c3486b0b6c8d61eb3b5cb650762dbf741bb6b050934f4c3c4f6551d1841"
         );
     }
@@ -220,9 +221,8 @@ mod tests {
         let uuids = get_test_vector();
         let cs = hash.checksum(&uuids, "\n".as_bytes());
 
-        assert!(cs.is_ok());
         assert_eq!(
-            cs.unwrap(/*:test:*/).value,
+            cs.value,
             "6cc3e6d3eb1d920ac3439a0b748244aa5f997ba0a813457bae7b99f3f58f035ce18eb3646a35517c19987dfe0bb60ebcc81ee5320f4d2348132fdb55bb8d8a25"
         );
     }

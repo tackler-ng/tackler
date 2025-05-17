@@ -38,11 +38,15 @@ impl StorageType {
 }
 
 impl StorageType {
+    /// Storage type from string
+    ///
+    /// # Errors
+    /// Returns `Err` in case of invalid type
     pub fn try_from(storage: &str) -> Result<StorageType, tackler::Error> {
         match storage {
             StorageType::FS => Ok(StorageType::Fs),
             StorageType::GIT => Ok(StorageType::Git),
-            _ => Err(format!("Unknown storage type: {}", storage).into()),
+            _ => Err(format!("Unknown storage type: {storage}").into()),
         }
     }
 }
@@ -53,7 +57,7 @@ impl Display for StorageType {
             StorageType::Fs => StorageType::FS,
             StorageType::Git => StorageType::GIT,
         };
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
@@ -93,7 +97,7 @@ impl TryFrom<&str> for PriceLookupType {
             PriceLookupType::LAST_PRICE => Ok(PriceLookupType::LastPrice),
             PriceLookupType::TXN_TIME => Ok(PriceLookupType::TxnTime),
             PriceLookupType::GIVEN_TIME => Ok(PriceLookupType::GivenTime),
-            _ => Err(format!("Unknown price lookup type: {}", lookup).into()),
+            _ => Err(format!("Unknown price lookup type: {lookup}").into()),
         }
     }
 }
@@ -106,7 +110,11 @@ pub enum ReportType {
     Register,
 }
 impl ReportType {
-    pub fn from(r: &str) -> Result<Self, tackler::Error> {
+    /// Report type from string
+    ///
+    /// # Errors
+    /// Returns `Err` in case of invalid type
+    pub fn try_from(r: &str) -> Result<Self, tackler::Error> {
         match r {
             "balance" => Ok(ReportType::Balance),
             "balance-group" => Ok(ReportType::BalanceGroup),
@@ -123,7 +131,11 @@ pub enum ExportType {
     Identity,
 }
 impl ExportType {
-    pub fn from(r: &str) -> Result<Self, tackler::Error> {
+    /// Export type from string
+    ///
+    /// # Errors
+    /// Returns `Err` in case of invalid type
+    pub fn try_from(r: &str) -> Result<Self, tackler::Error> {
         match r {
             "equity" => Ok(ExportType::Equity),
             "identity" => Ok(ExportType::Identity),
@@ -181,7 +193,8 @@ pub(crate) type AccountSelectors = Vec<String>;
 
 #[derive(Debug)]
 pub struct Config {
-    config_path: PathBuf,
+    /// Path of config file for this configuration
+    path: PathBuf,
     pub(crate) kernel: Kernel,
     pub(crate) price: Price,
     pub(crate) transaction: Transaction,
@@ -190,11 +203,15 @@ pub struct Config {
 }
 
 impl Config {
+    /// Create configuration
+    ///
+    /// # Errors
+    /// Returns `Err` in case there are syntactical or semantic errors with config
     pub fn try_from<P: AsRef<Path>>(cfg_path: P) -> Result<Config, tackler::Error> {
         let cfg_raw: ConfigRaw = toml::from_str(fs::read_to_string(&cfg_path)?.as_str())?;
 
         Ok(Config {
-            config_path: cfg_path.as_ref().to_path_buf(),
+            path: cfg_path.as_ref().to_path_buf(),
             kernel: Kernel::try_from(&cfg_raw.kernel)?,
             price: cfg_raw.price.map_or(Ok(Price::default()), |raw_price| {
                 Price::try_from(&cfg_path, &raw_price)
@@ -204,8 +221,9 @@ impl Config {
             export: { Export::from(&cfg_raw.export, &cfg_raw.report)? },
         })
     }
+    #[must_use]
     pub fn path(&self) -> PathBuf {
-        self.config_path.clone()
+        self.path.clone()
     }
 }
 
@@ -244,6 +262,7 @@ impl Default for Timestamp {
 }
 
 impl Timestamp {
+    #[allow(clippy::cast_possible_wrap)]
     fn from(ts_raw: &TimestampRaw) -> Result<Timestamp, tackler::Error> {
         let ts = Timestamp {
             default_time: {
@@ -269,13 +288,14 @@ impl Timezone {
                 return Err(msg.into());
             }
             (Some(tz_name), None) => jiff::tz::TimeZone::get(tz_name)?,
-            (None, Some(offset)) => match BrokenDownTime::parse("%:z", offset)?.offset() {
-                Some(tm) => tm.to_time_zone(),
-                None => {
+            (None, Some(offset)) => {
+                if let Some(tm) = BrokenDownTime::parse("%:z", offset)?.offset() {
+                    tm.to_time_zone()
+                } else {
                     let msg = format!("can't parse offset '{offset}' as valid offset");
                     return Err(msg.into());
                 }
-            },
+            }
             (None, None) => jiff::tz::Offset::UTC.to_time_zone(),
         };
         Ok(tz)
@@ -337,13 +357,14 @@ impl FS {
                 }
                 ext.clone()
             }
-            None => match &fs_raw.suffix {
-                Some(ext) => ext.clone(),
-                None => {
+            None => {
+                if let Some(ext) = &fs_raw.suffix {
+                    ext.clone()
+                } else {
                     let msg = "FS is missing 'ext' key";
                     return Err(msg.into());
                 }
-            },
+            }
         };
 
         let ext = extension
@@ -361,7 +382,7 @@ impl FS {
 #[derive(Debug, Clone, Default)]
 pub struct Git {
     pub repo: String,
-    pub git_ref: String,
+    pub reference: String,
     pub dir: String,
     pub ext: String,
 }
@@ -375,13 +396,14 @@ impl Git {
                 }
                 repo.clone()
             }
-            None => match &git_raw.repository {
-                Some(repo) => repo.clone(),
-                None => {
+            None => {
+                if let Some(repo) = &git_raw.repository {
+                    repo.clone()
+                } else {
                     let msg = "Git is missing 'repo' key";
                     return Err(msg.into());
                 }
-            },
+            }
         };
         let extension = match &git_raw.ext {
             Some(ext) => {
@@ -391,13 +413,14 @@ impl Git {
                 }
                 ext.clone()
             }
-            None => match &git_raw.suffix {
-                Some(ext) => ext.clone(),
-                None => {
+            None => {
+                if let Some(ext) = &git_raw.suffix {
+                    ext.clone()
+                } else {
                     let msg = "Git is missing 'ext' key";
                     return Err(msg.into());
                 }
-            },
+            }
         };
         let ext = extension
             .strip_prefix('.')
@@ -405,7 +428,7 @@ impl Git {
             .to_string();
         Ok(Git {
             repo,
-            git_ref: git_raw.git_ref.clone(),
+            reference: git_raw.git_ref.clone(),
             dir: git_raw.dir.clone(),
             ext,
         })
@@ -426,13 +449,14 @@ impl Price {
         let lookup_type = PriceLookupType::try_from(price_raw.lookup_type.as_str())?;
 
         match db_path_str {
-            NONE_VALUE => match lookup_type {
-                PriceLookupType::None => Ok(Price::default()),
-                _ => {
+            NONE_VALUE => {
+                if lookup_type == PriceLookupType::None {
+                    Ok(Price::default())
+                } else {
                     let msg = "Price database path is 'none' but lookup type is not 'none'";
                     Err(msg.into())
                 }
-            },
+            }
             _ => Ok(Price {
                 db_path: get_abs_path(base_path, db_path_str)?,
                 lookup_type,
@@ -471,23 +495,22 @@ impl Accounts {
         accs_path_raw: &AccountsPathRaw,
     ) -> Result<Accounts, tackler::Error> {
         let accs_path_str = accs_path_raw.path.as_str();
-        match accs_path_str {
-            NONE_VALUE => Ok(Accounts::default()),
-            _ => {
-                let accs_path = get_abs_path(&path, accs_path_str)?;
-                let acc_raw: AccountsRaw = match fs::read_to_string(&accs_path) {
-                    Ok(s) => toml::from_str(s.as_str())?,
-                    Err(err) => {
-                        let msg = format!(
-                            "Accounts configuration error while reading file '{accs_path_str}': {err}"
-                        );
-                        return Err(msg.into());
-                    }
-                };
-                Ok(Accounts {
-                    names: acc_raw.names,
-                })
-            }
+        if accs_path_str == NONE_VALUE {
+            Ok(Accounts::default())
+        } else {
+            let accs_path = get_abs_path(&path, accs_path_str)?;
+            let acc_raw: AccountsRaw = match fs::read_to_string(&accs_path) {
+                Ok(s) => toml::from_str(s.as_str())?,
+                Err(err) => {
+                    let msg = format!(
+                        "Accounts configuration error while reading file '{accs_path_str}': {err}"
+                    );
+                    return Err(msg.into());
+                }
+            };
+            Ok(Accounts {
+                names: acc_raw.names,
+            })
         }
     }
 }
@@ -504,27 +527,26 @@ impl Commodities {
         comm_path_raw: &CommoditiesPathRaw,
     ) -> Result<Commodities, tackler::Error> {
         let comm_path_str = comm_path_raw.path.as_str();
-        match comm_path_str {
-            NONE_VALUE => Ok(Commodities {
+        if comm_path_str == NONE_VALUE {
+            Ok(Commodities {
                 permit_empty_commodity: Some(true),
                 names: Vec::new(),
-            }),
-            _ => {
-                let comm_path = get_abs_path(&path, comm_path_str)?;
-                let comm_raw: CommoditiesRaw = match fs::read_to_string(&comm_path) {
-                    Ok(s) => toml::from_str(s.as_str())?,
-                    Err(err) => {
-                        let msg = format!(
-                            "Commodities configuration error while reading file '{comm_path_str}': {err}"
-                        );
-                        return Err(msg.into());
-                    }
-                };
-                Ok(Commodities {
-                    permit_empty_commodity: comm_raw.permit_empty_commodity,
-                    names: comm_raw.names,
-                })
-            }
+            })
+        } else {
+            let comm_path = get_abs_path(&path, comm_path_str)?;
+            let comm_raw: CommoditiesRaw = match fs::read_to_string(&comm_path) {
+                Ok(s) => toml::from_str(s.as_str())?,
+                Err(err) => {
+                    let msg = format!(
+                        "Commodities configuration error while reading file '{comm_path_str}': {err}"
+                    );
+                    return Err(msg.into());
+                }
+            };
+            Ok(Commodities {
+                permit_empty_commodity: comm_raw.permit_empty_commodity,
+                names: comm_raw.names,
+            })
         }
     }
 }
@@ -537,30 +559,29 @@ pub(crate) struct Tags {
 impl Tags {
     fn from<P: AsRef<Path>>(path: P, tags_path_raw: &TagsPathRaw) -> Result<Tags, tackler::Error> {
         let tags_path_str = tags_path_raw.path.as_str();
-        match tags_path_str {
-            NONE_VALUE => Ok(Tags::default()),
-            _ => {
-                let tags_path = get_abs_path(&path, tags_path_str)?;
-                let tags_raw: TagsRaw = match fs::read_to_string(&tags_path) {
-                    Ok(s) => toml::from_str(s.as_str())?,
-                    Err(err) => {
-                        let msg = format!(
-                            "Tags configuration error while reading file '{tags_path_str}': {err}"
-                        );
-                        return Err(msg.into());
-                    }
-                };
-                Ok(Tags {
-                    names: tags_raw.names,
-                })
-            }
+        if tags_path_str == NONE_VALUE {
+            Ok(Tags::default())
+        } else {
+            let tags_path = get_abs_path(&path, tags_path_str)?;
+            let tags_raw: TagsRaw = match fs::read_to_string(&tags_path) {
+                Ok(s) => toml::from_str(s.as_str())?,
+                Err(err) => {
+                    let msg = format!(
+                        "Tags configuration error while reading file '{tags_path_str}': {err}"
+                    );
+                    return Err(msg.into());
+                }
+            };
+            Ok(Tags {
+                names: tags_raw.names,
+            })
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub(crate) struct Report {
-    pub report_tz: TimeZone,
+    pub tz: TimeZone,
     pub targets: Vec<ReportType>,
     pub formats: Vec<FormatType>,
     pub scale: Scale,
@@ -573,7 +594,7 @@ pub(crate) struct Report {
 impl Default for Report {
     fn default() -> Self {
         Report {
-            report_tz: jiff::tz::TimeZone::UTC,
+            tz: TimeZone::UTC,
             targets: Vec::new(),
             formats: Vec::new(),
             scale: Scale::default(),
@@ -591,7 +612,7 @@ impl Report {
         let formats = to_report_formats(report_raw.formats.as_deref())?;
 
         Ok(Report {
-            report_tz: TimeZone::get(report_raw.report_tz.as_str())?,
+            tz: TimeZone::get(report_raw.report_tz.as_str())?,
             targets,
             formats,
             scale: Scale::from(&report_raw.scale)?,
@@ -650,7 +671,7 @@ impl Default for Scale {
 }
 
 fn get_account_selector(
-    acc_sel: &Option<AccountSelectors>,
+    acc_sel: Option<&AccountSelectors>,
     report: &ReportRaw,
 ) -> AccountSelectors {
     match acc_sel {
@@ -677,7 +698,7 @@ impl Register {
                 Some(style) => TimestampStyle::from(style.as_str())?,
                 None => TimestampStyle::Date,
             },
-            acc_sel: get_account_selector(&reg_raw.acc_sel, report),
+            acc_sel: get_account_selector(reg_raw.acc_sel.as_ref(), report),
         })
     }
 }
@@ -702,7 +723,7 @@ impl BalanceGroup {
                 None => BalanceType::default(),
             },
             group_by: GroupBy::from(balgrp_raw.group_by.as_str())?,
-            acc_sel: get_account_selector(&balgrp_raw.acc_sel, report),
+            acc_sel: get_account_selector(balgrp_raw.acc_sel.as_ref(), report),
         })
     }
 }
@@ -722,7 +743,7 @@ impl Balance {
                 Some(t) => BalanceType::from(t.as_str())?,
                 None => BalanceType::default(),
             },
-            acc_sel: get_account_selector(&bal_raw.acc_sel, report),
+            acc_sel: get_account_selector(bal_raw.acc_sel.as_ref(), report),
         })
     }
 }
@@ -737,7 +758,7 @@ impl Export {
         let trgs = to_export_targets(&export_raw.targets)?;
         Ok(Export {
             targets: trgs,
-            equity: Equity::from(&export_raw.equity, report)?,
+            equity: Equity::from(&export_raw.equity, report),
         })
     }
 }
@@ -749,10 +770,10 @@ pub(crate) struct Equity {
 }
 
 impl Equity {
-    fn from(eq_raw: &EquityRaw, report: &ReportRaw) -> Result<Equity, tackler::Error> {
-        Ok(Equity {
+    fn from(eq_raw: &EquityRaw, report: &ReportRaw) -> Equity {
+        Equity {
             equity_account: eq_raw.equity_account.clone(),
-            acc_sel: get_account_selector(&eq_raw.acc_sel, report),
-        })
+            acc_sel: get_account_selector(eq_raw.acc_sel.as_ref(), report),
+        }
     }
 }

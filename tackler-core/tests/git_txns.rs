@@ -66,7 +66,7 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
             }
         },
         Err(err) => {
-            panic!(/*:test:*/ "{:#?}", err);
+            panic!(/*:test:*/ "{err:#?}");
         }
     }
 }

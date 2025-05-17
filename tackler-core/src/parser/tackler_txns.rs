@@ -19,6 +19,8 @@ use gix::hash as gix_hash;
 use gix::objs::tree::EntryKind;
 use tackler_api::metadata::items::{GitInputReference, MetadataItem};
 
+/// # Errors
+/// Returns `Err` in case of parse or semantic error
 pub fn string_to_txns(
     input: &mut &str,
     settings: &mut Settings,
@@ -28,9 +30,11 @@ pub fn string_to_txns(
     // feature: a94d4a60-40dc-4ec0-97a3-eeb69399f01b
     // coverage: "sorted" tested by 200aad57-9275-4d16-bdad-2f1c484bcf17
 
-    TxnData::from(None, txns, &settings.get_hash())
+    Ok(TxnData::from(None, txns, &settings.get_hash()))
 }
 
+/// # Errors
+/// Returns `Err` in case of parse or semantic error
 pub fn paths_to_txns(
     paths: &[PathBuf],
     settings: &mut Settings,
@@ -41,9 +45,12 @@ pub fn paths_to_txns(
         .flatten_ok()
         .collect();
 
-    TxnData::from(None, txns?, &settings.get_hash())
+    Ok(TxnData::from(None, txns?, &settings.get_hash()))
 }
 
+/// # Errors
+/// Returns `Err` in case of parse or semantic error
+#[allow(clippy::too_many_lines)]
 pub fn git_to_txns(
     repo_path: &Path,
     dir: &str,
@@ -109,9 +116,9 @@ pub fn git_to_txns(
     let dir = if dir.ends_with('/') {
         dir.to_string()
     } else {
-        format!("{}/", dir)
+        format!("{dir}/")
     };
-    let ext = format!(".{}", extension);
+    let ext = format!(".{extension}");
 
     let tree = object.tree()?;
     // fixme: Optimization
@@ -186,5 +193,9 @@ pub fn git_to_txns(
     // perf: eprintln!("total time: {}ms, parse time: {}ms, git: {}ms", (ts_end.as_millis() - ts_start.as_millis()), ts_par_total, (ts_end.as_millis() - ts_start.as_millis())-ts_par_total);
 
     let hash = &settings.get_hash();
-    TxnData::from(Some(MetadataItem::GitInputReference(gitmd)), txns?, hash)
+    Ok(TxnData::from(
+        Some(MetadataItem::GitInputReference(gitmd)),
+        txns?,
+        hash,
+    ))
 }

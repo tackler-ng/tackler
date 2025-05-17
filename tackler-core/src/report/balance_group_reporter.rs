@@ -87,7 +87,7 @@ impl Report for BalanceGroupReporter {
         let group_by_op = self.get_group_by_op();
         let bal_groups = accumulator::balance_groups(
             &txn_data.txns,
-            group_by_op,
+            &group_by_op,
             &price_lookup_ctx,
             acc_sel.as_ref(),
             cfg,
@@ -99,7 +99,7 @@ impl Report for BalanceGroupReporter {
         };
 
         if let Some(hash) = cfg.get_hash() {
-            let asc = acc_sel.account_selector_metadata(hash)?;
+            let asc = acc_sel.account_selector_metadata(hash);
             metadata.push(asc);
         }
 
@@ -115,15 +115,15 @@ impl Report for BalanceGroupReporter {
             match w {
                 FormatWriter::TxtFormat(writer) => {
                     // There is always at least TimeZoneInfo
-                    writeln!(writer, "{}\n", metadata.text(cfg.report.report_tz.clone()))?;
+                    writeln!(writer, "{}\n", metadata.text(cfg.report.tz.clone()))?;
 
                     let title = &self.report_settings.title;
-                    writeln!(writer, "{}", title)?;
+                    writeln!(writer, "{title}")?;
                     writeln!(writer, "{}", "-".repeat(title.chars().count()))?;
 
                     let bal_settings = self.report_settings.clone().into();
                     for bal in &bal_groups {
-                        BalanceReporter::txt_report(writer, bal, &bal_settings)?
+                        BalanceReporter::txt_report(writer, bal, &bal_settings)?;
                     }
                 }
                 FormatWriter::JsonFormat(writer) => {

@@ -35,8 +35,8 @@ impl Balance {
     /// Recursive get balance tree nodes for this subtree
     /// starting from and defined by "me"
     ///
-    /// Input size is "small";  ~ size of CoA
-    /// Output size is "small"; ~ size of CoA
+    /// Input size is "small";  ~ size of Chart of Accounts
+    /// Output size is "small"; ~ size of Chart of Accounts
     ///
     /// `me` is name of root account for this sub-tree
     /// `acc_sums` is list of all account sums
@@ -76,17 +76,17 @@ impl Balance {
     }
 
     /// Bubble up from leafs to root, and generate any missing (gap)
-    /// AccountTreeNode (ATN) for new ATN entry with zero atn sum.
+    /// `AccountTreeNode` (ATN) for new ATN entry with zero atn sum.
     ///
     /// The max depth of recursion is the sub-account count
     /// from leaf to root (e.g. it's small)
     ///
-    /// * Input size is "small";  ~ size of CoA
-    /// * Output size is "small"; ~ size of CoA
+    /// * Input size is "small";  ~ size of Chart of Accounts
+    /// * Output size is "small"; ~ size of Chart of Accounts
     ///
-    /// `my_acctn_sum` starting AccTNSum entry
+    /// `my_acctn_sum` starting Account Tree Sum entry
     /// `acc_sums` current incomplete (in sense of Chart of Account) account sums
-    /// `returns`  new set of AccTNSums without gaps from this branch to root (from leaf to root)
+    /// `returns`  new set of Account Tree Sums without gaps from this branch to root (from leaf to root)
     fn bubble_up_acctn(
         my_acctn_sum: &(TxnAccount, Decimal),
         acc_sums: &[(TxnAccount, Decimal)],
@@ -112,12 +112,12 @@ impl Balance {
                     // This is on depth 2, and it doesn't have parent
                     // => let's create root account
                     // End of Recursion
-                    let new_parent_atn = settings
-                        .get_txn_account(my_acctn.atn.parent.as_str(), my_acctn.comm.clone())?;
+                    let new_parent_atn =
+                        settings.get_txn_account(my_acctn.atn.parent.as_str(), &my_acctn.comm)?;
                     Ok(vec![(new_parent_atn, Decimal::ZERO), my_acctn_sum.clone()])
                 } else {
-                    let new_parent_atn = settings
-                        .get_txn_account(my_acctn.atn.parent.as_str(), my_acctn.comm.clone())?;
+                    let new_parent_atn =
+                        settings.get_txn_account(my_acctn.atn.parent.as_str(), &my_acctn.comm)?;
                     let mut sub_tree = vec![my_acctn_sum.clone()];
                     let mut x = Balance::bubble_up_acctn(
                         &(new_parent_atn, Decimal::ZERO),
@@ -140,7 +140,7 @@ impl Balance {
     /// Calculate sum of postings for each account.
     ///
     /// Input size: is "big",    ~ all transactions
-    /// Output size: is "small", ~ size of CoA
+    /// Output size: is "small", ~ size of Chart of Accounts
     fn calculate_account_sums<'a, I>(
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
@@ -169,10 +169,10 @@ impl Balance {
     /// Calculate balance items
     ///
     /// * Input size is "big";     ~ all transactions
-    /// * Output size is "small";  ~ size of CoA
+    /// * Output size is "small";  ~ size of Chart of Accounts
     ///
     /// * `txns` sequence of transactions
-    /// * `returns` unfiltered sequence of BalanceTreeNodes
+    /// * `returns` unfiltered sequence of `BalanceTreeNode`s
     fn balance_tree<'a, I>(
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
@@ -237,6 +237,10 @@ impl Balance {
         Ok(bal)
     }
 
+    /// Balance for this `txn_set`
+    ///
+    /// # Errors
+    /// Returns `Err` in case of error
     pub fn from<T>(
         title: &str,
         txn_set: &TxnSet<'_>,
@@ -257,6 +261,7 @@ impl Balance {
         )
     }
 
+    #[allow(clippy::needless_pass_by_value)]
     pub(crate) fn from_iter<'a, I, T>(
         title: &str,
         txns: I,
@@ -274,7 +279,7 @@ impl Balance {
                 Balance::balance_tree(txns.into_iter(), price_lookup_ctx, settings)?
             }
             BalanceType::Flat => {
-                Balance::balance_flat(txns.into_iter(), price_lookup_ctx, settings)?
+                Balance::balance_flat(txns.into_iter(), price_lookup_ctx, settings)
             }
         };
 
@@ -283,8 +288,8 @@ impl Balance {
         if filt_bal.is_empty() {
             Ok(Balance {
                 title: title.to_string(),
-                bal: Default::default(),
-                deltas: Default::default(),
+                bal: Vec::default(),
+                deltas: BTreeMap::default(),
             })
         } else {
             let deltas = filt_bal
@@ -309,7 +314,7 @@ impl Balance {
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
         _settings: &Settings,
-    ) -> Result<Vec<BalanceTreeNode>, tackler::Error>
+    ) -> Vec<BalanceTreeNode>
     where
         I: Iterator<Item = &'a &'a Transaction>,
     {
@@ -326,6 +331,6 @@ impl Balance {
             .collect();
 
         v.sort_by(ord_by_btn);
-        Ok(v)
+        v
     }
 }

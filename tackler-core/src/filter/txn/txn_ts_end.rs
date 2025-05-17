@@ -13,8 +13,7 @@ impl Predicate<Transaction> for TxnFilterTxnTSEnd {
     fn eval(&self, txn: &Transaction) -> bool {
         match txn.header.timestamp.timestamp().cmp(&self.end) {
             Ordering::Less => true,
-            Ordering::Equal => false,
-            Ordering::Greater => false,
+            Ordering::Equal | Ordering::Greater => false,
         }
     }
 }
@@ -40,7 +39,7 @@ mod tests {
             ("2018-03-01T00:00:00+00:00", false),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             let txn = make_ts_txn(rfc3339_to_zoned(t.0).unwrap(/*:test:*/));
             assert_eq!(tf.eval(&txn), t.1);
         }

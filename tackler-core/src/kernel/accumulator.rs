@@ -8,7 +8,6 @@ use crate::kernel::balance::Balance;
 use crate::kernel::price_lookup::PriceLookupCtx;
 use crate::kernel::report_item_selector::{BalanceSelector, RegisterSelector};
 use crate::model::{RegisterEntry, RegisterPosting, Transaction, TxnAccount, TxnRefs};
-use crate::tackler;
 use itertools::Itertools;
 use rust_decimal::Decimal;
 use std::collections::HashMap;
@@ -17,7 +16,7 @@ pub(crate) type TxnGroupByOp<'a> = Box<dyn Fn(&Transaction) -> String + 'a>;
 
 pub(crate) fn balance_groups<T>(
     txns: &TxnRefs<'_>,
-    group_by_op: TxnGroupByOp<'_>,
+    group_by_op: &TxnGroupByOp<'_>,
     price_lookup_ctx: &PriceLookupCtx<'_>,
     ras: &T,
     settings: &Settings,
@@ -49,7 +48,7 @@ pub(crate) fn register_engine<'a, T>(
     txns: &'a TxnRefs<'_>,
     price_lookup_ctx: &PriceLookupCtx<'_>,
     ras: &T,
-) -> Result<Vec<RegisterEntry<'a>>, tackler::Error>
+) -> Vec<RegisterEntry<'a>>
 where
     T: RegisterSelector<'a> + ?Sized,
 {
@@ -66,8 +65,7 @@ where
     // "aaa" is calculated after "ccc" into running total, but postings are printed in sorted order
     // (`filt_postings.sort()` in this function) - this will cause that aaa has bigger
     // running total value than ccc, if postings are not sorted before the running total calculation
-    let res = txns
-        .iter()
+    txns.iter()
         .map(|txn| {
             let register_postings: Vec<_> = price_lookup_ctx
                 .convert_prices(txn)
@@ -103,7 +101,5 @@ where
                 posts: filt_postings,
             }
         })
-        .collect();
-
-    Ok(res)
+        .collect()
 }

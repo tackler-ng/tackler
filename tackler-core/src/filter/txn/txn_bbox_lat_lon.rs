@@ -62,7 +62,7 @@ mod tests {
             (make_geo_txn(dec!(50.0), dec!(27.0), None), false),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             assert_eq!(tf.eval(&t.0), t.1);
         }
 

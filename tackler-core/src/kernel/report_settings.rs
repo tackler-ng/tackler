@@ -57,7 +57,7 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
             bal_type: settings.report.balance_group.bal_type.clone(),
             ras: settings.get_balance_group_ras(),
             group_by: settings.report.balance_group.group_by,
-            report_tz: settings.report.report_tz.clone(),
+            report_tz: settings.report.tz.clone(),
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
             scale: settings.report.scale.clone(),
@@ -97,7 +97,7 @@ impl TryFrom<&Settings> for RegisterSettings {
         let rs = RegisterSettings {
             title: settings.report.register.title.clone(),
             ras: settings.get_register_ras(),
-            report_tz: settings.report.report_tz.clone(),
+            report_tz: settings.report.tz.clone(),
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
             timestamp_style: settings.report.register.timestamp_style,

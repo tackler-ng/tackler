@@ -88,7 +88,7 @@ mod tests {
             ),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             assert_eq!(tf.eval(&t.0), t.1);
         }
 

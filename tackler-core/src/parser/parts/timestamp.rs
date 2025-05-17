@@ -49,6 +49,7 @@ fn parse_date(is: &mut Stream<'_>) -> ModalResult<jiff::Zoned> {
     }
 }
 
+#[allow(clippy::cast_possible_truncation)]
 fn handle_time(
     h: i8,
     m: i8,

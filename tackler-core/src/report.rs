@@ -26,6 +26,8 @@ pub enum FormatWriter<'w> {
 }
 
 pub trait Report {
+    /// # Errors
+    /// Returns `Err` in case of error
     fn write_txt_report<'w, W: io::Write + ?Sized + 'w>(
         &self,
         cfg: &Settings,
@@ -36,6 +38,8 @@ pub trait Report {
         self.write_reports::<dyn io::Write>(cfg, &mut writers, None, txn_data)
     }
 
+    /// # Errors
+    /// Returns `Err` in case of error
     fn write_reports<W: io::Write + ?Sized>(
         &self,
         cfg: &Settings,
@@ -47,12 +51,11 @@ pub trait Report {
 
 fn report_timezone(cfg: &Settings) -> Result<TimeZoneInfo, tackler::Error> {
     Ok(TimeZoneInfo {
-        zone_id: match cfg.report.report_tz.iana_name() {
-            Some(tz) => tz.to_string(),
-            None => {
-                let msg = "no name for tz!?!";
-                return Err(msg.into());
-            }
+        zone_id: if let Some(tz) = cfg.report.tz.iana_name() {
+            tz.to_string()
+        } else {
+            let msg = "no name for tz!?!";
+            return Err(msg.into());
         },
     })
 }
@@ -153,6 +156,8 @@ fn report_writers<'w>(
     }
 }
 
+/// # Errors
+/// Return `Err` in case of error
 #[allow(clippy::too_many_arguments)]
 pub fn write_txt_reports<W: io::Write + ?Sized>(
     console_writer: &mut Option<Box<W>>,
@@ -173,11 +178,11 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
 
     let metadata = &txn_set
         .metadata()
-        .map(|md| format!("{}\n", md.text(settings.report.report_tz.clone())))
+        .map(|md| format!("{}\n", md.text(settings.report.tz.clone())))
         .unwrap_or_default();
 
     if let Some(cw) = console_writer.as_mut() {
-        write!(cw, "{}", metadata)?;
+        write!(cw, "{metadata}")?;
     }
 
     for r in reports {
@@ -185,57 +190,51 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
             ReportType::Balance => {
                 let bal_reporter = BalanceReporter::try_from(settings)?;
 
-                match (output_prefix, output_dir) {
-                    (Some(output_name), Some(output_dir)) => {
-                        let (mut writers, paths) =
-                            report_writers(output_dir, output_name, r, settings)?;
+                if let (Some(output_name), Some(output_dir)) = (output_prefix, output_dir) {
+                    let (mut writers, paths) =
+                        report_writers(output_dir, output_name, r, settings)?;
 
-                        bal_reporter.write_reports::<dyn io::Write>(
-                            settings,
-                            &mut writers,
-                            txn_set.metadata(),
-                            txn_set,
-                        )?;
+                    bal_reporter.write_reports::<dyn io::Write>(
+                        settings,
+                        &mut writers,
+                        txn_set.metadata(),
+                        txn_set,
+                    )?;
 
-                        report_output(prog_writer, paths, "Balance Report")?;
-                    }
-                    _ => {
-                        let mut cw = console_writer
-                            .as_mut()
-                            .expect("IE: logic error with output");
+                    report_output(prog_writer, paths, "Balance Report")?;
+                } else {
+                    let Some(mut cw) = console_writer.as_mut() else {
+                        return Err("IE: Logic error: console output".into());
+                    };
 
-                        writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                        bal_reporter.write_txt_report(settings, &mut cw, txn_set)?;
-                        writeln!(cw, "{}", "#".repeat(report_separator_len))?;
-                    }
+                    writeln!(cw, "{}", "*".repeat(report_separator_len))?;
+                    bal_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
             ReportType::BalanceGroup => {
                 let bal_group_reporter = BalanceGroupReporter {
                     report_settings: BalanceGroupSettings::try_from(settings)?,
                 };
-                match (output_prefix, output_dir) {
-                    (Some(output_name), Some(output_dir)) => {
-                        let (mut writers, paths) =
-                            report_writers(output_dir, output_name, r, settings)?;
+                if let (Some(output_name), Some(output_dir)) = (output_prefix, output_dir) {
+                    let (mut writers, paths) =
+                        report_writers(output_dir, output_name, r, settings)?;
 
-                        bal_group_reporter.write_reports::<dyn io::Write>(
-                            settings,
-                            &mut writers,
-                            txn_set.metadata(),
-                            txn_set,
-                        )?;
-                        report_output(prog_writer, paths, "Balance Group Report")?;
-                    }
-                    _ => {
-                        let mut cw = console_writer
-                            .as_mut()
-                            .expect("IE: logic error with output");
+                    bal_group_reporter.write_reports::<dyn io::Write>(
+                        settings,
+                        &mut writers,
+                        txn_set.metadata(),
+                        txn_set,
+                    )?;
+                    report_output(prog_writer, paths, "Balance Group Report")?;
+                } else {
+                    let Some(mut cw) = console_writer.as_mut() else {
+                        return Err("IE: Logic error: console output".into());
+                    };
 
-                        writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                        bal_group_reporter.write_txt_report(settings, &mut cw, txn_set)?;
-                        writeln!(cw, "{}", "#".repeat(report_separator_len))?;
-                    }
+                    writeln!(cw, "{}", "*".repeat(report_separator_len))?;
+                    bal_group_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
             ReportType::Register => {
@@ -243,29 +242,26 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
                     report_settings: RegisterSettings::try_from(settings)?,
                 };
 
-                match (output_prefix, output_dir) {
-                    (Some(output_name), Some(output_dir)) => {
-                        let (mut writers, paths) =
-                            report_writers(output_dir, output_name, r, settings)?;
+                if let (Some(output_name), Some(output_dir)) = (output_prefix, output_dir) {
+                    let (mut writers, paths) =
+                        report_writers(output_dir, output_name, r, settings)?;
 
-                        reg_reporter.write_reports::<dyn io::Write>(
-                            settings,
-                            &mut writers,
-                            txn_set.metadata(),
-                            txn_set,
-                        )?;
+                    reg_reporter.write_reports::<dyn io::Write>(
+                        settings,
+                        &mut writers,
+                        txn_set.metadata(),
+                        txn_set,
+                    )?;
 
-                        report_output(prog_writer, paths, "Register Report")?;
-                    }
-                    _ => {
-                        let mut cw = console_writer
-                            .as_mut()
-                            .expect("IE: logic error with output");
+                    report_output(prog_writer, paths, "Register Report")?;
+                } else {
+                    let Some(mut cw) = console_writer.as_mut() else {
+                        return Err("IE: Logic error: console output".into());
+                    };
 
-                        writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                        reg_reporter.write_txt_report(settings, &mut cw, txn_set)?;
-                        writeln!(cw, "{}", "#".repeat(report_separator_len))?;
-                    }
+                    writeln!(cw, "{}", "*".repeat(report_separator_len))?;
+                    reg_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
         }

@@ -66,6 +66,7 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
 // test: 074f5549-346c-4780-90a1-07d60ae0e79d
 // test: 33d85471-a04c-49b9-b7a0-9d7f7f5762eb
 #[allow(non_snake_case)]
+#[allow(clippy::cast_precision_loss)]
 fn test_10_loops_with_txns_1E5() {
     eprintln!("\n\nMake 5 loops with set-1e5:");
     let mut settings = Settings::default_audit();
@@ -108,7 +109,7 @@ fn test_10000_loops_with_txns_1E1() {
     eprintln!("\n\nMake 10_000 loops with set-1e1:");
     let mut r = 0;
     let mut loop_count = 0;
-    for i in 1..loops + 1 {
+    for i in 1..=loops {
         let result = parser::git_to_txns(
             Path::new(REPO_PATH),
             "txns/2016",

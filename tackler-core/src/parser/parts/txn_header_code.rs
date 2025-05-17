@@ -64,7 +64,7 @@ mod tests {
         // which is not valid for code
         for t in pok_tests.iter().skip(1) {
             let mut settings = Settings::default();
-            let i = format!("({})", t);
+            let i = format!("({t})");
             let mut is = Stream {
                 input: i.as_str(),
                 state: &mut settings,

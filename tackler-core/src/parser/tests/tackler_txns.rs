@@ -9,6 +9,7 @@ use indoc::indoc;
 use tackler_rs::IndocUtils;
 
 #[test]
+#[allow(clippy::too_many_lines)]
 fn txn_data_errors() {
     #[rustfmt::skip]
     let txns_str: Vec<(String, &str)> = vec![
@@ -183,13 +184,11 @@ fn txn_data_errors() {
         let res = parser::string_to_txns(&mut t.0.as_ref(), &mut Settings::default());
         assert!(
             res.is_err(),
-            "Testing Error: Offending test vector item: {}",
-            count
+            "Testing Error: Offending test vector item: {count}"
         );
         assert!(
             res.err().unwrap(/*:test:*/).to_string().contains(t.1),
-            "Testing Line: Offending test vector item: {}",
-            count
+            "Testing Line: Offending test vector item: {count}"
         );
         count += 1;
     }

@@ -44,7 +44,7 @@ mod tests {
             (make_desc_txn, Some("abc"), false),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             let txn = t.0(t.1);
             assert_eq!(tf.eval(&txn), t.2);
         }

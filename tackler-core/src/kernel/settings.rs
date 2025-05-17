@@ -107,7 +107,7 @@ struct AccountTrees {
 impl AccountTrees {
     fn build_account_tree(
         target_account_tree: &mut HashMap<String, Arc<AccountTreeNode>>,
-        atn: Arc<AccountTreeNode>,
+        atn: &Arc<AccountTreeNode>,
         other_account_tree: Option<&HashMap<String, Arc<AccountTreeNode>>>,
     ) -> Result<(), tackler::Error> {
         let parent = atn.parent.as_str();
@@ -122,7 +122,7 @@ impl AccountTrees {
                 Arc::new(AccountTreeNode::from(parent).expect("IE: synthetic parent is invalid"));
             target_account_tree.insert(parent.to_string(), parent_atn.clone());
 
-            Self::build_account_tree(target_account_tree, parent_atn, other_account_tree)
+            Self::build_account_tree(target_account_tree, &parent_atn, other_account_tree)
         }
     }
 
@@ -147,11 +147,11 @@ impl AccountTrees {
         let synthetic_parents = if strict_mode {
             // Synthetic Account Parents are only needed in strict mode
             let mut sap = HashMap::new();
-            for atn_entry in defined_accounts.iter() {
+            for atn_entry in &defined_accounts {
                 if !&defined_accounts.contains_key(atn_entry.1.parent.as_str()) {
                     // Parent is missing -> Let's build synthetic tree
                     let (_, atn) = atn_entry;
-                    Self::build_account_tree(&mut sap, atn.clone(), Some(&defined_accounts))?;
+                    Self::build_account_tree(&mut sap, atn, Some(&defined_accounts))?;
                 }
             }
             sap
@@ -178,7 +178,7 @@ pub struct Settings {
     pub(crate) report: Report,
     pub(crate) export: Export,
     strict_mode: bool,
-    input_settings: InputSettings,
+    input_config: InputSettings,
     kernel: Kernel,
     pub price: Price,
     price_lookup: PriceLookup,
@@ -193,7 +193,7 @@ impl Default for Settings {
         Settings {
             strict_mode: false,
             audit_mode: false,
-            input_settings: InputSettings::default(),
+            input_config: InputSettings::default(),
             report: Report::default(),
             export: Export::default(),
             kernel: Kernel::default(),
@@ -208,6 +208,7 @@ impl Default for Settings {
 }
 
 impl Settings {
+    #[must_use]
     pub fn default_audit() -> Self {
         Settings {
             audit_mode: true,
@@ -217,7 +218,23 @@ impl Settings {
 }
 
 impl Settings {
+    /// # Errors
+    /// Return `Err` in case of semantically incorrect configuration
+    #[allow(clippy::too_many_lines)]
     pub fn try_from(cfg: Config, overlaps: OverlapConfig) -> Result<Settings, tackler::Error> {
+        fn check_given_time_usage(
+            gt: Option<&String>,
+            plt: PriceLookupType,
+        ) -> Result<(), tackler::Error> {
+            if gt.is_some() {
+                let msg = format!(
+                    "Price \"before timestamp\" is not allowed when price lookup type is \"{plt}\""
+                );
+                return Err(msg.into());
+            }
+            Ok(())
+        }
+
         let strict_mode = overlaps.strict.mode.unwrap_or(cfg.kernel.strict);
         let audit_mode = overlaps.audit.mode.unwrap_or(cfg.kernel.audit.mode);
 
@@ -303,7 +320,7 @@ impl Settings {
             strict_mode,
             audit_mode,
             kernel: cfg.kernel,
-            input_settings,
+            input_config: input_settings,
             price: Price::default(), // this is not real, see next one
             price_lookup: PriceLookup::default(), // this is not real, see next one
             global_acc_sel: overlaps.report.account_overlap,
@@ -325,42 +342,28 @@ impl Settings {
 
         let given_time = overlaps.price.before_time;
 
-        fn check_given_time_usage(
-            gt: &Option<String>,
-            plt: &PriceLookupType,
-        ) -> Result<(), tackler::Error> {
-            if gt.is_some() {
-                let msg = format!(
-                    "Price \"before timestamp\" is not allowed when price lookup type is \"{}\"",
-                    plt
-                );
-                return Err(msg.into());
-            }
-            Ok(())
-        }
         let price_lookup = match lookup_type {
-            ref plt @ PriceLookupType::LastPrice => {
-                check_given_time_usage(&given_time, plt)?;
+            plt @ PriceLookupType::LastPrice => {
+                check_given_time_usage(given_time.as_ref(), plt)?;
                 PriceLookup::LastPriceDbEntry
             }
-            ref plt @ PriceLookupType::TxnTime => {
-                check_given_time_usage(&given_time, plt)?;
+            plt @ PriceLookupType::TxnTime => {
+                check_given_time_usage(given_time.as_ref(), plt)?;
                 PriceLookup::AtTheTimeOfTxn
             }
-            ref plt @ PriceLookupType::GivenTime => match given_time {
-                Some(ts) => tmp_settings
-                    .parse_timestamp(ts.as_str())
-                    .map(PriceLookup::GivenTime)?,
-                None => {
-                    let msg = format!(
-                        "Price lookup type is \"{}\" and there is no timestamp given",
-                        plt
-                    );
+            plt @ PriceLookupType::GivenTime => {
+                if let Some(ts) = given_time {
+                    tmp_settings
+                        .parse_timestamp(ts.as_str())
+                        .map(PriceLookup::GivenTime)?
+                } else {
+                    let msg =
+                        format!("Price lookup type is \"{plt}\" and there is no timestamp given");
                     return Err(msg.into());
                 }
-            },
-            ref plt @ PriceLookupType::None => {
-                check_given_time_usage(&given_time, plt)?;
+            }
+            plt @ PriceLookupType::None => {
+                check_given_time_usage(given_time.as_ref(), plt)?;
                 PriceLookup::None
             }
         };
@@ -393,7 +396,7 @@ impl Settings {
     pub(crate) fn get_txn_account(
         &self,
         name: &str,
-        commodity: Arc<Commodity>,
+        commodity: &Arc<Commodity>,
     ) -> Result<TxnAccount, tackler::Error> {
         let comm = self.get_commodity(commodity.name.as_str())?;
 
@@ -409,7 +412,7 @@ impl Settings {
                         comm,
                     })
                 } else {
-                    let msg = format!("gta: Unknown account: '{}'", name);
+                    let msg = format!("gta: Unknown account: '{name}'");
                     Err(msg.into())
                 }
             }
@@ -419,57 +422,48 @@ impl Settings {
     pub(crate) fn get_or_create_txn_account(
         &mut self,
         name: &str,
-        commodity: Arc<Commodity>,
+        commodity: &Arc<Commodity>,
     ) -> Result<TxnAccount, tackler::Error> {
         let comm = self.get_or_create_commodity(Some(commodity.name.as_str()))?;
 
         let strict_mode = self.strict_mode;
         let atn_opt = self.accounts.defined_accounts.get(name).cloned();
 
-        let atn = match atn_opt {
-            Some(account_tree) => TxnAccount {
+        let atn = if let Some(account_tree) = atn_opt {
+            TxnAccount {
                 atn: account_tree.clone(),
                 comm,
-            },
-            None => {
-                if self.strict_mode {
-                    let msg = format!("Unknown account: '{}'", name);
-                    return Err(msg.into());
-                } else {
-                    let atn = Arc::new(AccountTreeNode::from(name)?);
-                    self.accounts
-                        .defined_accounts
-                        .insert(name.into(), atn.clone());
-                    AccountTrees::build_account_tree(
-                        &mut self.accounts.defined_accounts,
-                        atn.clone(),
-                        None,
-                    )?;
-
-                    TxnAccount { atn, comm }
-                }
             }
+        } else {
+            if self.strict_mode {
+                let msg = format!("Unknown account: '{name}'");
+                return Err(msg.into());
+            }
+            let atn = Arc::new(AccountTreeNode::from(name)?);
+            self.accounts
+                .defined_accounts
+                .insert(name.into(), atn.clone());
+            AccountTrees::build_account_tree(&mut self.accounts.defined_accounts, &atn, None)?;
+
+            TxnAccount { atn, comm }
         };
         if !strict_mode {
             // Not strict mode, so we build the (missing) parents
             // directly into main Chart of Accounts
-            AccountTrees::build_account_tree(
-                &mut self.accounts.defined_accounts,
-                atn.atn.clone(),
-                None,
-            )?;
+            AccountTrees::build_account_tree(&mut self.accounts.defined_accounts, &atn.atn, None)?;
         }
 
         Ok(atn)
     }
 
+    /// # Errors
+    /// Returns reference for commodity, error if it doesn't exist
     pub fn get_commodity(&self, name: &str) -> Result<Arc<Commodity>, tackler::Error> {
-        match self.commodities.names.get(name) {
-            Some(comm) => Ok(comm.clone()),
-            None => {
-                let msg = format!("Unknown commodity: '{}'", name);
-                Err(msg.into())
-            }
+        if let Some(comm) = self.commodities.names.get(name) {
+            Ok(comm.clone())
+        } else {
+            let msg = format!("Unknown commodity: '{name}'");
+            Err(msg.into())
         }
     }
     pub(crate) fn get_or_create_commodity(
@@ -484,43 +478,39 @@ impl Settings {
         strict_mode: bool,
         name: Option<&str>,
     ) -> Result<Arc<Commodity>, tackler::Error> {
-        match name {
-            Some(n) => {
-                if n.is_empty() {
-                    if commodities.permit_empty_commodity {
-                        return match commodities.names.get(n) {
-                            Some(c) => Ok(c.clone()),
-                            None => {
-                                let comm = Arc::new(Commodity::default());
-                                commodities.names.insert(n.into(), comm.clone());
-
-                                Ok(comm.clone())
-                            }
-                        };
+        if let Some(n) = name {
+            if n.is_empty() {
+                let res = if commodities.permit_empty_commodity {
+                    if let Some(c) = commodities.names.get(n) {
+                        Ok(c.clone())
                     } else {
-                        let msg =
-                            "Empty commodity and 'permit-empty-commodity' is not set".to_string();
-                        return Err(msg.into());
+                        let comm = Arc::new(Commodity::default());
+                        commodities.names.insert(n.into(), comm.clone());
+
+                        Ok(comm)
                     }
-                }
-                match commodities.names.get(n) {
-                    Some(comm) => Ok(comm.clone()),
-                    None => {
-                        if strict_mode {
-                            let msg = format!("Unknown commodity: '{}'", n);
-                            Err(msg.into())
-                        } else {
-                            let comm = Arc::new(Commodity::from(n.into())?);
-                            commodities.names.insert(n.into(), comm.clone());
-                            Ok(comm)
-                        }
+                } else {
+                    let msg = "Empty commodity and 'permit-empty-commodity' is not set".to_string();
+                    Err(msg.into())
+                };
+                return res;
+            }
+            match commodities.names.get(n) {
+                Some(comm) => Ok(comm.clone()),
+                None => {
+                    if strict_mode {
+                        let msg = format!("Unknown commodity: '{n}'");
+                        Err(msg.into())
+                    } else {
+                        let comm = Arc::new(Commodity::from(n.into())?);
+                        commodities.names.insert(n.into(), comm.clone());
+                        Ok(comm)
                     }
                 }
             }
-            None => {
-                let comm = Arc::new(Commodity::default());
-                Ok(comm)
-            }
+        } else {
+            let comm = Arc::new(Commodity::default());
+            Ok(comm)
         }
     }
 
@@ -533,7 +523,7 @@ impl Settings {
             Some(tag) => Ok(tag.clone()),
             None => {
                 if self.strict_mode {
-                    let msg = format!("Unknown tag: '{}'", name);
+                    let msg = format!("Unknown tag: '{name}'");
                     Err(msg.into())
                 } else {
                     let tag = Arc::new(Tag::from(name));
@@ -544,14 +534,17 @@ impl Settings {
         }
     }
 
+    #[must_use]
     pub fn get_price_lookup(&self) -> PriceLookup {
         self.price_lookup.clone()
     }
 
+    #[must_use]
     pub fn input(&self) -> InputSettings {
-        self.input_settings.clone()
+        self.input_config.clone()
     }
 
+    #[allow(clippy::too_many_lines)]
     fn input_settings(
         cfg: &Config,
         storage_overlap: &StorageOverlap,
@@ -620,19 +613,20 @@ impl Settings {
                 None => {
                     // FS: No config, all info must come from overlap
                     if let Some(InputOverlap::Fs(fs_soi)) = &storage_overlap.input {
-                        match (&fs_soi.path, &fs_soi.dir, &fs_soi.ext) {
-                            (Some(path), Some(dir), Some(ext)) => Ok(InputSettings::Fs(FsInput {
+                        if let (Some(path), Some(dir), Some(ext)) =
+                            (&fs_soi.path, &fs_soi.dir, &fs_soi.ext)
+                        {
+                            Ok(InputSettings::Fs(FsInput {
                                 path: tackler_rs::get_abs_path(cfg.path(), path)?,
                                 dir: PathBuf::from(dir),
                                 ext: normalize_extension(ext).to_string(),
-                            })),
-                            _ => {
-                                let msg = format!(
-                                    "Not enough information to configure 'fs' storage: path = '{:?}', dir = '{:?}', ext = '{:?}'",
-                                    fs_soi.path, fs_soi.dir, fs_soi.ext
-                                );
-                                Err(msg.into())
-                            }
+                            }))
+                        } else {
+                            let msg = format!(
+                                "Not enough information to configure 'fs' storage: path = '{:?}', dir = '{:?}', ext = '{:?}'",
+                                fs_soi.path, fs_soi.dir, fs_soi.ext
+                            );
+                            Err(msg.into())
                         }
                     } else {
                         Err("Storage type 'fs' is not configured".into())
@@ -647,7 +641,7 @@ impl Settings {
                         let dir = git_soi.dir.as_ref().unwrap_or(&git_cfg.dir);
                         let ext = git_soi.ext.as_ref().unwrap_or(&git_cfg.ext);
                         // reference is only option via cfg
-                        let cfg_ref = GitInputSelector::Reference(git_cfg.git_ref.clone());
+                        let cfg_ref = GitInputSelector::Reference(git_cfg.reference.clone());
                         let git_ref = git_soi.git_ref.as_ref().unwrap_or(&cfg_ref);
 
                         GitInput {
@@ -662,7 +656,7 @@ impl Settings {
                         let ext = &git_cfg.ext;
                         GitInput {
                             repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
-                            git_ref: GitInputSelector::Reference(git_cfg.git_ref.clone()),
+                            git_ref: GitInputSelector::Reference(git_cfg.reference.clone()),
                             dir: git_cfg.dir.clone(),
                             ext: normalize_extension(ext).to_string(),
                         }
@@ -672,22 +666,21 @@ impl Settings {
                 None => {
                     // GIT: No config, all info must come from overlap
                     if let Some(InputOverlap::Git(git_soi)) = &storage_overlap.input {
-                        match (&git_soi.repo, &git_soi.dir, &git_soi.ext, &git_soi.git_ref) {
-                            (Some(repo), Some(dir), Some(ext), Some(git_ref)) => {
-                                Ok(InputSettings::Git(GitInput {
-                                    repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
-                                    git_ref: git_ref.clone(),
-                                    dir: dir.clone(),
-                                    ext: normalize_extension(ext).to_string(),
-                                }))
-                            }
-                            _ => {
-                                let msg = format!(
-                                    "Not enough information to configure 'git' storage: repo = '{:?}', dir = '{:?}', ext = '{:?}', ref = '{:?}'",
-                                    git_soi.repo, git_soi.dir, git_soi.ext, git_soi.git_ref
-                                );
-                                Err(msg.into())
-                            }
+                        if let (Some(repo), Some(dir), Some(ext), Some(git_ref)) =
+                            (&git_soi.repo, &git_soi.dir, &git_soi.ext, &git_soi.git_ref)
+                        {
+                            Ok(InputSettings::Git(GitInput {
+                                repo: tackler_rs::get_abs_path(cfg.path(), repo)?,
+                                git_ref: git_ref.clone(),
+                                dir: dir.clone(),
+                                ext: normalize_extension(ext).to_string(),
+                            }))
+                        } else {
+                            let msg = format!(
+                                "Not enough information to configure 'git' storage: repo = '{:?}', dir = '{:?}', ext = '{:?}', ref = '{:?}'",
+                                git_soi.repo, git_soi.dir, git_soi.ext, git_soi.git_ref
+                            );
+                            Err(msg.into())
                         }
                     } else {
                         Err("Storage type 'git' is not configured".into())
@@ -699,6 +692,17 @@ impl Settings {
 }
 
 impl Settings {
+    /// Parse timestamp in tackler-accepted format:
+    ///
+    /// Date (YYYY-MM-DD)
+    /// Date-Time (YYYY-MM-DDTHH:MM:SS[.SSS])
+    /// Date-Time-Zulu (YYYY-MM-DDTHH:MM:SS[.SSS]Z)
+    /// Date-Time-Offset (YYYY-MM-DDTHH:MM:SS[.SSS]+-HH:MM)
+    ///
+    /// Fractional seconds are supported up to nanosecond
+    ///
+    /// # Errors
+    /// Return `Err` timestamp is invalid
     pub fn parse_timestamp(&mut self, ts: &str) -> Result<Zoned, tackler::Error> {
         Ok(winnow::Parser::parse(
             &mut crate::parser::parts::timestamp::parse_timestamp,
@@ -710,41 +714,46 @@ impl Settings {
         .map_err(|e| e.to_string())?)
     }
 
-    pub fn get_offset_datetime(
-        &self,
-        dt: jiff::civil::DateTime,
-    ) -> Result<jiff::Zoned, tackler::Error> {
+    /// # Errors
+    /// Return `Err` if conversion to zone is not possible
+    pub fn get_offset_datetime(&self, dt: jiff::civil::DateTime) -> Result<Zoned, tackler::Error> {
         match dt.to_zoned(self.kernel.timestamp.timezone.clone()) {
             Ok(ts) => Ok(ts),
             Err(err) => {
-                let msg = format!("time is invalid '{:?}'", err);
+                let msg = format!("time is invalid '{err:?}'");
                 Err(msg.into())
             }
         }
     }
-    pub fn get_offset_date(&self, date: jiff::civil::Date) -> Result<jiff::Zoned, tackler::Error> {
+    /// # Errors
+    /// Return `Err` if conversion to timestamp is not possible
+    pub fn get_offset_date(&self, date: jiff::civil::Date) -> Result<Zoned, tackler::Error> {
         let ts = date.to_datetime(self.kernel.timestamp.default_time);
         match ts.to_zoned(self.kernel.timestamp.timezone.clone()) {
             Ok(ts) => Ok(ts),
             Err(err) => {
-                let msg = format!("time is invalid '{:?}'", err);
+                let msg = format!("time is invalid '{err:?}'");
                 Err(msg.into())
             }
         }
     }
 
+    #[must_use]
     pub fn get_report_commodity(&self) -> Option<Arc<Commodity>> {
-        self.report.commodity.as_ref().map(|c| c.clone())
+        self.report.commodity.clone()
     }
 
+    #[must_use]
     pub fn get_report_targets(&self) -> Vec<ReportType> {
         self.report.targets.clone()
     }
 
+    #[must_use]
     pub fn get_export_targets(&self) -> Vec<ExportType> {
         self.export.targets.clone()
     }
 
+    #[must_use]
     fn get_account_selector(&self, acc_sel: &AccountSelectors) -> AccountSelectors {
         match &self.global_acc_sel {
             Some(global_acc_sel) => global_acc_sel.clone(),
@@ -752,18 +761,22 @@ impl Settings {
         }
     }
 
+    #[must_use]
     pub fn get_balance_ras(&self) -> AccountSelectors {
         self.get_account_selector(&self.report.balance.acc_sel)
     }
 
+    #[must_use]
     pub fn get_balance_group_ras(&self) -> AccountSelectors {
         self.get_account_selector(&self.report.balance_group.acc_sel)
     }
 
+    #[must_use]
     pub fn get_register_ras(&self) -> AccountSelectors {
         self.get_account_selector(&self.report.register.acc_sel)
     }
 
+    #[must_use]
     pub fn get_equity_ras(&self) -> AccountSelectors {
         self.get_account_selector(&self.export.equity.acc_sel)
     }
@@ -779,7 +792,7 @@ mod tests {
         let comm = Arc::new(Commodity::default());
         let mut settings = Settings::default();
 
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
 
         assert_eq!(txntn_1.atn.depth, 3);
@@ -788,7 +801,7 @@ mod tests {
         assert_eq!(txntn_1.atn.account, "a:b:c");
         assert_eq!(txntn_1.atn.get_name(), "c");
 
-        let txntn_2 = settings.get_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
 
         assert_eq!(txntn_2.atn.depth, 3);
@@ -797,8 +810,7 @@ mod tests {
         assert_eq!(txntn_2.atn.account, "a:b:c");
         assert_eq!(txntn_2.atn.get_name(), "c");
 
-        let txntn_3 =
-            settings.get_or_create_txn_account("a:b:b-leaf", comm.clone()).unwrap(/*:test:*/);
+        let txntn_3 = settings.get_or_create_txn_account("a:b:b-leaf", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 4);
 
         assert_eq!(txntn_3.atn.depth, 3);
@@ -821,7 +833,7 @@ mod tests {
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
@@ -831,7 +843,7 @@ mod tests {
         assert_eq!(txntn_1.atn.account, "a:b:c");
         assert_eq!(txntn_1.atn.get_name(), "c");
 
-        let txntn_2 = settings.get_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
@@ -842,16 +854,12 @@ mod tests {
         assert_eq!(txntn_2.atn.get_name(), "c");
 
         // Check that it won't create a synthetic account as real one
-        assert!(
-            settings
-                .get_or_create_txn_account("a:b", comm.clone())
-                .is_err()
-        );
+        assert!(settings.get_or_create_txn_account("a:b", &comm).is_err());
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
         // Check synthetic account
-        let txntn_3 = settings.get_txn_account("a:b", comm.clone()).unwrap(/*:test:*/);
+        let txntn_3 = settings.get_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
@@ -862,7 +870,7 @@ mod tests {
         assert_eq!(txntn_3.atn.get_name(), "b");
 
         // Check synthetic account
-        let txntn_4 = settings.get_txn_account("a", comm.clone()).unwrap(/*:test:*/);
+        let txntn_4 = settings.get_txn_account("a", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
         assert_eq!(settings.accounts.synthetic_parents.len(), 2);
 
@@ -886,17 +894,17 @@ mod tests {
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
 
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
         assert_eq!(txntn_1.atn.account, "a:b:c");
 
-        let txntn_2 = settings.get_or_create_txn_account("a:b", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
         assert_eq!(txntn_2.atn.account, "a:b");
 
-        let txntn_2 = settings.get_or_create_txn_account("a", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
         assert_eq!(txntn_2.atn.account, "a");
@@ -916,23 +924,19 @@ mod tests {
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
 
         // Check that it won't create a synthetic account as real one
-        assert!(
-            settings
-                .get_or_create_txn_account("a:b:c", comm.clone())
-                .is_err()
-        );
+        assert!(settings.get_or_create_txn_account("a:b:c", &comm).is_err());
 
-        let txntn_synth = settings.get_txn_account("a:b:c", comm.clone()).unwrap(/*:test:*/);
+        let txntn_synth = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
         assert_eq!(txntn_synth.atn.account, "a:b:c");
 
-        let txntn_2 = settings.get_or_create_txn_account("a:b", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
         assert_eq!(txntn_2.atn.account, "a:b");
 
-        let txntn_2 = settings.get_or_create_txn_account("a", comm.clone()).unwrap(/*:test:*/);
+        let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
         assert_eq!(txntn_2.atn.account, "a");

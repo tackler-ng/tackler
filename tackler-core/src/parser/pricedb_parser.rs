@@ -18,6 +18,8 @@ use super::parts::{pricedb::parse_price_entry, txns::multispace0_line_ending};
 use crate::tackler;
 use std::path::Path;
 
+/// # Errors
+/// Returns `Err` in case of invalid pricedb data
 pub fn pricedb_from_str(
     input: &mut &str,
     settings: &mut Settings,
@@ -36,6 +38,8 @@ pub fn pricedb_from_str(
     .map_err(|err| err.to_string().into())
 }
 
+/// # Errors
+/// Returns `Err` in case of invalid pricedb data
 pub fn pricedb_from_file(path: &Path, settings: &mut Settings) -> Result<PriceDb, tackler::Error> {
     let pricedb_str = std::fs::read_to_string(path)
         .map_err(|err| format!("Can't open file: '{}' - {}", path.display(), err))?;

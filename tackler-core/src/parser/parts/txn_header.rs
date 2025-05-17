@@ -48,7 +48,7 @@ ISO 8601 Timestamp:
 
     if is.state.audit_mode && meta.as_ref().is_none_or(|m| m.uuid.is_none()) {
         let mut msg = "Audit mode is activated and there is a txn without UUID".to_string();
-        let _ = write!(msg, "\n   txn date: {}", ts); // todo: format this with rcf3339
+        let _ = write!(msg, "\n   txn date: {ts}"); // todo: format this with rcf3339
         let _ = write!(
             msg,
             "{}",

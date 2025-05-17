@@ -164,7 +164,7 @@ pub(crate) struct ValuePosition {
 
 fn handle_posting_value(
     amount: Decimal,
-    opt_unit: Option<(&str, Option<Positions<'_>>)>,
+    opt_unit: Option<&(&str, Option<Positions<'_>>)>,
     settings: &mut Settings,
 ) -> Result<ValuePosition, tackler::Error> {
     let post_commodity = match &opt_unit {
@@ -284,7 +284,7 @@ pub(crate) fn parse_posting_value(is: &mut Stream<'_>) -> ModalResult<ValuePosit
             opt(p_unit,)
         ).parse_next(is)?;
 
-    match handle_posting_value(m.0, m.1, is.state) {
+    match handle_posting_value(m.0, m.1.as_ref(), is.state) {
         Ok(v) => Ok(v),
         Err(err) => Err(from_error(is, err.as_ref())),
     }

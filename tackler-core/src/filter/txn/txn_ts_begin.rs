@@ -12,8 +12,7 @@ use crate::kernel::Predicate;
 impl Predicate<Transaction> for TxnFilterTxnTSBegin {
     fn eval(&self, txn: &Transaction) -> bool {
         match self.begin.cmp(&txn.header.timestamp.timestamp()) {
-            Ordering::Less => true,
-            Ordering::Equal => true,
+            Ordering::Less | Ordering::Equal => true,
             Ordering::Greater => false,
         }
     }
@@ -40,7 +39,7 @@ mod tests {
             ("2018-03-01T00:00:00+00:00", true),
         ];
 
-        for t in cases.iter() {
+        for t in &cases {
             let txn = make_ts_txn(rfc3339_to_zoned(t.0).unwrap(/*:test:*/));
             assert_eq!(tf.eval(&txn), t.1);
         }

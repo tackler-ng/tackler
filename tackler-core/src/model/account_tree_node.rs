@@ -284,7 +284,7 @@ mod tests {
         let atn = AccountTreeNode::from("a:b:c")
         .unwrap(/*:test:*/);
 
-        let atn_str = format!("{}", atn);
+        let atn_str = format!("{atn}");
         assert_eq!(atn_str, String::from("a:b:c"));
     }
 

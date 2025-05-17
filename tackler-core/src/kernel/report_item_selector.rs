@@ -24,15 +24,14 @@ pub trait ReportItemSelector {
     /// `--accounts a e`
     /// `echo -ne 'a\ne\n' | sha256sum`
     /// `   88a40beeddd8c558b85c52cd860682a2fc4643e02b0d6a353911e805c2a2526b`
-    fn checksum(&self, _: Hash) -> Result<Checksum, tackler::Error>;
+    fn checksum(&self, _: Hash) -> Checksum;
 
     /// Account Selector as Metadata Item (`AccountSelectorChecksum`)
-    fn account_selector_metadata(&self, hash: Hash) -> Result<MetadataItem, tackler::Error> {
-        let asc = MetadataItem::AccountSelectorChecksum(AccountSelectorChecksum {
-            hash: self.checksum(hash)?,
+    fn account_selector_metadata(&self, hash: Hash) -> MetadataItem {
+        MetadataItem::AccountSelectorChecksum(AccountSelectorChecksum {
+            hash: self.checksum(hash),
             selectors: self.selectors(),
-        });
-        Ok(asc)
+        })
     }
 }
 
@@ -50,11 +49,11 @@ impl ReportItemSelector for BalanceAllSelector {
         Vec::new()
     }
 
-    fn checksum(&self, _hash: Hash) -> Result<Checksum, tackler::Error> {
-        Ok(Checksum {
+    fn checksum(&self, _hash: Hash) -> Checksum {
+        Checksum {
             algorithm: "None".to_string(),
             value: "select all".to_string(),
-        })
+        }
     }
 }
 
@@ -74,11 +73,11 @@ impl ReportItemSelector for BalanceNonZeroSelector {
         Vec::new()
     }
 
-    fn checksum(&self, _hash: Hash) -> Result<Checksum, tackler::Error> {
-        Ok(Checksum {
+    fn checksum(&self, _hash: Hash) -> Checksum {
+        Checksum {
             algorithm: "None".to_string(),
             value: "select all non-zero".to_string(),
-        })
+        }
     }
 }
 
@@ -99,7 +98,7 @@ impl ReportItemSelector for BalanceNonZeroByAccountSelector {
         self.acc_sel.selectors()
     }
 
-    fn checksum(&self, hash: Hash) -> Result<Checksum, tackler::Error> {
+    fn checksum(&self, hash: Hash) -> Checksum {
         self.acc_sel.checksum(hash)
     }
 }
@@ -111,7 +110,9 @@ impl Predicate<BalanceTreeNode> for BalanceNonZeroByAccountSelector {
 }
 
 impl BalanceNonZeroByAccountSelector {
-    pub fn from(patterns: &[&str]) -> Result<BalanceNonZeroByAccountSelector, tackler::Error> {
+    /// # Errors
+    /// Returns `Err` in case of invalid pattern
+    pub fn try_from(patterns: &[&str]) -> Result<BalanceNonZeroByAccountSelector, tackler::Error> {
         let bfa = BalanceByAccountSelector {
             regexs: new_full_haystack_regex_set(patterns)?,
         };
@@ -125,7 +126,9 @@ pub struct BalanceByAccountSelector {
 }
 
 impl BalanceByAccountSelector {
-    pub fn from(patterns: &[&str]) -> Result<BalanceByAccountSelector, tackler::Error> {
+    /// # Errors
+    /// Returns `Err` in case of invalid pattern
+    pub fn try_from(patterns: &[&str]) -> Result<BalanceByAccountSelector, tackler::Error> {
         let bfa = BalanceByAccountSelector {
             regexs: new_full_haystack_regex_set(patterns)?,
         };
@@ -149,10 +152,9 @@ impl ReportItemSelector for BalanceByAccountSelector {
         accsel
     }
 
-    fn checksum(&self, hash: Hash) -> Result<Checksum, tackler::Error> {
+    fn checksum(&self, hash: Hash) -> Checksum {
         let accsel = self.selectors();
-        let h = hash.checksum(&accsel, "\n".as_bytes())?;
-        Ok(h)
+        hash.checksum(&accsel, "\n".as_bytes())
     }
 }
 
@@ -164,7 +166,9 @@ pub struct RegisterByAccountSelector {
 }
 
 impl RegisterByAccountSelector {
-    pub fn from(patterns: &[&str]) -> Result<RegisterByAccountSelector, tackler::Error> {
+    /// # Errors
+    /// Returns `Err` in case of invalid pattern
+    pub fn try_from(patterns: &[&str]) -> Result<RegisterByAccountSelector, tackler::Error> {
         let ras = RegisterByAccountSelector {
             regexs: new_full_haystack_regex_set(patterns)?,
         };
@@ -188,10 +192,9 @@ impl ReportItemSelector for RegisterByAccountSelector {
         accsel
     }
 
-    fn checksum(&self, hash: Hash) -> Result<Checksum, tackler::Error> {
+    fn checksum(&self, hash: Hash) -> Checksum {
         let accsel = self.selectors();
-        let h = hash.checksum(&accsel, "\n".as_bytes())?;
-        Ok(h)
+        hash.checksum(&accsel, "\n".as_bytes())
     }
 }
 
@@ -212,10 +215,10 @@ impl ReportItemSelector for RegisterAllSelector {
         Vec::new()
     }
 
-    fn checksum(&self, _hash: Hash) -> Result<Checksum, tackler::Error> {
-        Ok(Checksum {
+    fn checksum(&self, _hash: Hash) -> Checksum {
+        Checksum {
             algorithm: "None".to_string(),
             value: "select all".to_string(),
-        })
+        }
     }
 }

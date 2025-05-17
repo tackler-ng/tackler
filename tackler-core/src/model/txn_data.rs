@@ -25,37 +25,38 @@ pub struct TxnSet<'a> {
 }
 
 impl TxnSet<'_> {
+    #[must_use]
     pub fn metadata(&self) -> Option<&Metadata> {
         self.metadata.as_ref()
     }
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.txns.is_empty()
     }
 }
 
 impl TxnData {
+    #[must_use]
     pub fn len(&self) -> usize {
         self.txns.len()
     }
+
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.txns.is_empty()
     }
 
-    pub fn from(
-        mdi_opt: Option<MetadataItem>,
-        txns: Txns,
-        hash: &Option<Hash>,
-    ) -> Result<TxnData, tackler::Error> {
+    pub fn from(mdi_opt: Option<MetadataItem>, txns: Txns, hash: &Option<Hash>) -> TxnData {
         let metadata = mdi_opt.map(Metadata::from_mdi);
 
         let mut t = txns;
         t.sort_by(transaction::ord_by_txn);
 
-        Ok(TxnData {
+        TxnData {
             metadata,
             txns: t,
             hash: hash.clone(),
-        })
+        }
     }
 
     fn make_metadata(&self, txns: &TxnRefs<'_>) -> Result<Metadata, tackler::Error> {
@@ -76,7 +77,9 @@ impl TxnData {
         Ok(metadata)
     }
 
-    pub fn filter<'a>(&'a self, tf: &FilterDefinition) -> Result<TxnSet<'a>, tackler::Error> {
+    /// # Errors
+    /// Returns `Err` in case resulting Txn Set is not valid (e.g. there are missing UUIDs)
+    pub fn filter(&self, tf: &FilterDefinition) -> Result<TxnSet<'_>, tackler::Error> {
         let refvec: TxnRefs<'_> = self.txns.iter().filter(|txn| tf.eval(txn)).collect();
 
         let mut metadata = self.make_metadata(&refvec)?;
@@ -90,6 +93,8 @@ impl TxnData {
         })
     }
 
+    /// # Errors
+    /// Returns `Err` in case resulting Txn Set is not valid (e.g. there are missing UUIDs)
     pub fn get_all(&self) -> Result<TxnSet<'_>, tackler::Error> {
         let txns: TxnRefs<'_> = self.txns.iter().collect();
 
@@ -106,12 +111,9 @@ impl TxnData {
 fn calc_txn_checksum(txns: &TxnRefs<'_>, hasher: &Hash) -> Result<Checksum, tackler::Error> {
     let uuids: Result<Vec<String>, tackler::Error> = txns
         .iter()
-        .map(|txn| match txn.header.uuid {
-            Some(uuid) => Ok(uuid.to_string()),
-            None => {
-                let msg = "Txn without UUID. Txn UUID is mandatory with transaction set checksum calculation.";
-                Err(msg.into())
-            }
+        .map(|txn| if let Some(uuid) = txn.header.uuid { Ok(uuid.to_string()) } else {
+            let msg = "Txn without UUID. Txn UUID is mandatory with transaction set checksum calculation.";
+            Err(msg.into())
         })
         .collect();
 
@@ -137,7 +139,7 @@ fn calc_txn_checksum(txns: &TxnRefs<'_>, hasher: &Hash) -> Result<Checksum, tack
         return Err(msg.into());
     }
 
-    let cs = hasher.checksum(&u, "\n".as_bytes())?;
+    let cs = hasher.checksum(&u, "\n".as_bytes());
     Ok(cs)
 }
 

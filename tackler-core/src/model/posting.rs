@@ -47,6 +47,8 @@ impl Posting {
         })
     }
 }
+
+#[must_use]
 pub fn txn_sum(posts: &Posts) -> Decimal {
     posts.iter().map(|p| p.txn_amount).sum()
 }
@@ -66,9 +68,10 @@ impl Display for Posting {
             self.acctn.atn,
             sign_space,
             self.amount,
-            match comm.is_any() {
-                true => format!(" {}", comm.name),
-                false => String::new(),
+            if comm.is_any() {
+                format!(" {}", comm.name)
+            } else {
+                String::new()
             },
             if self.txn_commodity.is_any() {
                 #[allow(clippy::collapsible_else_if)]
@@ -154,7 +157,7 @@ mod tests {
         let v_str =
             //2         1         .         1         2         3         4
              "12345678901234567890.123456789";
-        let ref_str = format!("a:b   {}", v_str);
+        let ref_str = format!("a:b   {v_str}");
         let v = Decimal::from_str_exact(v_str).unwrap(/*:test:*/);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
         let txntn = TxnAccount {
@@ -163,7 +166,7 @@ mod tests {
         };
         let p = Posting::from(txntn, v, v, false, Arc::new(Commodity::default()), None).unwrap(/*:test:*/);
 
-        let p_str = format!("{}", p);
+        let p_str = format!("{p}");
         assert_eq!(p_str, ref_str);
         assert_eq!(p.to_string(), ref_str);
     }
@@ -181,7 +184,7 @@ mod tests {
             // Quadrillion is 15 digits, e.g. 100 * USA budget
             //2         1         .         1         2         3         4
                   "678901234567890.12345678901234";
-        let ref_str = format!("a:b   {}", v_str);
+        let ref_str = format!("a:b   {v_str}");
         let v = Decimal::from_str_exact(v_str).unwrap(/*:test:*/);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
         let txntn = TxnAccount {
@@ -189,7 +192,7 @@ mod tests {
             comm: Arc::new(Commodity::default()),
         };
         let p = Posting::from(txntn, v, v, false, Arc::new(Commodity::default()), None).unwrap(/*:test:*/);
-        let p_str = format!("{}", p);
+        let p_str = format!("{p}");
         assert_eq!(p_str, ref_str);
         assert_eq!(p.to_string(), ref_str);
     }
@@ -205,7 +208,7 @@ mod tests {
         };
         let p = Posting::from(txntn, v, v, false, Arc::new(Commodity::default()), Some("comment".to_string())).unwrap(/*:test:*/);
 
-        let p_str = format!("{}", p);
+        let p_str = format!("{p}");
         assert_eq!(p_str, "a:b   123.01 ; comment");
     }
 

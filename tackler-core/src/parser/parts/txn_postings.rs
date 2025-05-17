@@ -24,7 +24,7 @@ pub(crate) fn parse_txn_postings(is: &mut Stream<'_>) -> ModalResult<Posts> {
         let amount = txn_sum(&postings.0).neg();
         let comm = postings.0[0].txn_commodity.clone();
 
-        let acctn = match is.state.get_or_create_txn_account(p.0, comm.clone()) {
+        let acctn = match is.state.get_or_create_txn_account(p.0, &comm) {
             Ok(acctn) => acctn,
             Err(err) => return Err(from_error(is, err.as_ref())),
         };

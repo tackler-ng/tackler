@@ -19,6 +19,7 @@ use tackler_rs::IndocUtils;
       #[test]
       //desc: "check invalid description constructs"
       #[allow(non_snake_case)]
+      #[allow(clippy::too_many_lines)]
       fn id_03d3df34_e68a_4104_b8ab_be06d36bf189__err_description_parse() {
         let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
@@ -29,7 +30,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' abc'"#
+          r"at input ' abc'"
         ),
         (indoc!(
            "|
@@ -39,7 +40,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' ('"#
+          r"at input ' ('"
         ),
         (indoc!(
            "|
@@ -49,7 +50,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' )'"#
+          r"at input ' )'"
         ),
         (indoc!(
            "|
@@ -59,7 +60,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' +'"#
+          r"at input ' +'"
         ),
         (indoc!(
            "|
@@ -69,7 +70,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' -02'"#
+          r"at input ' -02'"
         ),
         (indoc!(
            "|
@@ -79,7 +80,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' Z'"#
+          r"at input ' Z'"
         ),
 
         (indoc!(
@@ -90,7 +91,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' T'"#
+          r"at input ' T'"
         ),
 
         (indoc!(
@@ -101,7 +102,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' T'"#
+          r"at input ' T'"
         ),
 
         (indoc!(
@@ -112,14 +113,14 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 2",
-          r#"at input ' )'"#
+          r"at input ' )'"
         ),
       ];
           let mut count = 0;
           for t in perr_strings {
               let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
               assert!(res.is_err(),
-                      "Testing Error: Offending test vector item: {}", count);
+                      "Testing Error: Offending test vector item: {count}");
               /*
               // todo: parser error messages, error position
               assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -133,6 +134,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "accept valid description constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_58d08778_10ee_489c_bb91_7059b9ba0cca__ok_description() {
       let pok_strings: Vec<(String, &str)> = vec![
         (indoc!(
@@ -293,7 +295,7 @@ use tackler_rs::IndocUtils;
         let mut count = 0;
         for t in pok_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
-            assert!(res.is_ok(), "Offending test vector item: {}", count);
+            assert!(res.is_ok(), "Offending test vector item: {count}");
             let txn_data = res.unwrap(/*:test:*/);
             let txns = txn_data.get_all().unwrap(/*:test:*/);
             let txn: &Transaction = txns.txns[0];
@@ -307,6 +309,7 @@ use tackler_rs::IndocUtils;
     #[test]
     //desc: "accept valid code + description constructs"
     #[allow(non_snake_case)]
+    #[allow(clippy::too_many_lines)]
     fn id_5081594a_ecaf_4232_9c93_1d84ea7600eb__ok_code_and_description() {
       let  pok_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
@@ -455,7 +458,7 @@ use tackler_rs::IndocUtils;
         let mut count = 0;
         for t in pok_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
-            assert!(res.is_ok(), "Offending test vector item: {}", count);
+            assert!(res.is_ok(), "Offending test vector item: {count}");
             let txn_data = res.unwrap(/*:test:*/);
             let txns = txn_data.get_all().unwrap(/*:test:*/);
             let txn: &Transaction = txns.txns[0];

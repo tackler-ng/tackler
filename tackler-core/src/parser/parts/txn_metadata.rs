@@ -144,6 +144,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn test_parse_txn_meta() {
         #[rustfmt::skip]
         let pok_meta = vec![

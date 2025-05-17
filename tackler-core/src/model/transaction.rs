@@ -19,7 +19,9 @@ pub struct Transaction {
 }
 
 impl Transaction {
-    pub fn from(header: TxnHeader, posts: Posts) -> Result<Transaction, tackler::Error> {
+    /// # Errors
+    /// Returns `Err` if transaction sum is not zero
+    pub fn try_from(header: TxnHeader, posts: Posts) -> Result<Transaction, tackler::Error> {
         let txn_sum = posting::txn_sum(&posts);
         if !txn_sum.is_zero() {
             let msg = format!("TXN postings do not zero: {txn_sum}");
@@ -30,6 +32,7 @@ impl Transaction {
     }
 }
 
+#[must_use]
 pub fn ord_by_txn(before: &Transaction, after: &Transaction) -> Ordering {
     before.cmp(after)
 }

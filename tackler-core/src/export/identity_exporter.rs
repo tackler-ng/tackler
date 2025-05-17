@@ -20,7 +20,7 @@ impl Export for IdentityExporter {
         txn_data: &TxnSet<'_>,
     ) -> Result<(), tackler::Error> {
         for txn in &txn_data.txns {
-            writeln!(writer, "{}", txn)?;
+            writeln!(writer, "{txn}")?;
         }
         Ok(())
     }

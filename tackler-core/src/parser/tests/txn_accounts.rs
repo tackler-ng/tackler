@@ -66,7 +66,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input 'a'"#
+          r"at input 'a'"
         ),
           // perr: :a
    (indoc!("|
@@ -76,7 +76,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ' :'"#
+          r"at input ' :'"
         ),
           // perr: a:
    (indoc!("|
@@ -86,7 +86,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input 'a'"#
+          r"at input 'a'"
         ),
           // perr: '×' U+00D7
    (indoc!("|
@@ -96,7 +96,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input '×'"#
+          r"at input '×'"
         ),
           // perr: '÷' U+00F7
    (indoc!("|
@@ -106,9 +106,10 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input '÷'"#
+          r"at input '÷'"
         ),
           // perr: ';' U+037E
+          #[allow(clippy::unicode_not_nfc)]
    (indoc!("|
             |2017-03-03
             | a;b  1
@@ -116,7 +117,7 @@ use tackler_rs::IndocUtils;
             |
             |").strip_margin(),
           "line: 3",
-          r#"at input ';'"#
+          r"at input ';'"
         ),
       ];
         let mut count = 0;
@@ -124,7 +125,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains(t.1),
@@ -206,7 +207,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains("line: 3"),
@@ -291,7 +292,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains("line: 3"),
@@ -370,7 +371,7 @@ use tackler_rs::IndocUtils;
         for t in perr_strings {
             let res = parser::string_to_txns(&mut t.0.as_str(), &mut Settings::default());
             assert!(res.is_err(),
-                    "Testing Error: Offending test vector item: {}", count);
+                    "Testing Error: Offending test vector item: {count}");
             /*
             // todo: parser error messages, error position
             assert!(res.err().unwrap(/*:test:*/).to_string().contains("line: 3"),
