@@ -1,15 +1,37 @@
-= How to Generate Audit test repository
+= How to Generate Audit Test Repository
+
+These are steps needed to generate data and repository for audit tests with
+https://github.com/tackler-ng/pta-generator[pta-generator] tool.
 
 ----
 perf=path/to/perf 
 
 mkdir sets
 
-pta-generator audit --path sets --shard-type txn --start 2016-01-01T00:00:00+0000[UTC] --stop 2017-01-01T00:00:00+0000[UTC] --set-size 1e1
-pta-generator audit --path sets --shard-type txn --start 2016-01-01T00:00:00+0000[UTC] --stop 2017-01-01T00:00:00+0000[UTC] --set-size 1e2
-pta-generator audit --path sets --shard-type txn --start 2016-01-01T00:00:00+0000[UTC] --stop 2017-01-01T00:00:00+0000[UTC] --set-size 1e3
-pta-generator audit --path sets --shard-type txn --start 2016-01-01T00:00:00+0000[UTC] --stop 2017-01-01T00:00:00+0000[UTC] --set-size 1e4
-pta-generator audit --path sets --shard-type txn --start 2016-01-01T00:00:00+0000[UTC] --stop 2017-01-01T00:00:00+0000[UTC] --set-size 1e5
+pta-generator audit --path sets --shard-type txn \
+    --start 2016-01-01T00:00:00+0000[UTC] \
+    --stop  2017-01-01T00:00:00+0000[UTC] \
+    --set-size 1e1
+
+pta-generator audit --path sets --shard-type txn \
+    --start 2016-01-01T00:00:00+0000[UTC] \
+    --stop  2017-01-01T00:00:00+0000[UTC] \
+    --set-size 1e2
+
+pta-generator audit --path sets --shard-type txn \
+    --start 2016-01-01T00:00:00+0000[UTC] \
+    --stop  2017-01-01T00:00:00+0000[UTC] \
+    --set-size 1e3
+
+pta-generator audit --path sets --shard-type txn \
+    --start 2016-01-01T00:00:00+0000[UTC] \
+    --stop  2017-01-01T00:00:00+0000[UTC] \
+    --set-size 1e4
+
+pta-generator audit --path sets --shard-type txn \
+    --start 2016-01-01T00:00:00+0000[UTC] \
+    --stop  2017-01-01T00:00:00+0000[UTC] \
+    --set-size 1e5
 
 $perf/bin/git-data-init.sh audit-repo 1e1
 $perf/bin/git-data-init.sh audit-repo 1e2
@@ -20,5 +42,5 @@ $perf/bin/git-error-init.sh audit-repo
 
 cd audit-repo.git/
 rm -f hooks/*.sample
-git gc --prune=now --aggressive
+git gc --prune=now
 ----

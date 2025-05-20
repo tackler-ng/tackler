@@ -11,13 +11,13 @@ None at the moment.
 
 === TEPs in planning phase
 
-* xref:./tep-1016.adoc[TEP-1016: Flat Balance]
 * xref:./tep-1003.adoc[TEP-1003: Profit and Loss (PnL)]
 
 
 === Implemented TEPs
 
 * xref:./tep-1015.adoc[TEP-1015: Price data support]
+* xref:./tep-1016.adoc[TEP-1016: Flat Balance]
 
 
 ==== Archived Tackler-Mk1 TEPs

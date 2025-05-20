@@ -1,0 +1,157 @@
+= High-Level Design Document
+
+Tackler operates on a stream of immutable transactions, and over this
+transaction stream (or sub-selection of it), it generates different reports.
+
+Transaction Stream is immutable, and it's possible to make multiple reports
+over the same data in one go. Currently, all transactions are held in memory.
+
+== Concepts and Names
+
+Typically, a singular form of something is one instance, and plural is a sequence.
+For example, Txn (single Transaction) or Txns (sequence of Transactions).
+
+In the case of tree-structures, child (singular) and childs (plural) are misspelled
+by purpose.
+
+Tackler data model classes and objects are defined in
+link:../../tackler-core/src/model/[tackler-core::model] module.
+
+Tackler data model classes which are used between server and client are located in
+link:../../tackler-api/src/[tackler-api] crate.  These API models
+are serialized over wire by Serde as JSON.
+
+Idea is that a client won't do any calculation with the API objects, so these are
+purely for Human-Machine-Interface (HMI) representation.
+
+For example, all numbers are strings, and they are rounded based on report settings.
+
+
+=== Date
+
+All tackler
+https://tackler.fi/docs/tackler/latest/reference/timestamps/[dates and timestamps]
+use a subset of https://en.wikipedia.org/wiki/ISO_8601[ISO 8601] format.
+
+* ISO date `YYYY-MM-DD`
+* ISO DateTime up to nanosecond resolution: `YYYY-MM-DDTHH:MM:SS.SSS`
+* ISO DateTime with timezone offset: `YYYY-MM-DDTHH:MM:SS.SSS+HH:MM`
+
+Internally, all dates and time are handled as datetime with zone offset.
+
+If txn timestamp is missing time part, then
+https://tackler.fi/docs/tackler/latest/reference/tackler-toml/#kernel-timestamp[the configured default time]
+is used.
+
+If the txn timestamp does not have offset, then
+https://tackler.fi/docs/tackler/latest/reference/tackler-toml/#kernel-timestamp-timezone[a configured default zone]
+is used.
+
+If timezone is offset (`+02:00`) then it is *not* adjusted by daylight saving times.
+On the other hand, Timezone as ZoneId (`e.g. Europe/Helsinki`) is adjusted by daylight saving time.
+
+
+=== Transaction (Txn, Txns)
+
+Transaction is one isolated, self-containing accounting activity,
+containing two or more postings to accounts which are involved with this activity.
+Transaction also contains meta-information (dates, codes, descriptions etc.) about this accounting action.
+
+Sum of Transaction's postings must be zero.
+
+
+=== Posting (post, posts)
+
+Posting is an activity on one account when the account is either debited or credited.
+Debit or credit of the account is handled by positive or negative number in Tackler.
+
+Posting also contains other information (comments, etc.) on top of
+account name and amount.
+
+If this posting is the last listed posting on the current transaction, then the amount could be left empty.
+
+Posting with zero amounts is not allowed.
+
+See Accumulator section for information different types of postings
+(`Posting`, `AccumulatorPosting`, `RegisterPosting` (API)).
+
+=== Account (acc)
+
+Account is a single entry on the structural hierarchy of accounts.
+
+For example:
+
+ Assets:Bank:Checking
+
+In above `Assets` is root account, `Bank` is child of `Assets` and parent of `Checking`. 
+If there are no other accounts under `Checking` in Chart of Accounts,
+then `Checking` is leaf.
+
+
+=== AccountTreeNode (AccTN, AccTNs)
+
+One entry of the Chart of Accounts, e.g., one entry in the account tree,
+where all used accounts are listed.
+
+This contains information about tree structure: parent-name, depths,
+own leaf-names, etc.
+
+In the default mode of operation, Tackler checks that all transactions postings
+(e.g. accounts)  are listed on Chart of Accounts.  It is a fatal error if there is
+an account that is not listed. This can be lifted by
+https://tackler.fi/docs/tackler/latest/reference/tackler-toml/#kernel[configuration and CLI] parameter.
+
+=== Accumulator and Reporting
+
+* AccountTreeNode, node in account tree (Chart of Accounts)
+* BalanceTreeNode, a node (row) in a balance report, contains its own balance and balance of childs
+* Different data types of postings
+** `Posting`, this is internal representation of original Txn Posting, as it was parsed
+** `AccumulatorPosting`, posting used and reported by Accumulator,
+this contains calculated data (running total so far for this account)
+** `RegisterPosting`, posting on a Register report, this is used by API interface, and used for reporting
+
+== Parsing
+
+Tackler uses link:https://docs.rs/winnow/latest/winnow/index.html[winnow]
+parser combinator library for parsing.
+
+Parser functions are defined in the
+link:../../tackler-core/src/parser/parts[parser::parts] module.
+
+There is an old tackler-mk1, ANTLR-based grammar and lexer definition available
+for reference:
+
+* Grammar: link:./antlr/TxnParser.g4[ANTLR TxnParser.g4]
+* Lexer: link:./antlr/TxnLexer.g4[ANTLR TxnLexer.g4].
+* Context handlers: link:./antlr/ctx_handler.rs[ANTLR Context Handlers]
+
+These are only used as reference and preserved for historic reasons.
+
+
+Input is fed to the parser by
+link:../../tackler-core/src/parser/tackler_txns.rs[tackler-core :: parser :: tackler_txns].
+
+Parser results are convected into data model by
+link:../../tackler-core/src/parser/parts/[tackler-core :: parser :: parts] functions.
+
+=== Old ANTLR Parser
+
+The result of parsing is converted to data models by
+link:./antlr/ctx_handler.rs[ctx_handler] helper class.
+
+== Input
+
+Input order of Txns cannot be mandated. There must be a stable way to sort
+transactions when internal order (e.g. order of transactions during one day
+and without time information) is important.
+
+In that case it is mandatory to provide unique sorting information for each transaction.
+
+Txn components are used in the following order to find sort order
+(in case of previous components have produced "the same" sort order):
+
+ timestamp, code, description, uuid
+
+Transactions must have UUID when a fully deterministic and stable sort order is needed,
+especially when transactions are produced by a distributed system.
