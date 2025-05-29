@@ -152,7 +152,7 @@ for M in $(seq 1 12); do
             git commit -m "$name: 2016-$m-$d"
     done
     GIT_AUTHOR_DATE="$ts" GIT_COMMITTER_DATE="$ts" \
-        git tag -a -m "$name: 2016-$m" "s${set}_2026-$m"
+        git tag -a -m "$name: 2016-$m" "s${set}_2016-$m"
     echo "step: git gc"
     git gc
     
