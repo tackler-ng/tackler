@@ -755,9 +755,16 @@ impl Settings {
 
     #[must_use]
     fn get_account_selector(&self, acc_sel: &AccountSelectors) -> AccountSelectors {
-        match &self.global_acc_sel {
+        let v = match &self.global_acc_sel {
             Some(global_acc_sel) => global_acc_sel.clone(),
             None => acc_sel.clone(),
+        };
+
+        // Turn "" into an empty ("select all") account selector
+        if v.len() == 1 && v[0].is_empty() {
+            Vec::new()
+        } else {
+            v
         }
     }
 

@@ -106,6 +106,29 @@ echo ": ok"
 
 #####################################################################
 #
+# test: 3dfdbcbb-e2d8-4426-8a9e-92a6a6805b9a
+# desc: "select all: override global account selector"
+rm -f $OUTPUT_DIR/*
+test_name=acc-sel-global
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/ok.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
+    --accounts ""
+
+echo -n "check:"
+cmp_result $module ${test_name} txt bal
+cmp_result $module ${test_name} txt balgrp
+cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} txn equity
+echo ": ok"
+
+
+#####################################################################
+#
 # test: 53f67fea-6307-44ca-9834-7a2f9b71a15a
 rm -f $OUTPUT_DIR/*
 test_name=bal-acc-01
@@ -139,6 +162,27 @@ cmp_result $module ${test_name}-ng txt bal
 cmp_result $module ${test_name}-ng json bal
 echo ": ok"
 
+#####################################################################
+#
+# test: 692eff1f-0dcf-401d-8ca6-25e54cb5cb5f
+# desc: "select all: balance"
+rm -f $OUTPUT_DIR/*
+test_name=bal-acc-02
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/ok.bal-acc.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
+    --accounts ""
+
+echo -n "check:"
+cmp_result $module ${test_name} txt bal
+cmp_result $module ${test_name} txt balgrp
+cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} txn equity
+echo ": ok"
 
 #####################################################################
 #
@@ -172,6 +216,28 @@ echo -n "check:"
 cmp_result $module ${test_name}-ng txt balgrp
 echo ": ok"
 
+#####################################################################
+#
+# test: e9bd7c0f-66e0-4523-a846-5338ed4d5e1a
+# desc: "select all: balance-group"
+rm -f $OUTPUT_DIR/*
+test_name=balgrp-acc-02
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/ok.balgrp-acc.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
+    --accounts ""
+
+echo -n "check:"
+cmp_result $module ${test_name} txt bal
+cmp_result $module ${test_name} txt balgrp
+cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} txn equity
+echo ": ok"
+
 
 #####################################################################
 #
@@ -192,6 +258,28 @@ cmp_result $module ${test_name} txt balgrp
 cmp_result $module ${test_name} txt reg
 cmp_result $module ${test_name} txn equity
 cmp_result $module ${test_name} txn identity
+echo ": ok"
+
+#####################################################################
+#
+# test: 12aa0f4f-430b-42cc-8640-46afa0ab9db9
+# desc: "select all: register"
+rm -f $OUTPUT_DIR/*
+test_name=register-acc-02
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/ok.register-acc.toml \
+    --input.file $SUITE_PATH/$module/ok/reporting.txn \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
+    --accounts ""
+
+echo -n "check:"
+cmp_result $module ${test_name} txt bal
+cmp_result $module ${test_name} txt balgrp
+cmp_result $module ${test_name} txt reg
+cmp_result $module ${test_name} txn equity
 echo ": ok"
 
 #####################################################################

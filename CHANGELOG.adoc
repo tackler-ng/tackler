@@ -21,8 +21,9 @@ Changed functionality:
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release:
 
+* Fixed cli select all (`--accounts ""`) account selector
 
 ==== Development
 
