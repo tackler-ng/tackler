@@ -67,7 +67,7 @@ fn report_output<W: io::Write + ?Sized>(
 ) -> Result<(), tackler::Error> {
     if let Some(pw) = prog_writer.as_mut() {
         for p in paths {
-            writeln!(pw, "{:>21} ({}): {}", title, p.0, p.1)?;
+            writeln!(pw, "{:>21} ({}) : {}", title, p.0, p.1)?;
         }
     }
     Ok(())
