@@ -12,7 +12,7 @@ pub(super) const TXT: &str = r"
    Expenses:Sweets:Ice·Cream 3
    Assets:Cash
 
-2025-01-02 '
+2025-01-02
    Assets:Coins 1 GML @ 3800 CAD
    Liabilities:Visa:4012_8888_8888_1881
 
