@@ -73,7 +73,7 @@ impl Export for EquityExporter {
         )?;
 
         if bal.is_empty() {
-            // todo: check if this is actually possible?
+            // todo: log warning that equity transaction is empty and ask to check account selector
             return Ok(());
         }
 
