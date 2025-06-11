@@ -40,8 +40,9 @@ cmp_result $module $test_name txt reg
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+cmp_result $module $test_name txn equity
+
 cmp_result_ref $module price $test_name txn identity
-cmp_result_ref $module price $test_name txn equity
 echo ": ok"
 
 #
@@ -70,8 +71,8 @@ cmp_result $module $test_name txt reg
 cmp_result_ref $module price-00 $test_name json bal
 cmp_result_ref $module price-00 $test_name json balgrp
 cmp_result_ref $module price-00 $test_name json reg
+cmp_result_ref $module price-00 $test_name txn equity
 cmp_result_ref $module price    $test_name txn identity
-cmp_result_ref $module price    $test_name txn equity
 
 echo ": ok"
 
@@ -108,8 +109,9 @@ cmp_result $module $test_name txt reg
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+cmp_result $module $test_name txn equity
+
 cmp_result_ref $module price $test_name txn identity
-cmp_result_ref $module price $test_name txn equity
 echo ": ok"
 
 #
@@ -137,8 +139,9 @@ cmp_result $module $test_name txt reg
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+cmp_result $module $test_name txn equity
+
 cmp_result_ref $module price $test_name txn identity
-cmp_result_ref $module price $test_name txn equity
 echo ": ok"
 
 #
@@ -167,6 +170,7 @@ cmp_result $module $test_name txt reg
 cmp_result $module $test_name json bal
 cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
+cmp_result $module $test_name txn equity
+
 cmp_result_ref $module price $test_name txn identity
-cmp_result_ref $module price $test_name txn equity
 echo ": ok"

@@ -4,6 +4,9 @@ Add price data support for currencies, shares and commodities.
 
 Github issue: https://github.com/tackler-ng/tackler/issues/36
 
+Equity Export: https://github.com/tackler-ng/tackler/issues/101
+
+
 == Summary
 
 There are three different use cases for initial price data support:
@@ -321,7 +324,10 @@ Changes to exports or exporting
 
 ==== Equity Export
 
-No changes to Equity Export
+If Price conversion is activate with Equity Export, create equity transactions
+with converted prices and include rate information into Equity Transaction's comment.
+
+https://github.com/tackler-ng/tackler/issues/101
 
 
 ==== Identity Export

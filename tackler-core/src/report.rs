@@ -49,7 +49,7 @@ pub trait Report {
     ) -> Result<(), tackler::Error>;
 }
 
-fn report_timezone(cfg: &Settings) -> Result<TimeZoneInfo, tackler::Error> {
+pub(crate) fn report_timezone(cfg: &Settings) -> Result<TimeZoneInfo, tackler::Error> {
     Ok(TimeZoneInfo {
         zone_id: if let Some(tz) = cfg.report.tz.iana_name() {
             tz.to_string()

@@ -6,7 +6,6 @@
 use crate::export::Export;
 use crate::kernel::Settings;
 use crate::kernel::balance::Balance;
-use crate::kernel::price_lookup::PriceLookupCtx;
 use crate::kernel::report_item_selector::{
     BalanceNonZeroByAccountSelector, BalanceNonZeroSelector, BalanceSelector,
 };
@@ -15,7 +14,7 @@ use crate::tackler;
 use itertools::Itertools;
 use rust_decimal::Decimal;
 use std::io;
-use tackler_api::metadata::items::{AccountSelectorChecksum, Text};
+use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem, Text};
 use tackler_api::txn_ts::rfc_3339;
 use uuid::Uuid;
 
@@ -64,10 +63,16 @@ impl Export for EquityExporter {
     ) -> Result<(), tackler::Error> {
         let bal_acc_sel = self.get_acc_selector()?;
 
+        let price_lookup_ctx = cfg.get_price_lookup().make_ctx(
+            &txn_data.txns,
+            cfg.report.commodity.clone(),
+            &cfg.price.price_db,
+        );
+
         let bal = Balance::from(
             &String::default(),
             txn_data,
-            &PriceLookupCtx::default(),
+            &price_lookup_ctx,
             bal_acc_sel.as_ref(),
             cfg,
         )?;
@@ -115,6 +120,8 @@ impl Export for EquityExporter {
             hash: bal_acc_sel.checksum(hash),
             selectors: bal_acc_sel.selectors(),
         });
+
+        let report_tz_mdi = MetadataItem::TimeZoneInfo(crate::report::report_timezone(cfg)?);
 
         let equity_txn_str: Vec<String> = bal
             .bal
@@ -171,6 +178,20 @@ impl Export for EquityExporter {
                             eq_txn.push(format!("{eq_txn_indent}; "));
                         }
                 }
+
+                if !price_lookup_ctx.is_empty() {
+                    for v in report_tz_mdi.text(cfg.report.tz.clone()) {
+                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                    }
+                    eq_txn.push(format!("{eq_txn_indent}; "));
+
+                    let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
+                    for v in pr.text(cfg.report.tz.clone()) {
+                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                    }
+                    eq_txn.push(format!("{eq_txn_indent}; "));
+                }
+
                 if dsum.is_zero() {
                     eq_txn.push(format!("{eq_txn_indent}; WARNING:"));
                     eq_txn.push(format!("{eq_txn_indent}; WARNING: The sum of equity transaction is zero without equity account."));
