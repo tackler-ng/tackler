@@ -92,3 +92,31 @@ cmp_result $module $test_name json reg
 
 cmp_result $module $test_name txn equity
 echo ": ok"
+
+#
+# multi-miss-vp-05
+#
+# test: 04d8dc19-c90e-466d-8d61-6054b3b9a935
+# desc: multi-miss-vp: inverted, txn-time, txn with multiple, missing comms
+rm -f $OUTPUT_DIR/*
+test_name=multi-miss-vp-05
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/$module/price-multi-miss.toml \
+    --input.file $SUITE_PATH/$module/ok/multi-vp-04.txn \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"

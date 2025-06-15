@@ -178,6 +178,7 @@ pub struct Settings {
     pub(crate) report: Report,
     pub(crate) export: Export,
     strict_mode: bool,
+    pub(crate) inverted: bool,
     input_config: InputSettings,
     kernel: Kernel,
     pub price: Price,
@@ -193,6 +194,7 @@ impl Default for Settings {
         Settings {
             strict_mode: false,
             audit_mode: false,
+            inverted: false,
             input_config: InputSettings::default(),
             report: Report::default(),
             export: Export::default(),
@@ -319,6 +321,7 @@ impl Settings {
         let mut tmp_settings = Settings {
             strict_mode,
             audit_mode,
+            inverted: overlaps.report.inverted,
             kernel: cfg.kernel,
             input_config: input_settings,
             price: Price::default(), // this is not real, see next one

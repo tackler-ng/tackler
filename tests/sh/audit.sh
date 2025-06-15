@@ -152,6 +152,83 @@ cmp_result $module $test_name json balgrp
 cmp_result $module $test_name json reg
 echo ": ok"
 
+#####################################################################
+#
+# test: 37ddb210-3f02-45b4-9b63-187279d08865
+# desc: baseline, not inverted
+rm -f $OUTPUT_DIR/*
+test_name=audit-invert-01
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/audit/audit.toml \
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"
+
+#####################################################################
+#
+# test: 6bfd4573-e99b-4e49-a7ba-c2882d46f06b
+# desc: inverted
+rm -f $OUTPUT_DIR/*
+test_name=audit-invert-02
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/audit/audit.toml \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"
+
+#####################################################################
+#
+# test: 9cfb09ef-c7f8-4470-ad16-46abf2708e26
+# desc: inverted, only one account-tree
+rm -f $OUTPUT_DIR/*
+test_name=audit-invert-03
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/audit/audit.toml \
+    --accounts "a:.*" \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"
 
 #
 # audit-1E2-01

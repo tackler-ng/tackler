@@ -17,6 +17,7 @@ pub struct BalanceSettings {
     pub(crate) bal_type: BalanceType,
     pub(crate) ras: Vec<String>,
     pub(crate) scale: Scale,
+    pub(crate) inverted: bool,
     pub(crate) report_commodity: Option<Arc<Commodity>>,
     pub(crate) price_lookup: PriceLookup,
 }
@@ -30,6 +31,7 @@ impl TryFrom<&Settings> for BalanceSettings {
             bal_type: settings.report.balance.bal_type.clone(),
             ras: settings.get_balance_ras(),
             scale: settings.report.scale.clone(),
+            inverted: settings.inverted,
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
         })
@@ -43,9 +45,10 @@ pub struct BalanceGroupSettings {
     pub ras: Vec<String>,
     pub group_by: GroupBy,
     pub report_tz: TimeZone,
+    pub scale: Scale,
+    pub inverted: bool,
     pub report_commodity: Option<Arc<Commodity>>,
     pub price_lookup: PriceLookup,
-    pub scale: Scale,
 }
 
 impl TryFrom<&Settings> for BalanceGroupSettings {
@@ -58,9 +61,10 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
             ras: settings.get_balance_group_ras(),
             group_by: settings.report.balance_group.group_by,
             report_tz: settings.report.tz.clone(),
+            scale: settings.report.scale.clone(),
+            inverted: settings.inverted,
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
-            scale: settings.report.scale.clone(),
         };
         Ok(bgs)
     }
@@ -73,6 +77,7 @@ impl From<BalanceGroupSettings> for BalanceSettings {
             bal_type: bgs.bal_type.clone(),
             ras: bgs.ras.clone(),
             scale: bgs.scale.clone(),
+            inverted: bgs.inverted,
             report_commodity: bgs.report_commodity.clone(),
             price_lookup: bgs.price_lookup.clone(),
         }
@@ -85,9 +90,10 @@ pub struct RegisterSettings {
     pub ras: Vec<String>,
     pub report_tz: TimeZone,
     pub report_commodity: Option<Arc<Commodity>>,
+    pub(crate) scale: Scale,
+    pub inverted: bool,
     pub price_lookup: PriceLookup,
     pub timestamp_style: TimestampStyle,
-    pub(crate) scale: Scale,
 }
 
 impl TryFrom<&Settings> for RegisterSettings {
@@ -98,10 +104,11 @@ impl TryFrom<&Settings> for RegisterSettings {
             title: settings.report.register.title.clone(),
             ras: settings.get_register_ras(),
             report_tz: settings.report.tz.clone(),
+            scale: settings.report.scale.clone(),
+            inverted: settings.inverted,
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
             timestamp_style: settings.report.register.timestamp_style,
-            scale: settings.report.scale.clone(),
         };
         Ok(rs)
     }

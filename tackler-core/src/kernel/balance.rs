@@ -144,10 +144,13 @@ impl Balance {
     fn calculate_account_sums<'a, I>(
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
+        inverted: bool,
     ) -> Vec<(TxnAccount, Decimal)>
     where
         I: Iterator<Item = &'a &'a Transaction>,
     {
+        let inv = Decimal::from(-1);
+
         // Calculate sum of postings for each account.
         //
         // Input size: is "big",    ~ all transactions
@@ -161,7 +164,11 @@ impl Balance {
                 // unwrap: ok: this is inside map, hence there must be at least one element
                 let acctn = ps.peek().unwrap(/*:ok:*/).0.clone();
                 let acc_sum = ps.map(|(_, amount, _)| amount).sum::<Decimal>();
-                (acctn, acc_sum)
+                if inverted {
+                    (acctn, acc_sum * inv)
+                } else {
+                    (acctn, acc_sum)
+                }
             })
             .collect()
     }
@@ -186,7 +193,7 @@ impl Balance {
         // Input size: is "big",    ~ all transactions
         // Output size: is "small", ~ size of CoA
         let account_sums: Vec<(TxnAccount, Decimal)> =
-            Self::calculate_account_sums(txns, price_lookup_ctx);
+            Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted);
 
         // From every account bubble up and insert missing parent AccTNs.
         //
@@ -313,13 +320,13 @@ impl Balance {
     fn balance_flat<'a, I>(
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
-        _settings: &Settings,
+        settings: &Settings,
     ) -> Vec<BalanceTreeNode>
     where
         I: Iterator<Item = &'a &'a Transaction>,
     {
         let account_sums: Vec<(TxnAccount, Decimal)> =
-            Self::calculate_account_sums(txns, price_lookup_ctx);
+            Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted);
 
         let mut v: Vec<BalanceTreeNode> = account_sums
             .into_iter()

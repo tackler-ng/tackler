@@ -95,6 +95,8 @@ pub struct ReportOverlap {
     pub account_overlap: Option<Vec<String>>,
     /// Group-By operator
     pub group_by: Option<String>,
+    /// Are the report values inverted?
+    pub inverted: bool,
 }
 
 /// Target (reports, exports) overlap configuration

@@ -14,7 +14,9 @@ use crate::tackler;
 use itertools::Itertools;
 use rust_decimal::Decimal;
 use std::io;
-use tackler_api::metadata::items::{AccountSelectorChecksum, MetadataItem, Text};
+use tackler_api::metadata::items::{
+    AccountSelectorChecksum, CreditAccountReport, MetadataItem, Text,
+};
 use tackler_api::txn_ts::rfc_3339;
 use uuid::Uuid;
 
@@ -130,7 +132,7 @@ impl Export for EquityExporter {
             .into_iter()
             .flat_map(|(c, bs)| {
                 let btns: Vec<_> = bs.collect();
-                let dsum: Decimal = btns.clone().into_iter().map(|b| b.account_sum).sum();
+                let dsum: Decimal = btns.clone().into_iter().map(|b| b.account_sum).sum::<Decimal>();
                 let bal_posting = {
                     let value = if c.is_empty() {
                         format!("{}", -dsum)
@@ -187,6 +189,14 @@ impl Export for EquityExporter {
 
                     let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
                     for v in pr.text(cfg.report.tz.clone()) {
+                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                    }
+                    eq_txn.push(format!("{eq_txn_indent}; "));
+                }
+
+                if cfg.inverted {
+                    let credit = MetadataItem::CreditAccountReport(CreditAccountReport { });
+                    for v in credit.text(cfg.report.tz.clone()) {
                         eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
                     }
                     eq_txn.push(format!("{eq_txn_indent}; "));

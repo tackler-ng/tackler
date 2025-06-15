@@ -261,3 +261,33 @@ cmp_result $module $test_name txn equity
 cmp_result $module $test_name txn identity
 echo ": ok"
 
+#####################################################################
+#
+# test: 604ca9e5-94d4-40b6-89cb-afac2460fd12
+# desc: inverted
+rm -f $OUTPUT_DIR/*
+test_name=inverted-01
+echo "test: $module/$test_name: "
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/no-commodities.toml \
+    --input.file $SUITE_PATH/$module/ok/basic-03.txn \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix ${test_name} \
+    --strict.mode false \
+    --formats txt json \
+    --accounts "a" \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"
+
