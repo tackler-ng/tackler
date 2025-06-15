@@ -43,8 +43,8 @@ codegen-units = 1
 [workspace.dependencies]
 base64 = { version = "0.22.1" }
 indoc = "2.0.6"
-jiff = { version = "0.2.14", features = [ "serde" ]}
-rust_decimal = { version = "1.37.1", features= ["serde-with-arbitrary-precision" ]}
+jiff = { version = "0.2.15", features = [ "serde" ]}
+rust_decimal = { version = "1.37.2", features= ["serde-with-arbitrary-precision" ]}
 rust_decimal_macros = { version = "1.37.1" }
 uuid = { version = "1.17.0", default-features = false, features = [ "serde" ] }
 log = "0.4.27"
