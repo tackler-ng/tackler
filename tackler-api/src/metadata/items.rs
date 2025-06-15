@@ -31,6 +31,8 @@ pub enum MetadataItem {
     #[doc(hidden)]
     TimeZoneInfo(TimeZoneInfo),
     #[doc(hidden)]
+    CreditAccountReport(CreditAccountReport),
+    #[doc(hidden)]
     AccountSelectorChecksum(AccountSelectorChecksum),
     #[doc(hidden)]
     GitInputReference(GitInputReference),
@@ -50,6 +52,7 @@ impl Text for MetadataItem {
             Self::GitInputReference(gif) => gif.text(tz),
             Self::TxnSetChecksum(tscs) => tscs.text(tz),
             Self::TimeZoneInfo(tzinfo) => tzinfo.text(tz),
+            Self::CreditAccountReport(credit) => credit.text(tz),
             Self::AccountSelectorChecksum(asc) => asc.text(tz),
             Self::TxnFilterDescription(tfd) => tfd.text(tz),
             Self::PriceRecords(pr) => pr.text(tz),
@@ -122,6 +125,22 @@ impl Text for AccountSelectorChecksum {
             }
         }
         t
+    }
+}
+
+/// Credit Account Report
+///
+/// Report of credit (usually negative) account
+#[derive(Serialize, Debug, Clone)]
+pub struct CreditAccountReport {}
+
+impl Text for CreditAccountReport {
+    fn text(&self, _tz: TimeZone) -> Vec<String> {
+        let pad = MetadataItem::ITEM_PAD;
+        vec![
+            "Credit Account Report".to_string(),
+            format!("{:>pad$} : {}", "NOTE", "All amounts are inverted"),
+        ]
     }
 }
 

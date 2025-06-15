@@ -20,7 +20,7 @@ use std::cmp::max;
 use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
-use tackler_api::metadata::items::MetadataItem;
+use tackler_api::metadata::items::{CreditAccountReport, MetadataItem};
 use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
 
 #[derive(Debug, Clone)]
@@ -279,6 +279,8 @@ impl Report for BalanceReporter {
         metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
     ) -> Result<(), Error> {
+        assert_eq!(self.report_settings.inverted, cfg.inverted);
+
         let acc_sel = self.get_acc_selector()?;
 
         let price_lookup_ctx = self.report_settings.price_lookup.make_ctx(
@@ -310,6 +312,11 @@ impl Report for BalanceReporter {
 
             let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
             metadata.push(pr);
+        }
+
+        if self.report_settings.inverted {
+            let credit = MetadataItem::CreditAccountReport(CreditAccountReport {});
+            metadata.push(credit);
         }
 
         for w in writers {

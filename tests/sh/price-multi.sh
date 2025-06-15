@@ -151,6 +151,33 @@ cmp_result_ref $module multi-02 $test_name json reg
 cmp_result_ref $module multi-02 $test_name txn equity
 echo ": ok"
 
+#
+# multi-05
+#
+# test: d76b0fa0-1fbb-4540-9c80-08b3cc6f6710
+# desc: multi-value: inverted, txn-time
+rm -f $OUTPUT_DIR/*
+test_name=multi-05
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/$module/price-multi.toml \
+    --input.file $SUITE_PATH/$module/ok/multi.txn \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+
+cmp_result $module $test_name txn equity
+echo ": ok"
+
 
 #
 # multi-vp-01

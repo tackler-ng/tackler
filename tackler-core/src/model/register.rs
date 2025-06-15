@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-use crate::config::Scale;
 use crate::kernel::RegisterSettings;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::math::format::format_with_scale;
@@ -73,14 +72,22 @@ impl RegisterEntry<'_> {
         tz: TimeZone,
         reg_cfg: &RegisterSettings,
     ) -> String {
-        fn amount_to_string(amount: &Decimal, scale: &Scale, width: usize) -> String {
-            let amount_txt = format_with_scale(0, amount, scale);
+        let inverter = Decimal::from(-1);
+
+        let amount_to_string = |value: &Decimal, width: usize| -> String {
+            let amount = if reg_cfg.inverted {
+                &(value * inverter)
+            } else {
+                value
+            };
+
+            let amount_txt = format_with_scale(0, amount, &reg_cfg.scale);
             if amount.is_sign_positive() && amount_txt.chars().count() >= width {
                 format!(" {amount_txt}")
             } else {
                 amount_txt
             }
-        }
+        };
 
         let indent = " ".repeat(12);
         let mut line_len = 0;
@@ -107,9 +114,9 @@ impl RegisterEntry<'_> {
                 "{}{:<33}{:>18}{:<w$} {:>18}{}",
                 indent,
                 p.post.acctn.atn.account,
-                amount_to_string(&p.post.amount, &reg_cfg.scale, 18),
+                amount_to_string(&p.post.amount, 18),
                 base_comm,
-                amount_to_string(&p.amount, &reg_cfg.scale, 18),
+                amount_to_string(&p.amount, 18),
                 match &comm.is_any() {
                     true => format!(" {}", comm.name),
                     false => String::new(),

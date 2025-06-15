@@ -16,10 +16,11 @@ use crate::tackler;
 use crate::tackler::Error;
 use jiff::Zoned;
 use jiff::tz::TimeZone;
+use rust_decimal::Decimal;
 use std::io;
 use std::io::Write;
 use tackler_api::metadata::Metadata;
-use tackler_api::metadata::items::MetadataItem;
+use tackler_api::metadata::items::{CreditAccountReport, MetadataItem};
 use tackler_api::reports::register_report::{RegisterPosting, RegisterReport, RegisterTxn};
 use tackler_api::txn_ts;
 use tackler_api::txn_ts::TimestampStyle;
@@ -71,6 +72,8 @@ fn register_entry_to_api(
         return None;
     }
 
+    let inverter = Decimal::from(-1);
+
     let scale = &register_settings.scale;
     let ts_style = register_settings.timestamp_style;
     let report_tz = register_settings.report_tz.clone();
@@ -98,10 +101,16 @@ fn register_entry_to_api(
                 None
             };
 
+            let (a, rt) = if register_settings.inverted {
+                (&(p.post.amount * inverter), &(p.amount * inverter))
+            } else {
+                (&p.post.amount, &p.amount)
+            };
+
             RegisterPosting {
                 account: p.post.acctn.atn.account.clone(),
-                amount: format_with_scale(0, &p.post.amount, scale),
-                running_total: format_with_scale(0, &p.amount, scale),
+                amount: format_with_scale(0, a, scale),
+                running_total: format_with_scale(0, rt, scale),
                 commodity,
                 rate: p.rate.map(|r| format_with_scale(0, &r, scale)),
                 base_commodity,
@@ -124,6 +133,8 @@ impl Report for RegisterReporter {
         metadata: Option<&Metadata>,
         txn_data: &TxnSet<'_>,
     ) -> Result<(), Error> {
+        assert_eq!(self.report_settings.inverted, cfg.inverted);
+
         let acc_sel = self.get_acc_selector()?;
 
         let report_commodity = self.report_settings.report_commodity.clone();
@@ -149,6 +160,11 @@ impl Report for RegisterReporter {
         if !price_lookup_ctx.is_empty() {
             let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
             metadata.push(pr);
+        }
+
+        if self.report_settings.inverted {
+            let credit = MetadataItem::CreditAccountReport(CreditAccountReport {});
+            metadata.push(credit);
         }
 
         let ras = self.get_acc_selector()?;

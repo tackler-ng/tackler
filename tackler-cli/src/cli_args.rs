@@ -407,6 +407,13 @@ pub(crate) struct DefaultModeArgs {
     )]
     pub(crate) exports: Option<Vec<String>>,
 
+    /// Invert report or export values
+    ///
+    /// This is useful for ("credit") accounts
+    /// with usually negative values
+    #[arg(long = "invert")]
+    pub(crate) invert: bool,
+
     /// Path to `PriceDB` file
     #[arg(
         long = "pricedb",
@@ -532,6 +539,7 @@ impl DefaultModeArgs {
                 commodity: self.report_commodity.clone(),
                 account_overlap: self.accounts.clone(),
                 group_by: self.group_by.clone(),
+                inverted: self.invert,
             },
             target: TargetOverlap {
                 reports: self.reports.clone(),

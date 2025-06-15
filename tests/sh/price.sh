@@ -174,3 +174,34 @@ cmp_result $module $test_name txn equity
 
 cmp_result_ref $module price $test_name txn identity
 echo ": ok"
+
+#
+# price-08
+#
+# test: 7e92948e-88c2-4c7b-bdfd-efd4b46f556f
+# desc: inverted, last-price
+rm -f $OUTPUT_DIR/*
+test_name=price-08
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --output.dir $OUTPUT_DIR \
+    --output.prefix $test_name \
+    --config $SUITE_PATH/$module/price.toml \
+    --accounts "e:conv" \
+    --input.file $SUITE_PATH/$module/ok/price.txn \
+    --report.commodity TCKLR \
+    --price.lookup-type last-price \
+    --invert
+
+echo -n "check:"
+cmp_result $module $test_name txt bal
+cmp_result $module $test_name txt balgrp
+cmp_result $module $test_name txt reg
+cmp_result $module $test_name json bal
+cmp_result $module $test_name json balgrp
+cmp_result $module $test_name json reg
+cmp_result $module $test_name txn equity
+
+cmp_result_ref $module price $test_name txn identity
+echo ": ok"
