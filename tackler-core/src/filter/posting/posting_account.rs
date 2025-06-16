@@ -28,7 +28,7 @@ mod tests {
 
     #[test]
     // test: 7784049f-ef3e-4185-8d33-f8c78478eef1
-    // desc: "filter by account name with wildcard at begin"
+    // desc: filter by account name with wildcard at begin
     fn posting_account() {
         let tf = TxnFilterPostingAccount {
             regex: Regex::new(".*:abc").unwrap(/*:test:*/),
@@ -45,6 +45,52 @@ mod tests {
 
         // test: c10b209c-7da7-4e44-acb1-a7b739ccddd5
         // desc: TxnFilter::TxnFilterPostingAccount
+        let filt = TxnFilter::TxnFilterPostingAccount(tf);
+        for t in cases {
+            assert_eq!(filt.eval(&t.0), t.1);
+        }
+    }
+
+    #[test]
+    // test: 0a1e4848-cef0-46ec-9a50-cc209c45da63
+    // desc: filter by account name with wildcard at end
+    fn posting_account_end() {
+        let tf = TxnFilterPostingAccount {
+            regex: Regex::new("a:the:.*").unwrap(/*:test:*/),
+        };
+
+        let cases: Vec<(Transaction, bool)> = vec![
+            (make_default_txn(None), false),
+            (make_posts_txn("a:the:abc", 123, "e:the:def"), true),
+        ];
+
+        for t in &cases {
+            assert_eq!(tf.eval(&t.0), t.1);
+        }
+
+        let filt = TxnFilter::TxnFilterPostingAccount(tf);
+        for t in cases {
+            assert_eq!(filt.eval(&t.0), t.1);
+        }
+    }
+
+    #[test]
+    // test: f85867a5-ebfd-4eb8-89c5-4a12b3b09109
+    // desc: filter by account name with (nonsensical) whitespace first regex
+    fn posting_account_whitespace() {
+        let tf = TxnFilterPostingAccount {
+            regex: Regex::new(" *a:the:abc").unwrap(/*:test:*/),
+        };
+
+        let cases: Vec<(Transaction, bool)> = vec![
+            (make_default_txn(None), false),
+            (make_posts_txn("a:the:abc", 123, "e:the:def"), true),
+        ];
+
+        for t in &cases {
+            assert_eq!(tf.eval(&t.0), t.1);
+        }
+
         let filt = TxnFilter::TxnFilterPostingAccount(tf);
         for t in cases {
             assert_eq!(filt.eval(&t.0), t.1);

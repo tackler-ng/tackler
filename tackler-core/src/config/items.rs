@@ -61,6 +61,17 @@ impl Display for StorageType {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::config::StorageType;
+
+    #[test]
+    // test: 195971d7-f16f-4c1c-a761-6764b28fd4db
+    fn test_invalid_storage_type() {
+        assert!(StorageType::try_from("invalid").is_err());
+    }
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum PriceLookupType {
     #[default]

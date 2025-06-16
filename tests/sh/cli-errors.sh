@@ -215,6 +215,13 @@ $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.storage git --input.fs.dir path \
     2>&1 | grep 'cannot be used with'
+# test: a2ca374a-1323-413b-aaff-64bc3c8d4d30
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.storage git \
+    --input.git.ref main \
+    --input.git.commit abcdef \
+    2>&1 | grep 'cannot be used with'
 
 ### input.storage = fs
 $TACKLER_SH \
@@ -259,14 +266,17 @@ $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.git.repository path \
     2>&1 | grep 'cannot be used with'
+# test: 1822f1b2-f749-4f63-be44-fa29c58c4fe2
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.git.ref main \
     2>&1 | grep 'cannot be used with'
+# test: 97bf542e-55b5-437f-9878-7f436f50c428
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.git.commit abcdef \
     2>&1 | grep 'cannot be used with'
+# test: 8afb22ac-8a52-4cba-9443-e6375e6fcf75
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file f.txn --input.git.dir dir \
@@ -281,17 +291,41 @@ $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.fs.dir path --input.git.repository path \
     2>&1 | grep 'cannot be used with'
+# test: 3eba26fe-821d-4d36-94cb-09427b1c004f
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.fs.dir path --input.git.ref main \
     2>&1 | grep 'cannot be used with'
+# test: 400bd1e9-6f7a-4e0c-913c-45401ee73181
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.fs.dir path --input.git.commit abcdef \
     2>&1 | grep 'cannot be used with'
+# test: f74a2252-d826-4176-945a-8895d4c7f1f7
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.fs.dir path --input.git.dir path \
+    2>&1 | grep 'cannot be used with'
+
+### cli fs.ext vs. git
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.fs.ext txn --input.git.repository path \
+    2>&1 | grep 'cannot be used with'
+# test: 7d4984c7-633f-4403-a2b7-5ea0cd4f07e8
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.fs.ext txn --input.git.ref main \
+    2>&1 | grep 'cannot be used with'
+# test: 6ec6431e-a443-4633-8f26-df3218a8657c
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.fs.ext txn --input.git.commit abcdef \
+    2>&1 | grep 'cannot be used with'
+# test: f150df09-dd9b-4240-9191-df1029c698e9
+$TACKLER_SH \
+    --config $SUITE_PATH/basic.toml \
+    --input.fs.ext txn --input.git.dir path \
     2>&1 | grep 'cannot be used with'
 
 echo "check: ok"

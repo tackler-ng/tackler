@@ -230,7 +230,7 @@ mod tests {
 
     // test: f82c5cbc-2f8b-4c81-9732-36e85807b754
     #[test]
-    fn verify_rounding_mode_half_up_1_1() {
+    fn verify_rounding_mode_half_up_1_2() {
         let scale = Scale::try_from(0,0).unwrap(/*:test:*/);
 
         let test_cases = vec![
@@ -251,8 +251,9 @@ mod tests {
             assert_eq!(format_with_scale(2, &value, &scale), fill_ref.to_string());
         }
     }
+    // test: bfa20914-bd4a-431e-879b-1d3abf2b9df3
     #[test]
-    fn verify_rounding_mode_half_up_1_2() {
+    fn verify_rounding_mode_half_up_2_2() {
         let scale = Scale::try_from(2,2).unwrap(/*:test:*/);
 
         let test_cases = vec![

@@ -53,9 +53,15 @@ mod tests {
             east: dec!(26.0),
         };
 
+        // test: 05983503-0aa4-42e1-a1c9-cc5df93285f7
+        // desc: 3D txn with 2D filter
         let cases: Vec<(Transaction, bool)> = vec![
             (make_geo_txn(dec!(0.0), dec!(0.0), None), false),
             (make_geo_txn(dec!(60.170833), dec!(24.9375), None), true),
+            (
+                make_geo_txn(dec!(60.170833), dec!(24.9375), Some(dec!(10.0))),
+                true,
+            ),
             (make_geo_txn(dec!(39.0), dec!(23.0), None), false),
             (make_geo_txn(dec!(66.0), dec!(23.0), None), false),
             (make_geo_txn(dec!(50.0), dec!(19.0), None), false),

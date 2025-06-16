@@ -66,6 +66,10 @@ mod tests {
             height: dec!(14000.0),
         };
 
+        // test: 00d5f743-4eca-4d06-a5e5-4de035909828
+        // desc: 3D filter doesn't filter 2D txns
+        // test: d6764e33-f20c-4c50-8452-d249d1f0c902
+        // desc: check altitude functionality
         let cases: Vec<(Transaction, bool)> = vec![
             (make_geo_txn(dec!(60.0), dec!(24.0), None), false),
             (

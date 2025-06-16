@@ -17,16 +17,30 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "check invalid metadata:uuid constructs"
-    #[allow(non_snake_case)]
-    fn id_49f73bec_afd9_4bef_bf5b_f9439ab2ea47__err_txn_uuid_parse() {
+    // test: 49f73bec-afd9-4bef-bf5b-f9439ab2ea47
+    // desc: check invalid metadata:uuid constructs
+    #[allow(clippy::too_many_lines)]
+    fn err_txn_uuid_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
+          // test: 4391990c-83f4-4ea2-8c25-78a87beae219
+          // desc: detect missing uuid
+          (indoc!(
+           "|
+            |2017-01-01
+            | # uuid:
+            | e 1
+            | a -1
+            |
+            |").strip_margin(),
+           "line: 3",
+           r"at input ' # uid'"
+          ),
         (indoc!(
            "|
             |2017-01-01
             | # uid: 2c01d889-c928-477b-bf53-55e19887d34b
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
@@ -36,8 +50,8 @@ use tackler_rs::IndocUtils;
            "|
             |2017-01-01
             | #:uuid: 2c01d889-c928-477b-bf53-55e19887d34b
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
@@ -47,8 +61,8 @@ use tackler_rs::IndocUtils;
            "|
             |2017-01-01
             | #uuid: 2c01d889-c928-477b-bf53-55e19887d34b
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
@@ -58,8 +72,8 @@ use tackler_rs::IndocUtils;
            "|
             |2017-01-01
             | # uuid:: 2c01d889-c928-477b-bf53-55e19887d34b
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
@@ -69,8 +83,8 @@ use tackler_rs::IndocUtils;
            "|
             |2017-01-01
             | # uuid 2c01d889-c928-477b-bf53-55e19887d34b
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
@@ -80,13 +94,44 @@ use tackler_rs::IndocUtils;
            "|
             |2017-01-01
             | ;:uuid: 688fca6a-86e2-4c9d-82a0-1384a386167f
-            | a 1
             | e 1
+            | a -1
             |
             |").strip_margin(),
           "line: 3",
           r"at input ';'"
         ),
+          // test: 56042ba1-89ca-48da-a55a-d6fea2946c59
+          // desc: notice invalid uuid 1
+          // | # uuid: 77356f17-98c9-43c6b9a7-bfc7436b77c8
+          (indoc!(
+           "|
+            |2017-01-01
+            | # uuid: 77356f17-98c9-43c6b9a7-bfc7436b77c8
+            | e 1
+            | a -1
+            |
+            |").strip_margin(),
+           "line: 3",
+           r"at input ';'"
+          ),
+          // test: 08e6dcf3-29b2-44d7-8fb0-af3fc6d74e0c
+          // desc: notice invalid uuid 2
+          //
+          // https://bugs.openjdk.java.net/browse/JDK-8159339
+          // https://bugs.openjdk.java.net/browse/JDK-8165199
+          // https://bugs.openjdk.java.net/browse/JDK-8216407
+          (indoc!(
+           "|
+            |2017-01-01
+            | # uuid: 694aaaaa39222-4d8b-4d0e-8204-50e2a0c8b664
+            | e 1
+            | a -1
+            |
+            |").strip_margin(),
+           "line: 3",
+           r"at input ';'"
+          ),
       ];
         let mut count = 0;
         for t in perr_strings {
@@ -100,7 +145,7 @@ use tackler_rs::IndocUtils;
             */
             count += 1;
         }
-        assert_eq!(count, 6);
+        assert_eq!(count, 9);
     }
 
     #[test]

@@ -197,6 +197,8 @@ fn txn_data_errors() {
 
 #[test]
 fn test_string_txns_are_sorted() {
+    // test: b591d5d3-0be8-4264-8ec0-75b464ff86dc
+    // desc: parser accept valid input string
     // test: 200aad57-9275-4d16-bdad-2f1c484bcf17
     // desc: "tackler_txns with string input: txns_data is sorted"
     #[rustfmt::skip]

@@ -50,7 +50,35 @@ mod tests {
         }
 
         // test: 3bca6d7b-e515-42d8-b65b-2780b0c0d7e0
-        // desc: TxnFilter::TxnFilterTxnCode
+        // desc: TxnFilter::TxnFilterTxnDescription
+        let filt = TxnFilter::TxnFilterTxnDescription(tf);
+        for t in cases {
+            let txn = t.0(t.1);
+            assert_eq!(filt.eval(&txn), t.2);
+        }
+    }
+    #[test]
+    // test: 503bbb2b-a964-495c-98da-ba4409b41c84
+    // desc: filter by txn description with whitespace regex at the beginning
+    fn txn_description_with_regex() {
+        let tf = TxnFilterTxnDescription {
+            regex: Regex::new(" +abc.*").unwrap(/*:test:*/),
+        };
+
+        #[allow(clippy::type_complexity)]
+        let cases: Vec<(fn(Option<&str>) -> Transaction, Option<&str>, bool)> = vec![
+            (make_default_txn, None, false),
+            (make_desc_txn, Some(""), false),
+            (make_desc_txn, Some(" abc"), true),
+            (make_desc_txn, Some("foo"), false),
+            (make_code_txn, Some("abc"), false),
+        ];
+
+        for t in &cases {
+            let txn = t.0(t.1);
+            assert_eq!(tf.eval(&txn), t.2);
+        }
+
         let filt = TxnFilter::TxnFilterTxnDescription(tf);
         for t in cases {
             let txn = t.0(t.1);

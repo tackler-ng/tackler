@@ -63,7 +63,6 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
     }
 }
 
-// test: 074f5549-346c-4780-90a1-07d60ae0e79d
 // test: 33d85471-a04c-49b9-b7a0-9d7f7f5762eb
 #[allow(non_snake_case)]
 #[allow(clippy::cast_precision_loss)]
@@ -100,7 +99,6 @@ Reference:  {txn_per_s_reference:8>.0} txn/s ({:>+6.0} txn/s)",
     );
 }
 
-// test: ce2e6523-ee83-46e7-a767-441c5b9f2802
 // test: fae31eb0-bd4a-483e-9eb7-9e4c36e7f785
 #[allow(non_snake_case)]
 fn test_10000_loops_with_txns_1E1() {
