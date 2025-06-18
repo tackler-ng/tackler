@@ -50,7 +50,13 @@ impl TimestampStyle {
             TimestampStyle::DATE => Ok(TimestampStyle::Date),
             TimestampStyle::SECONDS => Ok(TimestampStyle::Secodns),
             TimestampStyle::FULL => Ok(TimestampStyle::Full),
-            _ => Err(format!("Unknown timestamp style {name}").into()),
+            _ => Err(format!(
+                "Unknown timestamp style {name}. Valid options are: {}, {}, {}",
+                Self::DATE,
+                Self::SECONDS,
+                Self::FULL
+            )
+            .into()),
         }
     }
 }
@@ -102,7 +108,7 @@ impl GroupBy {
             GroupBy::YEAR => Ok(GroupBy::Year),
             _ => {
                 let msg = format!(
-                    "Unknown group-by selector. Valid selectors are: {}, {}, {}, {}, {}",
+                    "Unknown group-by selector. Valid options are: {}, {}, {}, {}, {}",
                     GroupBy::ISO_WEEK_DATE,
                     GroupBy::ISO_WEEK,
                     GroupBy::DATE,

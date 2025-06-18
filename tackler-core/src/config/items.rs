@@ -46,7 +46,12 @@ impl StorageType {
         match storage {
             StorageType::FS => Ok(StorageType::Fs),
             StorageType::GIT => Ok(StorageType::Git),
-            _ => Err(format!("Unknown storage type: {storage}").into()),
+            _ => Err(format!(
+                "Unknown storage type: {storage}. Valid options are: {}, {}",
+                Self::FS,
+                Self::GIT,
+            )
+            .into()),
         }
     }
 }
@@ -108,7 +113,14 @@ impl TryFrom<&str> for PriceLookupType {
             PriceLookupType::LAST_PRICE => Ok(PriceLookupType::LastPrice),
             PriceLookupType::TXN_TIME => Ok(PriceLookupType::TxnTime),
             PriceLookupType::GIVEN_TIME => Ok(PriceLookupType::GivenTime),
-            _ => Err(format!("Unknown price lookup type: {lookup}").into()),
+            _ => Err(format!(
+                "Unknown price lookup type: {lookup}. Valid options are: {}, {}, {}, {}",
+                Self::NONE,
+                Self::LAST_PRICE,
+                Self::TXN_TIME,
+                Self::GIVEN_TIME,
+            )
+            .into()),
         }
     }
 }
@@ -121,16 +133,25 @@ pub enum ReportType {
     Register,
 }
 impl ReportType {
+    const BALANCE: &'static str = "balance";
+    const BALANCE_GROUP: &'static str = "balance-group";
+    const REGISTER: &'static str = "register";
     /// Report type from string
     ///
     /// # Errors
-    /// Returns `Err` in case of invalid type
+    /// Returns `Err` in case of an invalid type
     pub fn try_from(r: &str) -> Result<Self, tackler::Error> {
         match r {
-            "balance" => Ok(ReportType::Balance),
-            "balance-group" => Ok(ReportType::BalanceGroup),
-            "register" => Ok(ReportType::Register),
-            _ => Err(format!("Unknown report type {r}").into()),
+            Self::BALANCE => Ok(ReportType::Balance),
+            Self::BALANCE_GROUP => Ok(ReportType::BalanceGroup),
+            Self::REGISTER => Ok(ReportType::Register),
+            _ => Err(format!(
+                "Unknown report type {r}. Valid options are: {}, {}, {}",
+                Self::BALANCE,
+                Self::BALANCE_GROUP,
+                Self::REGISTER,
+            )
+            .into()),
         }
     }
 }
@@ -142,15 +163,23 @@ pub enum ExportType {
     Identity,
 }
 impl ExportType {
+    const EQUITY: &'static str = "equity";
+    const IDENTITY: &'static str = "identity";
+
     /// Export type from string
     ///
     /// # Errors
     /// Returns `Err` in case of invalid type
     pub fn try_from(r: &str) -> Result<Self, tackler::Error> {
         match r {
-            "equity" => Ok(ExportType::Equity),
-            "identity" => Ok(ExportType::Identity),
-            _ => Err(format!("Unknown export type {r}").into()),
+            Self::EQUITY => Ok(ExportType::Equity),
+            Self::IDENTITY => Ok(ExportType::Identity),
+            _ => Err(format!(
+                "Unknown export type {r}. Valid options are: {}, {}",
+                Self::EQUITY,
+                Self::IDENTITY,
+            )
+            .into()),
         }
     }
 }
@@ -162,11 +191,19 @@ pub enum BalanceType {
     Flat,
 }
 impl BalanceType {
+    const TREE: &'static str = "tree";
+    const FLAT: &'static str = "flat";
+
     fn from(r: &str) -> Result<Self, tackler::Error> {
         match r {
-            "tree" => Ok(BalanceType::Tree),
-            "flat" => Ok(BalanceType::Flat),
-            _ => Err(format!("Unknown balance type {r}").into()),
+            Self::TREE => Ok(BalanceType::Tree),
+            Self::FLAT => Ok(BalanceType::Flat),
+            _ => Err(format!(
+                "Unknown balance type {r}. Valid options are: {}, {}",
+                Self::TREE,
+                Self::FLAT,
+            )
+            .into()),
         }
     }
 }
@@ -186,12 +223,12 @@ impl TryFrom<&str> for FormatType {
 
     fn try_from(t: &str) -> Result<Self, tackler::Error> {
         match t {
-            FormatType::TXT => Ok(FormatType::Txt),
-            FormatType::JSON => Ok(FormatType::Json),
+            Self::TXT => Ok(FormatType::Txt),
+            Self::JSON => Ok(FormatType::Json),
             _ => Err(format!(
-                "Unknown report output format type: '{t}'. Valid options are: \"{}\", \"{}\"",
-                FormatType::TXT,
-                FormatType::JSON
+                "Unknown report output format type: {t}. Valid options are: {}, {}",
+                Self::TXT,
+                Self::JSON
             )
             .into()),
         }

@@ -13,6 +13,7 @@ New features:
 * New credit account reporting option `--invert` for all reports
   and Equity export
   (link:https://github.com/tackler-ng/tackler/issues/99[GH-99])
+* Enchanged and better error messages in case of invalid configuratio file
 
 Changed functionality:
 
