@@ -10,22 +10,21 @@
 
 New features:
 
-* New `--invert` option for Reports and Equity Export 
-** https://github.com/tackler-ng/tackler/issues/99 
-* ...
-** ...
+* New credit account reporting option `--invert` for all reports
+  and Equity export
+  (link:https://github.com/tackler-ng/tackler/issues/99[GH-99])
 
 Changed functionality:
 
-* ...
-** ...
+* Equity export: Use price data if it's activated
+  (link:https://github.com/tackler-ng/tackler/issues/101[GH-101])
 
 
 ==== Fixes
 
 Fixes in this release:
 
-* Fixed cli select all (`--accounts ""`) account selector
+* Fixed CLI *_select all_* account selector (`--accounts ""`)
 
 ==== Development
 

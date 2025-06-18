@@ -1,9 +1,9 @@
 # Tackler: Tackler CLI Application
 
 [![Build Status](https://github.com/tackler-ng/tackler/actions/workflows/ci.yml/badge.svg)](https://github.com/tackler-ng/tackler/actions)
-[![Github Releases](https://img.shields.io/github/v/release/tackler-ng/tackler?include_prereleases&color=%230868da)](https://github.com/tackler-ng/tackler/releases)
+[![Github Releases](https://img.shields.io/github/v/release/tackler-ng/tackler?color=%230868da)](https://github.com/tackler-ng/tackler/releases)
 [![crates.io](https://tackler.fi/img/badge-crates.svg)](https://crates.io/crates/tackler)
-[![Tackler Docs](https://img.shields.io/badge/tackler-documentation-%23ffcb00)](https://tackler.fi/docs)
+[![Tackler Docs](https://tackler.fi/img/tackler-docs.svg)](https://tackler.fi/docs)
 [![GitHub Discussions](https://img.shields.io/github/discussions/tackler-ng/tackler)](https://github.com/tackler-ng/tackler/discussions)
 [![Chat on Matrix](https://tackler.fi/img/badge-matrix.svg)](https://matrix.to/#/#tackler:matrix.org)
 
@@ -45,11 +45,11 @@ Tackler is reimplementation of nearly 10 years old Scala based system,
 and it's in 
 [feature](https://tackler.fi/docs/tackler/latest/features/) parity 
 with and beyond of the old Scala code base. Tackler is using the same test
-and reference vectors as the tackler-mk1. This is basis of all the future
+and reference vectors as the tackler-mk1. This version is the basis of all future
 Tackler development.
 
 
-**NOTE: Tackler is tested with 436 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
+**NOTE: Tackler is tested with 472 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
 [Tackler Journal Format](https://tackler.fi/docs/tackler/latest/journal/format/), 
