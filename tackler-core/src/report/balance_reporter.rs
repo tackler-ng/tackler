@@ -63,16 +63,16 @@ impl BalanceReporter {
     ) -> Result<(), tackler::Error> {
         fn get_max_delta_len(deltas: &Deltas) -> usize {
             deltas
-                .iter()
-                .map(|(_, d)| format!("{d}").chars().count())
+                .values()
+                .map(|d| format!("{d}").chars().count())
                 .fold(0, max)
         }
         /// Max used length of commodity could be calculated from deltas
         /// because all balance account commodities are present in there
         fn get_max_commodity_len(deltas: &Deltas) -> usize {
             deltas
-                .iter()
-                .map(|(opt_comm, _)| {
+                .keys()
+                .map(|opt_comm| {
                     opt_comm
                         .as_ref()
                         .map_or(0, |comm| comm.name.chars().count())
