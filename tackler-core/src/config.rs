@@ -62,6 +62,10 @@ pub fn to_report_formats(formats: Option<&[String]>) -> Result<Vec<FormatType>, 
 /// # Errors
 /// Returns `Err` in case invalid target or if same target is defined multiple times
 pub fn to_report_targets(targets: &[String]) -> Result<Vec<ReportType>, tackler::Error> {
+    if targets.len() == 1 && targets[0].is_empty() {
+        // this is used to disable reports from CLI: `--reports ""`
+        return Ok(vec![]);
+    }
     // TODO: Detect same target multiple times
     let trgs = targets
         .iter()
@@ -86,6 +90,10 @@ pub fn to_report_targets(targets: &[String]) -> Result<Vec<ReportType>, tackler:
 /// # Errors
 /// Returns `Err` in case invalid format or if same format is defined multiple times
 pub fn to_export_targets(targets: &[String]) -> Result<Vec<ExportType>, tackler::Error> {
+    if targets.len() == 1 && targets[0].is_empty() {
+        // this is used to disable exports from CLI: `--exports ""`
+        return Ok(vec![]);
+    }
     let trgs = targets
         .iter()
         .try_fold(

@@ -26,6 +26,8 @@ Changed functionality:
 Fixes in this release:
 
 * Fixed CLI *_select all_* account selector (`--accounts ""`)
+* Fixed CLI *_disable all_* reports selector (`--reports ""`)
+* Fixed CLI *_disable all_* exports selector (`--exports ""`)
 
 ==== Development
 

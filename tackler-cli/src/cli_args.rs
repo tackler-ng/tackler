@@ -360,6 +360,7 @@ pub(crate) struct DefaultModeArgs {
     /// The list is space separated
     #[arg(long = "reports", value_name = "type", num_args(1..),
         value_parser([
+            PossibleValue::new(""),
             PossibleValue::new("register"),
             PossibleValue::new("balance"),
             PossibleValue::new("balance-group"),
@@ -399,6 +400,7 @@ pub(crate) struct DefaultModeArgs {
     /// The list is space separated
     #[arg(long = "exports", value_name = "type", num_args(1..),
         value_parser([
+            PossibleValue::new(""),
             PossibleValue::new("identity"),
             PossibleValue::new("equity"),
         ]),

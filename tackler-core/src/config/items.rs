@@ -47,7 +47,7 @@ impl StorageType {
             StorageType::FS => Ok(StorageType::Fs),
             StorageType::GIT => Ok(StorageType::Git),
             _ => Err(format!(
-                "Unknown storage type: {storage}. Valid options are: {}, {}",
+                "Unknown storage type: '{storage}'. Valid options are: {}, {}",
                 Self::FS,
                 Self::GIT,
             )
@@ -114,7 +114,7 @@ impl TryFrom<&str> for PriceLookupType {
             PriceLookupType::TXN_TIME => Ok(PriceLookupType::TxnTime),
             PriceLookupType::GIVEN_TIME => Ok(PriceLookupType::GivenTime),
             _ => Err(format!(
-                "Unknown price lookup type: {lookup}. Valid options are: {}, {}, {}, {}",
+                "Unknown price lookup type: '{lookup}'. Valid options are: {}, {}, {}, {}",
                 Self::NONE,
                 Self::LAST_PRICE,
                 Self::TXN_TIME,
@@ -146,7 +146,7 @@ impl ReportType {
             Self::BALANCE_GROUP => Ok(ReportType::BalanceGroup),
             Self::REGISTER => Ok(ReportType::Register),
             _ => Err(format!(
-                "Unknown report type {r}. Valid options are: {}, {}, {}",
+                "Unknown report type: '{r}'. Valid options are: {}, {}, {}",
                 Self::BALANCE,
                 Self::BALANCE_GROUP,
                 Self::REGISTER,
@@ -170,12 +170,12 @@ impl ExportType {
     ///
     /// # Errors
     /// Returns `Err` in case of invalid type
-    pub fn try_from(r: &str) -> Result<Self, tackler::Error> {
-        match r {
+    pub fn try_from(e: &str) -> Result<Self, tackler::Error> {
+        match e {
             Self::EQUITY => Ok(ExportType::Equity),
             Self::IDENTITY => Ok(ExportType::Identity),
             _ => Err(format!(
-                "Unknown export type {r}. Valid options are: {}, {}",
+                "Unknown export type: '{e}'. Valid options are: {}, {}",
                 Self::EQUITY,
                 Self::IDENTITY,
             )
@@ -194,12 +194,12 @@ impl BalanceType {
     const TREE: &'static str = "tree";
     const FLAT: &'static str = "flat";
 
-    fn from(r: &str) -> Result<Self, tackler::Error> {
-        match r {
+    fn try_from(b: &str) -> Result<Self, tackler::Error> {
+        match b {
             Self::TREE => Ok(BalanceType::Tree),
             Self::FLAT => Ok(BalanceType::Flat),
             _ => Err(format!(
-                "Unknown balance type {r}. Valid options are: {}, {}",
+                "Unknown balance type: '{b}'. Valid options are: {}, {}",
                 Self::TREE,
                 Self::FLAT,
             )
@@ -226,7 +226,7 @@ impl TryFrom<&str> for FormatType {
             Self::TXT => Ok(FormatType::Txt),
             Self::JSON => Ok(FormatType::Json),
             _ => Err(format!(
-                "Unknown report output format type: {t}. Valid options are: {}, {}",
+                "Unknown report output format type: '{t}'. Valid options are: {}, {}",
                 Self::TXT,
                 Self::JSON
             )
@@ -767,7 +767,7 @@ impl BalanceGroup {
         Ok(BalanceGroup {
             title: balgrp_raw.title.clone(),
             bal_type: match &balgrp_raw.bal_type {
-                Some(t) => BalanceType::from(t.as_str())?,
+                Some(t) => BalanceType::try_from(t.as_str())?,
                 None => BalanceType::default(),
             },
             group_by: GroupBy::from(balgrp_raw.group_by.as_str())?,
@@ -788,7 +788,7 @@ impl Balance {
         Ok(Balance {
             title: bal_raw.title.clone(),
             bal_type: match &bal_raw.bal_type {
-                Some(t) => BalanceType::from(t.as_str())?,
+                Some(t) => BalanceType::try_from(t.as_str())?,
                 None => BalanceType::default(),
             },
             acc_sel: get_account_selector(bal_raw.acc_sel.as_ref(), report),

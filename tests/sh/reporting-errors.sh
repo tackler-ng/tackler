@@ -20,7 +20,7 @@ echo "test: $module/$test_name: $mode"
 
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ex-unknown-report.toml \
-    2>&1 | grep "Tackler error: Configuration .*/reporting/ex-unknown-report.toml': Invalid .* does-not-exists"
+    2>&1 | grep "Tackler error: Configuration .*/reporting/ex-unknown-report.toml': Invalid .* 'does-not-exists'"
 
 echo "check: ok"
 
