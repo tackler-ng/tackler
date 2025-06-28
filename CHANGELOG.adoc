@@ -13,13 +13,14 @@ New features:
 * New credit account reporting option `--invert` for all reports
   and Equity export
   (link:https://github.com/tackler-ng/tackler/issues/99[GH-99])
-* Enchanged and better error messages in case of invalid configuratio file
+* Enhanced and better error messages in case of invalid configuration file
 
 Changed functionality:
 
-* Equity export: Use price data if it's activated
+* Equity export: Use price data if commodity conversion is activated
   (link:https://github.com/tackler-ng/tackler/issues/101[GH-101])
-
+* Equity export: move the uuid of last txn from the subject line
+  to the comment section of the equity transaction
 
 ==== Fixes
 

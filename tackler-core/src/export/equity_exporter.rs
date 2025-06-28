@@ -18,7 +18,6 @@ use tackler_api::metadata::items::{
     AccountSelectorChecksum, CreditAccountReport, MetadataItem, Text,
 };
 use tackler_api::txn_ts::rfc_3339;
-use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub struct EquitySettings {
@@ -87,7 +86,14 @@ impl Export for EquityExporter {
         let eq_txn_indent = "   ";
         let equity_account = "Equity:Default·Account".to_string();
 
-        let hdr_str = |last_txn: Option<&&Transaction>, c: &String| -> String {
+        let txn_uuid_str = |last_txn: &&Transaction| -> String {
+            if let Some(uuid) = last_txn.header.uuid {
+                format!("; Last txn (uuid) : {uuid}")
+            } else {
+                String::default()
+            }
+        };
+        let hdr_str = |last_txn: &&Transaction, c: &String| -> String {
             let comm_str = || -> String {
                 if c.is_empty() {
                     String::default()
@@ -95,28 +101,17 @@ impl Export for EquityExporter {
                     format!(" for {c}")
                 }
             };
-            let txn_uuid_str = |uuid: Option<Uuid>| -> String {
-                match uuid {
-                    Some(u) => format!(": last txn (uuid): {u}"),
-                    None => String::default(),
-                }
-            };
-            match last_txn {
-                Some(txn) => {
-                    format!(
-                        "{} 'Equity{}{}",
-                        rfc_3339(&txn.header.timestamp),
-                        comm_str(),
-                        txn_uuid_str(txn.header.uuid)
-                    )
-                }
-                _ => {
-                    "Internal logic error".to_string() // todo: fix this
-                }
-            }
+            format!(
+                "{} 'Equity txn{}",
+                rfc_3339(&last_txn.header.timestamp),
+                comm_str()
+            )
         };
 
-        let last_txn = txn_data.txns.last();
+        let Some(last_txn) = txn_data.txns.last() else {
+            let msg = "Equity: Internal logic error: last txn";
+            return Err(msg.into());
+        };
 
         let acc_sel_checksum = cfg.get_hash().map(|hash| AccountSelectorChecksum {
             hash: bal_acc_sel.checksum(hash),
@@ -165,6 +160,11 @@ impl Export for EquityExporter {
                 let mut eq_txn = Vec::<String>::new();
 
                 eq_txn.push(hdr_str(last_txn, c));
+                let uuid_str = txn_uuid_str(last_txn);
+                if !uuid_str.is_empty() {
+                    eq_txn.push(format!("{eq_txn_indent}{uuid_str}"));
+                    eq_txn.push(format!("{eq_txn_indent};"));
+                }
                 if let Some(md) = &txn_data.metadata {
                         for mdi in md.items.clone() {
                             eq_txn.extend(mdi.text(cfg.report.tz.clone()).iter().map(|v| {
