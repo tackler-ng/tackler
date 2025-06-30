@@ -4,7 +4,7 @@
 #
 [package]
 name = "tackler-api"
-version = "0.10.0"
+version = "0.11.0"
 description = "API components for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
@@ -30,7 +30,7 @@ regex = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true, features = [ "derive", "rc" ] }
 serde_json = { workspace = true }
-tackler-rs = { path = "../tackler-rs", version = "0.10.0" }
+tackler-rs = { path = "../tackler-rs", version = "0.10.1" }
 uuid = { workspace = true }
 
 [dev-dependencies]
