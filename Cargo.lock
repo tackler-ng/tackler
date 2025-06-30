@@ -2090,7 +2090,7 @@ dependencies = [
 
 [[package]]
 name = "tackler"
-version = "25.6.1"
+version = "25.6.2-dev"
 dependencies = [
  "clap",
  "log",

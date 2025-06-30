@@ -4,6 +4,53 @@
 
 == Releases
 
+=== Tackler release XX.YY.Z
+
+==== New features and changes
+
+New features:
+
+* ...
+** ...
+
+Changed functionality:
+
+* ...
+** ...
+
+
+==== Fixes
+
+Fixes in this release ...
+
+
+==== Development
+
+Updated dependencies (major or minor version):
+
+* ...
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | TODO: XX.YY.Z
+|tackler-core | TODO: No changes
+|tackler-api  | TODO: No changes
+|tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+
 === Tackler release 25.06.1
 
 ==== New features and changes
