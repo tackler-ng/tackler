@@ -10,25 +10,19 @@
 
 New features:
 
-* New credit account reporting option `--invert` for all reports
-  and Equity export
-  (link:https://github.com/tackler-ng/tackler/issues/99[GH-99])
-* Enhanced and better error messages in case of invalid configuration file
+* ...
+** ...
 
 Changed functionality:
 
-* Equity export: Use price data if commodity conversion is activated
-  (link:https://github.com/tackler-ng/tackler/issues/101[GH-101])
-* Equity export: move the uuid of last txn from the subject line
-  to the comment section of the equity transaction
+* ...
+** ...
+
 
 ==== Fixes
 
-Fixes in this release:
+Fixes in this release ...
 
-* Fixed CLI *_select all_* account selector (`--accounts ""`)
-* Fixed CLI *_disable all_* reports selector (`--reports ""`)
-* Fixed CLI *_disable all_* exports selector (`--exports ""`)
 
 ==== Development
 
@@ -51,6 +45,58 @@ MSRV:: 1.85.0
 |tackler-core | TODO: No changes
 |tackler-api  | TODO: No changes
 |tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+
+=== Tackler release 25.06.1
+
+==== New features and changes
+
+New features:
+
+* New credit account reporting option `--invert` for all reports
+  and Equity export
+  (link:https://github.com/tackler-ng/tackler/issues/99[GH-99])
+* Enhanced and better error messages in case of invalid configuration file
+
+Changed functionality:
+
+* Equity export: Use price data if commodity conversion is activated
+  (link:https://github.com/tackler-ng/tackler/issues/101[GH-101])
+* Equity export: move the uuid of last txn from the subject line
+  to the comment section of the equity transaction
+
+==== Fixes
+
+Fixes in this release:
+
+* Fixed CLI *_select all_* account selector (`--accounts ""`)
+* Fixed CLI *_disable all_* reports selector (`--reports ""`)
+* Fixed CLI *_disable all_* exports selector (`--exports ""`)
+* Adapt to Rust 1.88.0 with clippy::pedantic
+
+==== Development
+
+No major or minor version updates.
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.85.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | 25.6.1
+|tackler-core | 0.12.0
+|tackler-api  | 0.11.0
+|tackler-rs   | 0.10.1
 |===
 
 

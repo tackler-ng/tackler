@@ -4,7 +4,7 @@
 #
 [package]
 name = "tackler"
-version = "25.5.2-dev"
+version = "25.6.2-dev"
 description = "Fast, reliable bookkeeping tool with native GIT SCM support for plain text accounting"
 edition.workspace = true
 license.workspace = true
@@ -20,9 +20,9 @@ readme = "CRATES.md"
 workspace = true
 
 [dependencies]
-tackler-rs =   { path = "../tackler-rs",   version = "0.10.0" }
-tackler-api =  { path = "../tackler-api",  version = "0.10.0" }
-tackler-core = { path = "../tackler-core", version = "0.11.0" }
+tackler-rs =   { path = "../tackler-rs",   version = "0.10.1" }
+tackler-api =  { path = "../tackler-api",  version = "0.11.0" }
+tackler-core = { path = "../tackler-core", version = "0.12.0" }
 log = { workspace = true }
 clap = { version = "4.5.40", features = [ "derive" ] }
 
