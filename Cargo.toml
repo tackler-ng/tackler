@@ -50,6 +50,6 @@ uuid = { version = "1.17.0", default-features = false, features = [ "serde" ] }
 log = "0.4.27"
 regex =  { version = "1.11.1" }
 serde = { version = "1.0.219", default-features = false }
-serde_json = { version = "1.0.140" , default-features = false, features = [ "std", "arbitrary_precision" ] }
+serde_json = { version = "1.0.141" , default-features = false, features = [ "std", "arbitrary_precision" ] }
 itertools = "0.14.0"
 mimalloc = { version = "0.1.47" }
