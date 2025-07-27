@@ -47,7 +47,7 @@ mimalloc = { workspace = true }
 [dev-dependencies]
 rust_decimal_macros = { workspace = true }
 indoc = { workspace = true }
-criterion = { version = "0.6", features = ["html_reports"] }
+criterion = { version = "0.7", features = ["html_reports"] }
 
 [[bench]]
 name = "parser_bench"
