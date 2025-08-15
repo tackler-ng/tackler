@@ -26,7 +26,7 @@ impl Ord for BalanceTreeNode {
 
 impl PartialOrd for BalanceTreeNode {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.acctn.cmp(&other.acctn))
+        Some(self.cmp(other))
     }
 }
 
