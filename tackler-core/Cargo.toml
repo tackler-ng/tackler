@@ -40,7 +40,7 @@ digest = "0.10.7"
 
 gix = { version = "0.73.0", default-features = false, features = ["max-performance-safe", "revision"] }
 toml = "0.9.5"
-winnow = "0.7.12"
+winnow = "0.7.13"
 
 mimalloc = { workspace = true }
 
