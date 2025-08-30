@@ -21,7 +21,10 @@ Changed functionality:
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release:
+
+* Harmonized various error message styles and formatting
+** Provide more helpful error message in case of unknown hash algorithm
 
 
 ==== Development

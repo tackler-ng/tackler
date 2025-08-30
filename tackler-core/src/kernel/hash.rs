@@ -60,7 +60,11 @@ impl Hash {
                 hasher: Box::new(sha3::Sha3_512::default()),
             }),
             _ => {
-                let msg = format!("Unsupported hash algorithm: '{algo}'");
+                let mut msg = format!("Unknown hash algorithm: '{algo}'. ");
+                writeln!(
+                    msg,
+                    "Valid options are: SHA-256, SHA-512, SHA-512/256, SHA3-256, SHA3-512"
+                )?;
                 Err(msg.into())
             }
         }
@@ -144,12 +148,14 @@ mod tests {
     #[test]
     fn hasher_err() {
         let hash = Hash::from("foo");
+        let mut msg = "Unknown hash algorithm: 'foo'. ".to_string();
+        let _ = writeln!(
+            msg,
+            "Valid options are: SHA-256, SHA-512, SHA-512/256, SHA3-256, SHA3-512"
+        );
 
         assert!(hash.is_err());
-        assert_eq!(
-            hash.err().unwrap(/*:test:*/).to_string(),
-            "Unsupported hash algorithm: 'foo'".to_string()
-        );
+        assert_eq!(hash.err().unwrap(/*:test:*/).to_string(), msg);
     }
 
     //

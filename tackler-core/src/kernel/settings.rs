@@ -415,7 +415,7 @@ impl Settings {
                         comm,
                     })
                 } else {
-                    let msg = format!("gta: Unknown account: '{name}'");
+                    let msg = format!("Unknown account: '{name}'");
                     Err(msg.into())
                 }
             }
