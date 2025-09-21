@@ -44,12 +44,12 @@ codegen-units = 1
 base64 = { version = "0.22.1" }
 indoc = "2.0.6"
 jiff = { version = "0.2.15", features = [ "serde" ]}
-rust_decimal = { version = "1.37.2", features= ["serde-with-arbitrary-precision" ]}
-rust_decimal_macros = { version = "1.37.1" }
+rust_decimal = { version = "1.38.0", features= ["serde-with-arbitrary-precision" ]}
+rust_decimal_macros = { version = "1.38.0" }
 uuid = { version = "1.18.1", default-features = false, features = [ "serde" ] }
 log = "0.4.28"
 regex =  { version = "1.11.2" }
-serde = { version = "1.0.219", default-features = false }
-serde_json = { version = "1.0.143" , default-features = false, features = [ "std", "arbitrary_precision" ] }
+serde = { version = "1.0.226", default-features = false }
+serde_json = { version = "1.0.145" , default-features = false, features = [ "std", "arbitrary_precision" ] }
 itertools = "0.14.0"
 mimalloc = { version = "0.1.48" }
