@@ -49,7 +49,7 @@ rust_decimal_macros = { version = "1.38.0" }
 uuid = { version = "1.18.1", default-features = false, features = [ "serde" ] }
 log = "0.4.28"
 regex =  { version = "1.11.3" }
-serde = { version = "1.0.227", default-features = false }
+serde = { version = "1.0.228", default-features = false }
 serde_json = { version = "1.0.145" , default-features = false, features = [ "std", "arbitrary_precision" ] }
 itertools = "0.14.0"
 mimalloc = { version = "0.1.48" }
