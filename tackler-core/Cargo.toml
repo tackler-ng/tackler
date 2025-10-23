@@ -38,7 +38,7 @@ sha2 = "0.10.9"
 sha3 = "0.10.8"
 digest = "0.10.7"
 
-gix = { version = "0.73.0", default-features = false, features = ["max-performance-safe", "revision"] }
+gix = { version = "0.74.0", default-features = false, features = ["max-performance-safe", "revision"] }
 toml = "0.9.8"
 winnow = "0.7.13"
 
