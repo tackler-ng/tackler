@@ -30,6 +30,9 @@ impl Debug for Hash {
 }
 
 impl Hash {
+    const NAMES: &'static [&'static str] =
+        &["SHA-256", "SHA-512", "SHA-512/256", "SHA3-256", "SHA3-512"];
+
     /// Hash function based on algorithm name
     ///
     /// Supported algorithms: "SHA-256", "SHA-512",
@@ -61,10 +64,7 @@ impl Hash {
             }),
             _ => {
                 let mut msg = format!("Unknown hash algorithm: '{algo}'. ");
-                writeln!(
-                    msg,
-                    "Valid options are: SHA-256, SHA-512, SHA-512/256, SHA3-256, SHA3-512"
-                )?;
+                writeln!(msg, "Valid options are: {}", Self::NAMES.join(", "))?;
                 Err(msg.into())
             }
         }
@@ -146,6 +146,19 @@ mod tests {
     }
 
     #[test]
+    // test: 1b6876c4-3ef2-43f4-b14b-1bdaa56180fa
+    fn hash_functions() {
+        let mut c = 0;
+        for name in Hash::NAMES {
+            let hash = Hash::from(name);
+            assert!(hash.is_ok());
+            c += 1;
+        }
+        assert_eq!(c, Hash::NAMES.len());
+    }
+
+    #[test]
+    // test: 1edf6ced-8bfb-49e8-a307-c05cf7f6cc7e
     fn hasher_err() {
         let hash = Hash::from("foo");
         let mut msg = "Unknown hash algorithm: 'foo'. ".to_string();
