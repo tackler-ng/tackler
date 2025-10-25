@@ -66,17 +66,6 @@ impl Display for StorageType {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::config::StorageType;
-
-    #[test]
-    // test: 195971d7-f16f-4c1c-a761-6764b28fd4db
-    fn test_invalid_storage_type() {
-        assert!(StorageType::try_from("invalid").is_err());
-    }
-}
-
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum PriceLookupType {
     #[default]
@@ -823,5 +812,57 @@ impl Equity {
             equity_account: eq_raw.equity_account.clone(),
             acc_sel: get_account_selector(eq_raw.acc_sel.as_ref(), report),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::raw_items::ScaleRaw;
+
+    #[test]
+    // test: 195971d7-f16f-4c1c-a761-6764b28fd4db
+    fn test_invalid_storage_type() {
+        assert!(StorageType::try_from("invalid").is_err());
+    }
+
+    #[test]
+    // test: 2cc212bb-f167-4d42-a0e8-8124b3704e1c
+    fn scale_big_min() {
+        let sr = ScaleRaw { min: 29, max: 30 };
+        let scale = Scale::from(&sr);
+        assert!(scale.is_err());
+    }
+
+    #[test]
+    // test: 698ef5a8-2d4c-4d5a-87b1-9df12051e2d7
+    fn scale_big_max() {
+        let sr = ScaleRaw { min: 1, max: 29 };
+        let scale = Scale::from(&sr);
+        assert!(scale.is_err());
+    }
+
+    #[test]
+    // test: 999044e8-b3e6-447e-a15d-22e23cfdee1b
+    fn scale_max_min() {
+        let sr = ScaleRaw { min: 2, max: 1 };
+        let scale = Scale::from(&sr);
+        assert!(scale.is_err());
+    }
+
+    #[test]
+    // test: 1076287b-22f2-4601-8e7e-f2899b71533d
+    fn scale_zeros() {
+        let sr = ScaleRaw { min: 0, max: 0 };
+        let scale = Scale::from(&sr);
+        assert!(scale.is_ok());
+    }
+
+    #[test]
+    // test: 02663b5d-1471-471a-befc-5f093e6993ee
+    fn scale_valid_values() {
+        let sr = ScaleRaw { min: 2, max: 4 };
+        let scale = Scale::from(&sr);
+        assert!(scale.is_ok());
     }
 }
