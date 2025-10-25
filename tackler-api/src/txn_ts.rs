@@ -577,6 +577,43 @@ pub fn as_tz_iso_week_date(ts: &Zoned, tz: TimeZone) -> String {
 mod tests {
     use super::*;
 
+    #[test]
+    // test: f0e2f23c-7cc6-4610-80c0-8f1e3a6555c7
+    fn timestampstyle_full() {
+        let tss = TimestampStyle::from("full");
+        match tss {
+            Ok(TimestampStyle::Full) => (),
+            _ => panic!("/*:test:*/"),
+        }
+    }
+
+    #[test]
+    // test: abec5673-f55e-427d-9db6-cdf865100a21
+    fn timestampstyle_seconds() {
+        let tss = TimestampStyle::from("seconds");
+        match tss {
+            Ok(TimestampStyle::Secodns) => (),
+            _ => panic!("/*:test:*/"),
+        }
+    }
+
+    #[test]
+    // test: 0b8dd80a-e826-4107-9892-7db04e3a9f59
+    fn timestampstyle_date() {
+        let tss = TimestampStyle::from("date");
+        match tss {
+            Ok(TimestampStyle::Date) => (),
+            _ => panic!("/*:test:*/"),
+        }
+    }
+
+    #[test]
+    // test: fc6c569a-1ab4-4fde-bed6-1593116f617d
+    fn timestampstyle_invalid() {
+        let tss = TimestampStyle::from("minutes");
+        assert!(tss.is_err());
+    }
+
     fn txt2ts(txt_ts: &str) -> Zoned {
         strtime::parse("%Y-%m-%dT%H:%M:%S%.f%:z", txt_ts)
             .unwrap(/*:test:*/)
