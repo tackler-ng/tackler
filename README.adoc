@@ -43,12 +43,16 @@ get it link:https://www.rust-lang.org/tools/install[from here].
 
 == Project Status
 
+Tackler is reimplementation of 10 years old Scala based system,
+and it's the basis of all current development activities.
+
 Tackler is in link:https://tackler.fi/docs/tackler/latest/features/[feature] parity with
-and beyond of the old Scala code base. It's basis of all Tackler development.
+and beyond of the old Scala code base.  It's using the same set of test
+reference vectors as the original tackler-mk1.
 
 [NOTE]
 ====
-*Tackler is tested with 472
+*Tackler is tested with 488
 link:https://github.com/tackler-ng/tackler-t3db[tracked test vectors]*
 ====
 
