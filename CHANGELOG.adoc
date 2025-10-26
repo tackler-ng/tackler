@@ -15,6 +15,7 @@ New features:
 
 Changed functionality:
 
+* Add `Append` method for `TxnData`
 * ...
 ** ...
 

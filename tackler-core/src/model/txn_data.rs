@@ -13,6 +13,7 @@ use tackler_api::filters::FilterDefinition;
 use tackler_api::metadata::items::{MetadataItem, TxnFilterDescription, TxnSetChecksum};
 use tackler_api::metadata::{Checksum, Metadata};
 
+#[derive(Debug)]
 pub struct TxnData {
     metadata: Option<Metadata>,
     txns: Txns,
@@ -59,13 +60,34 @@ impl TxnData {
         }
     }
 
-    fn make_metadata(&self, txns: &TxnRefs<'_>) -> Result<Metadata, tackler::Error> {
-        let mut metadata = match &self.metadata {
+    /// Append `TxnData` to existing `TxnData`
+    ///
+    /// This will reset the Metadata of target `TxnData`
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err` in case resulting Txn Set is not valid (e.g. there are missing UUIDs)
+    /// This could happen especially when Txns with Audit information are appended with
+    /// plain Txns without UUIDs.
+    pub fn append(&mut self, txn_data: &mut TxnData) -> Result<&mut Self, tackler::Error> {
+        self.txns.append(&mut txn_data.txns);
+        let metadata =
+            TxnData::make_metadata(self.hash.as_ref(), None, &self.txns.iter().collect())?;
+        self.metadata = Some(metadata);
+        Ok(self)
+    }
+
+    fn make_metadata(
+        hash_opt: Option<&Hash>,
+        metadata_opt: Option<&Metadata>,
+        txns: &TxnRefs<'_>,
+    ) -> Result<Metadata, tackler::Error> {
+        let mut metadata = match metadata_opt {
             Some(md) => Metadata::from_metadata(md),
             None => Metadata::new(),
         };
 
-        if let Some(hash) = &self.hash {
+        if let Some(hash) = hash_opt {
             let new_tsc_mdi = MetadataItem::TxnSetChecksum(TxnSetChecksum {
                 size: txns.len(),
                 hash: calc_txn_checksum(txns, hash)?,
@@ -82,14 +104,14 @@ impl TxnData {
     pub fn filter(&self, tf: &FilterDefinition) -> Result<TxnSet<'_>, tackler::Error> {
         let refvec: TxnRefs<'_> = self.txns.iter().filter(|txn| tf.eval(txn)).collect();
 
-        let mut metadata = self.make_metadata(&refvec)?;
+        let mut metadata =
+            TxnData::make_metadata(self.hash.as_ref(), self.metadata.as_ref(), &refvec)?;
         let filter_mdi = MetadataItem::TxnFilterDescription(TxnFilterDescription::from(tf.clone()));
         metadata.push(filter_mdi);
 
         Ok(TxnSet {
             metadata: Some(metadata),
             txns: refvec,
-            //hash: &self.hash,
         })
     }
 
@@ -99,7 +121,11 @@ impl TxnData {
         let txns: TxnRefs<'_> = self.txns.iter().collect();
 
         let metadata = if self.hash.is_some() || self.metadata.is_some() {
-            Some(self.make_metadata(&txns)?)
+            Some(TxnData::make_metadata(
+                self.hash.as_ref(),
+                self.metadata.as_ref(),
+                &txns,
+            )?)
         } else {
             None
         };

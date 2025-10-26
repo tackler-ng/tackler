@@ -4,11 +4,13 @@
  */
 #![cfg_attr(rustfmt, rustfmt_skip)]
 use std::path::Path;
+use indoc::formatdoc;
 use tackler_api::metadata::items::MetadataItem;
 use tackler_core::kernel::Settings;
 use tackler_core::model::TxnData;
 use tackler_core::{parser, tackler};
 use tackler_core::kernel::settings::GitInputSelector;
+use tackler_rs::IndocUtils;
 // val cfg = ConfigFactory.parseString(
 //     """
 //       |{
@@ -30,11 +32,14 @@ const REPO_PATH: &str = "../suite/audit/audit-repo.git/";
 const TXN_SET_1E1_CHECKSUM: &str = "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3";
 const TXN_SET_1E1_COMMIT_ID: &str = "ed6e4b10de2daea8d143569c473d14a9b09c3270";
 
+const UUID_01: &str = "72f7b85b-42ce-4fa2-971e-5ba5fc196d9d";
+const TXN_SET_1E1_TXN01_CHECKSUM: &str = "69724dbe40e9077ba79387931f5c6188d41dca84a2098b2a1e48ebe5472ae287";
+
 const TXN_SET_1E5_CHECKSUM: &str = "2f4bc22df78502182aa27037d8d0f72462adb018be3e768399e0b803fa75baa7";
 const TXN_SET_1E5_COMMIT_ID: &str = "4648a2994b41ed341b544a148b3060fd2d267d79";
 
 #[rustfmt::skip]
-fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksum: &str) {
+fn verify_git_run(result: &Result<TxnData, tackler::Error>, commit: &str, checksum: &str) {
     match result {
         Ok(txn_data) => {
             let txn_set = txn_data.get_all().unwrap(/*:test:*/);
@@ -79,7 +84,51 @@ fn id_ce2e6523_ee83_46e7_a767_441c5b9f2802__normal_txns_1E1() {
                                      "txn",
                                      GitInputSelector::Reference("set-1e1".to_string()),
                                      &mut Settings::default_audit());
-    verify_git_run(result, TXN_SET_1E1_COMMIT_ID, TXN_SET_1E1_CHECKSUM);
+    verify_git_run(&result, TXN_SET_1E1_COMMIT_ID, TXN_SET_1E1_CHECKSUM);
+}
+
+#[test]
+// test: 5b193a18-9341-4c33-bc88-003411c4c2fc
+// desc: "TxnData Append will reset metadata"
+fn txndata_append_resets_metadata() {
+
+    #[rustfmt::skip]
+    let str_txn_01 = formatdoc!(
+                "2019-01-01 'txn01
+                | # uuid: {UUID_01}
+                | e  1
+                | a
+                |"
+    ).strip_margin();
+
+    let result = parser::git_to_txns(Path::new(REPO_PATH), "txns/2016",
+                                     "txn",
+                                     GitInputSelector::Reference("set-1e1".to_string()),
+                                     &mut Settings::default_audit());
+    verify_git_run(&result, TXN_SET_1E1_COMMIT_ID, TXN_SET_1E1_CHECKSUM);
+
+    let mut txns = result.unwrap();
+    let mut txns_01 = parser::string_to_txns(
+        &mut str_txn_01.as_str(), &mut Settings::default_audit()).unwrap(/*:test:*/);
+
+    let txn_set = txns.append(&mut txns_01).unwrap(/*:test:*/).get_all().unwrap(/*:test:*/);
+    match txn_set.metadata() {
+        Some(md) => {
+            assert_eq!(md.items.len(), 1, "Metadata Item count is wrong");
+            match &md.items[0] {
+                MetadataItem::TxnSetChecksum(tscsmd) => {
+                    assert_eq!(tscsmd.hash.value, TXN_SET_1E1_TXN01_CHECKSUM);
+                }
+                _ => {
+                    panic!(/*:test:*/
+                           "The first item is not Txn Set Checksum Metadata item")
+                }
+            }
+        }
+        None => {
+            panic!(/*:test:*/ "no metadata")
+        }
+    }
 }
 
 #[test]
@@ -92,7 +141,7 @@ fn id_074f5549_346c_4780_90a1_07d60ae0e79d__normal_txns_1E5() {
                                      GitInputSelector::Reference("set-1e5".to_string()),
                                      &mut Settings::default_audit());
 
-    verify_git_run(result, TXN_SET_1E5_COMMIT_ID, TXN_SET_1E5_CHECKSUM);
+    verify_git_run(&result, TXN_SET_1E5_COMMIT_ID, TXN_SET_1E5_CHECKSUM);
 }
 
 #[test]
