@@ -80,7 +80,7 @@ impl Commodities {
         let comms =
             cfg_comm.names.iter().try_fold(
                 HashMap::new(),
-                |mut chm, comm| match Commodity::from(comm.to_string()) {
+                |mut chm, comm| match Commodity::from(comm.clone()) {
                     Ok(c) => {
                         chm.insert(comm.into(), Arc::new(c));
                         Ok(chm)
@@ -270,7 +270,7 @@ impl Settings {
             .names
             .iter()
             .fold(HashMap::new(), |mut tags, tag| {
-                let t = Tag::from(tag.to_string());
+                let t = Tag::from(tag.clone());
                 tags.insert(tag.into(), Arc::new(t));
                 tags
             });

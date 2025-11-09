@@ -101,7 +101,7 @@ pub fn git_to_txns(
     let date = signature
         .time()?
         .format(CustomFormat::new("%Y-%m-%d %H:%M:%S %z"))
-        .to_string();
+        .clone();
 
     let gitmd = GitInputReference {
         commit: object.id.to_string(),

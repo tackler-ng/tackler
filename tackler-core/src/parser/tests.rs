@@ -10,10 +10,10 @@ fn txn_ts_to_string(txn: &Transaction) -> String {
     txn_ts::rfc_3339(&txn.header.timestamp)
 }
 fn txn_code_to_string(txn: &Transaction) -> String {
-    txn.header.code.as_ref().unwrap(/*:test:*/).to_string()
+    txn.header.code.as_ref().unwrap(/*:test:*/).clone()
 }
 fn txn_desc_to_string(txn: &Transaction) -> String {
-    txn.header.description.as_ref().unwrap(/*:test:*/).to_string()
+    txn.header.description.as_ref().unwrap(/*:test:*/).clone()
 }
 fn txn_uuid_to_string(txn: &Transaction) -> String {
     txn.header.uuid.as_ref().unwrap(/*:test:*/).to_string()
