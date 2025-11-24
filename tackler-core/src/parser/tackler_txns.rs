@@ -100,7 +100,7 @@ pub fn git_to_txns(
     let author = format!("{} <{}>", signature.name, signature.email);
     let date = signature
         .time()?
-        .format(CustomFormat::new("%Y-%m-%d %H:%M:%S %z"))
+        .format(CustomFormat::new("%Y-%m-%d %H:%M:%S %z"))?
         .clone();
 
     let gitmd = GitInputReference {
