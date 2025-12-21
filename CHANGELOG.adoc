@@ -18,6 +18,7 @@ New features:
 
 Changed functionality:
 
+* Enforce that there is more than one filter for AND and OR logic filters
 * ...
 ** ...
 

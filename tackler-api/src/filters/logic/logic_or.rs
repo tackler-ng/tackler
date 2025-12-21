@@ -1,12 +1,13 @@
 /*
- * Tackler-NG 2023-2024
+ * Tackler-NG 2023-2025
  * SPDX-License-Identifier: Apache-2.0
  */
 
-use crate::filters;
 use crate::filters::IndentDisplay;
+use crate::{filters, tackler};
 use filters::TxnFilter;
 
+use crate::filters::logic::logic_serde;
 use jiff::tz::TimeZone;
 use serde::{Deserialize, Serialize};
 use std::fmt::Formatter;
@@ -21,11 +22,26 @@ use std::fmt::Formatter;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TxnFilterOR {
     // todo: functionality, test
-    // todo-test: f9088d6f-d3ae-4120-b420-e77d0ea26f11
-    // desc: "reject OR filter with only one filter"
     #[doc(hidden)]
-    #[serde(rename = "txnFilters")]
+    #[serde(rename = "txnFilters", with = "logic_serde")]
     pub txn_filters: Vec<TxnFilter>,
+}
+
+impl TxnFilterOR {
+    /// Create a new OR filter based on provided filters
+    ///
+    /// # Errors
+    /// Return Err if there are less than two filters
+    pub fn new(filters: Vec<TxnFilter>) -> Result<TxnFilterOR, tackler::Error> {
+        if filters.len() > 1 {
+            Ok(TxnFilterOR {
+                txn_filters: filters,
+            })
+        } else {
+            let msg = "Expected multiple filters for logical OR filter";
+            Err(msg.into())
+        }
+    }
 }
 
 impl IndentDisplay for TxnFilterOR {
@@ -41,6 +57,29 @@ mod tests {
     use indoc::indoc;
     use jiff::tz;
     use tackler_rs::IndocUtils;
+
+    #[test]
+    // test: f9088d6f-d3ae-4120-b420-e77d0ea26f11
+    // desc: reject AND filter with only one filter
+    fn or_with_one_filter() {
+        let v = vec![TxnFilter::NullaryTRUE(NullaryTRUE {})];
+        let tf_res: Result<TxnFilterOR, tackler::Error> = TxnFilterOR::new(v);
+        assert!(
+            tf_res.unwrap_err(/*:test:*/).to_string().contains("Expected multiple filters for logical OR filter")
+        );
+    }
+
+    #[test]
+    // test: 00754b91-91e4-4ace-b4e4-0f43ff599939
+    // desc: "reject OR filter with only one filter"
+    fn or_with_one_filter_json() {
+        let filter_json_str =
+            r#"{"txnFilter":{"TxnFilterOR":{"txnFilters":[{"NullaryTRUE":{}}]}}}"#;
+        let tf_res = serde_json::from_str::<FilterDefinition>(filter_json_str);
+        assert!(
+            tf_res.unwrap_err(/*:test:*/).to_string().contains("Expected multiple filters for logical filter")
+        );
+    }
 
     #[test]
     // test: eddb393f-b8a4-4189-9280-40a911417b70

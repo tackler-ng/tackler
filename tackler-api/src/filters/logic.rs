@@ -8,6 +8,7 @@
 mod logic_and;
 mod logic_not;
 mod logic_or;
+mod logic_serde;
 
 pub use logic_and::TxnFilterAND;
 pub use logic_not::TxnFilterNOT;
