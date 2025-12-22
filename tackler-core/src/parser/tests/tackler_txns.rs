@@ -6,6 +6,7 @@ use super::*;
 use crate::kernel::Settings;
 use crate::parser;
 use indoc::indoc;
+use std::iter;
 use tackler_rs::IndocUtils;
 
 #[test]
@@ -229,4 +230,25 @@ fn test_string_txns_are_sorted() {
 
     assert_eq!(txn_desc_to_string(txn_1), "txn-1 by str");
     assert_eq!(txn_desc_to_string(txn_3), "txn-3 by str");
+}
+
+#[test]
+fn test_long_string_input_with_errors() {
+    // test: b0d7d5b1-8927-43c4-80c1-bfda9d0b149f
+    // desc: handle long string input in case of error
+    // This is testing that the whole input won't be part of the error message
+    #[rustfmt::skip]
+    let txns_str = indoc!(
+         "|2017-01-01 ()) 'str
+          | e  1
+          | a
+          |"
+    )
+    .strip_margin();
+    let garbage: String = iter::repeat_n("garbage", 2024).collect();
+    let input = txns_str + &garbage;
+
+    let res = parser::string_to_txns(&mut input.as_ref(), &mut Settings::default());
+    let err_str = res.unwrap_err().to_string();
+    assert!(err_str.len() < 512);
 }

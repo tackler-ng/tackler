@@ -268,4 +268,69 @@ mod txns_checksum {
             }
         }
     }
+    #[test]
+    // test: 283d64f6-4508-48ac-89a3-e70e25784330
+    // desc: decode working filter from JSON
+    fn txn_checksum_with_json_filters() {
+        #[rustfmt::skip]
+        let str_uuids = formatdoc!(
+            "2019-01-01 'txn01
+            | # uuid: {UUID_01}
+            | e  1
+            | a
+            |
+            |2019-02-01 'txn02
+            | # uuid: {UUID_02}
+            | e  1
+            | a
+            |
+            |2019-03-01 'txn03
+            | # uuid: {UUID_03}
+            | e  1
+            | a
+            |"
+        ).strip_margin();
+
+        let txns_all = parser::string_to_txns(
+            &mut str_uuids.as_str(), &mut Settings::default_audit()).unwrap(/*:test:*/);
+
+        let filter_json_str = r#"{"txnFilter":{"TxnFilterAND":{"txnFilters":[
+            {"TxnFilterTxnTSBegin":{"begin":"2019-02-01T00:00:00Z"}},
+            {"TxnFilterTxnTSEnd":{"end":"2019-03-01T00:00:00Z"}}
+        ]}}}"#;
+
+        let tf_res = serde_json::from_str::<FilterDefinition>(filter_json_str);
+        assert!(tf_res.is_ok());
+        let filter = tf_res.unwrap(/*:test:*/);
+
+        let txn_set = txns_all.filter(&filter).unwrap(/*:test:*/);
+        match txn_set.metadata() {
+            Some(md) => {
+                assert_eq!(md.items.len(), 2, "Metadata Item count is wrong");
+                match &md.items[0] {
+                    MetadataItem::TxnSetChecksum(tscsmd) => {
+                        assert_eq!(tscsmd.hash.value, TXN_02_CHECKSUM);
+                    }
+                    _ => {
+                        panic!(
+                            /*:test:*/
+                            "The first item is not Txn Set Checksum Metadata item"
+                        )
+                    }
+                }
+                match &md.items[1] {
+                    MetadataItem::TxnFilterDescription(_) => {}
+                    _ => {
+                        panic!(
+                            /*:test:*/
+                            "The first item is not Txn Set Checksum Metadata item"
+                        )
+                    }
+                }
+            }
+            None => {
+                panic!(/*:test:*/ "no metadata")
+            }
+        }
+    }
 }

@@ -37,7 +37,7 @@ mod txn_tags;
 mod txn_uuid;
 
 #[cfg(test)]
-pub(crate) fn content_data() -> Vec<String> {
+pub(super) fn content_data() -> Vec<String> {
     let data = [
         r##" !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"##, // this has to be first for txn code test
         r##"!"#$%&*+,-./:;=?@\^_`|~"##,
