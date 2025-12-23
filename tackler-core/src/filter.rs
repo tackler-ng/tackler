@@ -55,10 +55,12 @@ impl Predicate<Transaction> for TxnFilter {
 mod tests {
     use super::*;
     use crate::kernel::Predicate;
+    use rust_decimal::Decimal;
+    use rust_decimal_macros::dec;
+
     use crate::model::TxnAccount;
     use crate::model::{AccountTreeNode, Commodity, Posting};
     use jiff::Zoned;
-    use rust_decimal::Decimal;
     use std::sync::Arc;
     use tackler_api::filters::{
         NullaryFALSE, NullaryTRUE, TxnFilter, logic::TxnFilterAND, logic::TxnFilterNOT,
@@ -67,6 +69,156 @@ mod tests {
     use tackler_api::location::GeoPoint;
     use tackler_api::txn_header::TxnHeader;
     use uuid::Uuid;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub(crate) struct BBox2D {
+        pub lat1: Decimal,
+        pub lon1: Decimal,
+        pub lat2: Decimal,
+        pub lon2: Decimal,
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub(crate) struct BBox3D {
+        pub lat1: Decimal,
+        pub lon1: Decimal,
+        pub min_z: Decimal,
+        pub lat2: Decimal,
+        pub lon2: Decimal,
+        pub max_z: Decimal,
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub(crate) struct TestVector {
+        pub lat: Decimal,
+        pub lon: Decimal,
+        pub z: Option<Decimal>,
+        pub inside_2d: bool,
+        pub inside_3d: bool,
+    }
+
+    type GeoTest = (usize, BBox2D, BBox3D, Vec<TestVector>);
+
+    #[rustfmt::skip]
+    #[allow(clippy::too_many_lines)]
+    pub(crate) fn geo2d3d_tests() -> Vec<GeoTest> {
+        vec![
+        (
+            10,
+            BBox2D { lat1: dec!(20), lon1: dec!(10), lat2: dec!(45), lon2: dec!(25) },
+            BBox3D { lat1: dec!(20), lon1: dec!(10), min_z: dec!(22), lat2: dec!(45), lon2: dec!(25), max_z: dec!(22) },
+            vec![
+                TestVector { lat: dec!(30), lon: dec!(15), z: None, inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(18), lon: dec!(15), z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(50), lon: dec!(15), z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(30), lon: dec!(8),  z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(30), lon: dec!(26), z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(30), lon: dec!(15), z: Some(dec!(22)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(18), lon: dec!(15), z: Some(dec!(22)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(50), lon: dec!(15), z: Some(dec!(22)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(30), lon: dec!(8),  z: Some(dec!(22)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(30), lon: dec!(26), z: Some(dec!(22)), inside_2d: false, inside_3d: false },
+            ],
+        ),
+        (
+            10,
+            BBox2D { lat1: dec!(-16.5), lon1: dec!(-6), lat2: dec!(-15.75), lon2: dec!(-5.5) },
+            BBox3D { lat1: dec!(-16.5), lon1: dec!(-6), min_z: dec!(-1000), lat2: dec!(-15.75), lon2: dec!(-5.5), max_z: dec!(1000) },
+            vec![
+                TestVector { lat: dec!(-15.97), lon: dec!(-5.7), z: None, inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(-17),     lon: dec!(-5.7), z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15),     lon: dec!(-5.7), z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15.97), lon: dec!(-7),   z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15.97), lon: dec!(-4),   z: None, inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15.97), lon: dec!(-5.7), z: Some(dec!(810)),  inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(-17),     lon: dec!(-5.7), z: Some(dec!(810)),  inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15),     lon: dec!(-5.7), z: Some(dec!(-5.75)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15.97), lon: dec!(-7),   z: Some(dec!(-16)),   inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-15.97), lon: dec!(-4),   z: Some(dec!(-810)),  inside_2d: false, inside_3d: false },
+            ],
+        ),
+        (
+            12,
+            BBox2D { lat1: dec!(65), lon1: dec!(-180), lat2: dec!(90), lon2: dec!(180) },
+            BBox3D { lat1: dec!(65), lon1: dec!(-180), min_z: dec!(49), lat2: dec!(90), lon2: dec!(180), max_z: dec!(51) },
+            vec![
+                TestVector { lat: dec!(70.978056), lon: dec!(25.974722),  z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(70.978056), lon: dec!(-25.974722), z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(90),         lon: dec!(25),        z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(90),         lon: dec!(-25),       z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(62),         lon: dec!(25.974722), z: None,        inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-62),        lon: dec!(25.974722), z: None,        inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(70.978056), lon: dec!(25.974722),  z: Some(dec!(50)),  inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(70.978056), lon: dec!(-25.974722), z: Some(dec!(50)),  inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(90),         lon: dec!(25),        z: Some(dec!(50)),  inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(90),         lon: dec!(-25),       z: Some(dec!(50)),  inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(62),         lon: dec!(25.974722), z: Some(dec!(50)),  inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-62),        lon: dec!(25.974722), z: Some(dec!(50)),  inside_2d: false, inside_3d: false },
+            ],
+        ),
+        (
+            12,
+            BBox2D { lat1: dec!(-90), lon1: dec!(-180), lat2: dec!(-65), lon2: dec!(180) },
+            BBox3D { lat1: dec!(-90), lon1: dec!(-180), min_z: dec!(-51), lat2: dec!(-65), lon2: dec!(180), max_z: dec!(-49) },
+            vec![
+                TestVector { lat: dec!(-70.978056), lon: dec!(25.974722),  z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(-70.978056), lon: dec!(-25.974722), z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(-90),         lon: dec!(25),        z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(-90),         lon: dec!(-25),       z: None,        inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(62),          lon: dec!(25.974722), z: None,        inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-62),         lon: dec!(25.974722), z: None,        inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-70.978056), lon: dec!(25.974722),  z: Some(dec!(-50)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(-70.978056), lon: dec!(-25.974722), z: Some(dec!(-50)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(-90),         lon: dec!(25),        z: Some(dec!(-50)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(-90),         lon: dec!(-25),       z: Some(dec!(-50)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(62),          lon: dec!(25.974722), z: Some(dec!(-50)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-62),         lon: dec!(25.974722), z: Some(dec!(-50)), inside_2d: false, inside_3d: false },
+            ],
+        ),
+        (
+            6,
+            BBox2D { lat1: dec!(-21), lon1: dec!(175), lat2: dec!(-15), lon2: dec!(-175) },
+            BBox3D { lat1: dec!(-21), lon1: dec!(175), min_z: dec!(-100), lat2: dec!(-15), lon2: dec!(-175), max_z: dec!(100) },
+            vec![
+                TestVector { lat: dec!(-18.5), lon: dec!(178.56), z: None,       inside_2d: true,  inside_3d: false },
+                TestVector { lat: dec!(-18.5), lon: dec!(168),    z: None,       inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-18.5), lon: dec!(-174),   z: None,       inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-18.5), lon: dec!(178.56), z: Some(dec!(50)), inside_2d: true,  inside_3d: true },
+                TestVector { lat: dec!(-18.5), lon: dec!(168),    z: Some(dec!(50)), inside_2d: false, inside_3d: false },
+                TestVector { lat: dec!(-18.5), lon: dec!(174),    z: Some(dec!(50)), inside_2d: false, inside_3d: false },
+            ],
+        ),
+        (
+            13,
+            BBox2D { lat1: dec!(-90), lon1: dec!(-180), lat2: dec!(90), lon2: dec!(180) },
+            BBox3D { lat1: dec!(-90), lon1: dec!(-180), min_z: dec!(0), lat2: dec!(90), lon2: dec!(180), max_z: dec!(1) },
+            vec![
+                TestVector { lat: dec!(30),       lon: dec!(15),       z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(0),        lon: dec!(0),        z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(0),        lon: dec!(180),      z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(0),        lon: dec!(-180),     z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(-15.97),   lon: dec!(-5.7),     z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(-70.978056), lon: dec!(25.974722), z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(-70.978056), lon: dec!(-25.974722), z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(-90),        lon: dec!(25),        z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(-90),        lon: dec!(-25),       z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(70.978056),  lon: dec!(25.974722), z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(70.978056),  lon: dec!(-25.974722), z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(90),         lon: dec!(25),        z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+                TestVector { lat: dec!(90),         lon: dec!(-25),       z: Some(dec!(1)), inside_2d: true, inside_3d: true },
+            ],
+        ),
+        (
+            2,
+            BBox2D { lat1: dec!(1), lon1: dec!(2), lat2: dec!(1), lon2: dec!(2) },
+            BBox3D { lat1: dec!(1), lon1: dec!(2), min_z: dec!(3), lat2: dec!(1), lon2: dec!(2), max_z: dec!(3) },
+            vec![
+                TestVector { lat: dec!(1), lon: dec!(2), z: None,       inside_2d: true, inside_3d: false },
+                TestVector { lat: dec!(1), lon: dec!(2), z: Some(dec!(3)), inside_2d: true, inside_3d: true },
+            ],
+        ),
+    ]
+    }
 
     pub(crate) fn make_ts_txn(ts: Zoned) -> Transaction {
         Transaction {

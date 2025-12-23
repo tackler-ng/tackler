@@ -37,7 +37,7 @@ impl Predicate<Transaction> for TxnFilterBBoxLatLon {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::filter::tests::make_geo_txn;
+    use crate::filter::tests::{geo2d3d_tests, make_geo_txn};
     use crate::model::Transaction;
     use rust_decimal_macros::dec;
     use tackler_api::filters::TxnFilter;
@@ -78,5 +78,43 @@ mod tests {
         for t in cases {
             assert_eq!(filt.eval(&t.0), t.1);
         }
+    }
+
+    #[test]
+    // test: 8f7e0c4e-a4b5-4f33-aad9-adaae1df1c5e
+    // desc: 2D Check edge cases (points and/or BBoxes)
+    fn geo_2d_check_edge_cases() {
+        let tests = geo2d3d_tests();
+        let mut top_count = 0usize;
+
+        for (expected_count, bbox2d, _bbox3d, tvecs) in &tests {
+            let mut inner_count = 0usize;
+            for v in tvecs {
+                let tf = TxnFilterBBoxLatLon {
+                    south: bbox2d.lat1,
+                    west: bbox2d.lon1,
+                    north: bbox2d.lat2,
+                    east: bbox2d.lon2,
+                };
+
+                let txn = make_geo_txn(v.lat, v.lon, v.z);
+
+                assert_eq!(tf.eval(&txn), v.inside_2d);
+                let filt = TxnFilter::TxnFilterBBoxLatLon(tf);
+                let filtered = filt.eval(&txn);
+                assert_eq!(
+                    filtered, v.inside_2d,
+                    "filter result differed for bbox {filt:?} on vector {v:?}"
+                );
+                inner_count += 1;
+            }
+
+            assert_eq!(
+                *expected_count, inner_count,
+                "test vector size for one filter is wrong"
+            );
+            top_count += 1;
+        }
+        assert_eq!(top_count, 7, "test count for filter is wrong");
     }
 }
