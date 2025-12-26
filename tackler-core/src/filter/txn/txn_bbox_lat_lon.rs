@@ -46,12 +46,11 @@ mod tests {
     // test: 320d92b9-f8e7-4283-9296-74ff4340fff1
     // desc: Filter 2D Txns
     fn txn_bbox_lat_lon() {
-        let tf = TxnFilterBBoxLatLon {
-            south: dec!(40.0),
-            west: dec!(20.0),
-            north: dec!(65.0),
-            east: dec!(26.0),
-        };
+        let tf = TxnFilterBBoxLatLon::new(
+            dec!(40.0),
+            dec!(20.0),
+            dec!(65.0),
+            dec!(26.0)).unwrap(/*:test:*/);
 
         // test: 05983503-0aa4-42e1-a1c9-cc5df93285f7
         // desc: 3D txn with 2D filter
@@ -90,12 +89,11 @@ mod tests {
         for (expected_count, bbox2d, _bbox3d, tvecs) in &tests {
             let mut inner_count = 0usize;
             for v in tvecs {
-                let tf = TxnFilterBBoxLatLon {
-                    south: bbox2d.lat1,
-                    west: bbox2d.lon1,
-                    north: bbox2d.lat2,
-                    east: bbox2d.lon2,
-                };
+                let tf = TxnFilterBBoxLatLon::new(
+                    bbox2d.lat1,
+                    bbox2d.lon1,
+                    bbox2d.lat2,
+                    bbox2d.lon2).unwrap(/*:test:*/);
 
                 let txn = make_geo_txn(v.lat, v.lon, v.z);
 

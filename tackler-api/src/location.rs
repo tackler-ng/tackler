@@ -32,13 +32,19 @@ impl Display for GeoPoint {
         write!(f, "geo:{},{}{}", self.lat, self.lon, alt)
     }
 }
+/// Maximum latitude 90 deg (of North)
+pub const MAX_LAT: Decimal = Decimal::from_parts(90, 0, 0, false, 0);
+/// Minimum latitude -90 deg (of South)
+pub const MIN_LAT: Decimal = Decimal::from_parts(90, 0, 0, true, 0);
+/// Maximum longitude 180 (of East)
+pub const MAX_LON: Decimal = Decimal::from_parts(180, 0, 0, false, 0);
+/// Minimum longitude -180 (of West)
+pub const MIN_LON: Decimal = Decimal::from_parts(180, 0, 0, true, 0);
+/// Minimum altitude (Jules Verne: Voyage au centre de la Terre)
+pub const MIN_ALTITUDE: Decimal = Decimal::from_parts(6_378_137, 0, 0, true, 0);
 
 #[allow(clippy::manual_range_contains)]
 impl GeoPoint {
-    const MAX_LAT: Decimal = Decimal::from_parts(90, 0, 0, false, 0);
-    const MIN_LAT: Decimal = Decimal::from_parts(90, 0, 0, true, 0);
-    const MAX_LON: Decimal = Decimal::from_parts(180, 0, 0, false, 0);
-    const MIN_LON: Decimal = Decimal::from_parts(180, 0, 0, true, 0);
     /// Make Geo point from given coordinates.
     ///
     /// * `lat` in decimals, must be inclusive -90 -- 90
@@ -53,11 +59,11 @@ impl GeoPoint {
         lon: Decimal,
         alt: Option<Decimal>,
     ) -> Result<GeoPoint, tackler::Error> {
-        if lat < Self::MIN_LAT || Self::MAX_LAT < lat {
+        if lat < MIN_LAT || MAX_LAT < lat {
             let msg = format!("Value out of specification for Latitude: {lat}");
             return Err(msg.into());
         }
-        if lon < Self::MIN_LON || Self::MAX_LON < lon {
+        if lon < MIN_LON || MAX_LON < lon {
             let msg = format!("Value out of specification for Longitude: {lon}");
             return Err(msg.into());
         }
