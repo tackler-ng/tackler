@@ -52,7 +52,7 @@ reference vectors as the original tackler-mk1.
 
 [NOTE]
 ====
-*Tackler is tested with 488
+*Tackler is tested with 501
 link:https://github.com/tackler-ng/tackler-t3db[tracked test vectors]*
 ====
 

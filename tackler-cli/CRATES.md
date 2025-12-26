@@ -49,7 +49,7 @@ Tackler is in
 with and beyond of the old Scala code base. It's using the same set of test
 reference vectors as the original tackler-mk1.
 
-**NOTE: Tackler is tested with 488 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
+**NOTE: Tackler is tested with 501 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
 
 All Tackler CLI functionality is supported, including 
 [Tackler Journal Format](https://tackler.fi/docs/tackler/latest/journal/format/), 
