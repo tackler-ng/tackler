@@ -17,10 +17,10 @@ use tackler_rs::IndocUtils;
 
 
      #[test]
-     //desc: "various valid geo uris"
-     #[allow(non_snake_case)]
+     // test: bc98cc89-d3b2-468d-9508-8d7a55924178
+     // desc: "various valid geo uris"
      #[allow(clippy::too_many_lines)]
-     fn id_bc98cc89_d3b2_468d_9508_8d7a55924178__ok_geo_uris() {
+     fn ok_geo_uris() {
        let  txn_strs: Vec<(String, &str)> = vec![
         (indoc!(
            "|
@@ -159,9 +159,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "perr: detect invalid geo uris"
-    #[allow(non_snake_case)]
-    fn id_c8e7cdf6_3b30_476c_84f0_f5a19812cd28__err_location_parse() {
+    // test: c8e7cdf6-3b30-476c-84f0-f5a19812cd28
+    // desc: "perr: detect invalid geo uris"
+    fn err_location_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
           // perr: missing geo-uri
       (indoc!(
@@ -229,9 +229,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "detect semantically invalid geo uris"
-    #[allow(non_snake_case)]
-    fn id_fc711c0d_2820_4f72_8b4c_1219ef578363__err_location_semantics() {
+    // test: fc711c0d-2820-4f72-8b4c-1219ef578363
+    // desc: "detect semantically invalid geo uris"
+    fn err_location_semantics() {
       let  perr_strings: Vec<(String, &str)> = vec![
           // latitude out of spec 1/2
         (indoc!(

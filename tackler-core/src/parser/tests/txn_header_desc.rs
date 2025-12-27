@@ -17,10 +17,10 @@ use tackler_rs::IndocUtils;
 
 
       #[test]
-      //desc: "check invalid description constructs"
-      #[allow(non_snake_case)]
+      // test: 03d3df34-e68a-4104-b8ab-be06d36bf189
+      // desc: "check invalid description constructs"
       #[allow(clippy::too_many_lines)]
-      fn id_03d3df34_e68a_4104_b8ab_be06d36bf189__err_description_parse() {
+      fn err_description_parse() {
         let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|
@@ -132,10 +132,10 @@ use tackler_rs::IndocUtils;
       }
 
     #[test]
-    //desc: "accept valid description constructs"
-    #[allow(non_snake_case)]
+    // test: 58d08778-10ee-489c-bb91-7059b9ba0cca
+    // desc: "accept valid description constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_58d08778_10ee_489c_bb91_7059b9ba0cca__ok_description() {
+    fn ok_description() {
       let pok_strings: Vec<(String, &str)> = vec![
         (indoc!(
            "|
@@ -307,10 +307,10 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "accept valid code + description constructs"
-    #[allow(non_snake_case)]
+    // test: 5081594a-ecaf-4232-9c93-1d84ea7600eb
+    // desc: "accept valid code + description constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_5081594a_ecaf_4232_9c93_1d84ea7600eb__ok_code_and_description() {
+    fn ok_code_and_description() {
       let  pok_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|

@@ -176,13 +176,13 @@ impl AccountTreeNode {
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 #[allow(clippy::bool_assert_comparison)]
 mod tests {
     use super::*;
 
     #[test]
-    fn id_270d505b_76f6_4e49_a24c_2fbdfb6e5adf__commodity_ok() {
+    // test: 270d505b-76f6-4e49-a24c-2fbdfb6e5adf
+    fn commodity_ok() {
         let res = Commodity::from("He·bar".to_string());
         assert!(res.is_ok());
         let c = res.unwrap(/*:test:*/);
@@ -196,7 +196,8 @@ mod tests {
     }
 
     #[test]
-    fn id_699aadb1_d1ba_44b6_ae6a_158cf5be13e5__commodity_err() {
+    // test: 699aadb1-d1ba-44b6-ae6a-158cf5be13e5
+    fn commodity_err() {
         assert!(Commodity::from("123".to_string()).is_err());
         assert!(Commodity::from("-USD".to_string()).is_err());
         assert!(Commodity::from("_USD".to_string()).is_err());
@@ -208,7 +209,8 @@ mod tests {
     /*
     todo: commodity tests as part of AccountTreeNode vs. TxnAccount
     #[test]
-    fn id_e11d5d26_c149_4d8c_b150_5cb2e2f80608__atn_commodity() {
+    // test: e11d5d26-c149-4d8c-b150-5cb2e2f80608
+    fn atn_commodity() {
         let atn = AccountTreeNode::from(
             "a",
             Some(Commodity::from("He·bar".to_string()).unwrap(/*:test:*/)),
@@ -289,7 +291,8 @@ mod tests {
     }
 
     #[test]
-    fn id_88c5cb23_5995_4b93_8c26_a3f7374e96d9__atn_root() {
+    // test: 88c5cb23-5995-4b93-8c26-a3f7374e96d9
+    fn atn_root() {
         let atn = AccountTreeNode::from("a").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 1);
@@ -300,7 +303,8 @@ mod tests {
     }
 
     #[test]
-    fn id_fc69f9b2_1faf_425c_87d3_aed63d66171b__atn_two() {
+    // test: fc69f9b2-1faf-425c-87d3-aed63d66171b
+    fn atn_two() {
         let atn = AccountTreeNode::from("a:b").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 2);
@@ -311,7 +315,8 @@ mod tests {
     }
 
     #[test]
-    fn id_38c103d3_4cc7_4af7_86cd_bf24ca37d026__atn_three() {
+    // test: 38c103d3-4cc7-4af7-86cd-bf24ca37d026
+    fn atn_three() {
         let atn = AccountTreeNode::from("a:b:c").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 3);
@@ -322,7 +327,8 @@ mod tests {
     }
 
     #[test]
-    fn id_76a6c300_5569_4e1d_a0a1_ae2ee31d919a__atn_more() {
+    // test: 76a6c300-5569-4e1d-a0a1-ae2ee31d919a
+    fn atn_more() {
         let atn = AccountTreeNode::from("a:b:c:leaf").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 4);
@@ -333,13 +339,15 @@ mod tests {
     }
 
     #[test]
-    fn id_55407835_34d8_4de9_a362_4172f0e4d54b__err_empty() {
+    // test: 55407835-34d8-4de9-a362-4172f0e4d54b
+    fn err_empty() {
         let atn = AccountTreeNode::from("");
         assert!(atn.is_err());
     }
 
     #[test]
-    fn id_0609e72f_c509_4b62_950e_fce432122d10__err_empty_sub() {
+    // test: 0609e72f-c509-4b62-950e-fce432122d10
+    fn err_empty_sub() {
         // new tests
         assert!(AccountTreeNode::from("a:").is_err());
         assert!(AccountTreeNode::from(":a").is_err());

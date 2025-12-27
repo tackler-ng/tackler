@@ -101,15 +101,15 @@ impl Display for Posting {
 }
 
 #[cfg(test)]
-#[allow(non_snake_case)]
 mod tests {
     use super::*;
     use crate::model::AccountTreeNode;
     use std::sync::Arc;
 
     #[test]
+    // test: 42ad9d32-64aa-4fcd-a4ab-1e8521b921e3
     // desc: "reject zero postings"
-    fn id_42ad9d32_64aa_4fcd_a4ab_1e8521b921e3__reject_zero_posting() {
+    fn reject_zero_posting() {
         {
             let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
             let txntn = TxnAccount {
@@ -146,8 +146,9 @@ mod tests {
     }
 
     #[test]
+    // test: e3c97b66-318c-4396-8857-0cd2c1dfb0d2
     // desc: "preserve precision - 1E20"
-    fn id_e3c97b66_318c_4396_8857_0cd2c1dfb0d2__preserve_precision_1E20() {
+    fn preserve_precision_1e20() {
         /*
          * val v = //          3         2         1         .         1         2         3         4
          *        TacklerReal("123456789012345678901234567890.123456789012345678901234567890123456789012")
@@ -172,8 +173,9 @@ mod tests {
     }
 
     #[test]
+    // test: 26da0769-de5f-4344-b1d4-d3ddbf3f7f5a
     // desc: "preserve precision - 1E15"
-    fn id_26da0769_de5f_4344_b1d4_d3ddbf3f7f5a__preserve_precision_1E15() {
+    fn preserve_precision_1e15() {
         /*
          * val v = //          3         2         1         .         1         2         3         4
          *        TacklerReal("123456789012345678901234567890.123456789012345678901234567890123456789012")
@@ -198,8 +200,9 @@ mod tests {
     }
 
     #[test]
+    // test: 6ce68af4-5349-44e0-8fbc-35bebd8ac1ac
     // desc: "toString e.g. Display"
-    fn id_6ce68af4_5349_44e0_8fbc_35bebd8ac1ac__display() {
+    fn display() {
         let v = Decimal::new(12301, 2);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
         let txntn = TxnAccount {
@@ -213,8 +216,9 @@ mod tests {
     }
 
     #[test]
+    // test: 16b54e8c-5ea6-420c-bd72-157dbcc06a49
     // desc: "unit price"
-    fn id_16b54e8c_5ea6_420c_bd72_157dbcc06a49__unit_price() {
+    fn unit_price() {
         let pv = Decimal::new(12300, 2);
         let tv = Decimal::new(24600, 2);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
@@ -238,8 +242,9 @@ mod tests {
     }
 
     #[test]
+    // test: 22059d1d-7c10-42dc-831f-03bd1f1d6257
     // desc: "unit price with comment"
-    fn id_22059d1d_7c10_42dc_831f_03bd1f1d6257__unit_price_w_comment() {
+    fn unit_price_w_comment() {
         let pv = Decimal::new(12300, 2);
         let tv = Decimal::new(24600, 2);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
@@ -263,8 +268,9 @@ mod tests {
     }
 
     #[test]
+    // test: 0fef204a-19da-418f-b7d0-86b5211c2182
     // desc: "total price"
-    fn id_0fef204a_19da_418f_b7d0_86b5211c2182__total_price() {
+    fn total_price() {
         let pv = Decimal::new(12300, 2);
         let tv = Decimal::new(24600, 2);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));
@@ -288,8 +294,9 @@ mod tests {
     }
 
     #[test]
+    // test: 718dd25c-aebc-4f29-9903-67942c6ba531
     // desc: "total price with comment"
-    fn id_718dd25c_aebc_4f29_9903_67942c6ba531__total_price_w_comment() {
+    fn total_price_w_comment() {
         let pv = Decimal::new(12300, 2);
         let tv = Decimal::new(24600, 2);
         let acctn = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test:*/));

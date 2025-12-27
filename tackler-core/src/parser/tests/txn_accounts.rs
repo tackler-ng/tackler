@@ -16,9 +16,9 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "accept valid uncommon account names"
-    #[allow(non_snake_case)]
-    fn id_c6584dc1_3a9d_4bb6_8619_0ced9c7c6a17__ok_uncommon_accounts() {
+    // test: c6584dc1-3a9d-4bb6-8619-0ced9c7c6a17
+    // desc: "accept valid uncommon account names"
+    fn ok_uncommon_accounts() {
       let  txns_str =
       indoc!(
          "|
@@ -54,9 +54,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "reject invalid sub-account constructs"
-    #[allow(non_snake_case)]
-    fn id_9c836932_718c_491d_8cf0_30e35a0d1533__err_sub_accounts_parse() {
+    // test: 9c836932-718c-491d-8cf0-30e35a0d1533
+    // desc: "reject invalid sub-account constructs"
+    fn err_sub_accounts_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
           // perr: '::'
    (indoc!("|
@@ -140,9 +140,9 @@ use tackler_rs::IndocUtils;
     // "Numeric accounts names"
     //
     #[test]
-    //desc: "check invalid numeric top-account names"
-    #[allow(non_snake_case)]
-    fn id_385f7a60_9618_40e4_9f3e_8e28c76a8872__err_numeric_accounts_parse() {
+    // test: 385f7a60-9618-40e4-9f3e-8e28c76a8872
+    // desc: "check invalid numeric top-account names"
+    fn err_numeric_accounts_parse_1() {
         let  perr_strings:Vec<(String,)> = vec![
  (indoc!("|
           |2019-03-14
@@ -219,9 +219,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "reject invalid numeric sub-account names"
-    #[allow(non_snake_case)]
-    fn id_b160ec62_6254_45c8_ac3c_ef0ee41c95b1__err_numeric_accounts_parse() {
+    // test: b160ec62-6254-45c8-ac3c-ef0ee41c95b1
+    // desc: "reject invalid numeric sub-account names"
+    fn err_numeric_accounts_parse_2() {
         let  perr_strings:Vec<(String,)> = vec![
  (indoc!("|
           |2019-03-14
@@ -305,9 +305,9 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "reject invalid commodity names"
-    #[allow(non_snake_case)]
-    fn id_78a4af97_a876_4a13_9d67_b7e0ef86ed44__err_commodities_parse() {
+    // test: 78a4af97-a876-4a13-9d67-b7e0ef86ed44
+    // desc: "reject invalid commodity names"
+    fn err_commodities_parse() {
         let  perr_strings:Vec<(String,)> = vec![
  (indoc!("|
           |2019-03-14

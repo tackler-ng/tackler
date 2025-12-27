@@ -149,9 +149,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "accept valid metadata txn::uuid constructs"
-    #[allow(non_snake_case)]
-    fn id_546e4368_dcfa_44d5_a21d_13f3b8bf51b6__ok_txn_uuid() {
+    // test: 546e4368-dcfa-44d5-a21d-13f3b8bf51b6
+    // desc: "accept valid metadata txn::uuid constructs"
+    fn ok_txn_uuid() {
       let  pok_strings: Vec<(String, &str)> = vec![
         (indoc!(
            "|

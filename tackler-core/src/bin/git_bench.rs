@@ -64,9 +64,8 @@ fn verify_git_run(result: Result<TxnData, tackler::Error>, commit: &str, checksu
 }
 
 // test: 33d85471-a04c-49b9-b7a0-9d7f7f5762eb
-#[allow(non_snake_case)]
 #[allow(clippy::cast_precision_loss)]
-fn test_10_loops_with_txns_1E5() {
+fn test_10_loops_with_txns_1e5() {
     eprintln!("\n\nMake 5 loops with set-1e5:");
     let mut settings = Settings::default_audit();
     let mut all_txns_per_s = 0.0;
@@ -100,8 +99,7 @@ Reference:  {txn_per_s_reference:8>.0} txn/s ({:>+6.0} txn/s)",
 }
 
 // test: fae31eb0-bd4a-483e-9eb7-9e4c36e7f785
-#[allow(non_snake_case)]
-fn test_10000_loops_with_txns_1E1() {
+fn test_10000_loops_with_txns_1e1() {
     let mut settings = Settings::default_audit();
     let loops = 10_000;
     eprintln!("\n\nMake 10_000 loops with set-1e1:");
@@ -128,7 +126,7 @@ fn test_10000_loops_with_txns_1E1() {
 }
 
 fn main() {
-    test_10000_loops_with_txns_1E1();
+    test_10000_loops_with_txns_1e1();
 
-    test_10_loops_with_txns_1E5();
+    test_10_loops_with_txns_1e5();
 }

@@ -17,10 +17,10 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "check invalid header code constructs"
-    #[allow(non_snake_case)]
+    // test: 242aa119-bc5e-4562-9f4a-5feb26d1fba6
+    // desc: "check invalid header code constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_242aa119_bc5e_4562_9f4a_5feb26d1fba6__err_code_parse() {
+    fn err_code_parse() {
       let perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|
@@ -263,10 +263,10 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "accept valid code constructs"
-    #[allow(non_snake_case)]
+    // test: a5450ec6-42a3-4f3b-b989-27eb2949ccad
+    // desc: "accept valid code constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_a5450ec6_42a3_4f3b_b989_27eb2949ccad__ok_code() {
+    fn ok_code() {
       let pok_strings: Vec<(String, &str)> = vec![
         (indoc!(
            "|

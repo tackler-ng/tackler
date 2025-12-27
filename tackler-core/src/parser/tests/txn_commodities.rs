@@ -18,9 +18,9 @@ use tackler_rs::IndocUtils;
 // "Units and Commodities") {
 //
     #[test]
-    //desc: "accept commodity names"
-    #[allow(non_snake_case)]
-    fn id_aadbdf7c_c1d0_4e1e_a02f_9ca1b5ab2afc__ok_uncommon_accounts() {
+    // test: aadbdf7c-c1d0-4e1e-a02f-9ca1b5ab2afc
+    // desc: "accept commodity names"
+    fn ok_uncommon_accounts() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -64,7 +64,6 @@ use tackler_rs::IndocUtils;
 
     #[test]
     //desc: "uac ; comment"
-    #[allow(non_snake_case)]
     fn ok_commodity_and_comment_parse() {
       let  txns_str =
   indoc!("|
@@ -84,9 +83,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "accepts closing position"
-    #[allow(non_snake_case)]
-    fn id_5f5dcb57_792d_49df_a491_2923612a0e2f__ok_closing_position() {
+    // test: 5f5dcb57-792d-49df-a491-2923612a0e2f
+    // desc: "accepts closing position"
+    fn ok_closing_position() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -130,7 +129,6 @@ use tackler_rs::IndocUtils;
 
     #[test]
     //desc: "uac closing position ; comment"
-    #[allow(non_snake_case)]
     fn ok_commodity_and_comment_closing_pos_parse() {
       let  txns_str =
   indoc!("|
@@ -152,9 +150,9 @@ use tackler_rs::IndocUtils;
 //  describe("Profit and Loss parsing") {
 //
     #[test]
-    //desc: "opening with PnL"
-    #[allow(non_snake_case)]
-    fn id_9f711991_c9ae_4558_923c_95a69faff8bc__ok_opening_with_pnl() {
+    // test: 9f711991-c9ae-4558-923c-95a69faff8bc
+    // desc: "opening with PnL"
+    fn ok_opening_with_pnl() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -201,9 +199,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "opening with PnL ; comment"
-    #[allow(non_snake_case)]
-    fn id_92f75975_061b_4867_87f5_e25cf5b13d40__ok_closing_position() {
+    // test: 92f75975-061b-4867-87f5-e25cf5b13d40
+    // desc: "opening with PnL ; comment"
+    fn ok_closing_position_2() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -222,9 +220,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "closing position with PnL"
-    #[allow(non_snake_case)]
-    fn id_84d81380_8664_45d7_a9e1_523c38c7a963__ok_closing_position() {
+    // test: 84d81380-8664-45d7-a9e1-523c38c7a963
+    // desc: "closing position with PnL"
+    fn ok_closing_position_3() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -271,9 +269,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "closing position with PnL ; comment"
-    #[allow(non_snake_case)]
-    fn id_c1fbac7b_e924_4eee_aed3_b11b51116f1a__ok_closing_position() {
+    // test: c1fbac7b-e924-4eee-aed3-b11b51116f1a
+    // desc: "closing position with PnL ; comment"
+    fn ok_closing_position_4() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -299,9 +297,9 @@ use tackler_rs::IndocUtils;
 //
 
       #[test]
-      //desc: "Unit cost '{ ... }' with negative value"
-      #[allow(non_snake_case)]
-      fn id_5af5d0d8_ca6e_4a03_a939_99d9d2a4ec43__err() {
+      // test: 5af5d0d8-ca6e-4a03-a939-99d9d2a4ec43
+      // desc: "Unit cost '{ ... }' with negative value"
+      fn err_unit_cost() {
         let  txns_str =
     indoc!("|
             |2017-01-01
@@ -318,9 +316,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Unit price '@' with negative value"
-      #[allow(non_snake_case)]
-      fn id_a27b166c_e9c9_432c_bb9d_91915b51d76b__err() {
+      // test: a27b166c-e9c9-432c-bb9d-91915b51d76b
+      // desc: "Unit price '@' with negative value"
+      fn err_unit_price() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -337,9 +335,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Unit price '@' with same primary and secondary commodity"
-      #[allow(non_snake_case)]
-      fn id_6d1868da_3b9f_45e4_a2c6_db003da4c720__err() {
+      // test: 6d1868da-3b9f-45e4-a2c6-db003da4c720
+      // desc: "Unit price '@' with same primary and secondary commodity"
+      fn err_unit_price_commodity() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -355,9 +353,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Unit price '@' with discrepancy of commodities"
-      #[allow(non_snake_case)]
-      fn id_fe246259_2280_4d42_8360_6dd3e280b30a__err() {
+      // test: fe246259-2280-4d42-8360-6dd3e280b30a
+      // desc: "Unit price '@' with discrepancy of commodities"
+      fn err_unit_price_commodities() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -373,9 +371,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Total cost '=' with different sign (-1st vs. +2nd)"
-      #[allow(non_snake_case)]
-      fn id_6f45f594_c4e6_449a_b6d2_7f25e9479bd5__err() {
+      // test: 6f45f594-c4e6-449a-b6d2-7f25e9479bd5
+      // desc: "Total cost '=' with different sign (-1st vs. +2nd)"
+      fn err_total_cost() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -392,9 +390,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Total cost '=' with different sign (+1st vs. -2nd)"
-      #[allow(non_snake_case)]
-      fn id_aaf50217_1d04_49bd_a873_43a53be1c99f__err() {
+      // test: aaf50217-1d04-49bd-a873-43a53be1c99f
+      // desc: "Total cost '=' with different sign (+1st vs. -2nd)"
+      fn err_total_cost_2() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -412,9 +410,9 @@ use tackler_rs::IndocUtils;
 
 
       #[test]
-      //desc: "Total cost '=' with same primary and secondary commodity"
-      #[allow(non_snake_case)]
-      fn id_aa52ac0a_278a_49e4_abad_fc2f00416a41__err() {
+      // test: aa52ac0a-278a-49e4-abad-fc2f00416a41
+      // desc: "Total cost '=' with same primary and secondary commodity"
+      fn err_total_cost_3() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -429,9 +427,9 @@ use tackler_rs::IndocUtils;
       }
 
       #[test]
-      //desc: "Total cost '=' with discrepancy of commodities"
-      #[allow(non_snake_case)]
-      fn id_20b89e3e_a987_4e83_bd89_2cbf288caecc__err() {
+      // test: 20b89e3e-a987-4e83-bd89-2cbf288caecc
+      // desc: "Total cost '=' with discrepancy of commodities"
+      fn err_total_cost_4() {
         let  txns_str =
     indoc!("|
             |2019-01-01
@@ -446,9 +444,9 @@ use tackler_rs::IndocUtils;
       }
 
     #[test]
-    //desc: "perr: duplicate commodity"
-    #[allow(non_snake_case)]
-    fn id_4babf379_9d88_49f3_8158_b9b7ff4e6eed__err_parse() {
+    // test: 4babf379-9d88-49f3-8158-b9b7ff4e6eed
+    // desc: "perr: duplicate commodity"
+    fn err_parse() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -463,9 +461,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "perr: value position, no primary commodity"
-    #[allow(non_snake_case)]
-    fn id_e24aacdf_fba2_4dc7_8165_4270c8822559__err_parse() {
+    // test: e24aacdf-fba2-4dc7-8165-4270c8822559
+    // desc: "perr: value position, no primary commodity"
+    fn err_parse_2() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -480,9 +478,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "perr: value position, no secondary commodity"
-    #[allow(non_snake_case)]
-    fn id_0d1beaf2_c30c_4008_943f_46aaf44e4f76__err_parse() {
+    // test: 0d1beaf2-c30c-4008-943f-46aaf44e4f76
+    // desc: "perr: value position, no secondary commodity"
+    fn err_parse_3() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -497,9 +495,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
+    // test: 3152ec2f-4d5f-4a0a-b88c-68f17bccf7c6
     //desc: "perr: missing value pos value"
-    #[allow(non_snake_case)]
-    fn id_3152ec2f_4d5f_4a0a_b88c_68f17bccf7c6__err_parse() {
+    fn err_parse_4() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -514,9 +512,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "perr: with opening (comm)"
-    #[allow(non_snake_case)]
-    fn id_bed02ea9_4191_4c98_b847_6b4e2a0fcb2d__err_parse() {
+    // test: bed02ea9-4191-4c98-b847-6b4e2a0fcb2d
+    // desc: "perr: with opening (comm)"
+    fn err_parse_5() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -531,9 +529,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
+    // test: ac4a6183-fb21-4847-8b3e-912f21fe5a6b
     //desc: "perr: with opening (value)"
-    #[allow(non_snake_case)]
-    fn id_ac4a6183_fb21_4847_8b3e_912f21fe5a6b__err_parse() {
+    fn err_parse_6() {
       let  txns_str =
   indoc!("|
           |2017-01-01
@@ -548,9 +546,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "perr: with missing @"
-    #[allow(non_snake_case)]
-    fn id_436d9ed5_b7a0_4e37_a7b4_86b00eb60e83__err_parse() {
+    // test: 436d9ed5-b7a0-4e37-a7b4-86b00eb60e83
+    // desc: "perr: with missing @"
+    fn err_parse_7() {
       let  txns_str =
   indoc!("|
           |2017-01-01

@@ -18,10 +18,10 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "check invalid timestamp constructs"
-    #[allow(non_snake_case)]
+    // test: 4ff959f7-c2bd-4750-8664-f46ce50a7c7b
+    // desc: "check invalid timestamp constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_4ff959f7_c2bd_4750_8664_f46ce50a7c7b__err_timestamp_parse() {
+    fn err_timestamp_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
 
         (indoc!(
@@ -171,9 +171,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "check invalid timestamp constructs with format v2"
-    #[allow(non_snake_case)]
-    fn id_294a4d37_2911_4c0f_9024_0c79bf3c99ba__err_ts_format_v2_parse() {
+    // test: 294a4d37-2911-4c0f-9024-0c79bf3c99ba
+    // desc: "check invalid timestamp constructs with format v2"
+    fn err_ts_format_v2_parse() {
     let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|
@@ -272,10 +272,10 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "accept valid timestamp constructs"
-    #[allow(non_snake_case)]
+    // test: 2c0ee1a2-1a23-4427-a6dc-6156abc36272
+    // desc: "accept valid timestamp constructs"
     #[allow(clippy::too_many_lines)]
-    fn id_2c0ee1a2_1a23_4427_a6dc_6156abc36272__ok_timestamp() {
+    fn ok_timestamp() {
       let pok_strings: Vec<(String, &str)> = vec![
 
         (indoc!(

@@ -78,9 +78,9 @@ mod git_txns {
     }
 
     #[test]
-    //desc: "handle ref with 10 (1E1) txns"
-    #[allow(non_snake_case)]
-    fn id_ce2e6523_ee83_46e7_a767_441c5b9f2802__normal_txns_1E1() {
+    // test: ce2e6523-ee83-46e7-a767-441c5b9f2802
+    // desc: "handle ref with 10 (1E1) txns"
+    fn normal_txns_1e1() {
         let result = parser::git_to_txns(
             Path::new(REPO_PATH),
             "txns/2016",
@@ -137,9 +137,9 @@ mod git_txns {
     }
 
     #[test]
-    //desc: "handle ref with 100_000 (1E5) txns"
-    #[allow(non_snake_case)]
-    fn id_074f5549_346c_4780_90a1_07d60ae0e79d__normal_txns_1E5() {
+    // test: 074f5549-346c-4780-90a1-07d60ae0e79d
+    // desc: "handle ref with 100_000 (1E5) txns"
+    fn normal_txns_1e5() {
         let result = parser::git_to_txns(
             Path::new(REPO_PATH),
             "txns/2016",

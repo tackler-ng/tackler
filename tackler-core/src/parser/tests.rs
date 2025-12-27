@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#[cfg(test)]
 use crate::model::transaction::Transaction;
 use tackler_api::txn_ts;
 
@@ -36,7 +37,6 @@ mod txn_metadata;
 mod txn_tags;
 mod txn_uuid;
 
-#[cfg(test)]
 pub(super) fn content_data() -> Vec<String> {
     let data = [
         r##" !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"##, // this has to be first for txn code test

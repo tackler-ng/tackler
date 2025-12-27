@@ -16,10 +16,10 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    //desc: "reject invalid tags metadata constructions"
-    #[allow(non_snake_case)]
+    // test: 4d364251-f578-4c00-8390-9d8b5feea90b
+    // desc: "reject invalid tags metadata constructions"
     #[allow(clippy::too_many_lines)]
-    fn id_4d364251_f578_4c00_8390_9d8b5feea90b__err_tags_parse() {
+    fn err_tags_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|
@@ -191,9 +191,9 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    //desc: "reject duplicate tags in txn tags set"
-    #[allow(non_snake_case)]
-    fn id_32e2d33d_f357_4751_8286_605cee07ea78__err_tags_semantics_dups() {
+    // test: 32e2d33d-f357-4751-8286-605cee07ea78
+    // desc: "reject duplicate tags in txn tags set"
+    fn err_tags_semantics_dups() {
       let  perr_strings: Vec<(String, &str)> = vec![
         (indoc!(
            "|
@@ -223,10 +223,10 @@ use tackler_rs::IndocUtils;
     }
 
      #[test]
-     //desc: "accepts tags metadata"
-     #[allow(non_snake_case)]
+     // test: df593f17-2c74-4657-8da9-afc9ba445755
+     // desc: "accepts tags metadata"
      #[allow(clippy::too_many_lines)]
-     fn id_df593f17_2c74_4657_8da9_afc9ba445755__ok_tags() {
+     fn ok_tags() {
        #[allow(clippy::type_complexity)]
        let  pok_strings: Vec<(String, i32, Vec<(&str, fn(&Transaction) -> String)>)> = vec![
         (indoc!(

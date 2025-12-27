@@ -17,10 +17,10 @@ use tackler_rs::IndocUtils;
 
 
       #[test]
-      //desc: "reject invalid metadata constructions"
-      #[allow(non_snake_case)]
+      // test: b88d6733-2acf-4021-a3d7-deaf58b518a6
+      // desc: "reject invalid metadata constructions"
       #[allow(clippy::too_many_lines)]
-      fn id_b88d6733_2acf_4021_a3d7_deaf58b518a6__err_metadata_parse() {
+      fn err_metadata_parse() {
         let  perr_strings: Vec<(String, &str, &str)> = vec![
         (indoc!(
            "|
@@ -140,9 +140,9 @@ use tackler_rs::IndocUtils;
       }
 
     #[test]
-    //desc: "accepts multiple metadata items"
-    #[allow(non_snake_case)]
-    fn id_5bb95c2e_2fad_4584_9380_e6cafe732cf6__ok_metadata_multiple_items() {
+    // test: 5bb95c2e-2fad-4584-9380-e6cafe732cf6
+    // desc: "accepts multiple metadata items"
+    fn ok_metadata_multiple_items() {
       #[allow(clippy::type_complexity)]
       let  pok_strings: Vec<(String, i32, Vec<(&str, fn(&Transaction) -> String)>)> = vec![
         (indoc!(
