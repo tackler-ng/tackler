@@ -32,7 +32,7 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* gix: 0.76.0
+* gix: 0.77.0
 * toml: 0.9.10
 * uuid: 0.19.0
 
