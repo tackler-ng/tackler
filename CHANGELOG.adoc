@@ -4,7 +4,7 @@
 
 == Releases
 
-=== Tackler release XX.YY.Z
+=== Tackler release 26.01.1
 
 ==== New features and changes
 
@@ -13,19 +13,15 @@ New features:
 * Support TOML 1.1.0 configuration syntax
 ** This adds support of link:https://toml.io/en/v1.1.0#inline-table[indented inline tables]
    for tackler configuration files
-* ...
-** ...
 
 Changed functionality:
 
 * Enforce that there is more than one filter for AND and OR logic filters
-* ...
-** ...
 
 
 ==== Fixes
 
-Fixes in this release ...
+No fixes in this release.
 
 
 ==== Development
@@ -52,10 +48,10 @@ MSRV:: 1.85.0
 |===
 |Component    | Version
 
-|Tackler CLI  | TODO: XX.YY.Z
-|tackler-core | TODO: No changes
-|tackler-api  | TODO: No changes
-|tackler-rs   | TODO: No changes
+|Tackler CLI  | 26.01.1
+|tackler-core | 0.14.0
+|tackler-api  | 0.13.0
+|tackler-rs   | No changes (v0.11.0)
 |===
 
 '''
