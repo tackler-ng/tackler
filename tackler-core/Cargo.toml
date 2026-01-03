@@ -1,10 +1,10 @@
 #
-# Tackler-NG 2022-2025
+# Tackler-NG 2022-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 [package]
 name = "tackler-core"
-version = "0.13.0"
+version = "0.14.0"
 description = "Core components for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
@@ -24,7 +24,7 @@ name = "tackler_core"
 path = "src/lib.rs"
 
 [dependencies]
-tackler-api =  { path = "../tackler-api",  version = "0.12.0" }
+tackler-api =  { path = "../tackler-api",  version = "0.13.0" }
 tackler-rs =   { path = "../tackler-rs",   version = "0.11.0" }
 jiff = { workspace = true }
 log = { workspace = true }
