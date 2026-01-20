@@ -29,7 +29,7 @@ Updated dependencies (major or minor version):
 ===== Rust toolchain
 
 Rust Edition:: 2024
-MSRV:: 1.85.0
+MSRV:: 1.87.0
 
 ==== Release Artifacts
 
