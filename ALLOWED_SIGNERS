@@ -8,8 +8,8 @@
 #
 #    git config gpg.ssh.allowedSignersFile ALLOWED_SIGNERS
 #
-35vlg84-x4e6b92@e257.fi namespaces="git",valid-after="20241215",valid-before="20260201" sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIOYFeJaFh4wRubFoqKg/V8L29wBDl49hm9sFxGOL2aphAAAABHNzaDo=
-35vlg84-x4e6b92@e257.fi namespaces="git",valid-after="20241217",valid-before="20260201" sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIJ2MJd7soF56cwGRppG3hUee2BxBfjxLrMUuHQOPFH10AAAABHNzaDo=
+35vlg84-x4e6b92@e257.fi namespaces="git",valid-after="20241215",valid-before="20280201" sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIOYFeJaFh4wRubFoqKg/V8L29wBDl49hm9sFxGOL2aphAAAABHNzaDo=
+35vlg84-x4e6b92@e257.fi namespaces="git",valid-after="20241217",valid-before="20280201" sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIJ2MJd7soF56cwGRppG3hUee2BxBfjxLrMUuHQOPFH10AAAABHNzaDo=
 #
 # old keys
 #
