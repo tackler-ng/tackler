@@ -44,8 +44,8 @@ codegen-units = 1
 base64 = { version = "0.22.1" }
 indoc = "2.0.6"
 jiff = { version = "0.2.18", features = [ "serde" ]}
-rust_decimal = { version = "1.39.0", features= ["serde-with-arbitrary-precision" ]}
-rust_decimal_macros = { version = "1.39.0" }
+rust_decimal = { version = "1.40.0", features= ["serde-with-arbitrary-precision" ]}
+rust_decimal_macros = { version = "1.40.0" }
 uuid = { version = "1.19.0", default-features = false, features = [ "serde" ] }
 log = "0.4.29"
 regex =  { version = "1.12.2" }
