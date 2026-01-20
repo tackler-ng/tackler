@@ -8,6 +8,53 @@
 
 ==== New features and changes
 
+New features:
+
+* ...
+  ** ...
+
+Changed functionality:
+
+* ...
+  ** ...
+
+
+==== Fixes
+
+Fixes in this release ...
+
+
+==== Development
+
+Updated dependencies (major or minor version):
+
+* ...
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.87.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | TODO: XX.YY.Z
+|tackler-core | TODO: No changes
+|tackler-api  | TODO: No changes
+|tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+
+=== Tackler release 26.01.2
+
+==== New features and changes
+
 New features: None
 
 Changed functionality: None
@@ -37,10 +84,10 @@ MSRV:: 1.87.0
 |===
 |Component    | Version
 
-|Tackler CLI  | TODO: XX.YY.Z
-|tackler-core | TODO: No changes
-|tackler-api  | TODO: No changes
-|tackler-rs   | TODO: No changes
+|Tackler CLI  | 26.01.2
+|tackler-core | 0.15.0
+|tackler-api  | 0.14.0
+|tackler-rs   | 0.12.0
 |===
 
 
