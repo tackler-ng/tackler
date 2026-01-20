@@ -8,27 +8,23 @@
 
 ==== New features and changes
 
-New features:
+New features: None
 
-* ...
-  ** ...
-
-Changed functionality:
-
-* ...
-  ** ...
-
+Changed functionality: None
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release
+
+ * Possible memory corruption caused by dependency in OOM situation
+   ** rkyv via rust-decimal: link:https://rustsec.org/advisories/RUSTSEC-2026-0001.html[RUSTSEC-2026-0001]
 
 
 ==== Development
 
 Updated dependencies (major or minor version):
 
-* ...
+* rust_decimal: 1.40.0
 
 ===== Rust toolchain
 
