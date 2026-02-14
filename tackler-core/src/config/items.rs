@@ -307,8 +307,8 @@ impl Timestamp {
                 jiff::civil::Time::new(
                     t.hour as i8,
                     t.minute as i8,
-                    t.second as i8,
-                    t.nanosecond as i32,
+                    t.second.map_or(0, |s| s as i8),
+                    t.nanosecond.map_or(0, |s| s as i32),
                 )?
             },
             timezone: { Timezone::from(&ts_raw.timezone)? },

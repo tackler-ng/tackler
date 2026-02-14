@@ -28,7 +28,7 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* ...
+* toml: 1.0.1
 
 ===== Rust toolchain
 
