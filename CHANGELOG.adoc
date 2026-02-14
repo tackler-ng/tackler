@@ -15,6 +15,8 @@ New features:
 
 Changed functionality:
 
+* git-subsystem: some error messages are different
+  ** link:https://github.com/GitoxideLabs/gitoxide/issues/2351[gitoxide #2351]
 * ...
   ** ...
 
@@ -28,6 +30,7 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
+* gix: 0.79.0
 * toml: 1.0.1
 
 ===== Rust toolchain
