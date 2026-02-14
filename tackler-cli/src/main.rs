@@ -121,6 +121,7 @@ fn run(cli: DefaultModeArgs) -> Result<Option<String>, tackler::Error> {
     }
 
     let exports = settings.get_export_targets();
+    #[allow(clippy::unnecessary_unwrap)] // output_directory is always Some()
     if !exports.is_empty() && cli.output_directory.is_some() {
         write_exports(
             cli.output_directory
