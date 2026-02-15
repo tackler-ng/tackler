@@ -15,8 +15,6 @@ New features:
 
 Changed functionality:
 
-* git-subsystem: some error messages are different
-  ** link:https://github.com/GitoxideLabs/gitoxide/issues/2351[gitoxide #2351]
 * ...
   ** ...
 

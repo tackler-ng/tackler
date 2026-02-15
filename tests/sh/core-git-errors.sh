@@ -61,18 +61,29 @@ echo "check: ok"
 
 #####################################################################
 #
-# todo: GitoxideLabs/gitoxide#2351
-# 2>&1 | grep 'Tackler error: Txn Data: .* object .* ef8845.* could not be found'
-#
 # test: c233295d-08b9-49b5-b384-634fc8432e64
-# desc: commit not found
-test_name=git-unknown-commit
+# desc: commit not found (by ref)
+test_name=git-unknown-commit-by-ref
 echo "test: $module/$test_name: $mode"
 
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref ef88456ffae9eb546d115833f2ad66d48a8e268b \
-    2>&1 | grep 'Tackler error: Txn Data: .* ef8845.*'
+    2>&1 | grep 'Tackler error: Txn Data: .* object .* ef8845.* could not be found'
+
+echo "check: ok"
+
+#####################################################################
+#
+# test: beed0077-33b6-441f-b7be-deca8080362d
+# desc: commit not found (by commit)
+test_name=git-unknown-commit-by-commit
+echo "test: $module/$test_name: $mode"
+
+$TACKLER_SH \
+    --config $SUITE_PATH/$module/git-ok.toml \
+    --input.git.commit ef88456ffae9eb546d115833f2ad66d48a8e268b \
+    2>&1 | grep "Tackler error: Txn Data: Unknown commit id 'ef88456ffae9eb546d115833f2ad66d48a8e268b'"
 
 echo "check: ok"
 
@@ -86,7 +97,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "//" \
-    2>&1 | grep "couldn't parse revision: //"
+    2>&1 | grep 'An error occurred while trying to find a reference'
 
 echo "check: ok"
 
@@ -94,7 +105,7 @@ echo "check: ok"
 #
 # test: 7cb6af2e-3061-4867-96e3-ee175b87a114
 # desc: can not resolve ref
-test_name=git-ref-dosnt-resolve
+test_name=git-ref-doesnt-resolve
 echo "test: $module/$test_name: $mode"
 
 $TACKLER_SH \
@@ -106,9 +117,6 @@ echo "check: ok"
 
 #####################################################################
 #
-# todo: GitoxideLabs/gitoxide#2351
-# 2>&1 | grep 'Tackler error: Txn Data: The ref .* "not-found-ref" .* not be found'
-#
 # test: 4b507e08-b90e-4a6f-9c6b-4fef7c58d9fe
 # desc: ref which is not found
 test_name=git-ref-not-found
@@ -117,14 +125,11 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "not-found-ref" \
-    2>&1 | grep 'Tackler error: Txn Data: .*not-found-ref'
+    2>&1 | grep 'Tackler error: Txn Data: The ref .* "not-found-ref" .* not be found'
 
 echo "check: ok"
 
 #####################################################################
-#
-# todo: GitoxideLabs/gitoxide#2351
-# 2>&1 | grep 'Tackler error: Txn Data: Tried to navigate .* anchor first'
 #
 # test: 14b7e8eb-d168-48b2-86e7-8d922f306ad0
 # desc: ref format is invalid
@@ -136,7 +141,7 @@ $TACKLER_SH \
     --output.prefix $test_name \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "^^^" \
-    2>&1 | grep 'Tackler error: .*\^'
+    2>&1 | grep 'Tackler error: Txn Data: Tried to navigate .* anchor first'
 
 echo "check: ok"
 

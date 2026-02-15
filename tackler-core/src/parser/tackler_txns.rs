@@ -4,6 +4,7 @@
  */
 use itertools::Itertools;
 use std::collections::HashSet;
+use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::str;
 //use std::time::{SystemTime, UNIX_EPOCH};
@@ -84,7 +85,18 @@ pub fn git_to_txns(
             (repo.find_object(object_id)?.try_into_commit()?, None)
         }
         GitInputSelector::Reference(ref_str) => {
-            let id = repo.rev_parse_single(ref_str.as_bytes())?;
+            let id_res = repo.rev_parse_single(ref_str.as_bytes());
+            let id = match id_res {
+                Ok(id) => id,
+                Err(err) => {
+                    let msg = if let Some(source) = err.source() {
+                        format!("{source}")
+                    } else {
+                        format!("{err}")
+                    };
+                    return Err(msg.into());
+                }
+            };
             let reference = if id.to_string().starts_with(ref_str.as_str()) {
                 // This is tackler specific logic: don't show ref if it's plain commit id
                 None
