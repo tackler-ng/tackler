@@ -36,10 +36,11 @@ itertools = { workspace = true }
 regex = { workspace = true }
 sha2 = "0.10.9"
 sha3 = "0.10.8"
-digest = "0.10.7"
+# lock until 0.11 sha2 and sha3 are released
+digest = "< 0.11.0"
 
 gix = { version = "0.79.0", default-features = false, features = ["max-performance-safe", "revision" ]} #"auto-chain-error"] }
-toml = "1.0.1"
+toml = "1.0.3"
 winnow = "0.7.14"
 
 mimalloc = { workspace = true }
