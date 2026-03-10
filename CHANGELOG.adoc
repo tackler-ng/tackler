@@ -28,8 +28,8 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* gix: 0.79.0
-* toml: 1.0.1
+* gix: 0.80.0
+* toml: 1.0.6
 
 ===== Rust toolchain
 
