@@ -20,5 +20,8 @@ updates:
         - dependency-name: "tackler-api"
         - dependency-name: "tackler-core"
         - dependency-name: "tackler-cli"
+        # sha2 and sha3 from 0.11 series are needed
+        - dependency-name: "digest"
+          versions: ["0.11.x"]
     rebase-strategy: "disabled"
 

@@ -37,6 +37,7 @@ regex = { workspace = true }
 sha2 = "0.10.9"
 sha3 = "0.10.8"
 # lock until 0.11 sha2 and sha3 are released
+# change also dependabot.yml
 digest = "< 0.11.0"
 
 gix = { version = "0.79.0", default-features = false, features = ["max-performance-safe", "revision" ]} #"auto-chain-error"] }
