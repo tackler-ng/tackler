@@ -403,6 +403,7 @@ pub(crate) struct DefaultModeArgs {
             PossibleValue::new(""),
             PossibleValue::new("identity"),
             PossibleValue::new("equity"),
+            PossibleValue::new("accounts"),
         ]),
         requires("output_directory"),
         requires("output_name"),
