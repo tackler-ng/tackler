@@ -4,18 +4,17 @@ use crate::{export::Export, kernel::Settings, model::TxnSet, tackler};
 
 pub struct AccountsExporter {}
 
+
+/// Wrapper struct to order account names.
+/// Compares 2 account names piecewise splitting on ':'
+/// 
+/// If `account_name_a` is a prefix of `account_name_b` then `account_name_a < account_name_b` 
 #[derive(PartialEq, Eq, Hash, PartialOrd)]
 struct AccountName<'a>(Vec<&'a str>);
 
 impl<'a> From<&'a String> for AccountName<'a> {
     fn from(value: &'a String) -> Self {
         Self(value.split(":").collect())
-    }
-}
-
-impl<'a> From<AccountName<'a>> for String {
-    fn from(value: AccountName<'a>) -> Self {
-        value.0.join(":")
     }
 }
 
