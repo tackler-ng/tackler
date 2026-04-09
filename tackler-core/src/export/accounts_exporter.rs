@@ -57,9 +57,13 @@ impl Export for AccountsExporter {
                 accounts.insert(AccountName::from(&post.acctn.atn.account));
             }
         }
+
+        writeln!(writer, "accounts = [")?;
+
         for i in accounts {
-            writeln!(writer, "{i}")?;
+            writeln!(writer, "   \"{i}\",")?;
         }
+        writeln!(writer, "]")?;
         Ok(())
     }
 }
