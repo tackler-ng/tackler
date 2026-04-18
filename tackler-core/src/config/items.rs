@@ -150,10 +150,12 @@ pub enum ExportType {
     #[default]
     Equity,
     Identity,
+    Accounts,
 }
 impl ExportType {
     const EQUITY: &'static str = "equity";
     const IDENTITY: &'static str = "identity";
+    const ACCOUNTS: &'static str = "accounts";
 
     /// Export type from string
     ///
@@ -163,6 +165,7 @@ impl ExportType {
         match e {
             Self::EQUITY => Ok(ExportType::Equity),
             Self::IDENTITY => Ok(ExportType::Identity),
+            Self::ACCOUNTS => Ok(ExportType::Accounts),
             _ => Err(format!(
                 "Unknown export type: '{e}'. Valid options are: {}, {}",
                 Self::EQUITY,

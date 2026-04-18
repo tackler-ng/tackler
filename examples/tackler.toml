@@ -346,7 +346,7 @@ timestamp-style = "seconds"
 ###
 ### This is a list of exports targets to generate.
 ###
-### Valid options are: "equity", "identity"
+### Valid options are: "equity", "identity", "accounts"
 ### CLI: --exports
 targets = [ ]
 
@@ -364,5 +364,11 @@ equity-account = "Equity:Balance"
 ### Identity
 ###
 ### There are no configuration options for identity export
+###
+
+###
+### Accounts Export
+### 
+### There are no configuration options for accounts export
 ###
 ############################################################################

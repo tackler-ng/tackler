@@ -14,6 +14,9 @@ use crate::tackler;
 pub use identity_exporter::IdentityExporter;
 use tackler_rs::create_output_file;
 
+pub use accounts_exporter::AccountsExporter;
+
+mod accounts_exporter;
 mod equity_exporter;
 mod identity_exporter;
 
@@ -63,6 +66,15 @@ pub fn write_exports<ProgW: io::Write + ?Sized>(
                 id_exporter.write_export(settings, &mut out_writer, txn_set)?;
                 if let Some(p) = prog_writer.as_mut() {
                     writeln!(p, "{:>21} : {}", "Identity Export", path)?;
+                }
+            }
+            ExportType::Accounts => {
+                let acc_explorer = AccountsExporter {};
+                let (mut out_writer, path) =
+                    create_output_file(output_dir, output_name, "accounts", "toml")?;
+                acc_explorer.write_export(settings, &mut out_writer, txn_set)?;
+                if let Some(p) = prog_writer.as_mut() {
+                    writeln!(p, "{:>21} : {}", "Accounts Export", path)?;
                 }
             }
         }

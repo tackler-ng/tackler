@@ -10,8 +10,8 @@
 
 New features:
 
-* ...
-  ** ...
+* New export type "accounts"
+  ** The accounts exports will generate valid account file based on transaction data
 
 Changed functionality:
 
@@ -23,6 +23,11 @@ Changed functionality:
 
 Fixes in this release ...
 
+==== Contributions
+
+* Thanks link:https://github.com/VrugteVlieg[@VrugteVlieg] for contributing
+the account export feature
+(link:https://github.com/tackler-ng/tackler/pull/151[PR 151])!
 
 ==== Development
 
