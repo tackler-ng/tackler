@@ -71,7 +71,7 @@ pub fn write_exports<ProgW: io::Write + ?Sized>(
             ExportType::Accounts =>  {
                 let acc_explorer = AccountsExporter {};
                 let (mut out_writer, path) =
-                    create_output_file(output_dir, output_name, "accounts", "txn")?;
+                    create_output_file(output_dir, output_name, "accounts", "toml")?;
                 acc_explorer.write_export(settings, &mut out_writer, txn_set)?;
                 if let Some(p) = prog_writer.as_mut() {
                     writeln!(p, "{:>21} : {}", "Accounts Export", path)?;

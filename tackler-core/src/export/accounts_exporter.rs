@@ -1,3 +1,7 @@
+/*
+ * Tackler-NG 2026
+ * SPDX-License-Identifier: Apache-2.0
+ */
 use std::{cmp::Ordering, collections::BTreeSet, io};
 
 use crate::{export::Export, kernel::Settings, model::TxnSet, tackler};
