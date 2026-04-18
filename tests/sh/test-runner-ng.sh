@@ -56,6 +56,7 @@ $TEST_DIR/location.sh
 $TEST_DIR/location-errors.sh
 $TEST_DIR/parser.sh
 $TEST_DIR/parser-errors.sh
+$TEST_DIR/reporting-accounts.sh
 $TEST_DIR/reporting-equity.sh
 $TEST_DIR/reporting-group_by.sh
 $TEST_DIR/reporting-ok.sh
