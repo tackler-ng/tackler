@@ -33,8 +33,12 @@ the account export feature
 
 Updated dependencies (major or minor version):
 
-* gix: 0.80.0
+* digest: 0.11.2
+* gix: 0.81.0
+* sha2: 0.11.0
+* sha3: 0.11.0
 * toml: 1.0.6
+* winnow: 1.0.1
 
 ===== Rust toolchain
 
