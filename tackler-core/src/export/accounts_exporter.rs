@@ -17,32 +17,26 @@ struct AccountName<'a>(Vec<&'a str>);
 
 impl<'a> From<&'a String> for AccountName<'a> {
     fn from(value: &'a String) -> Self {
-        Self(value.split(":").collect())
+        Self(value.split(':').collect())
     }
 }
 
-impl<'a> std::fmt::Display for AccountName<'a> {
+impl std::fmt::Display for AccountName<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.0.join(":"))
     }
 }
 
-impl<'a> Ord for AccountName<'a> {
+impl Ord for AccountName<'_> {
     fn cmp(&self, other: &Self) -> Ordering {
         for (acc_a, acc_b) in self.0.iter().zip(other.0.iter()) {
             match acc_a.cmp(acc_b) {
-                Ordering::Equal => continue,
+                Ordering::Equal => {}
                 ordering => return ordering,
             }
         }
-
-        if self.0.len() > other.0.len() {
-            Ordering::Greater
-        } else if self.0.len() < other.0.len() {
-            Ordering::Less
-        } else {
-            Ordering::Equal
-        }
+        // So far subcomponents are equal, but which one has more subcomponents?
+        self.0.len().cmp(&other.0.len())
     }
 }
 
@@ -53,9 +47,14 @@ impl Export for AccountsExporter {
         writer: &mut W,
         txn_data: &TxnSet<'_>,
     ) -> Result<(), tackler::Error> {
+        // This can't be a String based set because natural sort won't work with numerical accounts
+        // Below is natural sort order for the following account names:
+        //    "E:01234567:Sweets:Ice·Cream",
+        //    "E:0123:567:Sweets:Ice·Cream",
+        // which is in wrong order ("E:0123:..." should come first)
         let mut accounts: BTreeSet<AccountName<'_>> = BTreeSet::new();
         for txn in &txn_data.txns {
-            for post in txn.posts.iter() {
+            for post in &txn.posts {
                 accounts.insert(AccountName::from(&post.acctn.atn.account));
             }
         }
