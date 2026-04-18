@@ -150,8 +150,7 @@ pub enum ExportType {
     #[default]
     Equity,
     Identity,
-    Accounts
-    
+    Accounts,
 }
 impl ExportType {
     const EQUITY: &'static str = "equity";

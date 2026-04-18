@@ -16,9 +16,9 @@ use tackler_rs::create_output_file;
 
 pub use accounts_exporter::AccountsExporter;
 
+mod accounts_exporter;
 mod equity_exporter;
 mod identity_exporter;
-mod accounts_exporter;
 
 pub trait Export {
     /// Write export
@@ -68,7 +68,7 @@ pub fn write_exports<ProgW: io::Write + ?Sized>(
                     writeln!(p, "{:>21} : {}", "Identity Export", path)?;
                 }
             }
-            ExportType::Accounts =>  {
+            ExportType::Accounts => {
                 let acc_explorer = AccountsExporter {};
                 let (mut out_writer, path) =
                     create_output_file(output_dir, output_name, "accounts", "toml")?;
