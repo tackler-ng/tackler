@@ -46,6 +46,8 @@ pub(crate) struct AccountTreeNode {
     root: String,
     /// parent account (path)
     pub(crate) parent: String,
+    /// account as sub-accounts
+    parts: Vec<String>,
     /// account of posting (path)
     pub(crate) account: String,
     /// account name (leaf)
@@ -60,6 +62,7 @@ impl AccountTreeNode {
         self.depth == 2
     }
 }
+
 #[derive(Debug, Clone, Eq)]
 pub struct TxnAccount {
     pub(crate) atn: Arc<AccountTreeNode>,
@@ -82,7 +85,7 @@ impl Ord for TxnAccount {
         match self.comm.cmp(&other.comm) {
             Ordering::Less => Ordering::Less,
             Ordering::Greater => Ordering::Greater,
-            Ordering::Equal => self.atn.account.cmp(&other.atn.account),
+            Ordering::Equal => self.atn.cmp(&other.atn),
         }
     }
 }
@@ -111,9 +114,39 @@ impl Display for AccountTreeNode {
     }
 }
 
+impl Hash for AccountTreeNode {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.account.hash(state);
+    }
+}
+
 impl PartialEq for AccountTreeNode {
     fn eq(&self, other: &Self) -> bool {
-        self.account == other.account
+        // depth is used as fast-path checking
+        self.depth == other.depth && self.account == other.account
+    }
+}
+
+impl PartialOrd for AccountTreeNode {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for AccountTreeNode {
+    /// Compares 2 account names piecewise by sub-accounts
+    /// Basic lexical sort order of account name can't be used because of
+    /// numerical accounts will sort wrongly with ':' in the middle
+    /// If `account_name_a` is a prefix of `account_name_b` then `account_name_a < account_name_b`
+    fn cmp(&self, other: &Self) -> Ordering {
+        for (acc_a, acc_b) in self.parts.iter().zip(other.parts.iter()) {
+            match acc_a.cmp(acc_b) {
+                Ordering::Equal => {}
+                ordering => return ordering,
+            }
+        }
+        // So far subcomponents are equal, but which one has more subcomponents?
+        self.depth.cmp(&other.depth)
     }
 }
 
@@ -157,6 +190,7 @@ impl AccountTreeNode {
 
         let depth = parts.len();
         let root = String::from(parts[0]);
+        let acc_parts = parts.iter().map(ToString::to_string).collect();
 
         let mut rev_parts = parts;
         rev_parts.reverse();
@@ -169,6 +203,7 @@ impl AccountTreeNode {
             depth,
             root,
             parent,
+            parts: acc_parts,
             account: account.to_string(),
             name,
         })

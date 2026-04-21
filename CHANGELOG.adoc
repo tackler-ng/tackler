@@ -20,8 +20,10 @@ Changed functionality:
 
 
 ==== Fixes
-
-Fixes in this release ...
+ 
+* Fixed account sorting order in reports with special case of numerical sub-accounts 
+  (link:https://github.com/tackler-ng/tackler/issues/152[Issue 152])
+** This is purely visual fix and doesn't affect any report results
 
 ==== Contributions
 
