@@ -24,6 +24,11 @@ Changed functionality:
 * Fixed account sorting order in reports with special case of numerical sub-accounts 
   (link:https://github.com/tackler-ng/tackler/issues/152[Issue 152])
 ** This is purely visual fix and doesn't affect any report results
+* Updated `gix` dependecy: this fixes
+link:https://github.com/GitoxideLabs/gitoxide/releases/tag/gix-v0.82.0[several vulnerabilities] in it.
+** Tackler is especially impacted if victim opens untrusted git journal with vulnerable version
+(link:https://github.com/GitoxideLabs/gitoxide/security/advisories/GHSA-x494-mj8g-cj27[GHSA-x494-mj8g-cj27]
+
 
 ==== Contributions
 
@@ -36,11 +41,11 @@ the account export feature
 Updated dependencies (major or minor version):
 
 * digest: 0.11.2
-* gix: 0.81.0
+* gix: 0.82.0
 * sha2: 0.11.0
 * sha3: 0.11.0
 * toml: 1.0.6
-* winnow: 1.0.1
+* winnow: 1.0.2
 
 ===== Rust toolchain
 
