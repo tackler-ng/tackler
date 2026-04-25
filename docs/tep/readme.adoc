@@ -12,6 +12,7 @@ None at the moment.
 === TEPs in planning phase
 
 * xref:./tep-1003.adoc[TEP-1003: Profit and Loss (PnL)]
+* xref:./tep-1017.adoc[TEP-1017: Advanced Chart of Accounts]
 
 
 === Implemented TEPs
