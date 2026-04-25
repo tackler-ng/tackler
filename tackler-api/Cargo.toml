@@ -4,7 +4,7 @@
 #
 [package]
 name = "tackler-api"
-version = "0.14.0"
+version = "0.15.0"
 description = "API components for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
