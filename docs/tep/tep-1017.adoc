@@ -63,6 +63,8 @@ Sub-changes:
 
 === Sub-change 1: `+[[account]]+` array-of-tables and storage shape
 
+Open design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
+
 `accounts.toml` accepts two coexisting top-level keys:
 
 `accounts = ["Foo", "Bar", ...]`::
@@ -124,7 +126,8 @@ timestamp < `open` are rejected in strict mode.
 `close` (optional, TOML date or datetime)::
 First *invalid* timestamp for postings to this account — postings at
 or after this timestamp are rejected. Implicit value: `+infinity`.
-Convention is to precede a `close` with a zero-balance assertion.
+Convention is to precede a `close` with a zero-balance assertion,
+however, tackler doesn't support balance assertions at the moment.
 
 Together they define a half-open interval `[open, close)`. Both fields
 accept the same temporal forms Tackler already accepts in txn headers:
@@ -144,6 +147,12 @@ timestamp written the same way. No new timezone-resolution rules to
 specify. It also keeps forward compatibility: writing
 `close = 2023-12-31` today and later deciding sub-day precision is
 needed costs nothing — just rewrite that single line.
+
+To support the above, it might be needed to define these time datatypes as string,
+so that they could be parsed with existing machinery, if it get's too complicated
+to support above natively with TOML.
+link:https://github.com/tackler-ng/tackler/blob/b1b2db5c329426e8536147cb53705f7dccdf5765/tackler-core/src/parser/parts/timestamp.rs#L163[tackler-core / parser / parts / timestamp.rs: parse_timestamp]
+
 
 Beancount's mental model carries over: `close` is the moment the
 account became inactive; postings at or after that moment are no
@@ -194,6 +203,8 @@ taxonomy this TEP would not be the right place to define.
 
 === Sub-change 5: Reserved `# kind: <value>` posting-tag override
 
+Open Design Question: https://github.com/tackler-ng/tackler/issues/162
+
 The motivation for `kind` on accounts is enabling *corrective transactions
 on immutable journals*: a posting that flips the natural debit/credit side
 of its account (e.g., crediting a normally-debited asset for a refund
@@ -218,6 +229,8 @@ posting-tag syntax (Sub-change 5) reuses the existing posting-tag
 mechanism from TEP-1011 with no syntactic change; only its semantic
 interpretation is reserved for future work.
 
+Open Design Question: https://github.com/tackler-ng/tackler/issues/162
+
 
 == Implementation
 
@@ -229,6 +242,7 @@ declared active periods (default behavior is to filter them):
 * [ ] `--include-closed` (or equivalent on the existing accounts-filter
   CLI surface — to be confirmed during implementation)
 
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
 
 === CONF Changes
 
@@ -239,6 +253,9 @@ declared active periods (default behavior is to filter them):
   `kind` (optional, `"debit"` \| `"credit"`)
 * [ ] Coexistence rules with the existing `accounts = [...]` flat list
   (see <<validation>>)
+
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/162
 
 
 === Filtering Changes
@@ -266,6 +283,8 @@ period information is ignored entirely.
 * `open >= close` within a block → error.
 * `kind` value not in {`"debit"`, `"credit"`} → error.
 
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/161
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/162
 
 === Machinery
 
@@ -317,6 +336,7 @@ not appear for that date range. An opt-in CLI flag (see CLI Changes)
 restores the current behavior of including all declared accounts
 regardless of period.
 
+Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
 
 ==== Balance Report
 
@@ -351,6 +371,8 @@ regardless of period.
 
 
 ==== Accounts Export
+
+Open Desing Question (ODQ): https://github.com/tackler-ng/tackler/issues/160
 
 * [ ] Round-trip: emit a flat string for accounts with no metadata, an
   `+[[account]]+` block (or N blocks for periodic accounts) for everything
@@ -437,7 +459,7 @@ Normal, ok-case tests to validate functionality:
 * [ ] `kind` override on subaccount overrides ancestor's `kind`
 * [ ] flat list and `+[[account]]+` block coexist for different names
 * [ ] relaxed mode ignores all period and `kind` constraints
-
+* [ ] if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
 
 ==== Errors
 
@@ -452,6 +474,8 @@ Various error cases:
 * [ ] e: `kind` value not in {`"debit"`, `"credit"`}
 * [ ] e: posting with date outside all declared periods (strict mode)
 
+* [ ] e: Additional tests based on (ODQ): https://github.com/tackler-ng/tackler/issues/161
+* [ ] e: if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
 
 ==== Perf
 
