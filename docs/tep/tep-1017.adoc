@@ -1,205 +1,464 @@
 = TEP-1017: Advanced Chart of Accounts
 
-See branch
-link:https://github.com/tackler-ng/tackler/tree/tep/tep-XXXX-SHORT-NAME/docs/tep/tep-XXXX.adoc[/tep/tep-XXXX-SHORT-NAME]
-for actual TEP-XXXX content.
+Advanced Chart of Accounts definitions: per-account lifecycle (open / close),
+periodicity, and a `kind` (debit / credit) attribute, expressed in
+`accounts.toml`.
 
-Advanced Chart of Accounts definitions
+Github issue: https://github.com/tackler-ng/tackler/issues/154
+
 
 == Description
 
+Today `accounts.toml` is a flat list of account names. Under
+`kernel.strict = true` an account is in one of two states: it is in the list
+(always valid for any txn date) or it isn't (always invalid). There is no
+temporal dimension.
 
+That makes it impossible to retire an account cleanly. Removing it from
+`accounts.toml` breaks strict-mode parsing of every historical txn that still
+references it, because Tackler reads the current `accounts.toml`, not the
+`accounts.toml` that existed on the txn's date. Tackler does not time-travel
+through git during validation. Keeping the name in the list forever is the
+only practical workaround, and it leaves no signal that the account has been
+retired.
+
+Opening is fine today: at parse time Tackler reads the current
+`accounts.toml`, so adding a name at commit X means Tackler accepts postings
+from X onward. "Opened on X" emerges naturally from git history without any
+explicit directive. The symmetric problem — closing — does not solve itself
+the same way, because validation is always against HEAD's config.
+
+A first-class close mechanism is also a de-facto convention in the broader
+plain-text-accounting ecosystem (Beancount has a journal `close` directive;
+hledger uses tags + `hledger check`; commercial bookkeeping tools
+universally implement "archive, don't delete" for accounts that have been
+used). Bringing this into Tackler removes the need for app-layer wrappers to
+invent their own archived-accounts sidecar.
+
+This TEP proposes per-account lifecycle and metadata expressed in
+`accounts.toml`, *not* as journal directives. Tackler cannot reliably attach
+directives to the txn stream because txn filters can drop them out of view;
+per-account metadata has to be configuration.
 
 
 == Summary of Changes
 
-Summary of changes
+A new `+[[account]]+` array-of-tables key is added to `accounts.toml`. It
+coexists with the existing flat `accounts = [...]` list. Each `+[[account]]+`
+block declares a single (account-name, period) with optional metadata.
 
-* Sub-change 1
-* Sub-change 2
+Sub-changes:
 
-Longer description with high level explanation of this change
+* New `+[[account]]+` array-of-tables key in `accounts.toml`
+* Per-account `open` and `close` dates (half-open interval `[open, close)`)
+* Periods via repeated entries (multiple disjoint `+[[account]]+` blocks for
+  the same name)
+* New per-account `kind` attribute (`"debit"` | `"credit"`), cascading down
+  the account tree
+* Reserved `# kind: <value>` posting-tag syntax for future corrective-entry
+  override (semantics specified in a later TEP)
+* Strict-mode enforcement of period membership; relaxed mode unchanged
+* Reports and exports respect declared periods
 
 
-=== Sub-change 1
+=== Sub-change 1: `+[[account]]+` array-of-tables and storage shape
 
-Lorem ipsum ...
+`accounts.toml` accepts two coexisting top-level keys:
+
+`accounts = ["Foo", "Bar", ...]`::
+The existing flat list, unchanged. Means "always-open, no metadata."
+Continues to be the right shape for users who do not need lifecycle or
+`kind` data. No deprecation.
+
+`+[[account]]+`::
+New in TEP-1017. An array of tables, one block per (account-name, period).
+Each block declares one account name with its optional metadata.
+
+Both keys may appear in the same file. An account name appears in *at most
+one* of them — see <<validation>>.
+
+.accounts.toml example
+----
+# legacy / shorthand — unchanged behavior
+accounts = [
+    "Income:Salary",
+    "Expenses:Food",
+]
+
+# advanced — close an old account, with kind
+[[account]]
+name  = "Assets:Banks:OldBank:Savings"
+open  = 2018-03-01
+close = 2023-12-31
+kind  = "debit"
+
+# advanced — sporadic open (one block per period, same name)
+# kind must agree across periods (see Sub-change 3)
+[[account]]
+name  = "Assets:HolidayCash"
+open  = 2024-12-01
+close = 2025-01-15
+kind  = "debit"
+
+[[account]]
+name  = "Assets:HolidayCash"
+open  = 2025-12-01
+close = 2026-01-15
+kind  = "debit"
+----
+
+This is the first use of TOML array-of-tables in Tackler config; existing
+`accounts.toml`, `commodities.toml`, `tags.toml` only use flat
+`key = [...]` lists. The two-key shape (`accounts` + `+[[account]]+`)
+preserves that shape for the simple case and reaches for array-of-tables
+only when per-account metadata is needed.
 
 
-=== Sub-change 2
+=== Sub-change 2: `open` and `close` timestamps
 
-Lorem ipsum ...
+`open` (optional, TOML date or datetime)::
+First valid timestamp for postings to this account. Implicit value:
+`-infinity` (the account has always been open). Postings with
+timestamp < `open` are rejected in strict mode.
+
+`close` (optional, TOML date or datetime)::
+First *invalid* timestamp for postings to this account — postings at
+or after this timestamp are rejected. Implicit value: `+infinity`.
+Convention is to precede a `close` with a zero-balance assertion.
+
+Together they define a half-open interval `[open, close)`. Both fields
+accept the same temporal forms Tackler already accepts in txn headers:
+
+* **Bare date** (`2023-12-31`) — normalized the same way a bare date
+  is normalized in a txn header (midnight UTC by default). The
+  expected shape for the common case: an account closes "on a day."
+* **Local datetime** (`2023-12-31T14:30:00`) — likewise normalized
+  the same as in a txn header. Use when sub-day precision matters
+  (system cutovers, exchange go-live times, audit-grade events).
+* **Offset datetime** (`2023-12-31T14:30:00+02:00` or `…Z`) — used
+  as-is.
+
+The point is to reuse the existing timestamp parser and conventions
+verbatim, so an `open` / `close` value behaves identically to a txn
+timestamp written the same way. No new timezone-resolution rules to
+specify. It also keeps forward compatibility: writing
+`close = 2023-12-31` today and later deciding sub-day precision is
+needed costs nothing — just rewrite that single line.
+
+Beancount's mental model carries over: `close` is the moment the
+account became inactive; postings at or after that moment are no
+longer accepted.
+
+
+=== Sub-change 3: Periods via repeated entries
+
+Multiple `+[[account]]+` blocks with the same `name` are *allowed* and
+represent disjoint periods for that account. A posting to `name` is valid
+iff its date falls in some declared period.
+
+This single mechanism subsumes:
+
+* one-shot retirement (one block with `close` set)
+* sporadic opens, e.g. seasonal accounts (N blocks with gaps)
+* close-then-reopen (two blocks with a gap)
+
+No nested `periods = [...]` syntax is needed. Implementation: group
+blocks by name, sort by `open`, validate non-overlap, lookup is binary
+search by date.
+
+`open` and `close` naturally vary per block. `kind` (Sub-change 4) must
+be identical across all periods of the same name — changing the kind
+mid-life would mean it is effectively a different account; the user
+should choose a different name.
+
+
+=== Sub-change 4: `kind` attribute
+
+`kind` (optional, `"debit"` | `"credit"`)::
+The account's natural balance side. Optional everywhere; if unset, no
+constraint. Cascades down the account tree: subaccounts inherit the
+nearest declared ancestor's `kind` unless they declare their own.
+
+We deliberately do *not* import a 5-type plain-text-accounting taxonomy
+(asset / liability / equity / income / expense). Tackler today does not
+parse account types from the `Assets:` / `Income:` prefix — those are
+convention, not semantics — and importing a taxonomy in this TEP invents
+structure for no current consumer. The future P&L work (TEP-1003) may
+want categorization with different splits; if so it adds an orthogonal
+`category` field later without conflicting with `kind`.
+
+The two-value `kind` is the minimum that supports the posting-level
+override outlined in #154 (Sub-change 5) and avoids importing a
+taxonomy this TEP would not be the right place to define.
+
+
+=== Sub-change 5: Reserved `# kind: <value>` posting-tag override
+
+The motivation for `kind` on accounts is enabling *corrective transactions
+on immutable journals*: a posting that flips the natural debit/credit side
+of its account (e.g., crediting a normally-debited asset for a refund
+correction).
+
+This TEP *reserves* the `# kind: debit` / `# kind: credit` posting-tag
+syntax for that purpose but does *not* specify enforcement semantics
+(when it errors, what changes in reports, how it interacts with balance
+assertions). Posting-tag infrastructure already exists from TEP-1011, so
+reserving the name is essentially free; the validation and reporting
+semantics belong in a dedicated follow-up TEP focused on corrective
+entries, not in this one.
+
+Until that follow-up TEP lands, `# kind: …` on a posting is parsed and
+ignored (or warned — implementation choice).
 
 
 == Journal File Format
 
-Journal file format changes, if any
+No journal file format change. The reserved `# kind: <value>`
+posting-tag syntax (Sub-change 5) reuses the existing posting-tag
+mechanism from TEP-1011 with no syntactic change; only its semantic
+interpretation is reserved for future work.
 
 
 == Implementation
 
 === CLI Changes
 
-Changes to command line interface
+Reports and exports gain an opt-in flag to include accounts outside their
+declared active periods (default behavior is to filter them):
 
-* [ ] item
+* [ ] `--include-closed` (or equivalent on the existing accounts-filter
+  CLI surface — to be confirmed during implementation)
 
 
 === CONF Changes
 
-Changes to conf-settings
+* [ ] New `+[[account]]+` array-of-tables key in `accounts.toml`
+  (Sub-change 1)
+* [ ] Per-block fields: `name` (required, string), `open` (optional,
+  TOML date or datetime), `close` (optional, TOML date or datetime),
+  `kind` (optional, `"debit"` \| `"credit"`)
+* [ ] Coexistence rules with the existing `accounts = [...]` flat list
+  (see <<validation>>)
 
-* [ ] item
 
 === Filtering Changes
+
+In strict mode, the existing "unknown account" rejection path extends to:
+*account is unknown OR txn date is outside every declared period for that
+account*. Same error class, distinct error message. In relaxed mode the
+period information is ignored entirely.
+
+
+[#validation]
+=== Validation rules (config load time)
+
+* Same name in `accounts = [...]` AND in any `+[[account]]+` block →
+  error. The flat form means "always-open, no constraints"; mixing with
+  a windowed entry is ambiguous.
+* Same name in two `accounts = [...]` entries → error (already implicit
+  today).
+* Multiple `+[[account]]+` blocks with the same name and *overlapping*
+  periods → error.
+* Multiple `+[[account]]+` blocks with the same name and *disjoint*
+  periods → allowed (this is the periods feature, Sub-change 3).
+* Multiple `+[[account]]+` blocks with the same name but *disagreeing
+  `kind`* → error (Sub-change 4).
+* `open >= close` within a block → error.
+* `kind` value not in {`"debit"`, `"credit"`} → error.
 
 
 === Machinery
 
-Changes to machinery
-
-* [ ] item
+* [ ] Extend `Accounts` config struct (currently
+  `tackler-core/src/config/items.rs`) to hold both the flat list and a
+  `Vec<AccountSpec>` parsed from `+[[account]]+` blocks.
+* [ ] TOML deserialization for `+[[account]]+` in
+  `tackler-core/src/config/raw_items.rs`.
+* [ ] `AccountTrees` (in `tackler-core/src/kernel/settings.rs`) gains a
+  by-name → sorted-periods map and a by-name → `kind` resolution.
+* [ ] `get_or_create_txn_account()` checks the txn date against the
+  periods when strict mode is on.
+* [ ] Synthetic parent-account behavior unchanged.
 
 
 ==== API Changes
 
-Api changes to server or client interfaces.
+No API surface changes beyond the config schema. Period and `kind`
+data are internal to validation and reporting; they do not appear in
+JSON report output unless a future TEP adds them.
 
 
 ===== Server API Changes
 
-Changes to server API
-
-* [ ] item
+* [ ] none anticipated
 
 
 ===== Client API Changes
 
-Changes to client API or JSON model
+* [ ] none anticipated
 
-* [ ] item
 
 ===== JSON Model
 
-Changes to JSON model
-
-* [ ] Metadata
-* [ ] JSON Reports
-** [ ] BalanceReport
-** [ ] BalanceGroupReport
-** [ ] RegisterReport
+* [ ] none anticipated
 
 
 ==== New Dependencies
 
-* [ ] link / url of new dependency
-** [ ] Add and check licenses: link / url
-** [ ] Is there NOTICE file(s)?
-** [ ] Add license under link:../licenses/[doc/licenses]
-*** [ ] Add NOTICES under link:../licenses/[doc/licenses]
-** [ ] Add link of license to xref:../readme.adoc[index]
-** [ ] Add link to Site credits
-** [ ] Add license material to binary distribution
+None anticipated. TOML array-of-tables is already supported by the
+existing TOML deserializer.
 
 
 === Reporting
 
-Changes to reports or reporting
+By default, balance / balance-group / register reports filter accounts
+to their declared active periods — outside the window the account does
+not appear for that date range. An opt-in CLI flag (see CLI Changes)
+restores the current behavior of including all declared accounts
+regardless of period.
 
 
 ==== Balance Report
 
-Changes to balance report
-
-* [ ] item
+* [ ] Filter accounts by declared periods relative to the report date
+  range.
 
 
 ==== Balance Group Report
 
-Changes to balance group report
-
-* [ ] item
+* [ ] As Balance Report.
 
 
 ==== Register Report
 
-Changes to register report
-
-* [ ] item
+* [ ] Postings to a closed account are valid for dates inside its
+  declared periods and rejected outside them (in strict mode); the
+  register itself naturally surfaces only postings that are present.
 
 
 === Exporting
 
-Changes to exports or exporting
-
 ==== Equity Export
 
-Changes to equity export
-
-* [ ] item
+* [ ] Equity export must respect periods so re-running equity at a date
+  past a `close` produces the right opening balance for downstream
+  journals (no "phantom" postings to a closed account).
 
 
 ==== Identity Export
 
-Changes to identity export
+* [ ] No change anticipated; identity is a faithful copy of input.
 
-* [ ] item
+
+==== Accounts Export
+
+* [ ] Round-trip: emit a flat string for accounts with no metadata, an
+  `+[[account]]+` block (or N blocks for periodic accounts) for everything
+  else. No new flag — output shape is determined by the input data.
 
 
 === Documentation
 
 * [ ] xref:./readme.adoc[]: Update TEP index
-* [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
+* [ ] xref:../../README.adoc[]: new noteworthy feature
 * [ ] link:../../CHANGELOG[]: add new item
-* [ ] Does it warrant own T3DB file?
-** [ ] update xref:../../suite/tests.adoc[]
-** [ ] update xref:../../suite/check-tests.sh[]
-** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+* [ ] T3DB file (TBD during implementation)
 * [ ] User docs
 ** [ ] User Manual
 *** [ ] cli-arguments
-**** [ ] `--arg-1`
-**** [ ] `--arg-2`
-** [ ] tackler.toml
-*** [ ] `setting-1`
-*** [ ] `setting-2`
-** [ ] accounts.toml
-** [ ] commodities.toml
-** [ ] tags.toml
-** [ ] examples
+**** [ ] `--include-closed` (or equivalent)
+** [ ] tackler.toml — none
+** [ ] accounts.toml — document `+[[account]]+` shape, fields, validation,
+       periods, coexistence with flat `accounts = [...]`
+** [ ] commodities.toml — none
+** [ ] tags.toml — none
+** [ ] examples — add an `accounts.toml` example showing flat +
+       `+[[account]]+` coexistence and a periods example
 * [ ] Developer docs
-** [ ] API changes
-*** [ ] Server API changes
-*** [ ] Client API changes
-*** [ ] JSON Examples
+** [ ] Note that `+[[account]]+` is the first array-of-tables config in
+       Tackler
 
 
 === Future Plans and Postponed (PP) Features
 
-How and where to go from here?
-
 ==== Postponed (PP) Features
 
-Anything which wasn't implemented?
+5-type / category taxonomy on accounts::
+Asset / liability / equity / income / expense. Orthogonal to `kind`.
+Defer to TEP-1003 (P&L) or whichever feature first needs categorization
+beyond debit/credit. Add as a separate `category` field; non-breaking
+addition.
+
+`# kind: <value>` posting-override enforcement semantics::
+This TEP reserves the syntax (Sub-change 5). When it errors, what it
+changes in reports, and how it interacts with balance assertions
+belong in a dedicated follow-up TEP focused on corrective entries.
+
+Per-account `commodity` constraint::
+Explicitly owned by TEP-1001 (Units and Commodities) Phase 2, which
+already lists "default commodity per account?" as planned work. Cross-
+reference; do not encroach.
+
+Booking method (Beancount-style FIFO / LIFO / STRICT)::
+Defer until lots / cost-basis exist in Tackler.
+
+Aliases / notes / payees on accounts (Ledger-CLI-style subdirectives)::
+Not requested; not in scope.
+
+Cron-style sporadic period syntax::
+Repeated `+[[account]]+` blocks already cover sporadic / seasonal
+accounts with explicit dates. If verbosity becomes a real complaint
+later, add sugar (`every-q1 = true` or similar) then. The repeated-
+entries mechanism is the underlying model regardless.
 
 
 === Tests
 
 Normal, ok-case tests to validate functionality:
 
-* [ ] test
+* [ ] flat `accounts = [...]` only, unchanged behavior
+* [ ] single `+[[account]]+` block with no metadata, equivalent to flat
+* [ ] `+[[account]]+` with `open` (date): posting at `open` accepted,
+  posting one moment earlier rejected (strict)
+* [ ] `+[[account]]+` with `close` (date): posting one moment before
+  `close` accepted, posting at `close` rejected (strict)
+* [ ] `+[[account]]+` with both `open` and `close`: half-open `[open,
+  close)` membership
+* [ ] `+[[account]]+` with datetime `open` / `close`: sub-day boundary
+  semantics
+* [ ] `+[[account]]+` with bare-date `open` / `close` is normalized
+  identically to a bare-date txn timestamp
+* [ ] `+[[account]]+` with offset-datetime `open` / `close` is used
+  as-is
+* [ ] multi-period (two `+[[account]]+` blocks for same name): posting in
+  either window accepted, posting in the gap rejected (strict)
+* [ ] `kind` cascade: posting to `Assets:Sub:Sub` resolves `kind` from
+  declared `Assets`
+* [ ] `kind` override on subaccount overrides ancestor's `kind`
+* [ ] flat list and `+[[account]]+` block coexist for different names
+* [ ] relaxed mode ignores all period and `kind` constraints
+
 
 ==== Errors
 
 Various error cases:
 
-* [ ] e: error test
+* [ ] e: same name in `accounts = [...]` and `+[[account]]+`
+* [ ] e: same name in two `accounts = [...]` entries
+* [ ] e: two `+[[account]]+` blocks for same name with overlapping
+  periods
+* [ ] e: two `+[[account]]+` blocks for same name with disagreeing `kind`
+* [ ] e: `open >= close` within a block
+* [ ] e: `kind` value not in {`"debit"`, `"credit"`}
+* [ ] e: posting with date outside all declared periods (strict mode)
+
 
 ==== Perf
 
-Is there need to run or create new perf tests?
+* [ ] period lookup is per posting; binary search over per-account
+  sorted periods should be negligible. Measure on a large journal to
+  confirm no regression.
 
-* [ ] perf test
 
 ==== Feature and Test Coverage Tracking
 
@@ -207,11 +466,11 @@ Is there need to run or create new perf tests?
 
 Feature-id::
 
-* name: <Feature name / subject-line>
-* uuid: <UUID>
+* name: Advanced Chart of Accounts definitions
+* uuid: 000769d3-6829-435a-a15d-8ce0e3a15670
 
 
-link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+link:https://github.com/tackler-ng/tackler-t3db/[tests-1017.yml: TEP-1017 T3DB]
 
 
 ==== Metadata template for Feature and Test Coverage Tracking
