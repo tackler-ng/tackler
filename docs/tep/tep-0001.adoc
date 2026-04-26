@@ -6,14 +6,19 @@ for actual TEP-XXXX content.
 
 Single line description
 
-== Summary
+== Description
 
-Summary of changes
+Longer description with high level explanation of this change
+
+
+== Summary of Changes
+
+Summary of planned changes:
 
 * Sub-change 1
 * Sub-change 2
 
-Longer description with high level explanation of this change
+This is more technical, lower-level description of this change.
 
 
 === Sub-change 1
@@ -48,10 +53,14 @@ Changes to conf-settings
 
 === Filtering Changes
 
+Changes to filtering logic or implementation
+
+* [ ] item
+
 
 === Machinery
 
-Changes to machinery
+Changes to the tackler machinery (e.g. implementation)
 
 * [ ] item
 
@@ -137,6 +146,13 @@ Changes to equity export
 ==== Identity Export
 
 Changes to identity export
+
+* [ ] item
+
+
+==== Accounts Export
+
+Changes to accounts export
 
 * [ ] item
 
