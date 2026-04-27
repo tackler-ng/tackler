@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2025
+ * Tackler-NG 2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -8,6 +8,49 @@ use indoc::indoc;
 use tackler_core::kernel::Settings;
 use tackler_core::parser::string_to_txns;
 use tackler_rs::IndocUtils;
+
+fn criterion_benchmark_bare(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input =
+        indoc!(
+            "|2026-04-27
+             | e 1
+             | a
+             |
+             |").strip_margin();
+
+    c.bench_function("bare", |b| {
+        b.iter(|| {
+            let res = string_to_txns(&mut input.as_str(), &mut settings);
+            assert!(res.is_ok());
+        });
+    });
+}
+
+fn criterion_benchmark_header(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input =
+        indoc!(
+            "|2026-04-27
+             | # uuid: 506a2d55-2375-4d51-af3a-cf5021f04de9
+             | # tags: cef, first, second
+             | # location: geo:1.111,2.222,3.333
+             | e 1
+             | a
+             |
+             |").strip_margin();
+
+    c.bench_function("meta", |b| {
+        b.iter(|| {
+            let res = string_to_txns(&mut input.as_str(), &mut settings);
+            assert!(res.is_ok());
+        });
+    });
+}
 
 fn criterion_benchmark(c: &mut Criterion) {
     let mut settings = Settings::default();
@@ -26,7 +69,7 @@ fn criterion_benchmark(c: &mut Criterion) {
              |
              |").strip_margin();
 
-    c.bench_function("parser", |b| {
+    c.bench_function("everything", |b| {
         b.iter(|| {
             let res = string_to_txns(&mut input.as_str(), &mut settings);
             assert!(res.is_ok());
@@ -34,5 +77,5 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, criterion_benchmark);
+criterion_group!(benches, criterion_benchmark_bare, criterion_benchmark_header, criterion_benchmark);
 criterion_main!(benches);

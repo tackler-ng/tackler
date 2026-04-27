@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4 smarttab expandtab autoindent
 #
-# Tackler-NG 2025
+# Tackler-NG 2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -74,9 +74,10 @@ install:
 # Run all benchmarks
 bench: parser-bench git-bench
 
-# Run parser benchmarks
-parser-bench:
-    cargo bench parser
+# Run parser benchmarks: bare, meta, everything
+parser-bench *ARGS:
+    cargo bench {{ ARGS }}
+
 
 _integration-test target:
     bash tests/sh/test-runner-ng.sh --{{ target }}
