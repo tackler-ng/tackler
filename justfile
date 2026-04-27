@@ -78,7 +78,6 @@ bench: parser-bench git-bench
 parser-bench *ARGS:
     cargo bench {{ ARGS }}
 
-
 _integration-test target:
     bash tests/sh/test-runner-ng.sh --{{ target }}
 

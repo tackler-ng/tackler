@@ -77,5 +77,10 @@ fn criterion_benchmark(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, criterion_benchmark_bare, criterion_benchmark_header, criterion_benchmark);
+criterion_group!(
+    benches,
+    criterion_benchmark_bare,
+    criterion_benchmark_header,
+    criterion_benchmark
+);
 criterion_main!(benches);
