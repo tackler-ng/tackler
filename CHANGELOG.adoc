@@ -27,7 +27,7 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* ...
+* gix: 0.83.0
 
 ===== Rust toolchain
 
