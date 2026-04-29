@@ -1,5 +1,5 @@
 #
-# Tackler-NG 2025
+# Tackler-NG 2025-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -21,6 +21,6 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ok.toml \
     --input.file $SUITE_PATH/$module/ex/unknown-tag.txn \
-    2>&1 | grep 'Semantic error: Unknown tag:.*saunatonttu2'
+    2>&1 | grep 'semantic error - Unknown tag:.*saunatonttu2'
 
 echo "check: ok"

@@ -1,130 +1,119 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
-
 use crate::parser::Stream;
+use crate::parser::error::TacklerTxnError;
 use crate::parser::parts::txn_meta_location::parse_meta_location;
 use crate::parser::parts::txn_meta_tags::parse_meta_tags;
 use crate::parser::parts::txn_meta_uuid::parse_meta_uuid;
 use tackler_api::location::GeoPoint;
 use tackler_api::txn_header::Tags;
 use uuid::Uuid;
-use winnow::combinator::{alt, opt};
-use winnow::{ModalResult, Parser, seq};
+use winnow::ascii::space1;
+use winnow::combinator::{cut_err, fail, peek, repeat};
+use winnow::error::{StrContext, StrContextValue};
+use winnow::token::any;
+use winnow::{ModalResult, Parser, dispatch, seq};
 
+#[derive(Debug)]
 pub(crate) struct TxnMeta {
     pub(crate) uuid: Option<Uuid>,
     pub(crate) tags: Option<Tags>,
     pub(crate) location: Option<GeoPoint>,
 }
+impl TxnMeta {
+    fn new() -> TxnMeta {
+        TxnMeta {
+            uuid: None,
+            tags: None,
+            location: None,
+        }
+    }
+}
 
-fn permutation_uuid(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
+enum MetaItem {
+    Uuid(Uuid),
+    Location(GeoPoint),
+    Tags(Tags),
+}
+
+const CTX_LABEL: &str = "txn metadata";
+
+fn p_meta_uuid(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
     let m = parse_meta_uuid.parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: Some(m),
-        tags: None,
-        location: None,
-    })
+    Ok(MetaItem::Uuid(m))
 }
 
-fn permutation_uuid_tags_o_location(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_uuid, parse_meta_tags, opt(parse_meta_location)).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: Some(m.0),
-        tags: Some(m.1),
-        location: m.2,
-    })
-}
-fn permutation_uuid_location_o_tags(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_uuid, parse_meta_location, opt(parse_meta_tags),).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: Some(m.0),
-        tags: m.2,
-        location: Some(m.1),
-    })
-}
-fn permutation_tags(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
+fn p_meta_tags(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
     let m = parse_meta_tags.parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: None,
-        tags: Some(m),
-        location: None,
-    })
-}
-fn permutation_tags_uuid_o_location(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_tags, parse_meta_uuid, opt(parse_meta_location)).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: Some(m.1),
-        tags: Some(m.0),
-        location: m.2,
-    })
-}
-fn permutation_tags_location_o_uuid(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_tags, parse_meta_location, opt(parse_meta_uuid),).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: m.2,
-        tags: Some(m.0),
-        location: Some(m.1),
-    })
+    Ok(MetaItem::Tags(m))
 }
 
-fn permutation_location(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
+fn p_meta_location(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
     let m = parse_meta_location.parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: None,
-        tags: None,
-        location: Some(m),
-    })
+    Ok(MetaItem::Location(m))
 }
-fn permutation_location_uuid_o_tags(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_location, parse_meta_uuid, opt(parse_meta_tags)).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: Some(m.1),
-        tags: m.2,
-        location: Some(m.0),
-    })
-}
-fn permutation_location_tags_o_uuid(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    let m = seq!(parse_meta_location, parse_meta_tags, opt(parse_meta_uuid),).parse_next(is)?;
-    Ok(TxnMeta {
-        uuid: m.2,
-        tags: Some(m.1),
-        location: Some(m.0),
-    })
+
+fn p_meta_item(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
+    let item = dispatch! {
+        peek(any);
+        'u' => p_meta_uuid,
+        'l' => p_meta_location,
+        't' => p_meta_tags,
+        _ => cut_err(fail)
+            .context(StrContext::Label(CTX_LABEL))
+            .context(StrContext::Expected(StrContextValue::Description("valid item: 'uuid', 'location' or 'tags'"))),
+    }
+    .parse_next(is)?;
+
+    Ok(item)
 }
 
 pub(crate) fn parse_txn_meta(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
-    /*
-     * ANTLR definition for metadata
-     *
-     * txn_meta [i32 u, i32 l, i32 t]:  (
-     *         {$u < 1}? txn_meta_uuid NL      { let tmp = $u; $u = (tmp+1); }
-     *      |  {$l < 1}? txn_meta_location NL  { let tmp = $l; $l = (tmp+1); }
-     *      |  {$t < 1}? txn_meta_tags NL      { let tmp = $t; $t = (tmp+1); }
-     *      )+;
-     */
-
-    // todo: meta permutation: is there better way?
-    //
-    // "The Winner Takes It All"
-    //
-    // Alt: Pick the first successful parser, so try
-    // the combinations in descending order of (common, length)
-    let meta = alt((
-        // uuid
-        permutation_uuid_tags_o_location,
-        permutation_uuid_location_o_tags,
-        permutation_uuid,
-        // tags
-        permutation_tags_uuid_o_location,
-        permutation_tags_location_o_uuid,
-        permutation_tags,
-        // location
-        permutation_location_uuid_o_tags,
-        permutation_location_tags_o_uuid,
-        permutation_location,
-    ))
+    let meta = cut_err(
+        repeat(
+            0..,
+            seq!(
+                _: space1,
+                _: '#',
+                _: cut_err(space1)
+                    .context(StrContext::Label(CTX_LABEL))
+                    .context(StrContext::Expected(StrContextValue::Description("space after '#'"))),
+                p_meta_item
+            ),
+        )
+        .try_fold(
+            TxnMeta::new,
+            |mut acc, item| -> Result<_, TacklerTxnError> {
+                match item.0 {
+                    MetaItem::Uuid(u) => {
+                        if acc.uuid.is_some() {
+                            let msg = "duplicate 'uuid' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.uuid = Some(u);
+                    }
+                    MetaItem::Tags(t) => {
+                        if acc.tags.is_some() {
+                            let msg = "duplicate 'tags' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.tags = Some(t);
+                    }
+                    MetaItem::Location(g) => {
+                        if acc.location.is_some() {
+                            let msg = "duplicate 'location' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.location = Some(g);
+                    }
+                }
+                Ok(acc)
+            },
+        )
+        .context(StrContext::Label(CTX_LABEL)),
+    )
     .parse_next(is)?;
 
     Ok(meta)

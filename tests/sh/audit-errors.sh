@@ -1,5 +1,5 @@
 #
-# Tackler-NG 2025
+# Tackler-NG 2025-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -24,7 +24,7 @@ $TACKLER_SH \
     --input.git.ref err-1e2 \
     --input.git.dir txns/2016/04 \
     --input.git.ext txn \
-    2>&1 | grep 'Semantic error: Audit .* without UUID'
+    2>&1 | grep 'semantic error - Audit .* without UUID'
 
 echo "check: ok"
 

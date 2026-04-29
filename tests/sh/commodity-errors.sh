@@ -1,5 +1,5 @@
 #
-# Tackler-NG 2025
+# Tackler-NG 2025-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -21,7 +21,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ex.toml \
     --input.file $SUITE_PATH/$module/ex/empty-postcomm.txn \
-    2>&1 | grep 'Semantic error: Empty commodity .*permit-empty-commodity'
+    2>&1 | grep 'semantic error - Empty commodity .*permit-empty-commodity'
 
 echo "check: ok"
 
@@ -34,7 +34,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ex.toml \
     --input.file $SUITE_PATH/$module/ex/unknown-txncomm.txn \
-    2>&1 | grep 'Semantic error: Unknown.*JPY'
+    2>&1 | grep 'semantic error - Unknown.*JPY'
 
 echo "check: ok"
 
@@ -48,6 +48,6 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ex.toml \
     --input.file $SUITE_PATH/$module/ex/unknown-postcomm.txn \
-    2>&1 | grep 'Semantic error: Unknown.*AAPL'
+    2>&1 | grep 'semantic error - Unknown.*AAPL'
 
 echo "check: ok"

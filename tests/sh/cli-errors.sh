@@ -1,5 +1,5 @@
 #
-# Tackler-NG 2025
+# Tackler-NG 2025-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -63,7 +63,7 @@ $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file $SUITE_PATH/$module/ex/unknown-acc-01.txn \
     --strict.mode true \
-    2>&1 | grep "Semantic error: Unknown account: 'a'"
+    2>&1 | grep "semantic error - Unknown account: 'a'"
 
 echo "check: ok"
 
@@ -77,7 +77,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/basic.toml \
     --input.file $SUITE_PATH/$module/ex/unbalanced.txn \
-    2>&1 | grep "Semantic error: .* zero: 2"
+    2>&1 | grep "semantic error - .* zero: 2"
 
 echo "check: ok"
 

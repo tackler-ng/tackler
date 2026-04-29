@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::kernel::Settings;
@@ -75,12 +75,9 @@ fn p_tags(is: &mut Stream<'_>) -> ModalResult<Tags> {
 
 pub(crate) fn parse_meta_tags(is: &mut Stream<'_>) -> ModalResult<Tags> {
     let tags = seq!(
-        _: space1,
-        _: '#',
-        _: cut_err(space1)
-            .context(StrContext::Label("txn metadata"))
-            .context(StrContext::Expected(StrContextValue::Description("space after '#'"))),
-        _: "tags:",
+        _: cut_err("tags:")
+            .context(StrContext::Label(CTX_LABEL))
+            .context(StrContext::Expected(StrContextValue::Description("'tags:'"))),
         _: cut_err(space1)
             .context(StrContext::Label(CTX_LABEL))
             .context(StrContext::Expected(StrContextValue::Description("space after 'tags:'"))),
@@ -123,7 +120,7 @@ mod tests {
     #[test]
     fn test_p_tags_err() {
         let mut settings = Settings::default();
-        let input = " # tags: first, , third \n";
+        let input = "tags: first, , third \n";
         let mut is = Stream {
             input,
             state: &mut settings,
@@ -137,7 +134,7 @@ mod tests {
     #[test]
     fn test_parse_meta_tags() {
         let mut settings = Settings::default();
-        let input = " # tags: a, first:second:third \n";
+        let input = "tags: a, first:second:third \n";
         let mut is = Stream {
             input,
             state: &mut settings,

@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -51,12 +51,9 @@ fn p_geo_uri(is: &mut Stream<'_>) -> ModalResult<GeoPoint> {
 
 pub(crate) fn parse_meta_location(is: &mut Stream<'_>) -> ModalResult<GeoPoint> {
     let geo = seq!(
-        _: space1,
-        _: '#',
-        _: cut_err(space1)
-            .context(StrContext::Label("txn metadata"))
-            .context(StrContext::Expected(StrContextValue::Description("space after '#'"))),
-        _: "location:",
+        _: cut_err("location:")
+            .context(StrContext::Label(CTX_LABEL))
+            .context(StrContext::Expected(StrContextValue::Description("'location:'"))),
         _: cut_err(space1)
             .context(StrContext::Label(CTX_LABEL))
             .context(StrContext::Expected(StrContextValue::Description("space after 'location:'"))),
@@ -97,7 +94,7 @@ mod tests {
     #[test]
     fn test_parse_meta_location() {
         let mut settings = Settings::default();
-        let input = " # location: geo:66.5436,25.84715,160\n";
+        let input = "location: geo:66.5436,25.84715,160\n";
         let mut is = Stream {
             input,
             state: &mut settings,

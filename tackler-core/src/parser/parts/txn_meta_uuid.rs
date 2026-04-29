@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -75,13 +75,9 @@ fn p_uuid(is: &mut Stream<'_>) -> ModalResult<Uuid> {
 
 pub(crate) fn parse_meta_uuid(is: &mut Stream<'_>) -> ModalResult<Uuid> {
     let uuid = seq!(
-        _: space1,
-        _: '#',
-        _: cut_err(space1)
+        _: cut_err("uuid:")
             .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("'uuid:'")))
-            .context(StrContext::Expected(StrContextValue::Description(UUID_HELP))),
-        _: "uuid:",
+            .context(StrContext::Expected(StrContextValue::Description("'uuid:'"))),
         _: cut_err(space1)
             .context(StrContext::Label(CTX_LABEL))
             .context(StrContext::Expected(StrContextValue::Description("space after 'uuid:'"))),
@@ -122,7 +118,7 @@ mod tests {
     #[test]
     fn test_parse_meta_uuid() {
         let mut settings = Settings::default();
-        let input = " # uuid: c51270e7-305d-40a3-a132-f9ed4b135da7\n";
+        let input = "uuid: c51270e7-305d-40a3-a132-f9ed4b135da7\n";
         let mut is = Stream {
             input,
             state: &mut settings,
