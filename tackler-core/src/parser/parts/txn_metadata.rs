@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::parser::Stream;
+use crate::parser::error::TacklerTxnError;
 use crate::parser::parts::txn_meta_location::parse_meta_location;
 use crate::parser::parts::txn_meta_tags::parse_meta_tags;
 use crate::parser::parts::txn_meta_uuid::parse_meta_uuid;
-use std::io;
-use std::io::Error;
 use tackler_api::location::GeoPoint;
 use tackler_api::txn_header::Tags;
 use uuid::Uuid;
@@ -84,32 +83,36 @@ pub(crate) fn parse_txn_meta(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
                 p_meta_item
             ),
         )
-        .try_fold(TxnMeta::new, |mut acc, item| -> Result<_, Error> {
-            match item.0 {
-                MetaItem::Uuid(u) => {
-                    if acc.uuid.is_some() {
-                        let msg = "Txn metadata 'uuid' is already defined";
-                        return Err(io::Error::other(msg));
+        .try_fold(
+            TxnMeta::new,
+            |mut acc, item| -> Result<_, TacklerTxnError> {
+                match item.0 {
+                    MetaItem::Uuid(u) => {
+                        if acc.uuid.is_some() {
+                            let msg = "duplicate 'uuid' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.uuid = Some(u);
                     }
-                    acc.uuid = Some(u);
-                }
-                MetaItem::Tags(t) => {
-                    if acc.tags.is_some() {
-                        let msg = "Txn metadata 'tags' is already defined";
-                        return Err(io::Error::other(msg));
+                    MetaItem::Tags(t) => {
+                        if acc.tags.is_some() {
+                            let msg = "duplicate 'tags' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.tags = Some(t);
                     }
-                    acc.tags = Some(t);
-                }
-                MetaItem::Location(g) => {
-                    if acc.location.is_some() {
-                        let msg = "Txn metadata 'location' is already defined";
-                        return Err(io::Error::other(msg));
+                    MetaItem::Location(g) => {
+                        if acc.location.is_some() {
+                            let msg = "duplicate 'location' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.location = Some(g);
                     }
-                    acc.location = Some(g);
                 }
-            }
-            Ok(acc)
-        }),
+                Ok(acc)
+            },
+        )
+        .context(StrContext::Label(CTX_LABEL)),
     )
     .parse_next(is)?;
 

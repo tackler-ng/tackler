@@ -1,5 +1,5 @@
 #
-# Tackler-NG 2025
+# Tackler-NG 2025-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -21,7 +21,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/ok.toml \
     --input.file $SUITE_PATH/$module/ex/values.txn \
-    2>&1 | grep 'Semantic error: Value .* Latitude: 90.1'
+    2>&1 | grep 'semantic error - Value .* Latitude: 90.1'
 
 echo "check: ok"
 

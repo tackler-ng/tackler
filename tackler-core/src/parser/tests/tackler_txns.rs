@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2016-2025
+ * Tackler-NG 2016-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use super::*;
@@ -151,7 +151,7 @@ fn txn_data_errors() {
                 | a -1000 EUR
                 |"
             ).strip_margin(),
-            "Semantic error: Different commodities without",
+            "semantic error - Different commodities without",
         ),
         (
             // test: edf1c7b6-fac6-4b58-8b5b-6c37b59609f5
@@ -163,7 +163,7 @@ fn txn_data_errors() {
                 | Assets:Cash 480.16 USD
                 |"
             ).strip_margin(),
-            "Semantic error: Different commodities without",
+            "semantic error - Different commodities without",
         ),
         (
             // test: 8994ca76-615f-4977-bb48-299f85b2b861
@@ -175,7 +175,7 @@ fn txn_data_errors() {
                 | Assets:Cash 480.16 ACME
                 |"
             ).strip_margin(),
-            "Semantic error: Different commodities without",
+            "semantic error - Different commodities without",
         ),
 
     ];
