@@ -40,27 +40,12 @@ enum MetaItem {
 
 const CTX_LABEL: &str = "txn metadata";
 
-fn p_meta_uuid(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
-    let m = parse_meta_uuid.parse_next(is)?;
-    Ok(MetaItem::Uuid(m))
-}
-
-fn p_meta_tags(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
-    let m = parse_meta_tags.parse_next(is)?;
-    Ok(MetaItem::Tags(m))
-}
-
-fn p_meta_location(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
-    let m = parse_meta_location.parse_next(is)?;
-    Ok(MetaItem::Location(m))
-}
-
 fn p_meta_item(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
     let item = dispatch! {
         peek(any);
-        'u' => p_meta_uuid,
-        'l' => p_meta_location,
-        't' => p_meta_tags,
+        'u' => parse_meta_uuid.map(MetaItem::Uuid),
+        'l' => parse_meta_location.map(MetaItem::Location),
+        't' => parse_meta_tags.map(MetaItem::Tags),
         _ => cut_err(fail)
             .context(StrContext::Label(CTX_LABEL))
             .context(StrContext::Expected(StrContextValue::Description("valid item: 'uuid', 'location' or 'tags'"))),
