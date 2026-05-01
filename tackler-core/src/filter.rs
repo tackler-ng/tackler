@@ -375,7 +375,7 @@ mod tests {
     ) -> Transaction {
         fn make_commodity(c: Option<&str>) -> Arc<Commodity> {
             match c {
-                Some(name) => Arc::new(Commodity::from(name.to_string()).unwrap(/*:test:*/)),
+                Some(name) => Arc::new(Commodity::from(name).unwrap(/*:test:*/)),
                 None => Arc::new(Commodity::default()),
             }
         }

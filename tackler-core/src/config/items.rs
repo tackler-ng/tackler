@@ -657,7 +657,7 @@ impl Report {
             formats,
             scale: Scale::from(&report_raw.scale)?,
             commodity: match &report_raw.commodity {
-                Some(c) => Some(Arc::new(Commodity::from(c.clone())?)),
+                Some(c) => Some(Arc::new(Commodity::from(c)?)),
                 None => None,
             },
             register: Register::from(&report_raw.register, report_raw)?,

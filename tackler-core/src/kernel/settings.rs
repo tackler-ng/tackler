@@ -80,7 +80,7 @@ impl Commodities {
         let comms =
             cfg_comm.names.iter().try_fold(
                 HashMap::new(),
-                |mut chm, comm| match Commodity::from(comm.clone()) {
+                |mut chm, comm| match Commodity::from(comm) {
                     Ok(c) => {
                         chm.insert(comm.into(), Arc::new(c));
                         Ok(chm)
@@ -514,7 +514,7 @@ impl Settings {
                         let msg = format!("Unknown commodity: '{n}'");
                         Err(msg.into())
                     } else {
-                        let comm = Arc::new(Commodity::unchecked_from(n.into()));
+                        let comm = Arc::new(Commodity::unchecked_from(n));
                         commodities.names.insert(n.into(), comm.clone());
                         Ok(comm)
                     }

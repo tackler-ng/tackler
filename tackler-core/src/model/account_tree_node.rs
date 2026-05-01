@@ -31,8 +31,8 @@ impl Commodity {
 }
 
 impl Commodity {
-    pub fn from(name: String) -> Result<Commodity, tackler::Error> {
-        match is_valid_identifier(name.as_str()) {
+    pub fn from(name: &str) -> Result<Commodity, tackler::Error> {
+        match is_valid_identifier(name) {
             Err(e) => {
                 let msg = format!("This is not a valid commodity: '{name}', error was: {e}");
                 Err(msg.into())
@@ -41,8 +41,10 @@ impl Commodity {
         }
     }
 
-    pub fn unchecked_from(name: String) -> Commodity {
-        Commodity { name }
+    pub fn unchecked_from(name: &str) -> Commodity {
+        Commodity {
+            name: name.to_string(),
+        }
     }
 }
 
@@ -209,27 +211,27 @@ mod tests {
     #[test]
     // test: 270d505b-76f6-4e49-a24c-2fbdfb6e5adf
     fn commodity_ok() {
-        let res = Commodity::from("He·bar".to_string());
+        let res = Commodity::from("He·bar");
         assert!(res.is_ok());
         let c = res.unwrap(/*:test:*/);
-        assert_eq!(c.name, "He·bar".to_string());
+        assert_eq!(c.name, "He·bar");
 
-        assert!(Commodity::from("$".to_string()).is_ok());
-        assert!(Commodity::from("¢".to_string()).is_ok());
-        assert!(Commodity::from("£".to_string()).is_ok());
-        assert!(Commodity::from("¤".to_string()).is_ok());
-        assert!(Commodity::from("¥".to_string()).is_ok());
+        assert!(Commodity::from("$").is_ok());
+        assert!(Commodity::from("¢").is_ok());
+        assert!(Commodity::from("£").is_ok());
+        assert!(Commodity::from("¤").is_ok());
+        assert!(Commodity::from("¥").is_ok());
     }
 
     #[test]
     // test: 699aadb1-d1ba-44b6-ae6a-158cf5be13e5
     fn commodity_err() {
-        assert!(Commodity::from("123".to_string()).is_err());
-        assert!(Commodity::from("-USD".to_string()).is_err());
-        assert!(Commodity::from("_USD".to_string()).is_err());
-        assert!(Commodity::from("·USD".to_string()).is_err());
-        assert!(Commodity::from("He:bar".to_string()).is_err());
-        assert!(Commodity::from("He bar".to_string()).is_err());
+        assert!(Commodity::from("123").is_err());
+        assert!(Commodity::from("-USD").is_err());
+        assert!(Commodity::from("_USD").is_err());
+        assert!(Commodity::from("·USD").is_err());
+        assert!(Commodity::from("He:bar").is_err());
+        assert!(Commodity::from("He bar").is_err());
     }
 
     /*
