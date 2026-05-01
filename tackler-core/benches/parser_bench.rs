@@ -9,6 +9,62 @@ use tackler_core::kernel::Settings;
 use tackler_core::parser::string_to_txns;
 use tackler_rs::IndocUtils;
 
+fn cb_ts_date(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input = "2026-05-01";
+
+    c.bench_function("date", |b| {
+        b.iter(|| {
+            let res = settings.parse_timestamp(input);
+            assert!(res.is_ok());
+        });
+    });
+}
+
+fn cb_ts_datetime(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input = "2026-05-01T10:01:11";
+
+    c.bench_function("datetime", |b| {
+        b.iter(|| {
+            let res = settings.parse_timestamp(input);
+            assert!(res.is_ok());
+        });
+    });
+}
+
+fn cb_ts_datetime_offset(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input = "2026-05-01T10:01:11+03:00";
+
+    c.bench_function("datetime_offset", |b| {
+        b.iter(|| {
+            let res = settings.parse_timestamp(input);
+            assert!(res.is_ok());
+        });
+    });
+}
+
+fn cb_ts_datetime_zulu(c: &mut Criterion) {
+    let mut settings = Settings::default();
+
+    #[rustfmt::skip]
+    let input = "2026-05-01T10:01:11Z";
+
+    c.bench_function("datetime_zulu", |b| {
+        b.iter(|| {
+            let res = settings.parse_timestamp(input);
+            assert!(res.is_ok());
+        });
+    });
+}
+
 fn criterion_benchmark_bare(c: &mut Criterion) {
     let mut settings = Settings::default();
 
@@ -79,6 +135,10 @@ fn criterion_benchmark(c: &mut Criterion) {
 
 criterion_group!(
     benches,
+    cb_ts_date,
+    cb_ts_datetime,
+    cb_ts_datetime_zulu,
+    cb_ts_datetime_offset,
     criterion_benchmark_bare,
     criterion_benchmark_header,
     criterion_benchmark

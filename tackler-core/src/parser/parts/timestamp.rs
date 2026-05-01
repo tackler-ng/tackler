@@ -1,13 +1,13 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use winnow::{ModalResult, Parser, seq};
 
-use crate::parser::{Stream, from_error};
+use crate::parser::{Stream, from_error, make_semantic_error};
 use crate::tackler;
 use std::str::FromStr;
-use winnow::combinator::{alt, cut_err, fail, opt};
+use winnow::combinator::{alt, cut_err, opt};
 use winnow::error::{StrContext, StrContextValue};
 use winnow::stream::AsChar;
 use winnow::token::take_while;
@@ -40,15 +40,6 @@ fn p_date(is: &mut Stream<'_>) -> ModalResult<jiff::civil::Date> {
     }
 }
 
-fn parse_date(is: &mut Stream<'_>) -> ModalResult<jiff::Zoned> {
-    let date = p_date(is)?;
-
-    match is.state.get_offset_date(date) {
-        Ok(date) => Ok(date),
-        Err(err) => Err(from_error(is, err.as_ref())),
-    }
-}
-
 #[allow(clippy::cast_possible_truncation)]
 fn handle_time(
     h: i8,
@@ -70,48 +61,46 @@ fn handle_time(
     Ok(t)
 }
 
-fn p_datetime(is: &mut Stream<'_>) -> ModalResult<jiff::civil::DateTime> {
-    let (date, h, m, s, ns_opt) = seq!(
-        p_date,
-        _: "T",
-        cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
+fn p_time(is: &mut Stream<'_>) -> ModalResult<jiff::civil::Time> {
+    let (h, m, s, ns_opt) = seq!(
+    cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
+        .context(StrContext::Label(CTX_LABEL))
+        .context(StrContext::Expected(StrContextValue::Description("hours format is 'hh'"))),
+    _: cut_err(":")
+    .context(StrContext::Label(CTX_LABEL))
+        .context(StrContext::Expected(StrContextValue::Description("hours-minutes separator is ':'"))),
+    cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
+        .context(StrContext::Label(CTX_LABEL))
+        .context(StrContext::Expected(StrContextValue::Description("minutes format is 'mm'"))),
+    _: cut_err(":")
+    .context(StrContext::Label(CTX_LABEL))
+        .context(StrContext::Expected(StrContextValue::Description("minutes-seconds separator is ':'"))),
+    cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
+        .context(StrContext::Label(CTX_LABEL))
+        .context(StrContext::Expected(StrContextValue::Description("seconds format is 'ss'"))),
+    opt((
+        ('.',cut_err(take_while(1.., AsChar::is_dec_digit)))
             .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("hours format is 'HH'"))),
-        _: cut_err(":")
-            .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("hours-minutes separator is ':'"))),
-        cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
-            .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("minutes format is 'MM'"))),
-        _: cut_err(":")
-            .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("minutes-seconds separator is ':'"))),
-        cut_err(take_while(2, AsChar::is_dec_digit).try_map(i8::from_str))
-            .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("seconds format is 'SS'"))),
-        opt((
-            ('.',cut_err(take_while(1..=9, AsChar::is_dec_digit)))
-                .context(StrContext::Label(CTX_LABEL))
-                .context(StrContext::Expected(StrContextValue::Description("nanoseconds format is '.SSS' (max 9 decimals)"))),
-        ))
-    )
+            .context(StrContext::Expected(StrContextValue::Description("nanoseconds format is '.sss' (max 9 decimals)"))),
+    )))
     .parse_next(is)?;
 
-    let time = match handle_time(h, m, s, ns_opt.map(|x| x.0.1)) {
+    let ns_str = if let Some(ns) = ns_opt {
+        if ns.0.1.chars().count() > 9 {
+            let err = make_semantic_error(is, "nanoseconds format is '.sss' (max 9 decimals)");
+            return Err(err);
+        }
+        Some(ns.0.1)
+    } else {
+        None
+    };
+
+    let time = match handle_time(h, m, s, ns_str) {
         Ok(t) => t,
         Err(err) => return Err(from_error(is, err.as_ref())),
     };
 
-    Ok(date.to_datetime(time))
-}
-
-fn parse_datetime(is: &mut Stream<'_>) -> ModalResult<jiff::Zoned> {
-    let dt_jiff: jiff::civil::DateTime = p_datetime(is)?;
-
-    match is.state.get_offset_datetime(dt_jiff) {
-        Ok(ts) => Ok(ts),
-        Err(err) => Err(from_error(is, err.as_ref())),
-    }
+    Ok(time)
 }
 
 fn p_offset(is: &mut Stream<'_>) -> ModalResult<jiff::tz::Offset> {
@@ -149,42 +138,46 @@ fn p_zulu_or_offset(is: &mut Stream<'_>) -> ModalResult<jiff::tz::Offset> {
     Ok(res)
 }
 
-fn parse_datetime_tz(is: &mut Stream<'_>) -> ModalResult<jiff::Zoned> {
-    let (ts, tz) = seq!(p_datetime, p_zulu_or_offset,).parse_next(is)?;
-
-    let ts_tz = match ts.to_zoned(tz.to_time_zone()) {
-        Ok(offset) => offset,
-        Err(err) => return Err(from_error(is, &err)),
-    };
-
-    Ok(ts_tz)
-}
-
 pub(crate) fn parse_timestamp(is: &mut Stream<'_>) -> ModalResult<jiff::Zoned> {
-    let ts = alt((
-        parse_datetime_tz,
-        parse_datetime,
-        parse_date,
-        fail.context(StrContext::Label("ISO 8601 timestamp"))
+    let ts_result = seq!(
+        cut_err(p_date)
+            .context(StrContext::Label("ISO 8601 timestamp"))
             .context(StrContext::Expected(StrContextValue::StringLiteral(
-                "ISO-8601 timestamp at the beginning of the line",
-            )))
-            .context(StrContext::Expected(StrContextValue::StringLiteral(
-                "YYYY-mm-ddTHH:MM:SS[.SSSSSSSSS][+-]HH:MM",
-            )))
-            .context(StrContext::Expected(StrContextValue::StringLiteral(
-                "YYYY-mm-ddTHH:MM:SS[.SSSSSSSSS]Z",
-            )))
-            .context(StrContext::Expected(StrContextValue::StringLiteral(
-                "YYYY-mm-ddTHH:MM:SS[.SSSSSSSSS]",
-            )))
-            .context(StrContext::Expected(StrContextValue::StringLiteral(
-                "YYYY-mm-dd",
+                "Accepted ISO-8601 timestamp formats are:
+   YYYY-MM-DD
+   YYYY-MM-DDThh:mm:ss[.sss]
+   YYYY-MM-DDThh:mm:ss[.sss]Z
+   YYYY-MM-DDThh:mm:ss[.sss][+-]HH:MM
+up to nanosecond precision (e.g. the optional .sss part with 9 decimals)
+",
             ))),
-    ))
+        opt(seq!(
+            _: 'T',
+            p_time,
+            opt(p_zulu_or_offset)
+        ))
+    )
     .parse_next(is)?;
 
-    Ok(ts)
+    if let Some((time, offset_opt)) = ts_result.1 {
+        let dt = ts_result.0.to_datetime(time);
+        if let Some(tz) = offset_opt {
+            match dt.to_zoned(tz.to_time_zone()) {
+                Ok(ts) => Ok(ts),
+                Err(err) => Err(from_error(is, &err)),
+            }
+        } else {
+            match is.state.get_offset_datetime(dt) {
+                Ok(ts) => Ok(ts),
+                Err(err) => Err(from_error(is, err.as_ref())),
+            }
+        }
+    } else {
+        match is.state.get_offset_date(ts_result.0) {
+            Ok(ts) => Ok(ts),
+            Err(err) => Err(from_error(is, err.as_ref())),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -193,7 +186,7 @@ mod tests {
     use crate::kernel::Settings;
 
     #[test]
-    fn test_p_date() {
+    fn test_date() {
         let mut settings = Settings::default();
         let input = "2024-12-30";
         let mut is = Stream {
@@ -205,7 +198,7 @@ mod tests {
     }
 
     #[test]
-    fn test_p_datetime() {
+    fn test_datetime() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22";
         let mut is = Stream {
@@ -213,11 +206,11 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
 
     #[test]
-    fn test_p_datetime_zulu() {
+    fn test_datetime_zulu() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22Z";
         let mut is = Stream {
@@ -225,11 +218,11 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
 
     #[test]
-    fn test_p_datetime_offset() {
+    fn test_datetime_offset() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22+02:00";
         let mut is = Stream {
@@ -237,11 +230,11 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
 
     #[test]
-    fn test_p_datetime_milli() {
+    fn test_datetime_milli() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.12";
         let mut is = Stream {
@@ -249,10 +242,10 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
     #[test]
-    fn test_p_datetime_micro() {
+    fn test_datetime_micro() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.12345";
         let mut is = Stream {
@@ -260,10 +253,10 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
     #[test]
-    fn test_p_datetime_nano() {
+    fn test_datetime_nano() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.12345678";
         let mut is = Stream {
@@ -271,10 +264,10 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
     #[test]
-    fn test_p_datetime_nano_offset() {
+    fn test_datetime_nano_offset() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.123456789+02:00";
         let mut is = Stream {
@@ -282,10 +275,10 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
     #[test]
-    fn test_p_datetime_nano_zulu() {
+    fn test_datetime_nano_zulu() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.123456789Z";
         let mut is = Stream {
@@ -293,11 +286,11 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(p_datetime(&mut is).is_ok());
+        assert!(parse_timestamp(&mut is).is_ok());
     }
 
     #[test]
-    fn test_p_datetime_nano_err() {
+    fn test_datetime_nano_err() {
         let mut settings = Settings::default();
         let input = "2024-12-30T20:21:22.1234567890+02:00";
         let mut is = Stream {
@@ -305,6 +298,6 @@ mod tests {
             state: &mut settings,
         };
 
-        assert!(parse_datetime_tz(&mut is).is_err());
+        assert!(parse_timestamp(&mut is).is_err());
     }
 }
