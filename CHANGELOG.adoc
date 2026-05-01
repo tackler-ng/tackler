@@ -11,6 +11,9 @@
 
 New features:
 
+* Tackler is over 20% faster than previous release
+  by cleanup of various parsing and validation code paths.
+
 * ...
   ** ...
 
