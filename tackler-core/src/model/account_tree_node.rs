@@ -392,4 +392,31 @@ mod tests {
         assert!(AccountTreeNode::from(":").is_err());
         assert!(AccountTreeNode::from(": :").is_err());
     }
+
+    #[test]
+    fn err_invalid_ids_sep_chars() {
+        assert!(AccountTreeNode::from("-Err").is_err());
+        assert!(AccountTreeNode::from("_Err").is_err());
+        assert!(AccountTreeNode::from("·Err").is_err());
+
+        assert!(AccountTreeNode::from("A:-Err").is_err());
+        assert!(AccountTreeNode::from("A:_Err").is_err());
+        assert!(AccountTreeNode::from("A:·Err").is_err());
+    }
+
+    #[test]
+    fn err_invalid_ids_spaces() {
+        assert!(AccountTreeNode::from(" a:b:c").is_err());
+        assert!(AccountTreeNode::from("a:b:c ").is_err());
+        assert!(AccountTreeNode::from(" a:b:c ").is_err());
+        assert!(AccountTreeNode::from("a:b c:d").is_err());
+    }
+
+    #[test]
+    fn err_invalid_ids_numerical() {
+        //assert!(AccountTreeNode::from("123:Err").is_err());
+        //assert!(AccountTreeNode::from("-123:Err").is_err());
+        //assert!(AccountTreeNode::from("1ABC:Err").is_err());
+        //assert!(AccountTreeNode::from("-1ABC:Err").is_err());
+    }
 }
