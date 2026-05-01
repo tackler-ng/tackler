@@ -6,6 +6,7 @@ pub use crate::parser::pricedb_parser::{pricedb_from_file, pricedb_from_str};
 pub use crate::parser::tackler_txns::git_to_txns;
 pub use crate::parser::tackler_txns::paths_to_txns;
 pub use crate::parser::tackler_txns::string_to_txns;
+use std::fmt::Write;
 use winnow::error::{ErrMode, FromExternalError};
 
 mod error;
@@ -15,6 +16,8 @@ mod tackler_txns;
 
 use crate::kernel::settings::Settings;
 use crate::parser::error::TacklerTxnError;
+use crate::parser::parts::identifier::{parse_identifier, parse_multi_part_id};
+use crate::tackler;
 use winnow::Stateful;
 
 pub(crate) mod parts;
@@ -46,42 +49,50 @@ pub(crate) fn from_error<
     .cut()
 }
 
-/*
- * TODO: This logic should be 1:1 with TxnLexer.g4
- *       (ID, SUBID and NameChar + NameStartChar)
- * Real account names are coming through parser+lexer,
- * So these are validating Chart-of-Xyz config/settings
- * entries (accounts, tags, commodities).
- * E.g. checking these is a nicety for user
- * (warn about invalid Chart-Of-Xyz).
- */
-#[inline]
-fn illegal_characters(c: char) -> bool {
-    c == ':' || c.is_whitespace()
+/// Check if id is a valid identifier, e.g., commodity name
+///
+/// # Errors
+/// Returns error in case the identifier is not valid
+pub fn is_valid_identifier(id: &str) -> Result<bool, tackler::Error> {
+    let mut ptr = id;
+    let res = parse_identifier(&mut ptr);
+
+    if res.is_err() || !ptr.is_empty() {
+        let mut msg = format!("Invalid identifier '{id}'. ");
+        match res {
+            Err(e) => {
+                let _ = write!(msg, "Error was {e}");
+            }
+            Ok(_) => {
+                let _ = write!(msg, "Extra characters: '{ptr}')");
+            }
+        }
+        return Err(msg.into());
+    }
+    Ok(true)
 }
 
-// todo: this is too relaxed
-fn is_valid_id_start_char(c: char) -> bool {
-    !(c.is_ascii_digit() || c == ':' || c == '-' || c == '_' || c == '·' || c.is_whitespace())
-}
+/// Check if id is a valid name, e.g., account name
+///
+/// # Errors
+/// Returns error in case the account name is not valid
+pub fn is_valid_name(name: &str) -> Result<bool, tackler::Error> {
+    let mut ptr = name;
+    let res = parse_multi_part_id(&mut ptr);
 
-// this is fine, once is_valid_id_start_char is fixed
-fn is_valid_sub_id_start_char(c: char) -> bool {
-    c.is_numeric() || is_valid_id_start_char(c)
-}
-
-// todo: this is too relaxed
-pub fn is_valid_id(token: &str) -> bool {
-    !token.is_empty()
-        && token.starts_with(is_valid_id_start_char)
-        && !token.contains(illegal_characters)
-}
-
-// todo: this is too relaxed
-pub fn is_valid_sub_id(token: &str) -> bool {
-    !token.is_empty()
-        && token.starts_with(is_valid_sub_id_start_char)
-        && !token.contains(illegal_characters)
+    if res.is_err() || !ptr.is_empty() {
+        let mut msg = format!("Invalid name '{name}'. ");
+        match res {
+            Err(e) => {
+                let _ = write!(msg, "Error was {e}");
+            }
+            Ok(_) => {
+                let _ = write!(msg, "Extra characters: '{ptr}')");
+            }
+        }
+        return Err(msg.into());
+    }
+    Ok(true)
 }
 
 #[cfg(test)]

@@ -1,9 +1,10 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
-use crate::{parser, tackler};
+use crate::parser::{is_valid_name, is_valid_identifier};
+use crate::tackler;
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter};
 use std::hash::{Hash, Hasher};
@@ -31,11 +32,13 @@ impl Commodity {
 
 impl Commodity {
     pub fn from(name: String) -> Result<Commodity, tackler::Error> {
-        if !parser::is_valid_id(&name) {
-            let msg = format!("This is not a valid commodity: '{name}'");
-            return Err(msg.into());
+        match is_valid_identifier(name.as_str()) {
+            Err(e) => {
+                let msg = format!("This is not a valid commodity: '{name}', error was: {e}");
+                Err(msg.into())
+            }
+            Ok(_) => Ok(Commodity { name }),
         }
-        Ok(Commodity { name })
     }
 }
 
@@ -162,31 +165,12 @@ impl AccountTreeNode {
 
 impl AccountTreeNode {
     pub(crate) fn from(account: &str) -> Result<AccountTreeNode, tackler::Error> {
-        {
-            let acc = account.trim();
-
-            if acc.len() != account.len() {
-                let msg = format!("Account name contains whitespaces '{account}'");
-                return Err(msg.into());
-            }
+        if let Err(e) = is_valid_name(account) {
+            let msg = format!("This is not a valid account name: '{account}', error was: {e}");
+            return Err(msg.into());
         }
 
         let parts: Vec<&str> = account.split(':').collect();
-
-        if parts.is_empty() {
-            let msg = format!(
-                "Empty account names are not allowed (all sub-components are empty): '{account}'"
-            );
-            return Err(msg.into());
-        }
-        if parts
-            .iter()
-            .map(|subpath| parser::is_valid_sub_id(subpath.trim()))
-            .any(|valid| !valid)
-        {
-            let msg = format!("This is not a valid account name: '{account}'");
-            return Err(msg.into());
-        }
 
         let depth = parts.len();
         let root = String::from(parts[0]);
@@ -406,6 +390,10 @@ mod tests {
 
     #[test]
     fn err_invalid_ids_spaces() {
+        assert!(AccountTreeNode::from(" a").is_err());
+        assert!(AccountTreeNode::from("a ").is_err());
+        assert!(AccountTreeNode::from(" a ").is_err());
+
         assert!(AccountTreeNode::from(" a:b:c").is_err());
         assert!(AccountTreeNode::from("a:b:c ").is_err());
         assert!(AccountTreeNode::from(" a:b:c ").is_err());
@@ -414,9 +402,9 @@ mod tests {
 
     #[test]
     fn err_invalid_ids_numerical() {
-        //assert!(AccountTreeNode::from("123:Err").is_err());
-        //assert!(AccountTreeNode::from("-123:Err").is_err());
-        //assert!(AccountTreeNode::from("1ABC:Err").is_err());
-        //assert!(AccountTreeNode::from("-1ABC:Err").is_err());
+        assert!(AccountTreeNode::from("123:Err").is_err());
+        assert!(AccountTreeNode::from("-123:Err").is_err());
+        assert!(AccountTreeNode::from("1ABC:Err").is_err());
+        assert!(AccountTreeNode::from("-1ABC:Err").is_err());
     }
 }

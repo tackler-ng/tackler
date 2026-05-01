@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2025
+ * Tackler-NG 2025-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -54,6 +54,11 @@ pub(crate) fn id_char(c: char) -> bool {
             | '\u{0300}'..='\u{036F}' // Combining Diacritical Marks
             | '\u{203F}'..='\u{2040}' // Undertie, Character Tie
         )
+}
+
+#[inline]
+pub(crate) fn sub_id_start_char(c: char) -> bool {
+    id_start_char(c) | matches!(c, |'0'..='9')
 }
 
 #[inline]
