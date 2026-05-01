@@ -12,7 +12,7 @@ use winnow::{ModalResult, Parser};
 
 const CTX_LABEL: &str = "name";
 
-pub(crate) fn p_id_part<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
+fn p_id_part<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
     (one_of(sub_id_start_char), take_while(0.., id_char))
         .take()
         .parse_next(input)
@@ -24,6 +24,8 @@ pub(crate) fn parse_identifier<'s>(input: &mut &'s str) -> ModalResult<&'s str> 
         .parse_next(input)?;
     Ok(res_str)
 }
+
+#[inline]
 pub(crate) fn p_identifier<'s>(is: &mut Stream<'s>) -> ModalResult<&'s str> {
     parse_identifier(&mut is.input)
 }
@@ -60,6 +62,7 @@ pub(crate) fn parse_multi_part_id<'s>(input: &mut &'s str) -> ModalResult<&'s st
     Ok(dec_str)
 }
 
+#[inline]
 pub(crate) fn p_multi_part_id<'s>(is: &mut Stream<'s>) -> ModalResult<&'s str> {
     parse_multi_part_id(&mut is.input)
 }

@@ -422,6 +422,10 @@ impl Settings {
         }
     }
 
+    /// Get or create `TxnAccount` by name and commodity
+    ///
+    /// Both name and commodity must be valid name and ID
+    /// e.g. this is function is supposed to be used by parser.
     pub(crate) fn get_or_create_txn_account(
         &mut self,
         name: &str,
@@ -442,7 +446,7 @@ impl Settings {
                 let msg = format!("Unknown account: '{name}'");
                 return Err(msg.into());
             }
-            let atn = Arc::new(AccountTreeNode::from(name)?);
+            let atn = Arc::new(AccountTreeNode::unchecked_from(name));
             self.accounts
                 .defined_accounts
                 .insert(name.into(), atn.clone());
@@ -469,6 +473,11 @@ impl Settings {
             Err(msg.into())
         }
     }
+
+    /// Get or create `Commodity` by name
+    ///
+    /// The name must be a valid ID
+    /// e.g. this is function is supposed to be used by parser.
     pub(crate) fn get_or_create_commodity(
         &mut self,
         name: Option<&str>,
@@ -505,7 +514,7 @@ impl Settings {
                         let msg = format!("Unknown commodity: '{n}'");
                         Err(msg.into())
                     } else {
-                        let comm = Arc::new(Commodity::from(n.into())?);
+                        let comm = Arc::new(Commodity::unchecked_from(n.into()));
                         commodities.names.insert(n.into(), comm.clone());
                         Ok(comm)
                     }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-use crate::parser::{is_valid_name, is_valid_identifier};
+use crate::parser::{is_valid_identifier, is_valid_name};
 use crate::tackler;
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter};
@@ -37,8 +37,12 @@ impl Commodity {
                 let msg = format!("This is not a valid commodity: '{name}', error was: {e}");
                 Err(msg.into())
             }
-            Ok(_) => Ok(Commodity { name }),
+            Ok(_) => Ok(Self::unchecked_from(name)),
         }
+    }
+
+    pub fn unchecked_from(name: String) -> Commodity {
+        Commodity { name }
     }
 }
 
@@ -169,7 +173,10 @@ impl AccountTreeNode {
             let msg = format!("This is not a valid account name: '{account}', error was: {e}");
             return Err(msg.into());
         }
+        Ok(Self::unchecked_from(account))
+    }
 
+    pub(crate) fn unchecked_from(account: &str) -> AccountTreeNode {
         let parts: Vec<&str> = account.split(':').collect();
 
         let depth = parts.len();
@@ -183,14 +190,14 @@ impl AccountTreeNode {
         rev_parts.reverse();
         let parent = rev_parts.join(":");
 
-        Ok(AccountTreeNode {
+        AccountTreeNode {
             depth,
             root,
             parent,
             parts: acc_parts,
             account: account.to_string(),
             name,
-        })
+        }
     }
 }
 
