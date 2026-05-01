@@ -45,16 +45,11 @@ fn p_id_part_helper<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
 pub(crate) fn parse_multi_part_id<'s>(input: &mut &'s str) -> ModalResult<&'s str> {
     let dec_str = (
         parse_identifier,
-        cut_err(
-            repeat(0.., p_id_part_helper).fold(String::new, |mut string, s| {
-                string.push_str(s);
-                string
-            }),
-        )
-        .context(StrContext::Label(CTX_LABEL))
-        .context(StrContext::Expected(StrContextValue::Description(
-            "for multi part name",
-        ))),
+        cut_err(repeat(0.., p_id_part_helper).map(|()| ()))
+            .context(StrContext::Label(CTX_LABEL))
+            .context(StrContext::Expected(StrContextValue::Description(
+                "for multi part name",
+            ))),
     )
         .take()
         .parse_next(input)?;
