@@ -37,6 +37,10 @@ pub struct RegisterPosting {
     #[serde(rename = "baseCommodity")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub base_commodity: Option<String>,
+
+    /// Posting comments, if any
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub comment: Option<String>,
 }
 
 /// Register transaction API object

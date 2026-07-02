@@ -111,6 +111,7 @@ fn register_entry_to_api(
                 account: p.post.acctn.atn.account.clone(),
                 amount: format_with_scale(0, a, scale),
                 running_total: format_with_scale(0, rt, scale),
+                comment: p.post.comment.clone(),
                 commodity,
                 rate: p.rate.map(|r| format_with_scale(0, &r, scale)),
                 base_commodity,

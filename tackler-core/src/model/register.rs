@@ -110,7 +110,7 @@ impl RegisterEntry<'_> {
                 (&p.post.acctn.comm, String::default(), filler_width)
             };
 
-            let line = format!(
+            let mut line = format!(
                 "{}{:<33}{:>18}{:<w$} {:>18}{}",
                 indent,
                 p.post.acctn.atn.account,
@@ -124,6 +124,10 @@ impl RegisterEntry<'_> {
                 w = width,
             );
             line_len = max(line_len, line.chars().count());
+            // Let's terminate the separating line to the value / commodity field
+            if let Some(comment) = &p.post.comment {
+                let _ = write!(line, " ; {comment}");
+            }
             let _ = writeln!(reg_entry_txt, "{line}");
         }
         let _ = writeln!(reg_entry_txt, "{}", "-".repeat(line_len));

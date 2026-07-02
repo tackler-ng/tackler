@@ -9,10 +9,10 @@
 
 ==== New features and changes
 
-New features:
+Tackler is over 25% faster than previous release,
+thanks to optimizing journal parsing and validating code.
 
-* Tackler is over 25% faster than previous release, thanks to
-  optimizing journal parsing and validating code.
+New features:
 
 * ...
   ** ...
@@ -24,7 +24,10 @@ Changed functionality:
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release:
+
+* Include posting comments to register report's txt and json formats
+  (link:https://github.com/tackler-ng/tackler/issues/168[Issue #168])
 
 ==== Development
 
