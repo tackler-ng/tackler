@@ -35,7 +35,7 @@ Register Report
 ...
 ```
 
-1) Tackler has excellent performance, it can process 700 000 transactions per second on modern laptop. 
+1) Tackler has excellent performance, it can process 900 000 transactions per second on modern laptop.
 See [Tackler Performance](https://tackler.fi/docs/tackler/latest/features/performance/) for details.
 
 
