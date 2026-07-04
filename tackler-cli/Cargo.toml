@@ -16,6 +16,19 @@ include.workspace = true
 rust-version.workspace = true
 readme = "CRATES.md"
 
+### Release profile for publish
+# The #pp# part is automatically enabled
+# by custom publish setup
+#
+# https://github.com/rust-lang/cargo/issues/8264
+# https://github.com/rust-lang/cargo/issues/11599
+#
+#pp# [profile.release]
+#pp# lto = true
+#pp# codegen-units = 1
+#
+###
+
 [lints]
 workspace = true
 
