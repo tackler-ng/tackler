@@ -6,3 +6,314 @@ for up to date TEP-1018 content.
 
 New metadata item to track external transaction reference IDs.
 
+ref: link:https://github.com/tackler-ng/tackler/issues/141[GH Issue 141]
+
+== Description
+
+The external reference id (`ext-id`) is a mean to link
+transaction data to external source, maybe in unique way.
+
+If the ext-id is unique, it can be used to detect data level duplicates,
+e.g. to detect when same CSV row is imported twice.
+
+It would be then up to the import logic how this would be unique,
+for example it could be checksum over the CVS row data,
+or if the external source have own ids, that could be used.
+
+The only restriction for content of the ext-id is, that it can't be empty,
+and it must consist Unicode characters (it can't be control characters).
+
+== Summary of Changes
+
+Summary of planned changes:
+
+* Journal format: This is new journal format feature, and it's backward compatible
+* Engine
+** New field in various data model objects
+** Support txn ext-id with filtering
+* conf: provide toggle to enforce uniqueness
+
+
+== Journal File Format
+
+New transaction metadata item:
+
+`ext-id`:: non-empty, single line, newline terminated, trimmed (begin, end) string
+
+
+== Implementation
+
+Detailed implementation planning
+
+=== CLI Changes
+
+No changes to the command line interface.
+
+=== CONF Changes
+
+Changes to conf-settings
+
+* [ ] new configuration table `kernel.ext-id`
+** [ ] option to enforce uniqueness `kernel.ext-id.unique = <true | false>`
+** [ ] _future_: option to enforce existence of `ext-id` `kernel.ext-id.mandatory = <true | false>`
+
+==== Tackler `init` / `new` commands
+
+Changes to tackler `new` or `init` commands
+
+* [ ] Add the ext-id section, with `unique = false`
+
+
+=== Filtering Changes
+
+Changes to filtering logic or implementation
+
+* [ ] new regex-based txn property filter for `ext-id`
+
+[source, json]
+----
+{
+  "TxnFilterTxnExtID" : {
+    "regex" : "<regex>"
+  }
+}
+----
+
+
+=== Tackler Core Engine
+
+Changes to the tackler core engine (e.g. core implementation)
+
+* [ ] item
+
+
+==== API Changes
+
+Api changes to server or client interfaces.
+
+===== Server API Changes
+
+Changes to server API
+
+* [ ] item
+
+===== Client API Changes
+
+Changes to client API or JSON model
+
+* [ ] item
+
+===== JSON Model
+
+Changes to JSON model
+
+* Metadata: no changes to report's metadata section
+* [ ] JSON Reports
+** BalanceReport: no changes
+** BalanceGroupReport: no changes
+** [ ] RegisterReport
+*** [ ] new metadata field `ext-id`
+
+
+==== New Dependencies
+
+No new dependencies
+
+
+=== Reporting
+
+Changes to reports or reporting
+
+==== Balance Report
+
+No changes to the balance report.
+
+==== Balance Group Report
+
+No changes to the balance group report.
+
+==== Register Report
+
+Changes to register report
+
+* [ ] new metadata field `ext-id`
+** [ ] txt
+** [ ] json
+
+
+=== Exporting
+
+Changes to exports or exporting
+
+==== Equity Export
+
+No changes to the equity export.
+
+==== Identity Export
+
+Changes to identity export
+
+* [ ] new txn metadata field `ext-id`
+
+==== Accounts Export
+
+No changes to the accounts export.
+
+
+=== Documentation
+
+* [ ] xref:./readme.adoc[]: Update TEP index
+* [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
+* [ ] link:../../CHANGELOG[]: add new item
+* [ ] Does it warrant own T3DB file?
+** [ ] update xref:../../suite/tests.adoc[]
+** [ ] update xref:../../suite/check-tests.sh[]
+** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+* [ ] User docs
+** [ ] User Manual
+*** cli-arguments: No changes
+** [ ] tackler.toml
+*** [ ] `kernel.ext-id.unique`
+** [ ] examples
+* [ ] Developer docs
+** [ ] API changes
+*** [ ] Server API changes
+*** [ ] Client API changes
+*** [ ] JSON Examples
+
+
+=== Future Plans and Postponed (PP) Features
+
+Changes to conf-settings
+
+* [ ] configuration table `kernel.ext-id`
+** [ ] _future_: option to enforce existence of ext-id
+      `kernel.ext-id.mandatory = <true | false>`
+
+
+==== Use case: test for duplicates or test for existence
+
+New tackler command family `lookup` with arguments:
+* `lookup ext-id <id> ...`
+* `lookup uuid <uuid> ...`
+
+These will print raw transaction(s) with matching `ext-id` and `uuid`.
+The implementation would be basically just `TxnFilter` -> `Identity export` to `stdout`.
+The return value should indicate if there was a match.
+
+There should be also global flag `-q` / `--quit` to suppress the output,
+and just test the existence of the txn with particular `ext-id` and `uuid`
+
+
+==== Postponed (PP) Features
+
+Anything which wasn't implemented?
+
+
+=== Tests
+
+Normal, ok-case tests to validate functionality:
+
+* [ ] basic functionality
+* [ ] filtering: `ext-id`
+* [ ] txn without ext-id are allowed
+* [ ] identity test: txn -> identity -> register report
+* [ ] `ext-id.unique`
+** [ ] `unique = false`: same ids are fine
+* [ ] test
+* [ ] test
+
+==== Errors
+
+Various error cases:
+
+* [ ] e: empty ext-id
+* [ ] e: `ext-id.unique`
+** [ ] e: `unique = true`: same ids cause error
+
+
+==== Perf
+
+Is there need to run or create new perf tests?
+
+* [ ] perf: `tackler-core/benches/parser_bench.rs`
+** [ ] perf test: `metadata`
+** [ ] perf test: `everything`
+
+==== Feature and Test Coverage Tracking
+
+Feature-id::
+
+* name: External reference id
+* uuid: 4e5f753f-d124-45e9-b703-6e2a588d3e85
+
+link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+
+
+==== Metadata template for Feature and Test Coverage Tracking
+
+....
+features:
+  - feature:
+      id: 4e5f753f-d124-45e9-b703-6e2a588d3e85
+      subject: "external reference id"
+
+  - feature:
+      id: 33282cc5-f722-49e4-9f58-c5ff519d18d3
+      parent: 4e5f753f-d124-45e9-b703-6e2a588d3e85
+      subject: "ext-id basic functionality"
+      tests:
+        errors:
+          - error:
+              id: 6429df98-0353-4378-81ff-e8abb10b0c01
+              name: "todo: name of test class/method or test description file"
+              desc: "empty ext-id"
+        operations:
+          - test:
+              id: 4933b0ba-a325-44b4-a688-a9776b9c42ac
+              name: "todo: name of test class/method or test description file"
+              descriptions:
+                - desc: "basic functionality"
+                - desc: "duplicate ext-id are allowed by default"
+                - desc: "txn without ext-id are ok"
+              references:
+                - ref: register
+          - test:
+              id: 85599f8c-eaff-4001-916c-34c9654ce8cb
+              name: "todo: name of test class/method or test description file"
+              descriptions:
+                - desc: "filtering based on ext-id"
+                - desc: "identity round-trip"
+              references:
+                - ref: register
+                - ref: identity
+
+  - feature:
+      id: 35f8b046-86b6-4acf-9442-437ec150664b
+      parent: 4e5f753f-d124-45e9-b703-6e2a588d3e85
+      subject: "kernel.ext-id.unique"
+      tests:
+        errors:
+          - error:
+              id: f26c19f6-70b3-47f8-af90-1922fa590bab
+              name: "todo: name of test class/method or test description file"
+              desc: "duplicate ext-ids with unique=true"
+        operations:
+          - test:
+              id: uuid
+              name: "todo: name of test class/method or test description file"
+              descriptions:
+                - desc: "todo: description"
+              references:
+                - ref: balance
+                - ref: balance-group
+                - ref: register
+                - ref: identity
+                - ref: equity
+....
+
+
+'''
+Tackler is distributed on an *"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND*, either express or implied.
+See the link:../../LICENSE[License] for the specific language governing permissions and limitations under
+the link:../../LICENSE[License].
