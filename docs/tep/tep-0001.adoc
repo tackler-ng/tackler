@@ -1,7 +1,7 @@
 = TEP-XXXX: short-name
 
 See branch
-link:https://github.com/tackler-ng/tackler/tree/tep/tep-XXXX-SHORT-NAME/docs/tep/tep-XXXX.adoc[/tep/tep-XXXX-SHORT-NAME]
+link:https://github.com/tackler-ng/tackler/tree/tep-XXXX-SHORT-NAME/docs/tep/tep-XXXX.adoc[/tep-XXXX-SHORT-NAME]
 for actual TEP-XXXX content.
 
 Single line description
@@ -38,6 +38,9 @@ Journal file format changes, if any
 
 == Implementation
 
+
+Detailed implementation planning
+
 === CLI Changes
 
 Changes to command line interface
@@ -51,6 +54,13 @@ Changes to conf-settings
 
 * [ ] item
 
+==== Tackler `init` / `new` commands
+
+Changes to tackler `new` or `init` commands
+
+* [ ] item
+
+
 === Filtering Changes
 
 Changes to filtering logic or implementation
@@ -58,9 +68,9 @@ Changes to filtering logic or implementation
 * [ ] item
 
 
-=== Machinery
+=== Tackler Core Engine
 
-Changes to the tackler machinery (e.g. implementation)
+Changes to the tackler core engine (e.g. core implementation)
 
 * [ ] item
 
@@ -214,13 +224,10 @@ Is there need to run or create new perf tests?
 
 ==== Feature and Test Coverage Tracking
 
-
-
 Feature-id::
 
 * name: <Feature name / subject-line>
 * uuid: <UUID>
-
 
 link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
 
