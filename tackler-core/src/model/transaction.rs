@@ -107,6 +107,7 @@ mod tests {
             code: None,
             description: Some("desc".to_string()),
             uuid: None,
+            extid: None,
             location: None,
             tags: None,
             comments: None,

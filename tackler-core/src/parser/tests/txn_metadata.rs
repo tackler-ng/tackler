@@ -85,6 +85,18 @@ use tackler_rs::IndocUtils;
         ),
         (indoc!(
            "|
+            |2026-07-05
+            | # ext-id: first
+            | # ext-id: second
+            | a  1
+            | e -1
+            |
+            |").strip_margin(),
+         "line: 4",
+         r" input ' "
+        ),
+        (indoc!(
+           "|
             |2019-05-01
             | # location: geo:60,25
             | # uuid: ea23a28b-a99e-4af4-8f87-c011d606efd7
@@ -122,6 +134,19 @@ use tackler_rs::IndocUtils;
           "line: 5",
           r" input ' "
         ),
+        (indoc!(
+           "|
+            |2026-07-05
+            | # ext-id: first
+            | # location: geo:60,25
+            | # ext-id: second
+            | a  1
+            | e -1
+            |
+            |").strip_margin(),
+         "line: 5",
+         r" input ' "
+        ),
       ];
           let mut count = 0;
           let should_be_count = perr_strings.len();
@@ -142,6 +167,7 @@ use tackler_rs::IndocUtils;
     #[test]
     // test: 5bb95c2e-2fad-4584-9380-e6cafe732cf6
     // desc: "accepts multiple metadata items"
+    #[allow(clippy::too_many_lines)]
     fn ok_metadata_multiple_items() {
       #[allow(clippy::type_complexity)]
       let  pok_strings: Vec<(String, i32, Vec<(&str, fn(&Transaction) -> String)>)> = vec![
@@ -215,6 +241,40 @@ use tackler_rs::IndocUtils;
           ("c075a1a4-37d5-4d79-a92b-5cbb323519f0", txn_uuid_to_string),
           ("geo:61,25", txn_geo_to_string),
           ("a:b:c", txn_tags_to_string)]
+        ),
+        (indoc!(
+           "|
+            |2020-12-24
+            | # ext-id: hello there
+            | # location: geo:61,25
+            | # tags: a:b:c
+            | # uuid: c075a1a4-37d5-4d79-a92b-5cbb323519f0
+            | a  1
+            | e -1
+            |
+            |").strip_margin(),
+         4, vec![
+            ("c075a1a4-37d5-4d79-a92b-5cbb323519f0", txn_uuid_to_string),
+            ("geo:61,25", txn_geo_to_string),
+            ("a:b:c", txn_tags_to_string),
+            ("hello there", txn_extid_to_string)]
+        ),
+        (indoc!(
+           "|
+            |2020-12-24
+            | # location: geo:61,25
+            | # tags: a:b:c
+            | # ext-id: hello there
+            | # uuid: c075a1a4-37d5-4d79-a92b-5cbb323519f0
+            | a  1
+            | e -1
+            |
+            |").strip_margin(),
+         4, vec![
+            ("c075a1a4-37d5-4d79-a92b-5cbb323519f0", txn_uuid_to_string),
+            ("geo:61,25", txn_geo_to_string),
+            ("a:b:c", txn_tags_to_string),
+            ("hello there", txn_extid_to_string)]
         ),
        ];
       let mut count = 0;

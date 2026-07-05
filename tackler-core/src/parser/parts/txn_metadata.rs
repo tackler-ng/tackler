@@ -4,6 +4,7 @@
  */
 use crate::parser::Stream;
 use crate::parser::error::TacklerTxnError;
+use crate::parser::parts::txn_meta_extid::parse_meta_extid;
 use crate::parser::parts::txn_meta_location::parse_meta_location;
 use crate::parser::parts::txn_meta_tags::parse_meta_tags;
 use crate::parser::parts::txn_meta_uuid::parse_meta_uuid;
@@ -21,6 +22,7 @@ pub(crate) struct TxnMeta {
     pub(crate) uuid: Option<Uuid>,
     pub(crate) tags: Option<Tags>,
     pub(crate) location: Option<GeoPoint>,
+    pub(crate) extid: Option<String>,
 }
 impl TxnMeta {
     fn new() -> TxnMeta {
@@ -28,6 +30,7 @@ impl TxnMeta {
             uuid: None,
             tags: None,
             location: None,
+            extid: None,
         }
     }
 }
@@ -36,6 +39,7 @@ enum MetaItem {
     Uuid(Uuid),
     Location(GeoPoint),
     Tags(Tags),
+    ExtId(String),
 }
 
 const CTX_LABEL: &str = "txn metadata";
@@ -46,9 +50,10 @@ fn p_meta_item(is: &mut Stream<'_>) -> ModalResult<MetaItem> {
         'u' => parse_meta_uuid.map(MetaItem::Uuid),
         'l' => parse_meta_location.map(MetaItem::Location),
         't' => parse_meta_tags.map(MetaItem::Tags),
+        'e' => parse_meta_extid.map(MetaItem::ExtId),
         _ => cut_err(fail)
             .context(StrContext::Label(CTX_LABEL))
-            .context(StrContext::Expected(StrContextValue::Description("valid item: 'uuid', 'location' or 'tags'"))),
+            .context(StrContext::Expected(StrContextValue::Description("valid item: 'uuid', 'ext-id', 'location' or 'tags'"))),
     }
     .parse_next(is)?;
 
@@ -78,6 +83,13 @@ pub(crate) fn parse_txn_meta(is: &mut Stream<'_>) -> ModalResult<TxnMeta> {
                             return Err(TacklerTxnError::txn_data_error(msg));
                         }
                         acc.uuid = Some(u);
+                    }
+                    MetaItem::ExtId(e) => {
+                        if acc.extid.is_some() {
+                            let msg = "duplicate 'ext-id' metadata item";
+                            return Err(TacklerTxnError::txn_data_error(msg));
+                        }
+                        acc.extid = Some(e);
                     }
                     MetaItem::Tags(t) => {
                         if acc.tags.is_some() {

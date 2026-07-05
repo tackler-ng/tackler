@@ -223,6 +223,14 @@ Normal, ok-case tests to validate functionality:
 * [ ] test
 * [ ] test
 
+Update:
+
+* // test: b88d6733-2acf-4021-a3d7-deaf58b518a6
+* // desc: "reject invalid metadata constructions"
+* // test: 5bb95c2e-2fad-4584-9380-e6cafe732cf6
+* // desc: "accepts multiple metadata items"
+
+
 ==== Errors
 
 Various error cases:
