@@ -40,6 +40,7 @@ pub struct TxnHeader {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uuid: Option<Uuid>,
     /// Txn ext-id, if any.
+    #[serde(rename = "extId")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub extid: Option<String>,
     /// Txn location, if any

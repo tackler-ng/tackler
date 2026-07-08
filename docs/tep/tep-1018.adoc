@@ -47,7 +47,9 @@ Detailed implementation planning
 
 === CLI Changes
 
-No changes to the command line interface.
+No changes to the command line interface with initial implementation.
+
+See also future plans for use case xref:use-case-lookup[lookup].
 
 === CONF Changes
 
@@ -73,7 +75,7 @@ Changes to filtering logic or implementation
 [source, json]
 ----
 {
-  "TxnFilterTxnExtID" : {
+  "TxnFilterTxnExtId" : {
     "regex" : "<regex>"
   }
 }
@@ -93,15 +95,11 @@ Api changes to server or client interfaces.
 
 ===== Server API Changes
 
-Changes to server API
-
-* [ ] item
+No changes to Server API
 
 ===== Client API Changes
 
-Changes to client API or JSON model
-
-* [ ] item
+No changes to client API
 
 ===== JSON Model
 
@@ -112,7 +110,7 @@ Changes to JSON model
 ** BalanceReport: no changes
 ** BalanceGroupReport: no changes
 ** [ ] RegisterReport
-*** [ ] new metadata field `ext-id`
+*** [ ] new metadata field `extId`
 
 
 ==== New Dependencies
@@ -136,9 +134,9 @@ No changes to the balance group report.
 
 Changes to register report
 
-* [ ] new metadata field `ext-id`
-** [ ] txt
-** [ ] json
+* [ ] new metadata field
+    txt:: `# ext-id: ...`
+    json:: `extId`
 
 
 === Exporting
@@ -153,7 +151,7 @@ No changes to the equity export.
 
 Changes to identity export
 
-* [ ] new txn metadata field `ext-id`
+* [ ] new metadata field `ext-id`
 
 ==== Accounts Export
 
@@ -191,7 +189,8 @@ Changes to conf-settings
       `kernel.ext-id.mandatory = <true | false>`
 
 
-==== Use case: test for duplicates or test for existence
+[[use-case-lookup]]
+==== Use case: test for existence
 
 New tackler command family `lookup` with arguments:
 * `lookup ext-id <id> ...`
