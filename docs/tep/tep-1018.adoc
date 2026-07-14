@@ -70,7 +70,7 @@ Changes to tackler `new` or `init` commands
 
 Changes to filtering logic or implementation
 
-* [ ] new regex-based txn property filter for `ext-id`
+* [x] new regex-based txn property filter for `ext-id`
 
 [source, json]
 ----
@@ -106,11 +106,11 @@ No changes to client API
 Changes to JSON model
 
 * Metadata: no changes to report's metadata section
-* [ ] JSON Reports
+* [x] JSON Reports
 ** BalanceReport: no changes
 ** BalanceGroupReport: no changes
-** [ ] RegisterReport
-*** [ ] new metadata field `extId`
+** [x] RegisterReport
+*** [x] new metadata field `extId`
 
 
 ==== New Dependencies
@@ -134,7 +134,7 @@ No changes to the balance group report.
 
 Changes to register report
 
-* [ ] new metadata field
+* [x] new metadata field
     txt:: `# ext-id: ...`
     json:: `extId`
 
@@ -151,7 +151,7 @@ No changes to the equity export.
 
 Changes to identity export
 
-* [ ] new metadata field `ext-id`
+* [x] new metadata field `ext-id`
 
 ==== Accounts Export
 

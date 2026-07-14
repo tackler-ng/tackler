@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -29,6 +29,7 @@ use txn::TxnFilterBBoxLatLonAlt;
 use txn::TxnFilterTxnCode;
 use txn::TxnFilterTxnComments;
 use txn::TxnFilterTxnDescription;
+use txn::TxnFilterTxnExtId;
 use txn::TxnFilterTxnTSBegin;
 use txn::TxnFilterTxnTSEnd;
 use txn::TxnFilterTxnTags;
@@ -84,6 +85,8 @@ pub enum TxnFilter {
     #[doc(hidden)]
     TxnFilterTxnUUID(TxnFilterTxnUUID),
     #[doc(hidden)]
+    TxnFilterTxnExtId(TxnFilterTxnExtId),
+    #[doc(hidden)]
     TxnFilterBBoxLatLon(TxnFilterBBoxLatLon),
     #[doc(hidden)]
     TxnFilterBBoxLatLonAlt(TxnFilterBBoxLatLonAlt),
@@ -132,6 +135,7 @@ impl IndentDisplay for TxnFilter {
             TxnFilter::TxnFilterTxnCode(tf) => tf.i_fmt(indent, tz, f),
             TxnFilter::TxnFilterTxnDescription(tf) => tf.i_fmt(indent, tz, f),
             TxnFilter::TxnFilterTxnUUID(tf) => tf.i_fmt(indent, tz, f),
+            TxnFilter::TxnFilterTxnExtId(tf) => tf.i_fmt(indent, tz, f),
             TxnFilter::TxnFilterBBoxLatLon(tf) => tf.i_fmt(indent, tz, f),
             TxnFilter::TxnFilterBBoxLatLonAlt(tf) => tf.i_fmt(indent, tz, f),
             TxnFilter::TxnFilterTxnTags(tf) => tf.i_fmt(indent, tz, f),

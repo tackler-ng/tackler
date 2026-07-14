@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023-2024
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -35,6 +35,7 @@ impl Predicate<Transaction> for TxnFilter {
             TxnFilter::TxnFilterTxnCode(tf) => tf.eval(txn),
             TxnFilter::TxnFilterTxnDescription(tf) => tf.eval(txn),
             TxnFilter::TxnFilterTxnUUID(tf) => tf.eval(txn),
+            TxnFilter::TxnFilterTxnExtId(tf) => tf.eval(txn),
             TxnFilter::TxnFilterBBoxLatLon(tf) => tf.eval(txn),
             TxnFilter::TxnFilterBBoxLatLonAlt(tf) => tf.eval(txn),
             TxnFilter::TxnFilterTxnTags(tf) => tf.eval(txn),
@@ -284,6 +285,22 @@ mod tests {
                 description: None,
                 uuid: uuid.map(|uuid_str| Uuid::parse_str(uuid_str).unwrap(/*:test:*/)),
                 extid: None,
+                location: None,
+                tags: None,
+                comments: None,
+            },
+            posts: vec![],
+        }
+    }
+
+    pub(crate) fn make_extid_txn(extid: Option<&str>) -> Transaction {
+        Transaction {
+            header: TxnHeader {
+                timestamp: Zoned::default(),
+                code: None,
+                description: None,
+                uuid: None,
+                extid: extid.map(ToString::to_string),
                 location: None,
                 tags: None,
                 comments: None,
