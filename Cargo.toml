@@ -46,9 +46,9 @@ indoc = "2.0.6"
 jiff = { version = "0.2.32", features = [ "serde" ]}
 rust_decimal = { version = "1.42.1", features= ["serde-with-arbitrary-precision" ]}
 rust_decimal_macros = { version = "1.40.0" }
-uuid = { version = "1.23.1", default-features = false, features = [ "serde" ] }
+uuid = { version = "1.24.0", default-features = false, features = [ "serde" ] }
 log = "0.4.29"
-regex =  { version = "1.12.4" }
+regex =  { version = "1.13.1" }
 serde = { version = "1.0.228", default-features = false }
 serde_json = { version = "1.0.150" , default-features = false, features = [ "std", "arbitrary_precision" ] }
 itertools = "0.15.0"

@@ -28,7 +28,8 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* ...
+* regex: 1.13.1
+* uuid: 1.24.0
 
 ===== Rust toolchain
 
