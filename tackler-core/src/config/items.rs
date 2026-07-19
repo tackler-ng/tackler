@@ -4,8 +4,8 @@
  */
 use crate::config::raw_items::{
     AccountsPathRaw, AccountsRaw, AuditRaw, BalanceGroupRaw, BalanceRaw, CommoditiesPathRaw,
-    CommoditiesRaw, ConfigRaw, EquityRaw, ExportRaw, FsRaw, GitRaw, InputRaw, KernelRaw, PriceRaw,
-    RegisterRaw, ReportRaw, ScaleRaw, TagsPathRaw, TagsRaw, TimestampRaw, TimezoneRaw,
+    CommoditiesRaw, ConfigRaw, EquityRaw, ExportRaw, ExtIdRaw, FsRaw, GitRaw, InputRaw, KernelRaw,
+    PriceRaw, RegisterRaw, ReportRaw, ScaleRaw, TagsPathRaw, TagsRaw, TimestampRaw, TimezoneRaw,
     TransactionRaw,
 };
 use crate::config::{to_export_targets, to_report_formats, to_report_targets};
@@ -272,6 +272,7 @@ pub(crate) struct Kernel {
     pub(crate) strict: bool,
     pub(crate) timestamp: Timestamp,
     pub(crate) audit: Audit,
+    pub(crate) extid: ExtId,
     pub input: Input,
 }
 impl Kernel {
@@ -280,6 +281,7 @@ impl Kernel {
             strict: k_raw.strict,
             timestamp: Timestamp::from(&k_raw.timestamp)?,
             audit: Audit::from(&k_raw.audit)?,
+            extid: ExtId::from(k_raw.extid.as_ref()),
             input: Input::try_from(&k_raw.input)?,
         };
         Ok(k)
@@ -354,6 +356,19 @@ impl Audit {
             mode: a_raw.mode,
         };
         Ok(a)
+    }
+}
+
+#[derive(Debug, Clone, Default)]
+pub(crate) struct ExtId {
+    pub(crate) unique: bool,
+}
+
+impl ExtId {
+    fn from(a_raw: Option<&ExtIdRaw>) -> ExtId {
+        ExtId {
+            unique: a_raw.is_some_and(|extid| extid.unique),
+        }
     }
 }
 

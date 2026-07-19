@@ -21,6 +21,8 @@ pub(super) struct KernelRaw {
     pub(super) strict: bool,
     pub(super) timestamp: TimestampRaw,
     pub(super) audit: AuditRaw,
+    #[serde(rename = "ext-id")]
+    pub(super) extid: Option<ExtIdRaw>,
     pub(super) input: InputRaw,
 }
 
@@ -44,6 +46,13 @@ pub(super) struct TimezoneRaw {
 pub(super) struct AuditRaw {
     pub(super) hash: String,
     pub(super) mode: bool,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+#[serde(rename = "ext-id")]
+pub(super) struct ExtIdRaw {
+    pub(super) unique: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]

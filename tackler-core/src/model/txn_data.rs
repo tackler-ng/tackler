@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-use crate::kernel::Predicate;
 use crate::kernel::hash::Hash;
+use crate::kernel::{Predicate, Settings};
 use crate::model::{TxnRefs, Txns, transaction};
 use crate::tackler;
 use itertools::Itertools;
@@ -18,6 +18,7 @@ pub struct TxnData {
     metadata: Option<Metadata>,
     txns: Txns,
     hash: Option<Hash>,
+    unique_extid: bool,
 }
 
 pub struct TxnSet<'a> {
@@ -54,12 +55,15 @@ impl TxnData {
     pub fn try_from(
         mdi_opt: Option<MetadataItem>,
         txns: Txns,
-        hash: &Option<Hash>,
+        settings: &Settings,
     ) -> Result<TxnData, tackler::Error> {
         let metadata = mdi_opt.map(Metadata::from_mdi);
 
-        if hash.is_some() {
+        if settings.audit_mode {
             check_uuids(&txns)?;
+        }
+        if settings.is_extid_unique() {
+            check_extid(&txns)?;
         }
 
         let mut t = txns;
@@ -68,7 +72,8 @@ impl TxnData {
         Ok(TxnData {
             metadata,
             txns: t,
-            hash: hash.clone(),
+            hash: settings.get_hash().clone(),
+            unique_extid: settings.is_extid_unique(),
         })
     }
 
@@ -85,6 +90,9 @@ impl TxnData {
 
         if self.hash.is_some() {
             check_uuids(&self.txns)?;
+        }
+        if self.unique_extid {
+            check_extid(&self.txns)?;
         }
 
         let metadata =
@@ -147,6 +155,34 @@ impl TxnData {
         };
 
         Ok(TxnSet { metadata, txns })
+    }
+}
+
+fn check_extid(txns: &Txns) -> Result<(), tackler::Error> {
+    let dups: Vec<&String> = txns
+        .iter()
+        .filter_map(|txn| txn.header.extid.as_ref())
+        .duplicates()
+        .collect();
+
+    if dups.is_empty() {
+        Ok(())
+    } else {
+        let dups_count = dups.len();
+        let msg = if dups_count < 10 {
+            format!(
+                "Found {} duplicate external ids.\nDuplicate ext-ids are:\n{}",
+                dups.len(),
+                dups.iter().join(",\n")
+            )
+        } else {
+            format!(
+                "Found {} duplicate external is.\nFirst ten duplicate ext-ids are:\n{}",
+                dups.len(),
+                dups[0..10].iter().join(",\n")
+            )
+        };
+        Err(msg.into())
     }
 }
 

@@ -55,15 +55,15 @@ See also future plans for use case xref:use-case-lookup[lookup].
 
 Changes to conf-settings
 
-* [ ] new configuration table `kernel.ext-id`
-** [ ] option to enforce uniqueness `kernel.ext-id.unique = <true | false>`
+* [x] new configuration table `kernel.ext-id`
+** [x] option to enforce uniqueness `kernel.ext-id.unique = <true | false>`
 ** [ ] _future_: option to enforce existence of `ext-id` `kernel.ext-id.mandatory = <true | false>`
 
 ==== Tackler `init` / `new` commands
 
 Changes to tackler `new` or `init` commands
 
-* [ ] Add the ext-id section, with `unique = false`
+* [x] Add the ext-id section, with `unique = false`
 
 
 === Filtering Changes
@@ -85,8 +85,6 @@ Changes to filtering logic or implementation
 === Tackler Core Engine
 
 Changes to the tackler core engine (e.g. core implementation)
-
-* [ ] item
 
 
 ==== API Changes

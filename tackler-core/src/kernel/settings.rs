@@ -217,6 +217,12 @@ impl Settings {
             ..Self::default()
         }
     }
+    #[must_use]
+    pub fn default_extid() -> Self {
+        let mut s = Settings::default();
+        s.kernel.extid.unique = true;
+        s
+    }
 }
 
 impl Settings {
@@ -394,6 +400,10 @@ impl Settings {
         } else {
             None
         }
+    }
+
+    pub(crate) fn is_extid_unique(&self) -> bool {
+        self.kernel.extid.unique
     }
 
     pub(crate) fn get_txn_account(
