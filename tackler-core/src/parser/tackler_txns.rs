@@ -31,7 +31,7 @@ pub fn string_to_txns(
     // feature: a94d4a60-40dc-4ec0-97a3-eeb69399f01b
     // coverage: "sorted" tested by 200aad57-9275-4d16-bdad-2f1c484bcf17
 
-    Ok(TxnData::from(None, txns, &settings.get_hash()))
+    TxnData::try_from(None, txns, &settings.get_hash())
 }
 
 /// # Errors
@@ -46,7 +46,7 @@ pub fn paths_to_txns(
         .flatten_ok()
         .collect();
 
-    Ok(TxnData::from(None, txns?, &settings.get_hash()))
+    TxnData::try_from(None, txns?, &settings.get_hash())
 }
 
 /// # Errors
@@ -205,9 +205,5 @@ pub fn git_to_txns(
     // perf: eprintln!("total time: {}ms, parse time: {}ms, git: {}ms", (ts_end.as_millis() - ts_start.as_millis()), ts_par_total, (ts_end.as_millis() - ts_start.as_millis())-ts_par_total);
 
     let hash = &settings.get_hash();
-    Ok(TxnData::from(
-        Some(MetadataItem::GitInputReference(gitmd)),
-        txns?,
-        hash,
-    ))
+    TxnData::try_from(Some(MetadataItem::GitInputReference(gitmd)), txns?, hash)
 }

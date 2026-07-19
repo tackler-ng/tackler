@@ -1,17 +1,17 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
-
-use itertools::Itertools;
 
 use crate::kernel::Predicate;
 use crate::kernel::hash::Hash;
 use crate::model::{TxnRefs, Txns, transaction};
 use crate::tackler;
+use itertools::Itertools;
 use tackler_api::filters::FilterDefinition;
 use tackler_api::metadata::items::{MetadataItem, TxnFilterDescription, TxnSetChecksum};
 use tackler_api::metadata::{Checksum, Metadata};
+use uuid::Uuid;
 
 #[derive(Debug)]
 pub struct TxnData {
@@ -47,17 +47,29 @@ impl TxnData {
         self.txns.is_empty()
     }
 
-    pub fn from(mdi_opt: Option<MetadataItem>, txns: Txns, hash: &Option<Hash>) -> TxnData {
+    /// Try to create `TxnData` from set of transactions
+    ///
+    /// # Errors
+    /// If resulting txn set is logically invalid, the method will return error
+    pub fn try_from(
+        mdi_opt: Option<MetadataItem>,
+        txns: Txns,
+        hash: &Option<Hash>,
+    ) -> Result<TxnData, tackler::Error> {
         let metadata = mdi_opt.map(Metadata::from_mdi);
+
+        if hash.is_some() {
+            check_uuids(&txns)?;
+        }
 
         let mut t = txns;
         t.sort_by(transaction::ord_by_txn);
 
-        TxnData {
+        Ok(TxnData {
             metadata,
             txns: t,
             hash: hash.clone(),
-        }
+        })
     }
 
     /// Append `TxnData` to existing `TxnData`
@@ -65,12 +77,16 @@ impl TxnData {
     /// This will reset the Metadata of target `TxnData`
     ///
     /// # Errors
-    ///
-    /// Returns `Err` in case resulting Txn Set is not valid (e.g. there are missing UUIDs)
+    /// Returns `Err` in case resulting txn set is invalid (e.g. there are missing UUIDs)
     /// This could happen especially when Txns with Audit information are appended with
     /// plain Txns without UUIDs.
     pub fn append(&mut self, txn_data: &mut TxnData) -> Result<&mut Self, tackler::Error> {
         self.txns.append(&mut txn_data.txns);
+
+        if self.hash.is_some() {
+            check_uuids(&self.txns)?;
+        }
+
         let metadata =
             TxnData::make_metadata(self.hash.as_ref(), None, &self.txns.iter().collect())?;
         self.metadata = Some(metadata);
@@ -134,38 +150,57 @@ impl TxnData {
     }
 }
 
-fn calc_txn_checksum(txns: &TxnRefs<'_>, hasher: &Hash) -> Result<Checksum, tackler::Error> {
-    let uuids: Result<Vec<String>, tackler::Error> = txns
+fn check_uuids(txns: &Txns) -> Result<(), tackler::Error> {
+    if txns.iter().any(|txn| txn.header.uuid.is_none()) {
+        let msg =
+            "Txn without UUID. Txn UUID is mandatory with transaction set checksum calculation.";
+        return Err(msg.into());
+    }
+
+    let dups: Vec<&Uuid> = txns
         .iter()
-        .map(|txn| if let Some(uuid) = txn.header.uuid { Ok(uuid.to_string()) } else {
-            let msg = "Txn without UUID. Txn UUID is mandatory with transaction set checksum calculation.";
-            Err(msg.into())
-        })
+        .filter_map(|txn| txn.header.uuid.as_ref())
+        .duplicates()
         .collect();
 
-    let mut u = uuids?;
-    u.sort();
-
-    let dups: Vec<String> = u.iter().duplicates().cloned().collect();
-    if !dups.is_empty() {
+    if dups.is_empty() {
+        Ok(())
+    } else {
         let dups_count = dups.len();
         let msg = if dups_count < 10 {
             format!(
                 "Found {} duplicate txn uuids with txn set checksum.\nDuplicate ids are:\n{}",
                 dups.len(),
-                dups.join(",\n")
+                dups.iter().map(|u| { u.to_string() }).join(",\n")
             )
         } else {
             format!(
                 "Found {} duplicate txn uuids with txn set checksum.\nFirst ten duplicate ids are:\n{}",
                 dups.len(),
-                dups[0..10].join(",\n")
+                dups[0..10].iter().map(|u| { u.to_string() }).join(",\n")
             )
         };
-        return Err(msg.into());
+        Err(msg.into())
     }
+}
 
-    let cs = hasher.checksum(&u, "\n".as_bytes());
+fn calc_txn_checksum(txns: &TxnRefs<'_>, hasher: &Hash) -> Result<Checksum, tackler::Error> {
+    let u: Result<Vec<String>, tackler::Error> = txns
+        .iter()
+        .map(|txn| {
+            if let Some(u) = txn.header.uuid {
+                Ok(u.to_string())
+            } else {
+                let msg = "Internal error: calc_txn_checksum with txns missing UUID";
+                Err(msg.into())
+            }
+        })
+        .collect();
+    let mut uuids = u?;
+
+    uuids.sort();
+
+    let cs = hasher.checksum(&uuids, "\n".as_bytes());
     Ok(cs)
 }
 
