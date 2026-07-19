@@ -213,7 +213,7 @@ impl BalanceReporter {
                     delta
                         .0
                         .as_ref()
-                        .map_or(String::default(), |c| format!(" {}", &c.name)),
+                        .map_or(String::default(), |c| format!(" {}", c.name)),
                 )?;
             }
         }

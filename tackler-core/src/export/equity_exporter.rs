@@ -175,7 +175,7 @@ impl Export for EquityExporter {
 
                         if let Some(asc) = &acc_sel_checksum {
                             for v in asc.text(cfg.report.tz.clone()) {
-                                eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                                eq_txn.push(format!("{eq_txn_indent}; {v}"));
                             }
                             eq_txn.push(format!("{eq_txn_indent}; "));
                         }
@@ -183,13 +183,13 @@ impl Export for EquityExporter {
 
                 if !price_lookup_ctx.is_empty() {
                     for v in report_tz_mdi.text(cfg.report.tz.clone()) {
-                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                        eq_txn.push(format!("{eq_txn_indent}; {v}"));
                     }
                     eq_txn.push(format!("{eq_txn_indent}; "));
 
                     let pr = MetadataItem::PriceRecords(price_lookup_ctx.metadata());
                     for v in pr.text(cfg.report.tz.clone()) {
-                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                        eq_txn.push(format!("{eq_txn_indent}; {v}"));
                     }
                     eq_txn.push(format!("{eq_txn_indent}; "));
                 }
@@ -197,7 +197,7 @@ impl Export for EquityExporter {
                 if cfg.inverted {
                     let credit = MetadataItem::CreditAccountReport(CreditAccountReport { });
                     for v in credit.text(cfg.report.tz.clone()) {
-                        eq_txn.push(format!("{}; {}", eq_txn_indent, &v));
+                        eq_txn.push(format!("{eq_txn_indent}; {v}"));
                     }
                     eq_txn.push(format!("{eq_txn_indent}; "));
                 }
