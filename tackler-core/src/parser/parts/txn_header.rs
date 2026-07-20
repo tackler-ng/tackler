@@ -63,6 +63,7 @@ ISO 8601 Timestamp:
         code: code.map(String::from),
         description: desc.map(String::from),
         uuid: meta.as_ref().and_then(|t| t.uuid),
+        extid: meta.as_ref().and_then(|t| t.extid.clone()),
         location: meta.as_ref().and_then(|t| t.location.clone()),
         tags: meta.and_then(|t| t.tags.clone()),
         comments: comments.map(|v| v.into_iter().map(String::from).collect()),

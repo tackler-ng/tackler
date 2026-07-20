@@ -93,6 +93,7 @@ fn criterion_benchmark_header(c: &mut Criterion) {
         indoc!(
             "|2026-04-27
              | # uuid: 506a2d55-2375-4d51-af3a-cf5021f04de9
+             | # ext-id: #123456789
              | # tags: cef, first, second
              | # location: geo:1.111,2.222,3.333
              | e 1
@@ -116,6 +117,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         indoc!(
             "|2024-12-31T23:58:59.123456789+02:00 (#001) 'bells 'n whistles
              | # uuid: 506a2d55-2375-4d51-af3a-cf5021f04de9
+             | # ext-id: #123456789
              | # tags: cef, first, second
              | # location: geo:1.111,2.222,3.333
              | ; first txn comment

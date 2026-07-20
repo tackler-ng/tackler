@@ -21,11 +21,11 @@ pub(crate) fn exec(exe_name: &str, name: &str) -> Result<Option<String>, tackler
 
     if fs::exists(&conf_dir)? {
         let p = Path::new(&conf_dir).canonicalize()?;
-        return Err(format!("'conf' destination `{}` already exists", &p.display()).into());
+        return Err(format!("'conf' destination `{}` already exists", p.display()).into());
     }
     if fs::exists(&txns_dir)? {
         let p = Path::new(&txns_dir).canonicalize()?;
-        return Err(format!("'txns' destination `{}` already exists", &p.display()).into());
+        return Err(format!("'txns' destination `{}` already exists", p.display()).into());
     }
     fs::create_dir_all(&conf_dir)?;
     fs::create_dir_all(&txns_dir)?;

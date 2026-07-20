@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2025
+ * Tackler-NG 2025-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -15,6 +15,7 @@ pub(super) const TXT: &str = r#"#
 ###   Valid values are <true|false>
 strict = false
 audit = { mode = false, hash = "SHA-256" }
+ext-id = { unique = false }
 timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
 [kernel.input]

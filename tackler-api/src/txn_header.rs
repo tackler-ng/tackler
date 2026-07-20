@@ -39,6 +39,10 @@ pub struct TxnHeader {
     /// Txn UUID, if any. This is mandatory, if audit-mode is on
     #[serde(skip_serializing_if = "Option::is_none")]
     pub uuid: Option<Uuid>,
+    /// Txn ext-id, if any.
+    #[serde(rename = "extId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub extid: Option<String>,
     /// Txn location, if any
     #[serde(skip_serializing_if = "Option::is_none")]
     pub location: Option<GeoPoint>,
@@ -144,7 +148,7 @@ impl TxnHeader {
         tz: TimeZone,
     ) -> String {
         format!(
-            "{}{}{}\n{}{}{}{}",
+            "{}{}{}\n{}{}{}{}{}",
             // txn header line: ts, code, desc
             ts_formatter(&self.timestamp, tz),
             self.code
@@ -157,6 +161,9 @@ impl TxnHeader {
             self.uuid
                 .as_ref()
                 .map_or_else(String::new, |uuid| format!("{indent}# uuid: {uuid}\n")),
+            self.extid
+                .as_ref()
+                .map_or_else(String::new, |extid| format!("{indent}# ext-id: {extid}\n")),
             self.location
                 .as_ref()
                 .map_or_else(String::new, |geo| format!("{indent}# location: {geo}\n")),
@@ -237,6 +244,7 @@ mod tests {
                     code: None,
                     description: None,
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -253,6 +261,7 @@ mod tests {
                     code: None,
                     description: None,
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -269,6 +278,7 @@ mod tests {
                     code: None,
                     description: None,
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -285,6 +295,7 @@ mod tests {
                     code: Some("#123".to_string()),
                     description: None,
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -301,6 +312,7 @@ mod tests {
                     code: Some("#123".to_string()),
                     description: Some("desc".to_string()),
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -317,6 +329,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -333,6 +346,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: Some(uuid),
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: None,
@@ -350,6 +364,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: None,
+                    extid: None,
                     location: Some(geo.clone()),
                     tags: None,
                     comments: None,
@@ -367,6 +382,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: Some(txn_tags.clone()),
                     comments: None,
@@ -384,6 +400,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: None,
+                    extid: None,
                     location: None,
                     tags: None,
                     comments: Some(comments.clone()),
@@ -403,6 +420,7 @@ mod tests {
                     code: None,
                     description: Some("desc".to_string()),
                     uuid: Some(uuid),
+                    extid: None, // todo
                     location: Some(geo),
                     tags: Some(txn_tags),
                     comments: Some(comments),

@@ -26,9 +26,14 @@ fn txn_tags_to_string(txn: &Transaction) -> String {
     txn.header.tags_to_string()
 }
 
+fn txn_extid_to_string(txn: &Transaction) -> String {
+    txn.header.extid.as_ref().unwrap(/*:test:*/).clone()
+}
+
 mod tackler_txns;
 mod txn_accounts;
 mod txn_commodities;
+mod txn_extid;
 mod txn_header_code;
 mod txn_header_desc;
 mod txn_header_timestamp;

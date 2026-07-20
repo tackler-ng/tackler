@@ -14,6 +14,7 @@ mod txn_comment;
 mod txn_header;
 mod txn_header_code;
 mod txn_header_desc;
+mod txn_meta_extid;
 mod txn_meta_location;
 mod txn_meta_tags;
 mod txn_meta_uuid;
