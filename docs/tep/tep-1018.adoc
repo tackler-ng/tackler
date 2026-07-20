@@ -1,23 +1,20 @@
 = TEP-1018: External reference ID
 
-See branch
-link:https://github.com/tackler-ng/tackler/tree/tep-1018-ext-id/docs/tep/tep-1018.adoc[/tep-1018-ext-id]
-for up to date TEP-1018 content.
-
-New metadata item to track external transaction reference IDs.
+Add new External Id (`ext-id`) metadata field to transactions.
 
 ref: link:https://github.com/tackler-ng/tackler/issues/141[GH Issue 141]
 
 == Description
 
-The external reference id (`ext-id`) is a mean to link
-transaction data to external source, maybe in unique way.
+The external reference id (ext-id) is meant to connect transaction data to external source,
+and optionally enforce uniqueness of that over the transaction set.
 
-If the ext-id is unique, it can be used to detect data level duplicates,
-e.g. to detect when same CSV row is imported twice.
+Main use case is to connect information between external systems with tackler journal,
+for example when importing CVS records to tackler.
+The uniqueness feature could be used to prevent importing same records twice.
 
 It would be then up to the import logic how this would be unique,
-for example it could be checksum over the CVS row data,
+it could be a checksum over the CVS row data,
 or if the external source have own ids, that could be used.
 
 The only restriction for content of the ext-id is, that it can't be empty,

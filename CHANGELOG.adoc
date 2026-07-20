@@ -10,8 +10,9 @@
 
 New features:
 
-* Transaction metadata for External IDs
-  ** (link:https://github.com/tackler-ng/tackler/issues/141[Issue #141])
+* A new external id (`ext-id`) txn metadata item
+  ** See xref:docs/tep/tep-1018.adoc[TEP-1018] and
+     link:https://github.com/tackler-ng/tackler/issues/141[GH #141]
 
 * ...
   ** ...
