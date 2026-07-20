@@ -11,12 +11,10 @@ use tackler_rs::IndocUtils;
 
 
     #[test]
-    // test:
-    // desc:
     #[allow(clippy::too_many_lines)]
     fn err_txn_extid_parse() {
       let  perr_strings: Vec<(String, &str, &str)> = vec![
-          // test:
+          // test: ad8b853a-8cf1-4e9d-a25e-c011907c86bf
           // desc: detect missing ext-id data
           (indoc!(
            "|
@@ -112,8 +110,6 @@ use tackler_rs::IndocUtils;
     }
 
     #[test]
-    // test:
-    // desc: ""
     fn ok_txn_extid_parse() {
       let  pok_strings: Vec<(String, &str)> = vec![
         (indoc!(

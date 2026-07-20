@@ -211,39 +211,37 @@ Anything which wasn't implemented?
 
 Normal, ok-case tests to validate functionality:
 
-* [ ] basic functionality
-* [ ] filtering: `ext-id`
-* [ ] txn without ext-id are allowed
-* [ ] identity test: txn -> identity -> register report
-* [ ] `ext-id.unique`
-** [ ] `unique = false`: same ids are fine
-* [ ] test
-* [ ] test
+* [x] basic functionality
+* [x] filtering: `ext-id`
+* [x] txn without ext-id are allowed
+* [x] identity test: txn -> identity -> register report
+* [x] `ext-id.unique`
+** [x] `unique = false`: same ids are fine
 
 Update:
 
-* // test: b88d6733-2acf-4021-a3d7-deaf58b518a6
-* // desc: "reject invalid metadata constructions"
-* // test: 5bb95c2e-2fad-4584-9380-e6cafe732cf6
-* // desc: "accepts multiple metadata items"
+* [x] // test: b88d6733-2acf-4021-a3d7-deaf58b518a6
+      // desc: "reject invalid metadata constructions"
+* [x] // test: 5bb95c2e-2fad-4584-9380-e6cafe732cf6
+      // desc: "accepts multiple metadata items"
 
 
 ==== Errors
 
 Various error cases:
 
-* [ ] e: empty ext-id
-* [ ] e: `ext-id.unique`
-** [ ] e: `unique = true`: same ids cause error
+* [x] e: empty ext-id
+* [x] e: `ext-id.unique`
+** [x] e: `unique = true`: same ids cause error
 
 
 ==== Perf
 
 Is there need to run or create new perf tests?
 
-* [ ] perf: `tackler-core/benches/parser_bench.rs`
-** [ ] perf test: `metadata`
-** [ ] perf test: `everything`
+* [x] perf: `tackler-core/benches/parser_bench.rs`
+** [x] perf test: `metadata`
+** [x] perf test: `everything`
 
 ==== Feature and Test Coverage Tracking
 

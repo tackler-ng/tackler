@@ -1,7 +1,7 @@
 #!/bin/bash
 # vim: tabstop=4 shiftwidth=4 softtabstop=4 smarttab expandtab autoindent
 #
-# Tackler-NG 2024-2025
+# Tackler-NG 2024-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -51,6 +51,8 @@ $TEST_DIR/commodity-errors.sh
 $TEST_DIR/core.sh
 $TEST_DIR/core-fs-errors.sh
 $TEST_DIR/core-git-errors.sh
+$TEST_DIR/extid.sh
+$TEST_DIR/extid-errors.sh
 $TEST_DIR/gas-blender.sh
 $TEST_DIR/location.sh
 $TEST_DIR/location-errors.sh
