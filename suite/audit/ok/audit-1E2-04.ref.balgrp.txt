@@ -1,0 +1,59 @@
+Git Storage
+      reference : set-1e2
+      directory : txns
+      extension : txn
+         commit : 203e6f22992f2fff80c537e7742ed3cf897a9e6b
+         author : tackler <accounting@example.com>
+           date : 2016-12-28 08:09:36 +0000
+        subject : set-1e2: 2016-12-28
+
+Txn Set Checksum
+        SHA-256 : aed68a71406105af4cfbc78ea1a43cdcc7e75e5de5b7c45ac431d91a9ab75044
+       set size : 3
+
+Filter
+  Txn Description: "^1E2 txn-(1|17|100)$"
+
+Account Selector Checksum
+        SHA-256 : 64263feac7b00952e9ec3b6c1fd11316faa58ff673c6bd085fac9f6f8d8389f6
+       selector : '.*'
+
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2016-01
+-------
+                 0.00   -1.0000001  a
+                 0.00   -1.0000001  a:ay2016
+           -1.0000001   -1.0000001  a:ay2016:am01
+                 0.00    1.0000001  e
+                 0.00    1.0000001  e:ey2016
+                 0.00    1.0000001  e:ey2016:em01
+            1.0000001    1.0000001  e:ey2016:em01:ed01
+=====================
+            0.0000000
+2016-02
+-------
+                 0.00   -28.0000001  a
+                 0.00   -28.0000001  a:ay2016
+          -28.0000001   -28.0000001  a:ay2016:am02
+                 0.00    28.0000001  e
+                 0.00    28.0000001  e:ey2016
+                 0.00    28.0000001  e:ey2016:em02
+           28.0000001    28.0000001  e:ey2016:em02:ed28
+=====================
+            0.0000000
+2016-12
+-------
+                 0.00   -28.0000001  a
+                 0.00   -28.0000001  a:ay2016
+          -28.0000001   -28.0000001  a:ay2016:am12
+                 0.00    28.0000001  e
+                 0.00    28.0000001  e:ey2016
+                 0.00    28.0000001  e:ey2016:em12
+           28.0000001    28.0000001  e:ey2016:em12:ed28
+=====================
+            0.0000000

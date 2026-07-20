@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2009-W01",
+      "balances": [
+        {
+          "accountSum": "-40180202.11",
+          "accountTreeSum": "-40180202.11",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "40180202.11",
+          "accountTreeSum": "40180202.11",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2009-W07",
+      "balances": [
+        {
+          "accountSum": "-20090214.00",
+          "accountTreeSum": "-20090214.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20090214.00",
+          "accountTreeSum": "20090214.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2009-W53",
+      "balances": [
+        {
+          "accountSum": "-60291435.00",
+          "accountTreeSum": "-60291435.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "60291435.00",
+          "accountTreeSum": "60291435.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010-W01",
+      "balances": [
+        {
+          "accountSum": "-20100104.00",
+          "accountTreeSum": "-20100104.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20100104.00",
+          "accountTreeSum": "20100104.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    }
+  ]
+}

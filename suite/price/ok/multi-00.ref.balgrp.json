@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2024-01",
+      "balances": [
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "aaa"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "1.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "title": "2024-02",
+      "balances": [
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "bbb"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "1.00",
+          "commodity": "bbb"
+        }
+      ]
+    },
+    {
+      "title": "2024-03",
+      "balances": [
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "ccc"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "1.00",
+          "commodity": "ccc"
+        }
+      ]
+    }
+  ]
+}

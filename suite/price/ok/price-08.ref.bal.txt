@@ -1,0 +1,17 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : 2024-04-01 00:00:00
+      Commodity : aaa
+          Value : 10000000.001 TCKLR
+
+Credit Account Report
+           NOTE : All amounts are inverted
+
+
+BALANCE
+-------
+         -120000000.012         -120000000.012 TCKLR  e:conv
+=============================
+         -120000000.012 TCKLR

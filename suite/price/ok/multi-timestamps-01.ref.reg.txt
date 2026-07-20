@@ -1,0 +1,40 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : 2024-01-01 12:15:16
+      Commodity : aaa
+          Value : 1.01 TCKLR
+                -
+           Time : 2024-02-01 12:15:16.123456789
+      Commodity : bbb
+          Value : 20.0001 TCKLR
+                -
+           Time : 2024-03-01 02:15:16
+      Commodity : ccc
+          Value : 300.000001 TCKLR
+
+
+REGISTER
+--------
+2024-01-01
+            Assets:Stocks                                 10.00                      10.00 $
+            Assets:Stocks                                  1.00 aaa                   1.01 TCKLR
+            Assets:Stocks                                  1.00 bbb                21.0101 TCKLR
+            Assets:Stocks                                  1.00 ccc             321.010101 TCKLR
+            Assets:Stocks                                  1.00                       1.00 ddd
+------------------------------------------------------------------------------------------------
+2024-02-01
+            Assets:Stocks                                 20.00                      30.00 $
+            Assets:Stocks                                  1.00 aaa             322.020101 TCKLR
+            Assets:Stocks                                  1.00 bbb             342.020201 TCKLR
+            Assets:Stocks                                  1.00 ccc             642.020202 TCKLR
+            Assets:Stocks                                  1.00                       2.00 ddd
+------------------------------------------------------------------------------------------------
+2024-03-01
+            Assets:Stocks                                 30.00                      60.00 $
+            Assets:Stocks                                  1.00 aaa             643.030202 TCKLR
+            Assets:Stocks                                  1.00 bbb             663.030302 TCKLR
+            Assets:Stocks                                  1.00 ccc             963.030303 TCKLR
+            Assets:Stocks                                  1.00                       3.00 ddd
+------------------------------------------------------------------------------------------------

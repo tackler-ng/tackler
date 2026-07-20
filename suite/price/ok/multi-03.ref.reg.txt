@@ -1,0 +1,17 @@
+Filter
+  Posting Commodity: "bbb"
+
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : 2024-03-01 00:00:00
+      Commodity : bbb
+          Value : 300.0001 TCKLR
+
+
+REGISTER
+--------
+2024-02-01
+            Assets:Stocks                                  1.00 bbb               300.0001 TCKLR
+------------------------------------------------------------------------------------------------

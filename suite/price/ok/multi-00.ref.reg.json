@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2024-01-01",
+      "txn": {
+        "timestamp": "2024-01-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-01",
+      "txn": {
+        "timestamp": "2024-02-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "bbb"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-01",
+      "txn": {
+        "timestamp": "2024-03-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "ccc"
+        }
+      ]
+    }
+  ]
+}

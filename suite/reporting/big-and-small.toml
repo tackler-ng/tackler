@@ -1,0 +1,36 @@
+###
+### REPORTING / BIG AND SMALL
+###
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "ok-accounts.toml" }
+commodities = { path = "ok-commodities.toml" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 0, max = 25 }
+formats = [ "txt", "json" ]
+accounts = [ "e0(:.+)?", "a0(:.+)?" ]
+targets = [ "balance", "balance-group", "register"]
+
+balance       = { title = "SUMMARY" }
+balance-group = { title = "MONTH SUMMARY", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+[export]
+targets = ["equity", "identity"]
+equity = { equity-account = "Equity:Balance" }

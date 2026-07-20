@@ -1,0 +1,20 @@
+2016-12-31T23:59:50+00:00 'Equity txn
+   ; Last txn (uuid) : d14fe4a3-3bed-36b6-871f-0838afc3b57c
+   ;
+   ; Txn Set Checksum
+   ;         SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+   ;        set size : 10
+   ; 
+   ; Account Selector Checksum
+   ;         SHA-256 : 2cc00a77563ae31320090f4c3227d5e40c283c47d3f0014680275211cf28ba5c
+   ;       selectors : 'a:ay2016:am11'
+   ;                 | 'e:ey2016:em11:.*'
+   ; 
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a:ay2016:am11  -25.0000001
+   e:ey2016:em11:ed25  25.0000001
+

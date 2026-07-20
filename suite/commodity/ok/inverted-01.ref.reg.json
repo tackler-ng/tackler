@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "CreditAccountReport": {}
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-05-01",
+      "txn": {
+        "timestamp": "2017-05-01T00:00:00+00:00[UTC]",
+        "description": "basic commodity (EUR)"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "EUR"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-02",
+      "txn": {
+        "timestamp": "2017-05-02T00:00:00+00:00[UTC]",
+        "description": "default with commodity (EUR)"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "10.00",
+          "runningTotal": "11.00",
+          "commodity": "EUR"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-03",
+      "txn": {
+        "timestamp": "2017-05-03T00:00:00+00:00[UTC]",
+        "description": "no commodity"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "200.00",
+          "runningTotal": "200.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-04",
+      "txn": {
+        "timestamp": "2017-05-04T00:00:00+00:00[UTC]",
+        "description": "no commodity with default"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "100.00",
+          "runningTotal": "300.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-05",
+      "txn": {
+        "timestamp": "2017-05-05T00:00:00+00:00[UTC]",
+        "description": "basic commodity (USD)"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1000.00",
+          "runningTotal": "1000.00",
+          "commodity": "USD"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-06",
+      "txn": {
+        "timestamp": "2017-05-06T00:00:00+00:00[UTC]",
+        "description": "default with commodity (USD)"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "2000.00",
+          "runningTotal": "3000.00",
+          "commodity": "USD"
+        }
+      ]
+    }
+  ]
+}

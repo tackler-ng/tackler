@@ -1,0 +1,9 @@
+2019-01-26T00:00:00+00:00 'Equity txn for JPY
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  -10 JPY
+   e  10 JPY
+

@@ -1,0 +1,27 @@
+Git Storage
+      reference : shard-01
+      directory : git-txns
+      extension : txn
+         commit : 422ca7f3cbc1f3597fd2312d7d6c7793115e1e50
+         author : tackler <accounting@example.com>
+           date : 2019-03-20 19:37:28 +0200
+        subject : test: shard-01
+
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2017-01
+-------
+                 1.00    1.00  a
+                -1.00   -1.00  e
+=====================
+                 0.00
+2017-02
+-------
+               110.00    110.00  a
+              -110.00   -110.00  e
+=====================
+                 0.00

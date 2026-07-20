@@ -1,0 +1,31 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : bbb
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : ccc
+          Value : - TCKLR
+
+Credit Account Report
+           NOTE : All amounts are inverted
+
+
+REGISTER
+--------
+2024-01-01
+            Assets:Stocks                                 -1.00 aaa @ 1.01                       -1.01 TCKLR
+------------------------------------------------------------------------------------------------------------
+2024-02-01
+            Assets:Stocks                                 -1.00 bbb @ 20.0001                 -21.0101 TCKLR
+------------------------------------------------------------------------------------------------------------
+2024-03-01
+            Assets:Stocks                                 -1.00 ccc @ 300.000001           -321.010101 TCKLR
+------------------------------------------------------------------------------------------------------------

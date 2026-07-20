@@ -1,0 +1,256 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "ed6e4b10de2daea8d143569c473d14a9b09c3270",
+          "ref": "set-1e1",
+          "dir": "txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-11-25 09:36:00 +0000",
+          "subject": "set-1e1: 2016-11-25"
+        }
+      },
+      {
+        "TxnSetChecksum": {
+          "size": 10,
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3"
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "None",
+            "value": "select all"
+          },
+          "selectors": []
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "CreditAccountReport": {}
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2016-01-01",
+      "txn": {
+        "timestamp": "2016-01-01T00:00:00+00:00[UTC]",
+        "code": "#0000001",
+        "description": "1E1 txn-1",
+        "uuid": "28527fbd-466b-5c6f-81a3-4c4d109c48d8"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am01",
+          "amount": "1.0000001",
+          "runningTotal": "1.0000001"
+        },
+        {
+          "account": "e:ey2016:em01:ed01",
+          "amount": "-1.0000001",
+          "runningTotal": "-1.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-02-06",
+      "txn": {
+        "timestamp": "2016-02-06T14:24:00+00:00[UTC]",
+        "code": "#0000002",
+        "description": "1E1 txn-2",
+        "uuid": "5ba38a34-4a05-585d-98fb-80fcdbbd58c8"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am02",
+          "amount": "6.0000001",
+          "runningTotal": "6.0000001"
+        },
+        {
+          "account": "e:ey2016:em02:ed06",
+          "amount": "-6.0000001",
+          "runningTotal": "-6.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-03-14",
+      "txn": {
+        "timestamp": "2016-03-14T04:48:00+00:00[UTC]",
+        "code": "#0000003",
+        "description": "1E1 txn-3",
+        "uuid": "e8a6c7fa-e340-59f3-9fcc-0991548ffcb6"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am03",
+          "amount": "14.0000001",
+          "runningTotal": "14.0000001"
+        },
+        {
+          "account": "e:ey2016:em03:ed14",
+          "amount": "-14.0000001",
+          "runningTotal": "-14.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-04-19",
+      "txn": {
+        "timestamp": "2016-04-19T19:12:00+00:00[UTC]",
+        "code": "#0000004",
+        "description": "1E1 txn-4",
+        "uuid": "d37cab1f-4cd5-53d1-a588-760a973a307b"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am04",
+          "amount": "19.0000001",
+          "runningTotal": "19.0000001"
+        },
+        {
+          "account": "e:ey2016:em04:ed19",
+          "amount": "-19.0000001",
+          "runningTotal": "-19.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-05-26",
+      "txn": {
+        "timestamp": "2016-05-26T09:36:00+00:00[UTC]",
+        "code": "#0000005",
+        "description": "1E1 txn-5",
+        "uuid": "d8f51cad-c26c-52b8-925a-29bb18a565cd"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am05",
+          "amount": "26.0000001",
+          "runningTotal": "26.0000001"
+        },
+        {
+          "account": "e:ey2016:em05:ed26",
+          "amount": "-26.0000001",
+          "runningTotal": "-26.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-07-02",
+      "txn": {
+        "timestamp": "2016-07-02T00:00:00+00:00[UTC]",
+        "code": "#0000006",
+        "description": "1E1 txn-6",
+        "uuid": "fe7c11fa-a45e-50c1-bdf5-7da5bd488e3b"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am07",
+          "amount": "2.0000001",
+          "runningTotal": "2.0000001"
+        },
+        {
+          "account": "e:ey2016:em07:ed02",
+          "amount": "-2.0000001",
+          "runningTotal": "-2.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-08-07",
+      "txn": {
+        "timestamp": "2016-08-07T14:24:00+00:00[UTC]",
+        "code": "#0000007",
+        "description": "1E1 txn-7",
+        "uuid": "dc5fc89b-0c74-5109-ad27-ff515203aabc"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am08",
+          "amount": "7.0000001",
+          "runningTotal": "7.0000001"
+        },
+        {
+          "account": "e:ey2016:em08:ed07",
+          "amount": "-7.0000001",
+          "runningTotal": "-7.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-09-13",
+      "txn": {
+        "timestamp": "2016-09-13T04:48:00+00:00[UTC]",
+        "code": "#0000008",
+        "description": "1E1 txn-8",
+        "uuid": "e46c1f23-ad1d-575a-aae6-9b24317c6692"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am09",
+          "amount": "13.0000001",
+          "runningTotal": "13.0000001"
+        },
+        {
+          "account": "e:ey2016:em09:ed13",
+          "amount": "-13.0000001",
+          "runningTotal": "-13.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-10-19",
+      "txn": {
+        "timestamp": "2016-10-19T19:12:00+00:00[UTC]",
+        "code": "#0000009",
+        "description": "1E1 txn-9",
+        "uuid": "09032608-18df-52e6-8e12-a31d23e9b35d"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am10",
+          "amount": "19.0000001",
+          "runningTotal": "19.0000001"
+        },
+        {
+          "account": "e:ey2016:em10:ed19",
+          "amount": "-19.0000001",
+          "runningTotal": "-19.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-11-25",
+      "txn": {
+        "timestamp": "2016-11-25T09:36:00+00:00[UTC]",
+        "code": "#0000010",
+        "description": "1E1 txn-10",
+        "uuid": "9e902481-1609-5f1a-9640-c3d40b6b66f9"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am11",
+          "amount": "25.0000001",
+          "runningTotal": "25.0000001"
+        },
+        {
+          "account": "e:ey2016:em11:ed25",
+          "amount": "-25.0000001",
+          "runningTotal": "-25.0000001"
+        }
+      ]
+    }
+  ]
+}

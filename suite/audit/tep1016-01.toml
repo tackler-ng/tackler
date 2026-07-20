@@ -1,0 +1,33 @@
+### 
+### TEP-1016: FLAT BALANCE
+###
+[kernel]
+strict = true
+audit = { mode = true, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "git", git = { repo = "audit-repo.git", dir = "txns", ref = "set-1e2", suffix = "txn" } }
+
+[transaction]
+accounts    = { path = "../../examples/audit/accounts.toml" }
+commodities = { path = "../../examples/audit/commodities.toml" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+accounts = [ ]
+targets = [ "balance", "balance-group", "register" ]
+formats = [ "txt", "json" ]
+
+balance       = { title = "BALANCE", type = "flat" }
+balance-group = { title = "BALANCE GROUPS", type = "tree", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+### Export Configuration
+[export]
+targets = [ "equity" ]
+equity = { equity-account = "Equity:Balance" }

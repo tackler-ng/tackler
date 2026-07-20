@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2017-01-01",
+      "balances": [
+        {
+          "accountSum": "21.00",
+          "accountTreeSum": "321.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "300.00",
+          "accountTreeSum": "300.00",
+          "account": "a:b:c"
+        },
+        {
+          "accountSum": "-301.00",
+          "accountTreeSum": "-301.00",
+          "account": "e:e0101"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "20.00"
+        }
+      ]
+    },
+    {
+      "title": "2017-01-02",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "0.01",
+          "account": "a:by"
+        },
+        {
+          "accountSum": "0.01",
+          "accountTreeSum": "0.01",
+          "account": "a:by:not"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.01"
+        }
+      ]
+    }
+  ]
+}

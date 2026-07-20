@@ -1,0 +1,19 @@
+Txn Set Checksum
+        SHA-256 : 7fff8c6dfc0eaa9aaffdb308900dc20ec26a444d0c1a87082f12393f7390a9a8
+       set size : 1
+
+Account Selector Checksum
+           None : select all
+
+
+BALANCE
+-------
+                 0.00   -14.0000001  a
+                 0.00   -14.0000001  a:ay2016
+          -14.0000001   -14.0000001  a:ay2016:am03
+                 0.00    14.0000001  e
+                 0.00    14.0000001  e:ey2016
+                 0.00    14.0000001  e:ey2016:em03
+           14.0000001    14.0000001  e:ey2016:em03:ed14
+=====================
+            0.0000000

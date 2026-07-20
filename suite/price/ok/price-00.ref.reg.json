@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2024-01-01",
+      "txn": {
+        "timestamp": "2024-01-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-12",
+      "txn": {
+        "timestamp": "2024-01-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "2.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-24",
+      "txn": {
+        "timestamp": "2024-01-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "3.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-31",
+      "txn": {
+        "timestamp": "2024-01-31T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "4.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-01",
+      "txn": {
+        "timestamp": "2024-02-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "5.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-12",
+      "txn": {
+        "timestamp": "2024-02-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "6.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-24",
+      "txn": {
+        "timestamp": "2024-02-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "7.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-29",
+      "txn": {
+        "timestamp": "2024-02-29T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "8.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-01",
+      "txn": {
+        "timestamp": "2024-03-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "9.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-12",
+      "txn": {
+        "timestamp": "2024-03-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "10.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-24",
+      "txn": {
+        "timestamp": "2024-03-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "11.00",
+          "commodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-31",
+      "txn": {
+        "timestamp": "2024-03-31T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "12.00",
+          "commodity": "aaa"
+        }
+      ]
+    }
+  ]
+}

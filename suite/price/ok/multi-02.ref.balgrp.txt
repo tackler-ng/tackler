@@ -1,0 +1,34 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : 2024-03-01 00:00:00
+      Commodity : aaa
+          Value : 300.01 TCKLR
+                -
+           Time : 2024-03-01 00:00:00
+      Commodity : bbb
+          Value : 300.0001 TCKLR
+                -
+           Time : 2024-03-01 00:00:00
+      Commodity : ccc
+          Value : 300.000001 TCKLR
+
+
+BALANCE GROUPS
+--------------
+2024-01
+-------
+               300.01          300.01 TCKLR  Assets:Stocks
+===========================
+               300.01 TCKLR
+2024-02
+-------
+             300.0001          300.0001 TCKLR  Assets:Stocks
+===========================
+             300.0001 TCKLR
+2024-03
+-------
+           300.000001          300.000001 TCKLR  Assets:Stocks
+===========================
+           300.000001 TCKLR

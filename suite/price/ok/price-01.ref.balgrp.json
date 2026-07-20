@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2024-01",
+      "balances": [
+        {
+          "accountSum": "68.004",
+          "accountTreeSum": "68.004",
+          "account": "e:conv",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "68.004",
+          "commodity": "TCKLR"
+        }
+      ]
+    },
+    {
+      "title": "2024-02",
+      "balances": [
+        {
+          "accountSum": "7500.004",
+          "accountTreeSum": "7500.004",
+          "account": "e:conv",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "7500.004",
+          "commodity": "TCKLR"
+        }
+      ]
+    },
+    {
+      "title": "2024-03",
+      "balances": [
+        {
+          "accountSum": "770000.004",
+          "accountTreeSum": "770000.004",
+          "account": "e:conv",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "770000.004",
+          "commodity": "TCKLR"
+        }
+      ]
+    }
+  ]
+}

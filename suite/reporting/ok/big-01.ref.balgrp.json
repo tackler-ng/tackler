@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUP (TEST)",
+  "groups": [
+    {
+      "title": "2017-03-01",
+      "balances": [
+        {
+          "accountSum": "12345678901234567890.1234568",
+          "accountTreeSum": "12345678901234567890.1234568",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "-12345678901234567890.1234568",
+          "accountTreeSum": "-12345678901234567890.1234568",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000"
+        }
+      ]
+    }
+  ]
+}

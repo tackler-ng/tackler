@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2019-04",
+      "balances": [
+        {
+          "accountSum": "351.00",
+          "account": "e",
+          "commodity": "$"
+        },
+        {
+          "accountSum": "3.00",
+          "account": "Assets:Stocks",
+          "commodity": "ACME"
+        },
+        {
+          "accountSum": "-111.60",
+          "account": "Assets:Cash",
+          "commodity": "EUR"
+        },
+        {
+          "accountSum": "-321.00",
+          "account": "a",
+          "commodity": "€"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "351.00",
+          "commodity": "$"
+        },
+        {
+          "delta": "3.00",
+          "commodity": "ACME"
+        },
+        {
+          "delta": "-111.60",
+          "commodity": "EUR"
+        },
+        {
+          "delta": "-321.00",
+          "commodity": "€"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : bbb
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : ccc
+          Value : - TCKLR
+
+
+REGISTER
+--------
+2024-01-01
+            Assets:Stocks                                 10.00                                  10.00 $
+            Assets:Stocks                                  1.00 aaa @ 1.01                        1.01 TCKLR
+            Assets:Stocks                                  1.00 bbb @ 1.0001                    2.0101 TCKLR
+            Assets:Stocks                                  1.00 ccc @ 1.000001                3.010101 TCKLR
+            Assets:Stocks                                  1.00                                   1.00 ddd
+------------------------------------------------------------------------------------------------------------
+2024-02-01
+            Assets:Stocks                                 20.00                                  30.00 $
+            Assets:Stocks                                  1.00 aaa @ 20.01                  23.020101 TCKLR
+            Assets:Stocks                                  1.00 bbb @ 20.0001                43.020201 TCKLR
+            Assets:Stocks                                  1.00 ccc @ 20.000001              63.020202 TCKLR
+            Assets:Stocks                                  1.00                                   2.00 ddd
+------------------------------------------------------------------------------------------------------------
+2024-03-01
+            Assets:Stocks                                 30.00                                  60.00 $
+            Assets:Stocks                                  1.00 aaa @ 300.01                363.030202 TCKLR
+            Assets:Stocks                                  1.00 bbb @ 300.0001              663.030302 TCKLR
+            Assets:Stocks                                  1.00 ccc @ 300.000001            963.030303 TCKLR
+            Assets:Stocks                                  1.00                                   3.00 ddd
+------------------------------------------------------------------------------------------------------------

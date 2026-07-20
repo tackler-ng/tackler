@@ -1,0 +1,36 @@
+###
+### YEAR
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "tz-accounts.toml" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+formats = [ "txt", "json" ]
+accounts = [ ]
+targets = [ "balance-group", "register" ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "year" }
+register      = { title = "REGISTER", timestamp-style = "date" }
+
+
+[export]
+targets = [ ]
+equity = { equity-account = "Equity:Balance" }

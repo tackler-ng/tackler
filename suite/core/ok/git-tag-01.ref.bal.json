@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "3a1622d0c81cd1520f42ee357315d1db8c0e0771",
+          "ref": "tag-test-01",
+          "dir": "git-txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2019-03-20 19:37:57 +0200",
+          "subject": "test: commit-id-01, step 2"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "110.00",
+      "accountTreeSum": "110.00",
+      "account": "a"
+    },
+    {
+      "accountSum": "-110.00",
+      "accountTreeSum": "-110.00",
+      "account": "e"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0.00"
+    }
+  ]
+}

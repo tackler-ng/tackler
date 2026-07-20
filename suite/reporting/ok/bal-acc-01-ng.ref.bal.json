@@ -1,0 +1,40 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "-20.010",
+      "account": "not"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "0.001",
+      "account": "not:a"
+    },
+    {
+      "accountSum": "0.001",
+      "accountTreeSum": "0.001",
+      "account": "not:a:b"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "-20.011",
+      "account": "not:e"
+    },
+    {
+      "accountSum": "-0.001",
+      "accountTreeSum": "-0.001",
+      "account": "not:e:b"
+    },
+    {
+      "accountSum": "-20.01",
+      "accountTreeSum": "-20.01",
+      "account": "not:e:e0101"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "-20.01"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+2017-05-06T00:00:00+00:00 'Equity txn
+   ; Credit Account Report
+   ;            NOTE : All amounts are inverted
+   ; 
+   a  300
+   Equity:Balance  -300
+
+2017-05-06T00:00:00+00:00 'Equity txn for EUR
+   ; Credit Account Report
+   ;            NOTE : All amounts are inverted
+   ; 
+   a  11 EUR
+   Equity:Balance  -11 EUR
+
+2017-05-06T00:00:00+00:00 'Equity txn for USD
+   ; Credit Account Report
+   ;            NOTE : All amounts are inverted
+   ; 
+   a  3000 USD
+   Equity:Balance  -3000 USD
+

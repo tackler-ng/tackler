@@ -1,0 +1,13 @@
+Credit Account Report
+           NOTE : All amounts are inverted
+
+
+BALANCE
+-------
+               300.00         300.00      a
+                11.00          11.00 EUR  a
+              3000.00        3000.00 USD  a
+=========================
+               300.00
+                11.00 EUR
+              3000.00 USD

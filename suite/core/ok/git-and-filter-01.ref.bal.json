@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "3ebf14112c0ba2b4263a4b7388c589b10db27b1e",
+          "dir": "git-txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2019-03-20 19:38:00 +0200",
+          "subject": "test: commit-id-01, step 3"
+        }
+      },
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterTxnDescription": {
+                "regex": "shard01"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "10.00",
+      "accountTreeSum": "10.00",
+      "account": "a"
+    },
+    {
+      "accountSum": "-10.00",
+      "accountTreeSum": "-10.00",
+      "account": "e"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0.00"
+    }
+  ]
+}

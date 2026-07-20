@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-05-01",
+      "txn": {
+        "timestamp": "2017-05-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-1.00",
+          "commodity": "EUR"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "EUR"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-02",
+      "txn": {
+        "timestamp": "2017-05-02T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "EUR:a",
+          "amount": "-2.00",
+          "runningTotal": "-2.00"
+        },
+        {
+          "account": "EUR:e:b:c",
+          "amount": "2.00",
+          "runningTotal": "2.00"
+        }
+      ]
+    }
+  ]
+}

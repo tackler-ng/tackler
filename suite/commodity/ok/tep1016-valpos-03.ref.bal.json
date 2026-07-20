@@ -1,0 +1,43 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "-1.20",
+      "account": "a",
+      "commodity": "$"
+    },
+    {
+      "accountSum": "100.00",
+      "account": "e",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "-120.00",
+      "account": "a",
+      "commodity": "USD"
+    },
+    {
+      "accountSum": "1.00",
+      "account": "e",
+      "commodity": "€"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "-1.20",
+      "commodity": "$"
+    },
+    {
+      "delta": "100.00",
+      "commodity": "EUR"
+    },
+    {
+      "delta": "-120.00",
+      "commodity": "USD"
+    },
+    {
+      "delta": "1.00",
+      "commodity": "€"
+    }
+  ]
+}

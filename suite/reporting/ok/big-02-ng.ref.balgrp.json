@@ -1,0 +1,644 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "MONTH SUMMARY",
+  "groups": [
+    {
+      "title": "2019-01",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-1000000000000000000000000.1",
+          "account": "a0"
+        },
+        {
+          "accountSum": "-1000000000000000000000000.1",
+          "accountTreeSum": "-1000000000000000000000000.1",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "1000000000000000000000000.1",
+          "account": "e0"
+        },
+        {
+          "accountSum": "1000000000000000000000000.1",
+          "accountTreeSum": "1000000000000000000000000.1",
+          "account": "e0:e1"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0"
+        }
+      ]
+    },
+    {
+      "title": "2019-02",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-2000000000000000000000.0002",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-2000000000000000000000.0002",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "-2000000000000000000000.0002",
+          "accountTreeSum": "-2000000000000000000000.0002",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "2000000000000000000000.0002",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "2000000000000000000000.0002",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "2000000000000000000000.0002",
+          "accountTreeSum": "2000000000000000000000.0002",
+          "account": "e0:e1:e2"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000"
+        }
+      ]
+    },
+    {
+      "title": "2019-03",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-3000000000000000000.0000003",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-3000000000000000000.0000003",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-3000000000000000000.0000003",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "-3000000000000000000.0000003",
+          "accountTreeSum": "-3000000000000000000.0000003",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "3000000000000000000.0000003",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "3000000000000000000.0000003",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "3000000000000000000.0000003",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "3000000000000000000.0000003",
+          "accountTreeSum": "3000000000000000000.0000003",
+          "account": "e0:e1:e2:e3"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-04",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-4000000000000000.0000000004",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-4000000000000000.0000000004",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-4000000000000000.0000000004",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-4000000000000000.0000000004",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "-4000000000000000.0000000004",
+          "accountTreeSum": "-4000000000000000.0000000004",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "4000000000000000.0000000004",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "4000000000000000.0000000004",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "4000000000000000.0000000004",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "4000000000000000.0000000004",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "4000000000000000.0000000004",
+          "accountTreeSum": "4000000000000000.0000000004",
+          "account": "e0:e1:e2:e3:e4"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-05",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "-5000000000000.0000000000005",
+          "accountTreeSum": "-5000000000000.0000000000005",
+          "account": "a0:a1:a2:a3:a4:a5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0:e1:e2:e3:e4"
+        },
+        {
+          "accountSum": "5000000000000.0000000000005",
+          "accountTreeSum": "5000000000000.0000000000005",
+          "account": "e0:e1:e2:e3:e4:e5"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-06",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1:a2:a3:a4:a5"
+        },
+        {
+          "accountSum": "-6000000000.0000000000000006",
+          "accountTreeSum": "-6000000000.0000000000000006",
+          "account": "a0:a1:a2:a3:a4:a5:a6"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1:e2:e3:e4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1:e2:e3:e4:e5"
+        },
+        {
+          "accountSum": "6000000000.0000000000000006",
+          "accountTreeSum": "6000000000.0000000000000006",
+          "account": "e0:e1:e2:e3:e4:e5:e6"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-07",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2:a3:a4:a5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2:a3:a4:a5:a6"
+        },
+        {
+          "accountSum": "-7000000.0000000000000000007",
+          "accountTreeSum": "-7000000.0000000000000000007",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2:e3:e4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2:e3:e4:e5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2:e3:e4:e5:e6"
+        },
+        {
+          "accountSum": "7000000.0000000000000000007",
+          "accountTreeSum": "7000000.0000000000000000007",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000000000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-08",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3:a4:a5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3:a4:a5:a6"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7"
+        },
+        {
+          "accountSum": "-8000.0000000000000000000008",
+          "accountTreeSum": "-8000.0000000000000000000008",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7:a8"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3:e4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3:e4:e5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3:e4:e5:e6"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7"
+        },
+        {
+          "accountSum": "8000.0000000000000000000008",
+          "accountTreeSum": "8000.0000000000000000000008",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7:e8"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000000000000000"
+        }
+      ]
+    },
+    {
+      "title": "2019-09",
+      "balances": [
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4:a5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4:a5:a6"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7:a8"
+        },
+        {
+          "accountSum": "-9.0000000000000000000000009",
+          "accountTreeSum": "-9.0000000000000000000000009",
+          "account": "a0:a1:a2:a3:a4:a5:a6:a7:a8:a9"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4:e5"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4:e5:e6"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7"
+        },
+        {
+          "accountSum": "0",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7:e8"
+        },
+        {
+          "accountSum": "9.0000000000000000000000009",
+          "accountTreeSum": "9.0000000000000000000000009",
+          "account": "e0:e1:e2:e3:e4:e5:e6:e7:e8:e9"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000000000000000000000"
+        }
+      ]
+    }
+  ]
+}

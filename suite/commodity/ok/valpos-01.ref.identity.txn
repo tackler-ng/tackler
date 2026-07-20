@@ -1,0 +1,14 @@
+2017-05-01T00:00:00+00:00 'initial balance
+   Assets:Stocks   10 ACME @ 120 EUR
+   Assets:Cash  -1200 EUR
+
+2017-05-03T00:00:00+00:00 'sell three ACME at 120.03 EUR
+   ; check inferred price with multiple entries
+   Assets:Stocks  -3 ACME @ 120.03 EUR
+   Assets:Cash   360.09 EUR
+
+2017-05-04T00:00:00+00:00 'sell four ACME at 120.04 EUR
+   ; check fixed price with multiple entries
+   Assets:Stocks  -4 ACME @ 120.04 EUR
+   Assets:Cash   480.16 EUR
+

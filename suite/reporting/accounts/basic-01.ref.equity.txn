@@ -1,0 +1,26 @@
+2026-04-18T00:00:00+00:00 'Equity txn
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   Assets:Bank:Acme_Inc  100
+   Assets:Cash  -7.50
+   Assets:Visa:4012_8888_8888_1881  -12
+   E:0123:567:Sweets:Ice·Cream  1
+   E:01234567:Sweets:Ice·Cream  1
+   Expenses:Food:FastFood  12
+   Expenses:Sweets:Candy  2.50
+   Expenses:Sweets:Ice·Cream  3
+   Expenses:crème·glacée  1
+   Expenses:ice_cream  1
+   Expenses:jäätelö  1
+   Expenses:jäätelö:mansikka-vadelma  1
+   Expenses:мороженое  1
+   Expenses:アイスクリーム  1
+   Expenses:風:空  1
+   Income:Lottery  -100
+   assets:cash  -7
+   空  -1
+   風:空  1
+

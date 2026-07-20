@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2008",
+      "balances": [
+        {
+          "accountSum": "-20090101.01",
+          "accountTreeSum": "-20090101.01",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20090101.01",
+          "accountTreeSum": "20090101.01",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2009",
+      "balances": [
+        {
+          "accountSum": "-60271546.10",
+          "accountTreeSum": "-60271546.10",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "60271546.10",
+          "accountTreeSum": "60271546.10",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010",
+      "balances": [
+        {
+          "accountSum": "-60300308.00",
+          "accountTreeSum": "-60300308.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "60300308.00",
+          "accountTreeSum": "60300308.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    }
+  ]
+}

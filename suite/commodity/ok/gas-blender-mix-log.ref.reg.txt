@@ -1,0 +1,19 @@
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------
+2017-05-01 (mix-1234) 'tmx 18/45 D12L
+            ; Gas:He:Tank·102  Why is this '-' delta (neg)?
+            ; negative deltas would be better with starting pressures
+            ; e.g.: 247 -273 = -26 as tank delta
+            ; and (298 -25) -26 = 247 as end pressure
+            ; Also then user will see positive pressures, 
+            ; and rest of accunting will make more sense
+            User:diverX:He                                26.00              26.00 bar·He
+-----------------------------------------------------------------------------------------
+2017-05-01 (mix-1234) 'tmx 18/45 D12L
+            ; this mix used 5 bar @ 50L tank
+            User:diverX:O2                                 5.00               5.00 bar·O2
+-----------------------------------------------------------------------------------------

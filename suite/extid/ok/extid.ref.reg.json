@@ -1,0 +1,113 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "Register Report",
+  "transactions": [
+    {
+      "displayTime": "2026-07-20",
+      "txn": {
+        "timestamp": "2026-07-20T00:00:00+00:00[UTC]",
+        "description": "extid none"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2026-07-20",
+      "txn": {
+        "timestamp": "2026-07-20T00:00:00+00:00[UTC]",
+        "description": "txn 001",
+        "extId": "EXT-ID #1"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-2.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "2.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2026-07-20",
+      "txn": {
+        "timestamp": "2026-07-20T00:00:00+00:00[UTC]",
+        "description": "txn 002",
+        "extId": "EXT-ID #2"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-3.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "3.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2026-07-20",
+      "txn": {
+        "timestamp": "2026-07-20T00:00:00+00:00[UTC]",
+        "description": "txn 003",
+        "extId": "EXT-ID #3"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-4.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "4.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2026-07-20",
+      "txn": {
+        "timestamp": "2026-07-20T00:00:00+00:00[UTC]",
+        "description": "txn 004",
+        "extId": "EXT-ID #4"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-5.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "5.00"
+        }
+      ]
+    }
+  ]
+}

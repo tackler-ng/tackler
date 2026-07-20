@@ -1,0 +1,191 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "203e6f22992f2fff80c537e7742ed3cf897a9e6b",
+          "ref": "set-1e2",
+          "dir": "txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-12-28 08:09:36 +0000",
+          "subject": "set-1e2: 2016-12-28"
+        }
+      },
+      {
+        "TxnSetChecksum": {
+          "size": 3,
+          "hash": {
+            "algorithm": "SHA3-512",
+            "value": "3df193eb2327db178cc7fb2f8f6505d15a9dc70a66565ec08349ac5e3098f750fc112a0f859cf185839dcf5cf672400d60dcc23a622cff56d010afd6a3415603"
+          }
+        }
+      },
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterTxnDescription": {
+                "regex": "^1E2 txn-(1|17|100)$"
+              }
+            }
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "SHA3-512",
+            "value": "3646ad992b393998c6496f4085864f717fb433fac1d3625bac300a9455141fec765eb9d0e49bb03f2aa60c61e23c2495a70472476608b664d58770acc0c1c9e9"
+          },
+          "selectors": [
+            ".*"
+          ]
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2016-01",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-1.0000001",
+          "account": "a"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-1.0000001",
+          "account": "a:ay2016"
+        },
+        {
+          "accountSum": "-1.0000001",
+          "accountTreeSum": "-1.0000001",
+          "account": "a:ay2016:am01"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "1.0000001",
+          "account": "e"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "1.0000001",
+          "account": "e:ey2016"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "1.0000001",
+          "account": "e:ey2016:em01"
+        },
+        {
+          "accountSum": "1.0000001",
+          "accountTreeSum": "1.0000001",
+          "account": "e:ey2016:em01:ed01"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000"
+        }
+      ]
+    },
+    {
+      "title": "2016-02",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-28.0000001",
+          "account": "a"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-28.0000001",
+          "account": "a:ay2016"
+        },
+        {
+          "accountSum": "-28.0000001",
+          "accountTreeSum": "-28.0000001",
+          "account": "a:ay2016:am02"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016:em02"
+        },
+        {
+          "accountSum": "28.0000001",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016:em02:ed28"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000"
+        }
+      ]
+    },
+    {
+      "title": "2016-12",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-28.0000001",
+          "account": "a"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-28.0000001",
+          "account": "a:ay2016"
+        },
+        {
+          "accountSum": "-28.0000001",
+          "accountTreeSum": "-28.0000001",
+          "account": "a:ay2016:am12"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016:em12"
+        },
+        {
+          "accountSum": "28.0000001",
+          "accountTreeSum": "28.0000001",
+          "account": "e:ey2016:em12:ed28"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.0000000"
+        }
+      ]
+    }
+  ]
+}

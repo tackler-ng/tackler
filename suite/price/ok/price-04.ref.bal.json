@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterTxnTSEnd": {
+                "end": "2024-03-31T00:00:00Z"
+              }
+            }
+          }
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "ts": "2024-03-30T00:00:00+00:00[UTC]",
+              "source": "aaa",
+              "rate": "300000.001",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "3300000.011",
+      "accountTreeSum": "3300000.011",
+      "account": "e:conv",
+      "commodity": "TCKLR"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "3300000.011",
+      "commodity": "TCKLR"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+
+
+BALANCE
+-------
+           777568.012          777568.012 TCKLR  e:conv
+===========================
+           777568.012 TCKLR

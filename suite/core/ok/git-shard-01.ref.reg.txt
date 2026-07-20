@@ -1,0 +1,30 @@
+Git Storage
+      reference : shard-01
+      directory : git-txns
+      extension : txn
+         commit : 422ca7f3cbc1f3597fd2312d7d6c7793115e1e50
+         author : tackler <accounting@example.com>
+           date : 2019-03-20 19:37:28 +0200
+        subject : test: shard-01
+
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------
+2017-01-31 'shard03
+            # uuid: c87adf25-bd3c-4050-a441-ddd701f2c53e
+            a                                              1.00               1.00
+            e                                             -1.00              -1.00
+----------------------------------------------------------------------------------
+2017-02-01 'shard01
+            # uuid: 4dba67d9-0f47-4c8e-a3bc-f31d2bae2de4
+            a                                             10.00              11.00
+            e                                            -10.00             -11.00
+----------------------------------------------------------------------------------
+2017-02-02 'shard02
+            # uuid: 7594bf5f-15b5-46ef-ab7b-21d3c5f19bdc
+            a                                            100.00             111.00
+            e                                           -100.00            -111.00
+----------------------------------------------------------------------------------

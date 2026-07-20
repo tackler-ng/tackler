@@ -1,0 +1,37 @@
+###
+### PRICE: GIVEN-TIME
+###
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "fs", fs = { dir = "not-found", suffix = "no-ext" } }
+
+[price]
+db-path = "ok/price.db"
+lookup-type = "given-time"
+
+[transaction]
+accounts    = { path = "none" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 12 }
+targets = [ "balance", "balance-group", "register" ]
+commodity = "TCKLR"
+accounts = [ ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+### Export Configuration
+[export]
+targets = [ "equity", "identity" ]
+equity = { accounts = [ ], equity-account = "Equity:Balance" }

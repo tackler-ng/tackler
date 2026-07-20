@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "CreditAccountReport": {}
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "300.00",
+      "accountTreeSum": "300.00",
+      "account": "a"
+    },
+    {
+      "accountSum": "11.00",
+      "accountTreeSum": "11.00",
+      "account": "a",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "3000.00",
+      "accountTreeSum": "3000.00",
+      "account": "a",
+      "commodity": "USD"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "300.00"
+    },
+    {
+      "delta": "11.00",
+      "commodity": "EUR"
+    },
+    {
+      "delta": "3000.00",
+      "commodity": "USD"
+    }
+  ]
+}

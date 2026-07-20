@@ -1,0 +1,17 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "12.00",
+      "accountTreeSum": "12.00",
+      "account": "e:conv",
+      "commodity": "aaa"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "12.00",
+      "commodity": "aaa"
+    }
+  ]
+}

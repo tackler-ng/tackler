@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "description": "äöåÄÖÅéèÿ:äöåÄ:ÖÅéèÿ 空 風 風:空"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "code": "!\"#¤%&/=? @£€\\",
+        "description": "abc"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "2.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-2.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "code": "abc",
+        "description": "!\"#¤%&/()=? @£€{[]}\\",
+        "uuid": "8898bd3d-1d12-4ccd-b8d9-f52c61093250"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "3.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-3.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "code": "abc",
+        "description": "123",
+        "comments": [
+          "äöåÄÖÅéèÿ:äöåÄ:ÖÅéèÿ 空 風 風:空 !\"#¤%&/()=? @£€{[]}\\"
+        ]
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "4.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-4.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "code": "abc",
+        "description": "edf"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "5.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-5.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "code": "abc",
+        "description": "edf xzy"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "1.00",
+          "runningTotal": "6.00"
+        },
+        {
+          "account": "e:b:c",
+          "amount": "-1.00",
+          "runningTotal": "-6.00"
+        }
+      ]
+    }
+  ]
+}

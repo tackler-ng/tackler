@@ -1,0 +1,35 @@
+2017-01-03T00:00:00+00:00 'non-ascii
+   Expenses:ice_cream   1
+   Expenses:jäätelö   1
+   Expenses:jäätelö:mansikka-vadelma   1
+   Expenses:crème·glacée   1
+   Expenses:мороженое   1
+   Expenses:アイスクリーム   1
+   Expenses:風:空   1
+   assets:cash  -7
+
+2017-01-04T00:00:00+00:00
+   風:空   1
+   空  -1
+
+2024-03-20T00:00:00+00:00 'Lucky Day!
+   Assets:Bank:Acme_Inc   100
+   Income:Lottery  -100
+
+2024-06-20T00:00:00+00:00 'Sweet'n Sour Candies
+   Expenses:Sweets:Candy   2.50
+   Assets:Cash  -2.50
+
+2024-09-22T00:00:00+00:00 'Hot dogs
+   Expenses:Food:FastFood   12
+   Assets:Visa:4012_8888_8888_1881  -12
+
+2024-12-21T00:00:00+00:00 'Strawberry ice cream
+   Expenses:Sweets:Ice·Cream   3
+   Assets:Cash  -3
+
+2026-04-18T00:00:00+00:00 'test sort order of ":" and numbers
+   E:01234567:Sweets:Ice·Cream   1
+   E:0123:567:Sweets:Ice·Cream   1
+   Assets:Cash  -2
+

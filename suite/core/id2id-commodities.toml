@@ -1,0 +1,3 @@
+permit-empty-commodity = true
+
+commodities = [ ]

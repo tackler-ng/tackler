@@ -1,0 +1,17 @@
+2017-05-01 (mix-1234) 'tmx 18/45 D12L
+   ; Gas:He:Tank·102  Why is this '-' delta (neg)?
+   ; negative deltas would be better with starting pressures
+   ; e.g.: 247 -273 = -26 as tank delta
+   ; and (298 -25) -26 = 247 as end pressure
+   ; Also then user will see positive pressures, 
+   ; and rest of accunting will make more sense
+   Gas:He:Tank·102  247 bar·He
+   Gas:He:Tank·102 -273 bar·He
+   User:diverX:He
+
+2017-05-01 (mix-1234) 'tmx 18/45 D12L
+   ; this mix used 5 bar @ 50L tank
+   Gas:O2:Tank·208  145 bar·O2
+   Gas:O2:Tank·208 -150 bar·O2
+   User:diverX:O2 
+

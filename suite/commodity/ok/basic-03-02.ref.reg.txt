@@ -1,0 +1,33 @@
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------
+2017-05-06 'Equity txn
+            ; WARNING:
+            ; WARNING: The sum of equity transaction is zero without equity account.
+            ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+            ; WARNING: Is the account selector correct for this Equity export?
+            ; WARNING:
+            a                                           -300.00            -300.00
+            e                                            300.00             300.00
+----------------------------------------------------------------------------------
+2017-05-06 'Equity txn for EUR
+            ; WARNING:
+            ; WARNING: The sum of equity transaction is zero without equity account.
+            ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+            ; WARNING: Is the account selector correct for this Equity export?
+            ; WARNING:
+            a                                            -11.00             -11.00 EUR
+            e                                             11.00              11.00 EUR
+--------------------------------------------------------------------------------------
+2017-05-06 'Equity txn for USD
+            ; WARNING:
+            ; WARNING: The sum of equity transaction is zero without equity account.
+            ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+            ; WARNING: Is the account selector correct for this Equity export?
+            ; WARNING:
+            a                                          -3000.00           -3000.00 USD
+            e                                           3000.00            3000.00 USD
+--------------------------------------------------------------------------------------

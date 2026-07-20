@@ -1,0 +1,7 @@
+BALANCE
+-------
+                26.00           26.00 bar·He  User:diverX:He
+                 5.00            5.00 bar·O2  User:diverX:O2
+============================
+                26.00 bar·He
+                 5.00 bar·O2

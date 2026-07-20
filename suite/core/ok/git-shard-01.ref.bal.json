@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "422ca7f3cbc1f3597fd2312d7d6c7793115e1e50",
+          "ref": "shard-01",
+          "dir": "git-txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2019-03-20 19:37:28 +0200",
+          "subject": "test: shard-01"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "111.00",
+      "accountTreeSum": "111.00",
+      "account": "a"
+    },
+    {
+      "accountSum": "-111.00",
+      "accountTreeSum": "-111.00",
+      "account": "e"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0.00"
+    }
+  ]
+}

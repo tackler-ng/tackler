@@ -1,0 +1,16 @@
+2017-01-01 'desc
+ a   1 ; 1:a comment
+ e  -1
+
+2017-01-02 'desc
+ a   1
+ e ; 2:e comment
+
+2017-01-03 'desc
+ a   1 ; 3:a
+ e  -1 ; 3:e
+
+2017-01-04 'desc
+ a   1 ; 4:a
+ e ; 4:e
+

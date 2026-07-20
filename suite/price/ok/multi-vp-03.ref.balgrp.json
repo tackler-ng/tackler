@@ -1,0 +1,83 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            },
+            {
+              "source": "bbb",
+              "target": "TCKLR"
+            },
+            {
+              "source": "ccc",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2024-01",
+      "balances": [
+        {
+          "accountSum": "3.010101",
+          "accountTreeSum": "3.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "3.010101",
+          "commodity": "TCKLR"
+        }
+      ]
+    },
+    {
+      "title": "2024-02",
+      "balances": [
+        {
+          "accountSum": "60.010101",
+          "accountTreeSum": "60.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "60.010101",
+          "commodity": "TCKLR"
+        }
+      ]
+    },
+    {
+      "title": "2024-03",
+      "balances": [
+        {
+          "accountSum": "900.010101",
+          "accountTreeSum": "900.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "900.010101",
+          "commodity": "TCKLR"
+        }
+      ]
+    }
+  ]
+}

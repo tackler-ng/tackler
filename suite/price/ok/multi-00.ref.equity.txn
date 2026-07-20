@@ -1,0 +1,12 @@
+2024-03-01T00:00:00+00:00 'Equity txn for aaa
+   Assets:Stocks  1 aaa
+   Equity:Balance  -1 aaa
+
+2024-03-01T00:00:00+00:00 'Equity txn for bbb
+   Assets:Stocks  1 bbb
+   Equity:Balance  -1 bbb
+
+2024-03-01T00:00:00+00:00 'Equity txn for ccc
+   Assets:Stocks  1 ccc
+   Equity:Balance  -1 ccc
+

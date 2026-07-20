@@ -1,0 +1,216 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "203e6f22992f2fff80c537e7742ed3cf897a9e6b",
+          "ref": "set-1e2",
+          "dir": "txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-12-28 08:09:36 +0000",
+          "subject": "set-1e2: 2016-12-28"
+        }
+      },
+      {
+        "TxnSetChecksum": {
+          "size": 9,
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "9a25d978d08abfa10ab4cae50c7b7cf693eb4200e5f1ae6b97a5d709552bc133"
+          }
+        }
+      },
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterAND": {
+                "txnFilters": [
+                  {
+                    "TxnFilterPostingAccount": {
+                      "regex": "^e:.*"
+                    }
+                  },
+                  {
+                    "TxnFilterTxnTSBegin": {
+                      "begin": "2016-01-01T00:00:00Z"
+                    }
+                  },
+                  {
+                    "TxnFilterTxnTSEnd": {
+                      "end": "2016-02-01T00:00:00Z"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "23b3e1d50b27f44e53c0bc66b132028eea2f939fc9ad0d9225f661e41f869b23"
+          },
+          "selectors": [
+            "e:.*"
+          ]
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2016-01-01",
+      "txn": {
+        "timestamp": "2016-01-01T00:00:00+00:00[UTC]",
+        "code": "#0000001",
+        "description": "1E2 txn-1",
+        "uuid": "7e6a42b4-a49a-5b8d-a13f-ac81cb7f4ef6"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed01",
+          "amount": "1.0000001",
+          "runningTotal": "1.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-04",
+      "txn": {
+        "timestamp": "2016-01-04T15:50:24+00:00[UTC]",
+        "code": "#0000002",
+        "description": "1E2 txn-2",
+        "uuid": "a57d20cc-6812-509c-891c-dd857c9c1590"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed04",
+          "amount": "4.0000001",
+          "runningTotal": "4.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-08",
+      "txn": {
+        "timestamp": "2016-01-08T07:40:48+00:00[UTC]",
+        "code": "#0000003",
+        "description": "1E2 txn-3",
+        "uuid": "1627f110-7339-53dc-9d63-82537464f9ec"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed08",
+          "amount": "8.0000001",
+          "runningTotal": "8.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-11",
+      "txn": {
+        "timestamp": "2016-01-11T23:31:12+00:00[UTC]",
+        "code": "#0000004",
+        "description": "1E2 txn-4",
+        "uuid": "1c1f16ea-986b-5c8c-8fd9-6f94ca04c758"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed11",
+          "amount": "11.0000001",
+          "runningTotal": "11.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-15",
+      "txn": {
+        "timestamp": "2016-01-15T15:21:36+00:00[UTC]",
+        "code": "#0000005",
+        "description": "1E2 txn-5",
+        "uuid": "5a86daf0-727d-52a7-b7d8-c77cb2799299"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed15",
+          "amount": "15.0000001",
+          "runningTotal": "15.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-19",
+      "txn": {
+        "timestamp": "2016-01-19T07:12:00+00:00[UTC]",
+        "code": "#0000006",
+        "description": "1E2 txn-6",
+        "uuid": "48d67bd6-0a06-5c57-aeb3-e2cc510d4652"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed19",
+          "amount": "19.0000001",
+          "runningTotal": "19.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-22",
+      "txn": {
+        "timestamp": "2016-01-22T23:02:24+00:00[UTC]",
+        "code": "#0000007",
+        "description": "1E2 txn-7",
+        "uuid": "05fdd9dc-202e-5e9c-883b-b7b34238562c"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed22",
+          "amount": "22.0000001",
+          "runningTotal": "22.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-26",
+      "txn": {
+        "timestamp": "2016-01-26T14:52:48+00:00[UTC]",
+        "code": "#0000008",
+        "description": "1E2 txn-8",
+        "uuid": "47fcc1b4-0e23-58be-bdcc-397cb3993cbe"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed26",
+          "amount": "26.0000001",
+          "runningTotal": "26.0000001"
+        }
+      ]
+    },
+    {
+      "displayTime": "2016-01-30",
+      "txn": {
+        "timestamp": "2016-01-30T06:43:12+00:00[UTC]",
+        "code": "#0000009",
+        "description": "1E2 txn-9",
+        "uuid": "6fd441da-6a5e-5b09-bb3f-ab740cbbc23d"
+      },
+      "postings": [
+        {
+          "account": "e:ey2016:em01:ed30",
+          "amount": "30.0000001",
+          "runningTotal": "30.0000001"
+        }
+      ]
+    }
+  ]
+}

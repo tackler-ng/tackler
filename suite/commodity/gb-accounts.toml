@@ -1,0 +1,23 @@
+# vim: tabstop=2 shiftwidth=2 softtabstop=2 smarttab expandtab autoindent
+#
+# Gas Blender System: Accounts
+#
+accounts = [
+
+   # The gas supplier: Helium and Oxygen
+  "Woikoski:He",
+  "Woikoski:O2",
+  
+  #  Gas tanks for Helium and Oxygen
+  "Gas:He:Tank·102",
+  "Gas:He:Tank·103",
+  "Gas:He:Tank·104",
+  "Gas:O2:Tank·208",
+  
+  # Divers (DiverX): Used Helium and Oxygen
+  "User:diverX:O2",
+  "User:diverX:He",
+  
+  # Billing accounts for each diver
+  "Billing:diverX:Receivable",
+]

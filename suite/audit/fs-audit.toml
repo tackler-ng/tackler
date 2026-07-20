@@ -1,0 +1,32 @@
+###
+### AUDIT / FS-AUDIT.TOML
+### 
+[kernel]
+strict = true
+audit = { mode = true, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "fs", fs = { path = "txns", dir = "1E1", suffix = "txn" } }
+
+[transaction]
+accounts    = { path = "../../examples/audit/accounts.toml" }
+commodities = { path = "../../examples/audit/commodities.toml" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+formats = [ "txt", "json" ]
+targets = [ "balance", "balance-group", "register" ]
+accounts = [ ]
+
+balance       = { title = "BALANCE", accounts = [ "a:ay2016:am02", "e:ey2016:em02:.*" ] }
+balance-group = { title = "BALANCE GROUPS", group-by = "month", accounts = [ "a:ay2016:am07", "e:ey2016:em07:.*" ] }
+register      = { title = "REGISTER", accounts = [ "a:ay2016:am10", "e:ey2016:em10:.*" ] }
+
+
+[export]
+targets = [ "equity" ]
+equity = { equity-account = "Equity:Balance", accounts = [ "a:ay2016:am11", "e:ey2016:em11:.*" ] }
+

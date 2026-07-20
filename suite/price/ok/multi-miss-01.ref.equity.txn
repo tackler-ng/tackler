@@ -1,0 +1,40 @@
+2024-03-01T00:00:00+00:00 'Equity txn for TCKLR
+   ; Report Time Zone
+   ;         TZ name : UTC
+   ; 
+   ; Commodity Prices
+   ;            Time : At txn time
+   ;       Commodity : aaa
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : bbb
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : ccc
+   ;           Value : - TCKLR
+   ; 
+   Assets:Stocks  21.000101 TCKLR
+   Equity:Balance  -21.000101 TCKLR
+
+2024-03-01T00:00:00+00:00 'Equity txn for aaa
+   ; Report Time Zone
+   ;         TZ name : UTC
+   ; 
+   ; Commodity Prices
+   ;            Time : At txn time
+   ;       Commodity : aaa
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : bbb
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : ccc
+   ;           Value : - TCKLR
+   ; 
+   Assets:Stocks  1 aaa
+   Equity:Balance  -1 aaa
+

@@ -1,0 +1,22 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : bbb
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : ccc
+          Value : - TCKLR
+
+
+BALANCE
+-------
+           963.030303          963.030303 TCKLR  Assets:Stocks
+===========================
+           963.030303 TCKLR

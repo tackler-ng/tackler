@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2019",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-40382460030203.04003",
+          "account": "a"
+        },
+        {
+          "accountSum": "-40382460030203.04003",
+          "accountTreeSum": "-40382460030203.04003",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "40382460030203.04003",
+          "account": "e"
+        },
+        {
+          "accountSum": "40382460030203.04003",
+          "accountTreeSum": "40382460030203.04003",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00000"
+        }
+      ]
+    },
+    {
+      "title": "2020",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-20201231235800.00003",
+          "account": "a"
+        },
+        {
+          "accountSum": "-20201231235800.00003",
+          "accountTreeSum": "-20201231235800.00003",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "20201231235800.00003",
+          "account": "e"
+        },
+        {
+          "accountSum": "20201231235800.00003",
+          "accountTreeSum": "20201231235800.00003",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00000"
+        }
+      ]
+    },
+    {
+      "title": "2021",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "20201231235800.04004",
+          "account": "a"
+        },
+        {
+          "accountSum": "20201231235800.04004",
+          "accountTreeSum": "20201231235800.04004",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "-20201231235800.04004",
+          "account": "e"
+        },
+        {
+          "accountSum": "-20201231235800.04004",
+          "accountTreeSum": "-20201231235800.04004",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00000"
+        }
+      ]
+    }
+  ]
+}

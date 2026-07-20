@@ -1,0 +1,134 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2009-01-01",
+      "balances": [
+        {
+          "accountSum": "-40180202.11",
+          "accountTreeSum": "-40180202.11",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "40180202.11",
+          "accountTreeSum": "40180202.11",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2009-02-14",
+      "balances": [
+        {
+          "accountSum": "-20090214.00",
+          "accountTreeSum": "-20090214.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20090214.00",
+          "accountTreeSum": "20090214.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2009-12-31",
+      "balances": [
+        {
+          "accountSum": "-20091231.00",
+          "accountTreeSum": "-20091231.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20091231.00",
+          "accountTreeSum": "20091231.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010-01-01",
+      "balances": [
+        {
+          "accountSum": "-20100101.00",
+          "accountTreeSum": "-20100101.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20100101.00",
+          "accountTreeSum": "20100101.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010-01-03",
+      "balances": [
+        {
+          "accountSum": "-20100103.00",
+          "accountTreeSum": "-20100103.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20100103.00",
+          "accountTreeSum": "20100103.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010-01-04",
+      "balances": [
+        {
+          "accountSum": "-20100104.00",
+          "accountTreeSum": "-20100104.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "20100104.00",
+          "accountTreeSum": "20100104.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    }
+  ]
+}

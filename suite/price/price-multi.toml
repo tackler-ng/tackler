@@ -1,0 +1,38 @@
+###
+### PRICE: MULTI
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "fs", fs = { dir = "not-found", suffix = "no-ext" } }
+
+[price]
+db-path = "ok/multi.db"
+lookup-type = "txn-time"
+
+[transaction]
+accounts    = { path = "price-accounts.toml" }
+commodities = { path = "price-commodities.toml" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 12 }
+formats = [ "txt", "json" ]
+targets = [ "balance", "balance-group", "register" ]
+commodity = "TCKLR"
+accounts = [ "Assets:Stocks" ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+### Export Configuration
+[export]
+targets = [ "equity" ]
+equity = { accounts = [ "Assets:Stocks" ], equity-account = "Equity:Balance" }

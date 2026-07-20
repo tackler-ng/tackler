@@ -1,0 +1,33 @@
+Git Storage
+      reference : FIXED by commit
+      directory : txns
+      extension : txn
+         commit : 3e8aa1c9cfc11a8a24afa33da76b7973b93fd455
+         author : tackler <accounting@example.com>
+           date : 2016-10-30 18:43:12 +0000
+        subject : set-1e2: 2016-10-30
+
+Txn Set Checksum
+        SHA-256 : a58047b4a1329c9f2effb6aca9a6aee263dcf0dd46b10e35776abba1d2f5bda1
+       set size : 84
+
+Account Selector Checksum
+        SHA-256 : 19d31a48bf9a8604a1128ccfd281511f961c5469748a97897a21fc0fa2a5f519
+       selector : '^a:.*'
+
+
+BALANCE
+-------
+                  0.00   -1309.0000084  a:ay2016
+          -136.0000009    -136.0000009  a:ay2016:am01
+          -121.0000008    -121.0000008  a:ay2016:am02
+          -124.0000008    -124.0000008  a:ay2016:am03
+          -141.0000009    -141.0000009  a:ay2016:am04
+          -135.0000008    -135.0000008  a:ay2016:am05
+          -121.0000008    -121.0000008  a:ay2016:am06
+          -145.0000009    -145.0000009  a:ay2016:am07
+          -129.0000008    -129.0000008  a:ay2016:am08
+          -116.0000008    -116.0000008  a:ay2016:am09
+          -141.0000009    -141.0000009  a:ay2016:am10
+======================
+         -1309.0000084

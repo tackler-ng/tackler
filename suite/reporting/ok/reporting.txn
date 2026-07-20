@@ -1,0 +1,19 @@
+2017-01-01T00:00:01.001 '01
+ a:b  1
+ not:a:b   0.001
+ not:e:b  -0.001
+ e:e0101  -1
+
+2017-01-01T00:00:01.002 '01
+ a:b  20
+ not:e:e0101  -20
+
+2017-01-01T00:00:02.003 '01
+ a:b:c  300
+ e:e0101  -300
+
+2017-01-02 'check that report filtering doesn't affect accumulator
+ a:by:not  0.01
+ not:e:e0101
+
+

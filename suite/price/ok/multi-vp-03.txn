@@ -1,0 +1,17 @@
+2024-01-01
+   Assets:Stocks 1 aaa = 1 $
+   Assets:Stocks 1 bbb = 2 $
+   Assets:Stocks 1 ccc = 3 $
+   Assets:Cash  -6 $
+
+2024-02-01
+   Assets:Stocks 1 bbb = 2 $
+   Assets:Stocks 1 ccc = 3 $
+   Assets:Stocks 1 aaa = 1 $
+   Assets:Cash  -6 $
+
+2024-03-01
+   Assets:Stocks 1 ccc = 3 $
+   Assets:Stocks 1 aaa = 1 $
+   Assets:Stocks 1 bbb = 2 $
+   Assets:Cash  -6 $

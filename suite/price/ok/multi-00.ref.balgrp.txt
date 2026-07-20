@@ -1,0 +1,21 @@
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2024-01
+-------
+                 1.00        1.00 aaa  Assets:Stocks
+=========================
+                 1.00 aaa
+2024-02
+-------
+                 1.00        1.00 bbb  Assets:Stocks
+=========================
+                 1.00 bbb
+2024-03
+-------
+                 1.00        1.00 ccc  Assets:Stocks
+=========================
+                 1.00 ccc

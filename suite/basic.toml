@@ -1,0 +1,35 @@
+###
+### TACKLER TEST SUITE: BASIC, NON-STRICT
+###
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "not-found"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "none" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 4 }
+accounts = [ ]
+targets = [ ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUP", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+[export]
+targets = [ ]
+equity = { equity-account = "Equity:Balance" }

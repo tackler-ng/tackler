@@ -1,0 +1,20 @@
+2017-02-02T00:00:00+00:00 'Equity txn
+   ; Last txn (uuid) : 7594bf5f-15b5-46ef-ab7b-21d3c5f19bdc
+   ;
+   ; Git Storage
+   ;       reference : shard-01
+   ;       directory : git-txns
+   ;       extension : txn
+   ;          commit : 422ca7f3cbc1f3597fd2312d7d6c7793115e1e50
+   ;          author : tackler <accounting@example.com>
+   ;            date : 2019-03-20 19:37:28 +0200
+   ;         subject : test: shard-01
+   ; 
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  111
+   e  -111
+

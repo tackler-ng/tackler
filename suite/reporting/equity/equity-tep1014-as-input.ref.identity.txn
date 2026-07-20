@@ -1,0 +1,51 @@
+2019-09-09T00:00:00+00:00 'Equity
+   a0:a1  -1000000000000000000000000.1
+   a0:a1:a2  -2000000000000000000000.0002
+   a0:a1:a2:a3  -3000000000000000000.0000003
+   a0:a1:a2:a3:a4  -4000000000000000.0000000004
+   a0:a1:a2:a3:a4:a5  -5000000000000.0000000000005
+   a0:a1:a2:a3:a4:a5:a6  -6000000000.0000000000000006
+   a0:a1:a2:a3:a4:a5:a6:a7  -7000000.0000000000000000007
+   a0:a1:a2:a3:a4:a5:a6:a7:a8  -8000.0000000000000000000008
+   a0:a1:a2:a3:a4:a5:a6:a7:a8:a9  -9.0000000000000000000000009
+   Eq:Acc   1002003004005006007008009.1002003004005006007008009
+
+2021-01-04T00:00:00+00:00 'Equity
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  -1
+   e   1
+
+2021-01-04T00:00:00+00:00 'Equity for ACME
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  -1 ACME
+   e   1 ACME
+
+2021-01-04T00:00:00+00:00 'Equity for €
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  -1.01 €
+   e   1.01 €
+
+2021-01-10T00:00:00+00:00 'Equity
+   a  -1
+   Eq:Acc   1
+
+2021-01-10T00:00:00+00:00 'Equity for ACME
+   a  -1 ACME
+   Eq:Acc   1 ACME
+
+2021-01-10T00:00:00+00:00 'Equity for €
+   a  -1.01 €
+   Eq:Acc   1.01 €
+

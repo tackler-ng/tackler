@@ -1,0 +1,12 @@
+2017-05-06T00:00:00+00:00 'Equity txn
+   a  -300
+   Equity:Balance  300
+
+2017-05-06T00:00:00+00:00 'Equity txn for EUR
+   a  -11 EUR
+   Equity:Balance  11 EUR
+
+2017-05-06T00:00:00+00:00 'Equity txn for USD
+   a  -3000 USD
+   Equity:Balance  3000 USD
+

@@ -1,0 +1,20 @@
+2024-03-01T00:00:00+00:00 'Equity txn for TCKLR
+   ; Report Time Zone
+   ;         TZ name : UTC
+   ; 
+   ; Commodity Prices
+   ;            Time : At txn time
+   ;       Commodity : aaa
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : bbb
+   ;           Value : - TCKLR
+   ;                 -
+   ;            Time : At txn time
+   ;       Commodity : ccc
+   ;           Value : - TCKLR
+   ; 
+   Assets:Stocks  963.030303 TCKLR
+   Equity:Balance  -963.030303 TCKLR
+

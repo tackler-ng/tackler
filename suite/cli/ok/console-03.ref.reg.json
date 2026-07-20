@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-01-03",
+      "txn": {
+        "timestamp": "2017-01-03T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Expenses:crème·glacée",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:ice_cream",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:jäätelö",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:jäätelö:mansikka-vadelma",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:мороженое",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:アイスクリーム",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "Expenses:風:空",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "assets:cash",
+          "amount": "-7.00",
+          "runningTotal": "-7.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-04",
+      "txn": {
+        "timestamp": "2017-01-04T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "空",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        },
+        {
+          "account": "風:空",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        }
+      ]
+    }
+  ]
+}

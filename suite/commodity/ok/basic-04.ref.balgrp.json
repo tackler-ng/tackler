@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2017-05",
+      "balances": [
+        {
+          "accountSum": "-300.00",
+          "accountTreeSum": "-300.00",
+          "account": "a"
+        },
+        {
+          "accountSum": "300.00",
+          "accountTreeSum": "300.00",
+          "account": "e"
+        },
+        {
+          "accountSum": "-11.00",
+          "accountTreeSum": "-11.00",
+          "account": "a",
+          "commodity": "EUR"
+        },
+        {
+          "accountSum": "10.00",
+          "accountTreeSum": "11.00",
+          "account": "e",
+          "commodity": "EUR"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "1.00",
+          "account": "e:b",
+          "commodity": "EUR"
+        },
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "e:b:c",
+          "commodity": "EUR"
+        },
+        {
+          "accountSum": "-3000.00",
+          "accountTreeSum": "-3000.00",
+          "account": "a",
+          "commodity": "USD"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "3000.00",
+          "account": "e",
+          "commodity": "USD"
+        },
+        {
+          "accountSum": "1000.00",
+          "accountTreeSum": "3000.00",
+          "account": "e:b",
+          "commodity": "USD"
+        },
+        {
+          "accountSum": "2000.00",
+          "accountTreeSum": "2000.00",
+          "account": "e:b:c",
+          "commodity": "USD"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        },
+        {
+          "delta": "0.00",
+          "commodity": "EUR"
+        },
+        {
+          "delta": "0.00",
+          "commodity": "USD"
+        }
+      ]
+    }
+  ]
+}

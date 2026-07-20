@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "203e6f22992f2fff80c537e7742ed3cf897a9e6b",
+          "ref": "set-1e2",
+          "dir": "txns/2016/01/11",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-12-28 08:09:36 +0000",
+          "subject": "set-1e2: 2016-12-28"
+        }
+      },
+      {
+        "TxnSetChecksum": {
+          "size": 1,
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "fc88ae6f605baba520878110572e6cff6e78309e12adb25bca8697f917b54763"
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "64263feac7b00952e9ec3b6c1fd11316faa58ff673c6bd085fac9f6f8d8389f6"
+          },
+          "selectors": [
+            ".*"
+          ]
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2016-01-11",
+      "txn": {
+        "timestamp": "2016-01-11T23:31:12+00:00[UTC]",
+        "code": "#0000004",
+        "description": "1E2 txn-4",
+        "uuid": "1c1f16ea-986b-5c8c-8fd9-6f94ca04c758"
+      },
+      "postings": [
+        {
+          "account": "a:ay2016:am01",
+          "amount": "-11.0000001",
+          "runningTotal": "-11.0000001"
+        },
+        {
+          "account": "e:ey2016:em01:ed11",
+          "amount": "11.0000001",
+          "runningTotal": "11.0000001"
+        }
+      ]
+    }
+  ]
+}

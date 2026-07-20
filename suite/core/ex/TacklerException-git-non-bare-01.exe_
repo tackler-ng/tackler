@@ -1,0 +1,4 @@
+# format: exec
+# test:uuid: 062cc72c-9704-4dca-bd77-9893a6ffbbd9
+# non-bare repository
+#exec:--cfg;tests/core/ex/git-non-bare.conf;

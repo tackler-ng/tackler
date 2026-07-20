@@ -1,0 +1,35 @@
+###
+### PARSER / ACC-NAMES
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "id-chars-accounts.toml" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 0, max = 7 }
+accounts = [ ]
+targets = [ ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "date" }
+register      = { title = "REGISTER" }
+
+
+[export]
+targets = [ "identity" ]
+equity = { equity-account = "Equity:Balance" }

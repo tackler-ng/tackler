@@ -1,0 +1,16 @@
+2019-04-02T00:00:00+00:00 'Equity txn for $
+   a  -1.2 $
+   Equity:Balance  1.2 $
+
+2019-04-02T00:00:00+00:00 'Equity txn for EUR
+   e  100 EUR
+   Equity:Balance  -100 EUR
+
+2019-04-02T00:00:00+00:00 'Equity txn for USD
+   a  -120 USD
+   Equity:Balance  120 USD
+
+2019-04-02T00:00:00+00:00 'Equity txn for €
+   e  1 €
+   Equity:Balance  -1 €
+

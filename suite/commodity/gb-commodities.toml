@@ -1,0 +1,16 @@
+# vim: tabstop=2 shiftwidth=2 softtabstop=2 smarttab expandtab autoindent
+#
+# Gas Blender System: commodities
+#
+permit-empty-commodity = false
+
+commodities = [
+
+  # Commodity for Storage tanks
+  # Units are gas pressures on fixed size tanks
+  "bar·He",
+  "bar·O2",
+
+  # Monetary commodities for billing
+  "EUR"
+]

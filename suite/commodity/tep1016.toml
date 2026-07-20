@@ -1,0 +1,33 @@
+###
+### TEP-1016: Commodity testing
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "fs", fs = { dir = "not-found", suffix = "not-ext" } }
+
+[transaction]
+accounts    = { path = "ok-accounts.toml" }
+commodities = { path = "ok-commodities.toml" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 4 }
+formats = [ "txt", "json" ]
+targets = [ "balance", "balance-group", "register" ]
+accounts = [ ]
+
+balance       = { title = "BALANCE", type = "flat" }
+balance-group = { title = "BALANCE GROUPS", type = "flat", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+### Export Configuration
+[export]
+targets = [ "equity" ]
+equity = { accounts = [ ], equity-account = "Equity:Balance" }

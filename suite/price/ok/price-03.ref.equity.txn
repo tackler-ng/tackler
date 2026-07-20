@@ -1,0 +1,15 @@
+2024-03-31T00:00:00+00:00 'Equity txn for TCKLR
+   ; Filter
+   ;   Txn TS: end   2024-04-01T00:00:00+00:00
+   ; 
+   ; Report Time Zone
+   ;         TZ name : UTC
+   ; 
+   ; Commodity Prices
+   ;            Time : 2024-03-31 00:00:00
+   ;       Commodity : aaa
+   ;           Value : 310000.001 TCKLR
+   ; 
+   e:conv  3720000.012 TCKLR
+   Equity:Balance  -3720000.012 TCKLR
+

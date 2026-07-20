@@ -1,0 +1,39 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "272.00",
+      "accountTreeSum": "272.00",
+      "account": "Gas:He:Tank·102",
+      "commodity": "bar·He"
+    },
+    {
+      "accountSum": "298.00",
+      "accountTreeSum": "298.00",
+      "account": "Gas:He:Tank·103",
+      "commodity": "bar·He"
+    },
+    {
+      "accountSum": "298.00",
+      "accountTreeSum": "298.00",
+      "account": "Gas:He:Tank·104",
+      "commodity": "bar·He"
+    },
+    {
+      "accountSum": "193.00",
+      "accountTreeSum": "193.00",
+      "account": "Gas:O2:Tank·208",
+      "commodity": "bar·O2"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "868.00",
+      "commodity": "bar·He"
+    },
+    {
+      "delta": "193.00",
+      "commodity": "bar·O2"
+    }
+  ]
+}

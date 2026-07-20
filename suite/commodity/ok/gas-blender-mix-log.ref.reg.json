@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-05-01",
+      "txn": {
+        "timestamp": "2017-05-01T00:00:00+00:00[UTC]",
+        "code": "mix-1234",
+        "description": "tmx 18/45 D12L",
+        "comments": [
+          "Gas:He:Tank·102  Why is this '-' delta (neg)?",
+          "negative deltas would be better with starting pressures",
+          "e.g.: 247 -273 = -26 as tank delta",
+          "and (298 -25) -26 = 247 as end pressure",
+          "Also then user will see positive pressures, ",
+          "and rest of accunting will make more sense"
+        ]
+      },
+      "postings": [
+        {
+          "account": "User:diverX:He",
+          "amount": "26.00",
+          "runningTotal": "26.00",
+          "commodity": "bar·He"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-05-01",
+      "txn": {
+        "timestamp": "2017-05-01T00:00:00+00:00[UTC]",
+        "code": "mix-1234",
+        "description": "tmx 18/45 D12L",
+        "comments": [
+          "this mix used 5 bar @ 50L tank"
+        ]
+      },
+      "postings": [
+        {
+          "account": "User:diverX:O2",
+          "amount": "5.00",
+          "runningTotal": "5.00",
+          "commodity": "bar·O2"
+        }
+      ]
+    }
+  ]
+}

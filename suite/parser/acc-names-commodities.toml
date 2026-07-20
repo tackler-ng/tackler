@@ -1,0 +1,20 @@
+# vim: tabstop=2 shiftwidth=2 softtabstop=2 smarttab expandtab autoindent
+
+
+permit-empty-commodity = true
+
+commodities = [
+"Z",
+"au",
+"au_oz",
+"au-g",
+"au·kg",
+"O2_bar",
+"O2-bar",
+"O2·bar",
+"O2_bar_50L",
+"O2-bar-50L",
+"O2·bar·50L",
+"SP500",
+  ]
+

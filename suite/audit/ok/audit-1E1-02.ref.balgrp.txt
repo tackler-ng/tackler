@@ -1,0 +1,21 @@
+Txn Set Checksum
+        SHA-256 : 9b29071e1bf228cfbd31ca2b8e7263212e4b86e51cfee1e8002c9b795ab03f76
+       set size : 10
+
+Account Selector Checksum
+        SHA-256 : d1227257ad0ae6872b23d8ba48934f6bf54766afd8e7daf6e35a919bbb01867b
+      selectors : 'a:ay2016:am07'
+                | 'e:ey2016:em07:.*'
+
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2016-07
+-------
+           -1.0000001   -1.0000001  a:ay2016:am07
+            1.0000001    1.0000001  e:ey2016:em07:ed01
+=====================
+            0.0000000

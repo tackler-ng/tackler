@@ -1,0 +1,13 @@
+2017-01-03T00:00:00+00:00 'Equity txn
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a:b  27.4
+   a:b:c  300
+   a:c  4.6
+   e:e0101  -321
+   e:e0102  -2.0
+   e:e0103  -9.0
+

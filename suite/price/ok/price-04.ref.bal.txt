@@ -1,0 +1,17 @@
+Filter
+  Txn TS: end   2024-03-31T00:00:00+00:00
+
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : 2024-03-30 00:00:00
+      Commodity : aaa
+          Value : 300000.001 TCKLR
+
+
+BALANCE
+-------
+          3300000.011          3300000.011 TCKLR  e:conv
+===========================
+          3300000.011 TCKLR

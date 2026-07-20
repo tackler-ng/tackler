@@ -1,0 +1,216 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2024-01-01",
+      "txn": {
+        "timestamp": "2024-01-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "1.001",
+          "commodity": "TCKLR",
+          "rate": "1.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-12",
+      "txn": {
+        "timestamp": "2024-01-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "13.002",
+          "commodity": "TCKLR",
+          "rate": "12.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-24",
+      "txn": {
+        "timestamp": "2024-01-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "37.003",
+          "commodity": "TCKLR",
+          "rate": "24.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-01-31",
+      "txn": {
+        "timestamp": "2024-01-31T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "68.004",
+          "commodity": "TCKLR",
+          "rate": "31.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-01",
+      "txn": {
+        "timestamp": "2024-02-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "1068.005",
+          "commodity": "TCKLR",
+          "rate": "1000.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-12",
+      "txn": {
+        "timestamp": "2024-02-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "2268.006",
+          "commodity": "TCKLR",
+          "rate": "1200.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-24",
+      "txn": {
+        "timestamp": "2024-02-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "4668.007",
+          "commodity": "TCKLR",
+          "rate": "2400.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-29",
+      "txn": {
+        "timestamp": "2024-02-29T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "7568.008",
+          "commodity": "TCKLR",
+          "rate": "2900.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-01",
+      "txn": {
+        "timestamp": "2024-03-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "107568.009",
+          "commodity": "TCKLR",
+          "rate": "100000.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-12",
+      "txn": {
+        "timestamp": "2024-03-12T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "227568.010",
+          "commodity": "TCKLR",
+          "rate": "120000.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-24",
+      "txn": {
+        "timestamp": "2024-03-24T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "467568.011",
+          "commodity": "TCKLR",
+          "rate": "240000.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-31",
+      "txn": {
+        "timestamp": "2024-03-31T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "e:conv",
+          "amount": "1.00",
+          "runningTotal": "777568.012",
+          "commodity": "TCKLR",
+          "rate": "310000.001",
+          "baseCommodity": "aaa"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+###
+### REPORTING / OK
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "ok-accounts.toml" }
+commodities = { path = "ok-commodities.toml" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+# Verify that accounts are not trimmed (e.g. nonsensical " *" start of regex is ok)
+# test: c6da0aef-125f-4d33-9780-ffaa9e724499
+accounts = [ " *a:.*", "^e:.*" ]
+targets = [ "balance", "balance-group", "register"]
+
+balance       = { title = "BALANCE (TEST)" }
+balance-group = { title = "BALANCE GROUP (TEST)", group-by = "date" }
+register      = { title = "REGISTER (TEST)" }
+
+
+[export]
+targets = ["equity", "identity"]
+equity = { equity-account = "Equity:not-in-coa" }

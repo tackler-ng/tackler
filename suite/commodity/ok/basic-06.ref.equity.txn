@@ -1,0 +1,18 @@
+2017-05-02T00:00:00+00:00 'Equity txn
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   EUR:a  -2
+   EUR:e:b:c  2
+
+2017-05-02T00:00:00+00:00 'Equity txn for EUR
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   a  -1 EUR
+   e:b:c  1 EUR
+

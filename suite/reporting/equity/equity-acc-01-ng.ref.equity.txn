@@ -1,0 +1,6 @@
+2017-01-02T00:00:00+00:00 'Equity txn
+   not:a:b  0.001
+   not:e:b  -0.001
+   not:e:e0101  -20.01
+   Equity:Balance  20.01
+

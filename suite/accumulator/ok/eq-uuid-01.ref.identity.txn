@@ -1,0 +1,8 @@
+2017-01-03T16:00:00.123+00:00 'Equity txn
+   ; Last txn (uuid) : a92caa4b-7d94-4b29-a418-2715a7b1cfff
+   ; 
+   a:b   27.4
+   a:b:c   300
+   a:c   4.6
+   Equity:Balance  -332.0
+

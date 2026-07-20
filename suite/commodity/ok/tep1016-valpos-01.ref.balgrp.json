@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2017-05",
+      "balances": [
+        {
+          "accountSum": "3.00",
+          "account": "Assets:Stocks",
+          "commodity": "ACME"
+        },
+        {
+          "accountSum": "-359.75",
+          "account": "Assets:Cash",
+          "commodity": "EUR"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "3.00",
+          "commodity": "ACME"
+        },
+        {
+          "delta": "-359.75",
+          "commodity": "EUR"
+        }
+      ]
+    }
+  ]
+}

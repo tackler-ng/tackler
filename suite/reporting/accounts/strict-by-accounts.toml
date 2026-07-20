@@ -1,0 +1,38 @@
+###
+### REPORTING / OK
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "strict-01.accounts.toml" }
+commodities = { path = "../ok-commodities.toml" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+formats = [ "txt", "json" ]
+# Verify that accounts selector doesn't affect account export
+# test: 2fe1dd09-fefc-4a19-ad2b-03bf77c73bf5
+accounts = [ "^X:.*", "^Y:.*" ]
+targets = [ "balance", "balance-group", "register"]
+
+balance       = { title = "BALANCE (TEST)" }
+balance-group = { title = "BALANCE GROUP (TEST)", group-by = "date" }
+register      = { title = "REGISTER (TEST)" }
+
+
+[export]
+targets = ["equity", "identity", "accounts" ]
+equity = { equity-account = "assets:cash" }

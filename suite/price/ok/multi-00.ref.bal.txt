@@ -1,0 +1,9 @@
+BALANCE
+-------
+                 1.00        1.00 aaa  Assets:Stocks
+                 1.00        1.00 bbb  Assets:Stocks
+                 1.00        1.00 ccc  Assets:Stocks
+=========================
+                 1.00 aaa
+                 1.00 bbb
+                 1.00 ccc

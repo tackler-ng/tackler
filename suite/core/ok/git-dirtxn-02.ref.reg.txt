@@ -1,0 +1,20 @@
+Git Storage
+      reference : dirtxn-02
+      directory : git-txns/2018
+      extension : txn
+         commit : 491cc5fdcbfe0b51a4556d634b0240b18cc16f96
+         author : tackler <accounting@example.com>
+           date : 2019-03-20 19:36:43 +0200
+        subject : test: dirtxn-02
+
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------
+2018-01-01 'under 2018
+            # uuid: 38af4629-8ce6-43cb-99ac-53ca808b8eec
+            a                                             10.00              10.00
+            e                                            -10.00             -10.00
+----------------------------------------------------------------------------------

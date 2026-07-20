@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER (TEST)",
+  "transactions": [
+    {
+      "displayTime": "2017-03-01",
+      "txn": {
+        "timestamp": "2017-03-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "a:b",
+          "amount": "12345678901234567890.1234568",
+          "runningTotal": "12345678901234567890.1234568"
+        },
+        {
+          "account": "e:b",
+          "amount": "-12345678901234567890.1234568",
+          "runningTotal": "-12345678901234567890.1234568"
+        }
+      ]
+    }
+  ]
+}

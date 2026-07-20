@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:00+00:00[UTC]",
+        "description": "desc"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "comment": "1:a comment"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-02",
+      "txn": {
+        "timestamp": "2017-01-02T00:00:00+00:00[UTC]",
+        "description": "desc"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "2.00"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-2.00",
+          "comment": "2:e comment"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-03",
+      "txn": {
+        "timestamp": "2017-01-03T00:00:00+00:00[UTC]",
+        "description": "desc"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "3.00",
+          "comment": "3:a"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-3.00",
+          "comment": "3:e"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-04",
+      "txn": {
+        "timestamp": "2017-01-04T00:00:00+00:00[UTC]",
+        "description": "desc"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "4.00",
+          "comment": "4:a"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-4.00",
+          "comment": "4:e"
+        }
+      ]
+    }
+  ]
+}

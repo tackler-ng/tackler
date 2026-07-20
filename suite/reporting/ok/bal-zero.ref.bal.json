@@ -1,0 +1,35 @@
+{
+  "title": "BALANCE ZERO",
+  "balances": [
+    {
+      "accountSum": "0",
+      "accountTreeSum": "1000003000005000007000009",
+      "account": "e0"
+    },
+    {
+      "accountSum": "0",
+      "accountTreeSum": "3000005000007000009",
+      "account": "e0:e1:e2"
+    },
+    {
+      "accountSum": "0",
+      "accountTreeSum": "5000007000009",
+      "account": "e0:e1:e2:e3:e4"
+    },
+    {
+      "accountSum": "0",
+      "accountTreeSum": "7000009",
+      "account": "e0:e1:e2:e3:e4:e5:e6"
+    },
+    {
+      "accountSum": "0",
+      "accountTreeSum": "9",
+      "account": "e0:e1:e2:e3:e4:e5:e6:e7:e8"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0"
+    }
+  ]
+}

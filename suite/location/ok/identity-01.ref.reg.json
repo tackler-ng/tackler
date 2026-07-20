@@ -1,0 +1,150 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2019-01-01",
+      "txn": {
+        "timestamp": "2019-01-01T00:00:00+00:00[UTC]",
+        "location": {
+          "lat": "60",
+          "lon": "25"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2019-01-02",
+      "txn": {
+        "timestamp": "2019-01-02T00:00:00+00:00[UTC]",
+        "location": {
+          "lat": "61.00000001",
+          "lon": "25.00000001"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-2.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "2.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2019-01-03",
+      "txn": {
+        "timestamp": "2019-01-03T00:00:00+00:00[UTC]",
+        "location": {
+          "lat": "61.00000000",
+          "lon": "25.00000000"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-3.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "3.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2019-01-04",
+      "txn": {
+        "timestamp": "2019-01-04T00:00:00+00:00[UTC]",
+        "location": {
+          "lat": "-0.7",
+          "lon": "-90.6"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-4.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "4.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2019-01-05",
+      "txn": {
+        "timestamp": "2019-01-05T00:00:00+00:00[UTC]",
+        "uuid": "db28c347-2311-4a1d-9886-54f1794436b7",
+        "location": {
+          "lat": "63.658611",
+          "lon": "26.041111",
+          "alt": "-1444"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-5.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "5.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2019-01-06",
+      "txn": {
+        "timestamp": "2019-01-06T00:00:00+00:00[UTC]",
+        "uuid": "4a4421f4-5662-47e9-8438-91494e4ae4c0",
+        "location": {
+          "lat": "69.79100",
+          "lon": "27.79275",
+          "alt": "423.0"
+        }
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "-1.00",
+          "runningTotal": "-6.00"
+        },
+        {
+          "account": "e",
+          "amount": "1.00",
+          "runningTotal": "6.00"
+        }
+      ]
+    }
+  ]
+}

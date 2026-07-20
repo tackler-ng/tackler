@@ -1,0 +1,35 @@
+### Configuration settings for Tackler-NG
+###
+### See tackler.toml file full configuration options
+### and documentation.
+###
+### The format of this file is TOML (https://toml.io/en/)
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "fs", fs = { dir = "not-found", suffix = "not-ext" } }
+
+[transaction]
+accounts    = { path = "none" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 4 }
+targets = [ "balance", "balance-group", "register" ]
+accounts = [ ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "date" }
+register      = { title = "REGISTER" }
+
+
+### Export Configuration
+[export]
+targets = [ "equity" ]
+equity = { accounts = [ ], equity-account = "Equity:Balance" }

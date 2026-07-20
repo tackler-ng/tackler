@@ -1,0 +1,6 @@
+2017-05-02  'diverX outstanding payments
+   ; Convert used gas to EUR
+   User:diverX:He -26 bar·He @ 1.25 EUR ; -32.50 EUR
+   User:diverX:O2  -5 bar·O2 @ 0.25 EUR ;  -1.25 EUR
+   Billing:diverX:Receivable  33.75 EUR
+

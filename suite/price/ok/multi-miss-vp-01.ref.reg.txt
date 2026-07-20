@@ -1,0 +1,28 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : bbb
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : ccc
+          Value : - TCKLR
+
+
+REGISTER
+--------
+2024-01-01
+            Assets:Stocks                                  1.00                                   1.00 aaa
+----------------------------------------------------------------------------------------------------------
+2024-02-01
+            Assets:Stocks                                  1.00 bbb @ 1.0001                    1.0001 TCKLR
+------------------------------------------------------------------------------------------------------------
+2024-03-01
+            Assets:Stocks                                  1.00 ccc @ 20.000001              21.000101 TCKLR
+------------------------------------------------------------------------------------------------------------

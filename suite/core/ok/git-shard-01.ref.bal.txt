@@ -1,0 +1,16 @@
+Git Storage
+      reference : shard-01
+      directory : git-txns
+      extension : txn
+         commit : 422ca7f3cbc1f3597fd2312d7d6c7793115e1e50
+         author : tackler <accounting@example.com>
+           date : 2019-03-20 19:37:28 +0200
+        subject : test: shard-01
+
+
+BALANCE
+-------
+               111.00    111.00  a
+              -111.00   -111.00  e
+=====================
+                 0.00

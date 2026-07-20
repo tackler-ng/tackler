@@ -1,0 +1,18 @@
+accounts = [
+"a",
+"e",
+"äöåÄÖÅéèÿ",
+"äöåÄ:ÖÅéèÿ",
+"è",
+"空",
+"風:空",
+"Expenses:ice_cream",
+"Expenses:jäätelö",
+"Expenses:jäätelö:mansikka-vadelma",
+"Expenses:crème·glacée",
+"Expenses:мороженое",
+"Expenses:アイスクリーム",
+"Expenses:風:空",
+"assets:cash",
+]
+

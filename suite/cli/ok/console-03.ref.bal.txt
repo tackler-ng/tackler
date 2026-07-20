@@ -1,0 +1,18 @@
+BALANCE
+-------
+                 0.00    7.00  Expenses
+                 1.00    1.00  Expenses:crème·glacée
+                 1.00    1.00  Expenses:ice_cream
+                 1.00    2.00  Expenses:jäätelö
+                 1.00    1.00  Expenses:jäätelö:mansikka-vadelma
+                 1.00    1.00  Expenses:мороженое
+                 1.00    1.00  Expenses:アイスクリーム
+                 0.00    1.00  Expenses:風
+                 1.00    1.00  Expenses:風:空
+                 0.00   -7.00  assets
+                -7.00   -7.00  assets:cash
+                -1.00   -1.00  空
+                 0.00    1.00  風
+                 1.00    1.00  風:空
+=====================
+                 0.00

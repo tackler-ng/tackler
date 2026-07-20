@@ -1,0 +1,33 @@
+Git Storage
+      reference : set-1e2
+      directory : txns/2016/01/11
+      extension : txn
+         commit : 203e6f22992f2fff80c537e7742ed3cf897a9e6b
+         author : tackler <accounting@example.com>
+           date : 2016-12-28 08:09:36 +0000
+        subject : set-1e2: 2016-12-28
+
+Txn Set Checksum
+        SHA-256 : fc88ae6f605baba520878110572e6cff6e78309e12adb25bca8697f917b54763
+       set size : 1
+
+Account Selector Checksum
+           None : select all
+
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2016-01
+-------
+                 0.00   -11.0000001  a
+                 0.00   -11.0000001  a:ay2016
+          -11.0000001   -11.0000001  a:ay2016:am01
+                 0.00    11.0000001  e
+                 0.00    11.0000001  e:ey2016
+                 0.00    11.0000001  e:ey2016:em01
+           11.0000001    11.0000001  e:ey2016:em01:ed11
+=====================
+            0.0000000

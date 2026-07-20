@@ -1,0 +1,46 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : bbb
+          Value : - TCKLR
+                -
+           Time : At txn time
+      Commodity : ccc
+          Value : - TCKLR
+
+
+BALANCE GROUPS
+--------------
+2024-01
+-------
+                10.00             10.00 $      Assets:Stocks
+             3.010101          3.010101 TCKLR  Assets:Stocks
+                 1.00              1.00 ddd    Assets:Stocks
+===========================
+                10.00 $
+             3.010101 TCKLR
+                 1.00 ddd
+2024-02
+-------
+                20.00              20.00 $      Assets:Stocks
+            60.010101          60.010101 TCKLR  Assets:Stocks
+                 1.00               1.00 ddd    Assets:Stocks
+===========================
+                20.00 $
+            60.010101 TCKLR
+                 1.00 ddd
+2024-03
+-------
+                30.00               30.00 $      Assets:Stocks
+           900.010101          900.010101 TCKLR  Assets:Stocks
+                 1.00                1.00 ddd    Assets:Stocks
+===========================
+                30.00 $
+           900.010101 TCKLR
+                 1.00 ddd

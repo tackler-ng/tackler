@@ -1,0 +1,54 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2009",
+      "balances": [
+        {
+          "accountSum": "-80361647.11",
+          "accountTreeSum": "-80361647.11",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "80361647.11",
+          "accountTreeSum": "80361647.11",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    },
+    {
+      "title": "2010",
+      "balances": [
+        {
+          "accountSum": "-60300308.00",
+          "accountTreeSum": "-60300308.00",
+          "account": "a:b"
+        },
+        {
+          "accountSum": "60300308.00",
+          "accountTreeSum": "60300308.00",
+          "account": "e:b"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "0.00"
+        }
+      ]
+    }
+  ]
+}

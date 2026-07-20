@@ -1,0 +1,17 @@
+2017-01-04T00:00:00+00:00 'Equity txn
+   ; WARNING:
+   ; WARNING: The sum of equity transaction is zero without equity account.
+   ; WARNING: Therefore there is no equity posting row, and this is probably not right.
+   ; WARNING: Is the account selector correct for this Equity export?
+   ; WARNING:
+   Expenses:crème·glacée  1
+   Expenses:ice_cream  1
+   Expenses:jäätelö  1
+   Expenses:jäätelö:mansikka-vadelma  1
+   Expenses:мороженое  1
+   Expenses:アイスクリーム  1
+   Expenses:風:空  1
+   assets:cash  -7
+   空  -1
+   風:空  1
+

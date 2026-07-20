@@ -1,0 +1,31 @@
+###
+### CFG: FS - git active
+###
+[kernel]
+strict = true
+audit = { mode = true, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "git"
+git = { repo = "audit-repo.git", dir = "txns", ref = "set-1e2", suffix = "txn" }
+fs  = { path = "txns", dir = "none", suffix = "txn" }
+
+[transaction]
+accounts    = { path = "../../examples/audit/accounts.toml" }
+commodities = { path = "../../examples/audit/commodities.toml" }
+tags        = { path = "none" }
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+accounts = [ ]
+targets = [ "balance" ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "month" }
+register      = { title = "REGISTER" }
+
+[export]
+targets = [ ]
+equity = { equity-account = "Equity:Balance" }

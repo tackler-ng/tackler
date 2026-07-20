@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            },
+            {
+              "source": "bbb",
+              "target": "TCKLR"
+            },
+            {
+              "source": "ccc",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2024-01-01",
+      "txn": {
+        "timestamp": "2024-01-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "10.00",
+          "runningTotal": "10.00",
+          "commodity": "$"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "aaa"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.0001",
+          "commodity": "TCKLR",
+          "rate": "1.0001",
+          "baseCommodity": "bbb"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "2.000101",
+          "commodity": "TCKLR",
+          "rate": "1.000001",
+          "baseCommodity": "ccc"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "1.00",
+          "commodity": "ddd"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-02-01",
+      "txn": {
+        "timestamp": "2024-02-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "20.00",
+          "runningTotal": "30.00",
+          "commodity": "$"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "22.010101",
+          "commodity": "TCKLR",
+          "rate": "20.01",
+          "baseCommodity": "aaa"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "23.010201",
+          "commodity": "TCKLR",
+          "rate": "1.0001",
+          "baseCommodity": "bbb"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "43.010202",
+          "commodity": "TCKLR",
+          "rate": "20.000001",
+          "baseCommodity": "ccc"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "2.00",
+          "commodity": "ddd"
+        }
+      ]
+    },
+    {
+      "displayTime": "2024-03-01",
+      "txn": {
+        "timestamp": "2024-03-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "30.00",
+          "runningTotal": "60.00",
+          "commodity": "$"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "343.020202",
+          "commodity": "TCKLR",
+          "rate": "300.01",
+          "baseCommodity": "aaa"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "643.020302",
+          "commodity": "TCKLR",
+          "rate": "300.0001",
+          "baseCommodity": "bbb"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "663.020303",
+          "commodity": "TCKLR",
+          "rate": "20.000001",
+          "baseCommodity": "ccc"
+        },
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "3.00",
+          "commodity": "ddd"
+        }
+      ]
+    }
+  ]
+}

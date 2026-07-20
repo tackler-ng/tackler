@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            },
+            {
+              "source": "bbb",
+              "target": "TCKLR"
+            },
+            {
+              "source": "ccc",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "321.010101",
+      "accountTreeSum": "321.010101",
+      "account": "Assets:Stocks",
+      "commodity": "TCKLR"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "321.010101",
+      "commodity": "TCKLR"
+    }
+  ]
+}

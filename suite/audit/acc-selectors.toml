@@ -1,0 +1,36 @@
+### Configuration settings for Tackler-NG
+###
+### See tackler.toml file full configuration options
+### and documentation.
+###
+### The format of this file is TOML (https://toml.io/en/)
+[kernel]
+strict = true
+audit = { mode = true, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+input = { storage = "git", git = { repository = "audit-repo.git", dir = "txns", ref = "set-1e1", suffix = "txn" } }
+
+[transaction]
+accounts    = { path = "../../examples/audit/accounts.toml" }
+commodities = { path = "../../examples/audit/commodities.toml" }
+tags        = { path = "none" }
+
+
+### Report Configuration
+[report]
+report-timezone = "Europe/Helsinki"
+scale = { min = 2, max = 7 }
+formats = [ "txt", "json" ]
+accounts = [ "global selector, should not be used" ]
+targets = [ "balance", "balance-group", "register" ]
+
+balance       = { title = "BALANCE", accounts = [ "a:ay2016:am02", "e:ey2016:em02:.*" ]}
+balance-group = { title = "BALANCE GROUPS", group-by = "month", accounts = [ "a:ay2016:am07", "e:ey2016:em07:.*" ]}
+register      = { title = "REGISTER", accounts = [ "a:ay2016:am10", "e:ey2016:em10:.*" ]}
+
+
+### Export Configuration
+[export]
+targets = [ "equity" ]
+equity = { accounts = [ "a:ay2016:am11", "e:ey2016:em11:.*" ], equity-account = "Equity:Balance" }

@@ -1,0 +1,37 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "33.75",
+      "accountTreeSum": "33.75",
+      "account": "Billing:diverX:Receivable",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "0.00",
+      "account": "User:diverX:He",
+      "commodity": "bar·He"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "0.00",
+      "account": "User:diverX:O2",
+      "commodity": "bar·O2"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "33.75",
+      "commodity": "EUR"
+    },
+    {
+      "delta": "0.00",
+      "commodity": "bar·He"
+    },
+    {
+      "delta": "0.00",
+      "commodity": "bar·O2"
+    }
+  ]
+}

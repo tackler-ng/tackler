@@ -1,0 +1,9 @@
+BALANCE
+-------
+                 0.00           3.00 ACME  Assets
+                 3.00           3.00 ACME  Assets:Stocks
+                 0.00        -359.75 EUR   Assets
+              -359.75        -359.75 EUR   Assets:Cash
+==========================
+                 3.00 ACME
+              -359.75 EUR

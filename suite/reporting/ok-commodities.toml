@@ -1,0 +1,9 @@
+# vim: tabstop=3 shiftwidth=3 softtabstop=3 smarttab expandtab autoindent
+
+permit-empty-commodity = true
+  
+commodities = [
+    "ACME",
+    "€",
+]
+

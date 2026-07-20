@@ -1,0 +1,63 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "0.00",
+      "account": "EUR"
+    },
+    {
+      "accountSum": "-2.00",
+      "accountTreeSum": "-2.00",
+      "account": "EUR:a"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "2.00",
+      "account": "EUR:e"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "2.00",
+      "account": "EUR:e:b"
+    },
+    {
+      "accountSum": "2.00",
+      "accountTreeSum": "2.00",
+      "account": "EUR:e:b:c"
+    },
+    {
+      "accountSum": "-1.00",
+      "accountTreeSum": "-1.00",
+      "account": "a",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "1.00",
+      "account": "e",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "1.00",
+      "account": "e:b",
+      "commodity": "EUR"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "e:b:c",
+      "commodity": "EUR"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0.00"
+    },
+    {
+      "delta": "0.00",
+      "commodity": "EUR"
+    }
+  ]
+}

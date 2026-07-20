@@ -1,0 +1,9 @@
+BALANCE
+-------
+               272.00           272.00 bar·He  Gas:He:Tank·102
+               298.00           298.00 bar·He  Gas:He:Tank·103
+               298.00           298.00 bar·He  Gas:He:Tank·104
+               193.00           193.00 bar·O2  Gas:O2:Tank·208
+============================
+               868.00 bar·He
+               193.00 bar·O2

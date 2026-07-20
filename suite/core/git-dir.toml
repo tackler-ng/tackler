@@ -1,0 +1,36 @@
+###
+### GIT-DIR
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "git"
+
+[kernel.input.git]
+repository = "test-data.git"
+dir = "git-txns/2018"
+ref = "dirtxn-02"
+suffix = ".txn"
+
+
+[transaction]
+accounts    = { path = "id2id-accounts.toml" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 7 }
+accounts = [ ]
+targets = [ "register" ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUPS", group-by = "month" }
+register      = { title = "REGISTER" }
+
+[export]
+targets = [ "identity" ]
+equity = { equity-account = "Equity:Balance" }

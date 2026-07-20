@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:01.001+00:00[UTC]",
+        "description": "01"
+      },
+      "postings": [
+        {
+          "account": "a:b",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "e:e0101",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:01.002+00:00[UTC]",
+        "description": "01"
+      },
+      "postings": [
+        {
+          "account": "a:b",
+          "amount": "20.00",
+          "runningTotal": "21.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-01",
+      "txn": {
+        "timestamp": "2017-01-01T00:00:02.003+00:00[UTC]",
+        "description": "01"
+      },
+      "postings": [
+        {
+          "account": "a:b:c",
+          "amount": "300.00",
+          "runningTotal": "300.00"
+        },
+        {
+          "account": "e:e0101",
+          "amount": "-300.00",
+          "runningTotal": "-301.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2017-01-02",
+      "txn": {
+        "timestamp": "2017-01-02T00:00:00+00:00[UTC]",
+        "description": "check that report filtering doesn't affect accumulator"
+      },
+      "postings": [
+        {
+          "account": "a:by:not",
+          "amount": "0.01",
+          "runningTotal": "0.01"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+accounts = [
+"a",
+"EUR:a",
+"a:b",
+"a:b:c",
+"a:c",
+"e",
+"e:b",
+"e:b:c",
+"EUR:e:b:c",
+"e:c",
+"e:d",
+"e:e",
+"Assets:Stocks",
+"Assets:Cash",
+"Equity:Balance",
+]

@@ -1,0 +1,37 @@
+2016-01-30T06:43:12+00:00 'Equity txn
+   ; Last txn (uuid) : 6fd441da-6a5e-5b09-bb3f-ab740cbbc23d
+   ;
+   ; Git Storage
+   ;       reference : set-1e2
+   ;       directory : txns
+   ;       extension : txn
+   ;          commit : 203e6f22992f2fff80c537e7742ed3cf897a9e6b
+   ;          author : tackler <accounting@example.com>
+   ;            date : 2016-12-28 08:09:36 +0000
+   ;         subject : set-1e2: 2016-12-28
+   ; 
+   ; Txn Set Checksum
+   ;         SHA-256 : 9a25d978d08abfa10ab4cae50c7b7cf693eb4200e5f1ae6b97a5d709552bc133
+   ;        set size : 9
+   ; 
+   ; Filter
+   ;   AND
+   ;     Posting Account: "^e:.*"
+   ;     Txn TS: begin 2016-01-01T00:00:00+00:00
+   ;     Txn TS: end   2016-02-01T00:00:00+00:00
+   ; 
+   ; Account Selector Checksum
+   ;         SHA-256 : 23b3e1d50b27f44e53c0bc66b132028eea2f939fc9ad0d9225f661e41f869b23
+   ;        selector : 'e:.*'
+   ; 
+   e:ey2016:em01:ed01  1.0000001
+   e:ey2016:em01:ed04  4.0000001
+   e:ey2016:em01:ed08  8.0000001
+   e:ey2016:em01:ed11  11.0000001
+   e:ey2016:em01:ed15  15.0000001
+   e:ey2016:em01:ed19  19.0000001
+   e:ey2016:em01:ed22  22.0000001
+   e:ey2016:em01:ed26  26.0000001
+   e:ey2016:em01:ed30  30.0000001
+   Equity:Balance  -136.0000009
+

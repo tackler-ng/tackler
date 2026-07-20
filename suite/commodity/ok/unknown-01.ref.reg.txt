@@ -1,0 +1,10 @@
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------
+2019-01-26 'unknown commodity with non-strict
+            a                                            -10.00             -10.00 JPY
+            e                                             10.00              10.00 JPY
+--------------------------------------------------------------------------------------

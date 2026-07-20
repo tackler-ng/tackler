@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterPostingCommodity": {
+                "regex": "bbb"
+              }
+            }
+          }
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "ts": "2024-03-01T00:00:00+00:00[UTC]",
+              "source": "bbb",
+              "rate": "300.0001",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2024-02-01",
+      "txn": {
+        "timestamp": "2024-02-01T00:00:00+00:00[UTC]"
+      },
+      "postings": [
+        {
+          "account": "Assets:Stocks",
+          "amount": "1.00",
+          "runningTotal": "300.0001",
+          "commodity": "TCKLR",
+          "baseCommodity": "bbb"
+        }
+      ]
+    }
+  ]
+}

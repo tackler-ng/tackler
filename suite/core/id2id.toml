@@ -1,0 +1,43 @@
+###
+### ID2ID
+###
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "ok/txns-id2id"
+suffix = "txn"
+
+
+[kernel.input.git]
+repository = "test-data.git"
+dir = "git-txns"
+ref = "master"
+suffix = ".txn"
+
+
+[transaction]
+accounts    = { path = "none" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 4 }
+accounts = [ ]
+targets = [ ]
+
+balance       = { title = "BALANCE" }
+balance-group = { title = "BALANCE GROUP", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+[export]
+targets = [ "identity" ]
+equity = { equity-account = "Equity:Balance" }

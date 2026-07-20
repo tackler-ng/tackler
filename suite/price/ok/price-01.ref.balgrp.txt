@@ -1,0 +1,26 @@
+Report Time Zone
+        TZ name : UTC
+
+Commodity Prices
+           Time : At txn time
+      Commodity : aaa
+          Value : - TCKLR
+
+
+BALANCE GROUPS
+--------------
+2024-01
+-------
+               68.004          68.004 TCKLR  e:conv
+===========================
+               68.004 TCKLR
+2024-02
+-------
+             7500.004          7500.004 TCKLR  e:conv
+===========================
+             7500.004 TCKLR
+2024-03
+-------
+           770000.004          770000.004 TCKLR  e:conv
+===========================
+           770000.004 TCKLR

@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "ts": "2024-01-01T00:00:00+00:00[UTC]",
+              "source": "aaa",
+              "rate": "1.01",
+              "target": "TCKLR"
+            },
+            {
+              "ts": "2024-02-01T00:00:00+00:00[UTC]",
+              "source": "bbb",
+              "rate": "20.0001",
+              "target": "TCKLR"
+            },
+            {
+              "ts": "2024-04-01T00:00:00+00:00[UTC]",
+              "source": "ccc",
+              "rate": "4000.000001",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "60.00",
+      "accountTreeSum": "60.00",
+      "account": "Assets:Stocks",
+      "commodity": "$"
+    },
+    {
+      "accountSum": "12063.030303",
+      "accountTreeSum": "12063.030303",
+      "account": "Assets:Stocks",
+      "commodity": "TCKLR"
+    },
+    {
+      "accountSum": "3.00",
+      "accountTreeSum": "3.00",
+      "account": "Assets:Stocks",
+      "commodity": "ddd"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "60.00",
+      "commodity": "$"
+    },
+    {
+      "delta": "12063.030303",
+      "commodity": "TCKLR"
+    },
+    {
+      "delta": "3.00",
+      "commodity": "ddd"
+    }
+  ]
+}

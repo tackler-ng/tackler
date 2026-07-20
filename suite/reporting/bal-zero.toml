@@ -1,0 +1,42 @@
+###
+### REPORTING / BAL ZERO
+###
+[kernel]
+strict = true
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+
+[kernel.input.fs]
+dir = "txns"
+suffix = "txn"
+
+[transaction]
+accounts    = { path = "ok-accounts.toml" }
+commodities = { path = "ok-commodities.toml" }
+tags        = { path = "none" }
+
+
+[report]
+report-timezone = "UTC"
+formats = [ "txt", "json" ]
+scale = { min = 0, max = 25 }
+accounts = [ 
+        "^e0:e1:e2:e3:e4:e5:e6:e7:e8$",
+        "^e0:e1:e2:e3:e4:e5:e6$",
+        "^e0:e1:e2:e3:e4$",
+        "^e0:e1:e2$",
+        "^e0$",
+]
+targets = [ "balance", "balance-group", "register"]
+
+balance       = { title = "BALANCE ZERO" }
+balance-group = { title = "GROUP-BY ZERO", group-by = "month" }
+register      = { title = "REGISTER" }
+
+
+[export]
+targets = ["equity", "identity"]
+equity = { equity-account = "Equity:Balance" }

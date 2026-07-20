@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            },
+            {
+              "source": "bbb",
+              "target": "TCKLR"
+            },
+            {
+              "source": "ccc",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "60.00",
+      "accountTreeSum": "60.00",
+      "account": "Assets:Stocks",
+      "commodity": "$"
+    },
+    {
+      "accountSum": "963.030303",
+      "accountTreeSum": "963.030303",
+      "account": "Assets:Stocks",
+      "commodity": "TCKLR"
+    },
+    {
+      "accountSum": "3.00",
+      "accountTreeSum": "3.00",
+      "account": "Assets:Stocks",
+      "commodity": "ddd"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "60.00",
+      "commodity": "$"
+    },
+    {
+      "delta": "963.030303",
+      "commodity": "TCKLR"
+    },
+    {
+      "delta": "3.00",
+      "commodity": "ddd"
+    }
+  ]
+}

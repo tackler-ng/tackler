@@ -1,0 +1,37 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Assets:Stocks",
+      "commodity": "aaa"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Assets:Stocks",
+      "commodity": "bbb"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Assets:Stocks",
+      "commodity": "ccc"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "1.00",
+      "commodity": "aaa"
+    },
+    {
+      "delta": "1.00",
+      "commodity": "bbb"
+    },
+    {
+      "delta": "1.00",
+      "commodity": "ccc"
+    }
+  ]
+}

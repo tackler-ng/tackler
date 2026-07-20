@@ -1,0 +1,39 @@
+BALANCE (TEST)
+--------------
+                 0.00     80.50  Assets
+                 0.00    100.00  Assets:Bank
+               100.00    100.00  Assets:Bank:Acme_Inc
+                -7.50     -7.50  Assets:Cash
+                 0.00    -12.00  Assets:Visa
+               -12.00    -12.00  Assets:Visa:4012_8888_8888_1881
+                 0.00      2.00  E
+                 0.00      1.00  E:0123
+                 0.00      1.00  E:0123:567
+                 0.00      1.00  E:0123:567:Sweets
+                 1.00      1.00  E:0123:567:Sweets:Ice·Cream
+                 0.00      1.00  E:01234567
+                 0.00      1.00  E:01234567:Sweets
+                 1.00      1.00  E:01234567:Sweets:Ice·Cream
+                 0.00     24.50  Expenses
+                 0.00     12.00  Expenses:Food
+                12.00     12.00  Expenses:Food:FastFood
+                 0.00      5.50  Expenses:Sweets
+                 2.50      2.50  Expenses:Sweets:Candy
+                 3.00      3.00  Expenses:Sweets:Ice·Cream
+                 1.00      1.00  Expenses:crème·glacée
+                 1.00      1.00  Expenses:ice_cream
+                 1.00      2.00  Expenses:jäätelö
+                 1.00      1.00  Expenses:jäätelö:mansikka-vadelma
+                 1.00      1.00  Expenses:мороженое
+                 1.00      1.00  Expenses:アイスクリーム
+                 0.00      1.00  Expenses:風
+                 1.00      1.00  Expenses:風:空
+                 0.00   -100.00  Income
+              -100.00   -100.00  Income:Lottery
+                 0.00     -7.00  assets
+                -7.00     -7.00  assets:cash
+                -1.00     -1.00  空
+                 0.00      1.00  風
+                 1.00      1.00  風:空
+=====================
+                 0.00

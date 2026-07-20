@@ -1,0 +1,23 @@
+2019-04-01 'Buy 10 ACME
+ Assets:Stocks 10 ACME = 120 EUR
+ Assets:Cash
+
+2019-04-02 'sell four ACME in total 4.8 EUR
+ ; check fixed price with multiple entries
+ Assets:Stocks -4 ACME = -4.8 EUR
+ Assets:Cash 4.8 EUR
+
+2019-04-03 'sell three ACME in total 3.6 EUR
+ ; check inferred price with multiple entries
+ Assets:Stocks -3 ACME = -3.6 EUR
+ Assets:Cash
+
+2019-04-04 'Credit card transaction
+ ; expence in foreing, billing in native currency
+ e 120 $ = 100 €
+ a
+
+2019-04-05 'Credit card transaction
+ ; expence in foreing, billing in native currency
+ e 231 $
+ a -221 € = -231 $

@@ -1,0 +1,12 @@
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2019-01
+-------
+               -10.00       -10.00 JPY  a
+                10.00        10.00 JPY  e
+=========================
+                 0.00 JPY

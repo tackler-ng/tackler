@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "REGISTER",
+  "transactions": [
+    {
+      "displayTime": "2007-10-02",
+      "txn": {
+        "timestamp": "2007-10-02T13:45:30.123456781+00:00[UTC]",
+        "description": "3",
+        "uuid": "9890018e-20a5-4587-8189-48891052a5de"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "1.00"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-1.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2007-10-02",
+      "txn": {
+        "timestamp": "2007-10-02T13:45:30.123456782+00:00[UTC]",
+        "description": "1",
+        "uuid": "391bce7b-198a-41c5-b00c-d3437e55ba92"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "2.00"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-2.00"
+        }
+      ]
+    },
+    {
+      "displayTime": "2007-10-02",
+      "txn": {
+        "timestamp": "2007-10-02T13:45:30.123456789+00:00[UTC]",
+        "description": "2",
+        "uuid": "2fb486f2-5983-4649-b528-3fc53de4d3d0"
+      },
+      "postings": [
+        {
+          "account": "a",
+          "amount": "1.00",
+          "runningTotal": "3.00"
+        },
+        {
+          "account": "e",
+          "amount": "-1.00",
+          "runningTotal": "-3.00"
+        }
+      ]
+    }
+  ]
+}

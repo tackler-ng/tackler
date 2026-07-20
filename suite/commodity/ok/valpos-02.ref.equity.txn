@@ -1,0 +1,16 @@
+2019-04-05T00:00:00+00:00 'Equity txn for $
+   e  351 $
+   Equity:Balance  -351 $
+
+2019-04-05T00:00:00+00:00 'Equity txn for ACME
+   Assets:Stocks  3 ACME
+   Equity:Balance  -3 ACME
+
+2019-04-05T00:00:00+00:00 'Equity txn for EUR
+   Assets:Cash  -111.6 EUR
+   Equity:Balance  111.6 EUR
+
+2019-04-05T00:00:00+00:00 'Equity txn for €
+   a  -321 €
+   Equity:Balance  321 €
+

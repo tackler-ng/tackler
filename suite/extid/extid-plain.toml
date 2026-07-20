@@ -1,0 +1,35 @@
+#
+# EXT-ID: PLAIN
+#
+[kernel]
+strict = false
+audit = { mode = false, hash = "SHA-256" }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "fs"
+fs  = { path = "not-used",      dir = "t", ext = "txn" }
+
+[transaction]
+accounts    = { path = "none" }
+commodities = { path = "none" }
+tags        = { path = "none" }
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 2 }
+
+formats = [ "txt", "json" ]
+
+accounts = [ "a(:.*)?", "e(:.*)?" ]
+
+targets = [ "register" ]
+
+
+balance       = { title = "Balance Report", type = "tree" }
+balance-group = { title = "Balance Group Report", type = "tree", group-by = "month" }
+register      = { title = "Register Report" }
+
+[export]
+targets = [ "identity" ]
+equity = { accounts = [ "a(:.*)?", ], equity-account = "Equity:Balance" }

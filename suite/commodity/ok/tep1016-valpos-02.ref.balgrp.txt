@@ -1,0 +1,17 @@
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2019-04
+-------
+               351.00        $     e
+                 3.00        ACME  Assets:Stocks
+              -111.60        EUR   Assets:Cash
+              -321.00        €     a
+==========================
+               351.00 $
+                 3.00 ACME
+              -111.60 EUR
+              -321.00 €

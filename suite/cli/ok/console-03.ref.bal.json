@@ -1,0 +1,80 @@
+{
+  "title": "BALANCE",
+  "balances": [
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "7.00",
+      "account": "Expenses"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:crème·glacée"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:ice_cream"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "2.00",
+      "account": "Expenses:jäätelö"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:jäätelö:mansikka-vadelma"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:мороженое"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:アイスクリーム"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:風"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "Expenses:風:空"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "-7.00",
+      "account": "assets"
+    },
+    {
+      "accountSum": "-7.00",
+      "accountTreeSum": "-7.00",
+      "account": "assets:cash"
+    },
+    {
+      "accountSum": "-1.00",
+      "accountTreeSum": "-1.00",
+      "account": "空"
+    },
+    {
+      "accountSum": "0.00",
+      "accountTreeSum": "1.00",
+      "account": "風"
+    },
+    {
+      "accountSum": "1.00",
+      "accountTreeSum": "1.00",
+      "account": "風:空"
+    }
+  ],
+  "deltas": [
+    {
+      "delta": "0.00"
+    }
+  ]
+}

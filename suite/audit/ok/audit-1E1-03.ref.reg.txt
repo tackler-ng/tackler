@@ -1,0 +1,24 @@
+Git Storage
+      reference : set-1e1
+      directory : txns
+      extension : txn
+         commit : ed6e4b10de2daea8d143569c473d14a9b09c3270
+         author : tackler <accounting@example.com>
+           date : 2016-11-25 09:36:00 +0000
+        subject : set-1e1: 2016-11-25
+
+Txn Set Checksum
+        SHA-256 : 4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3
+       set size : 10
+
+Account Selector Checksum
+        SHA-256 : 88a40beeddd8c558b85c52cd860682a2fc4643e02b0d6a353911e805c2a2526b
+      selectors : 'a'
+                | 'e'
+
+Report Time Zone
+        TZ name : UTC
+
+
+REGISTER
+--------

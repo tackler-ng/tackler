@@ -1,0 +1,12 @@
+= Tackler Test Vectors ("the Suite")
+
+This is collection of test vectors for link:https://tackler.fi/[Tackler],
+source code is here: link:https://github.com/tackler-ng/tackler[tackler-ng/tackler].
+
+See link:https://github.com/tackler-ng/tackler-t3db[Tackler Test Tracking Database (T3DB)] 
+for general information about these tests.
+
+'''
+Tackler Test Suite is distributed on an *"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND*,
+either express or implied. See the link:./LICENSE[License] for the specific language governing 
+permissions and limitations under the link:./LICENSE[License].

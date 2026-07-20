@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      },
+      {
+        "PriceRecords": {
+          "rates": [
+            {
+              "source": "aaa",
+              "target": "TCKLR"
+            },
+            {
+              "source": "bbb",
+              "target": "TCKLR"
+            },
+            {
+              "source": "ccc",
+              "target": "TCKLR"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2024-01",
+      "balances": [
+        {
+          "accountSum": "10.00",
+          "accountTreeSum": "10.00",
+          "account": "Assets:Stocks",
+          "commodity": "$"
+        },
+        {
+          "accountSum": "3.010101",
+          "accountTreeSum": "3.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        },
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "ddd"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "10.00",
+          "commodity": "$"
+        },
+        {
+          "delta": "3.010101",
+          "commodity": "TCKLR"
+        },
+        {
+          "delta": "1.00",
+          "commodity": "ddd"
+        }
+      ]
+    },
+    {
+      "title": "2024-02",
+      "balances": [
+        {
+          "accountSum": "20.00",
+          "accountTreeSum": "20.00",
+          "account": "Assets:Stocks",
+          "commodity": "$"
+        },
+        {
+          "accountSum": "60.010101",
+          "accountTreeSum": "60.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        },
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "ddd"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "20.00",
+          "commodity": "$"
+        },
+        {
+          "delta": "60.010101",
+          "commodity": "TCKLR"
+        },
+        {
+          "delta": "1.00",
+          "commodity": "ddd"
+        }
+      ]
+    },
+    {
+      "title": "2024-03",
+      "balances": [
+        {
+          "accountSum": "30.00",
+          "accountTreeSum": "30.00",
+          "account": "Assets:Stocks",
+          "commodity": "$"
+        },
+        {
+          "accountSum": "900.010101",
+          "accountTreeSum": "900.010101",
+          "account": "Assets:Stocks",
+          "commodity": "TCKLR"
+        },
+        {
+          "accountSum": "1.00",
+          "accountTreeSum": "1.00",
+          "account": "Assets:Stocks",
+          "commodity": "ddd"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "30.00",
+          "commodity": "$"
+        },
+        {
+          "delta": "900.010101",
+          "commodity": "TCKLR"
+        },
+        {
+          "delta": "1.00",
+          "commodity": "ddd"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+2017-05-01T00:00:00+00:00 'basic commodity (EUR)
+   e   1 EUR
+   a  -1 EUR
+
+2017-05-02T00:00:00+00:00 'default with commodity (EUR)
+   e   10 EUR
+   a  -10 EUR
+

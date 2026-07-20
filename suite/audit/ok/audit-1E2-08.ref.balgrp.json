@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "items": [
+      {
+        "GitInputReference": {
+          "commit": "203e6f22992f2fff80c537e7742ed3cf897a9e6b",
+          "ref": "set-1e2",
+          "dir": "txns",
+          "extension": "txn",
+          "author": "tackler <accounting@example.com>",
+          "date": "2016-12-28 08:09:36 +0000",
+          "subject": "set-1e2: 2016-12-28"
+        }
+      },
+      {
+        "TxnSetChecksum": {
+          "size": 9,
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "9a25d978d08abfa10ab4cae50c7b7cf693eb4200e5f1ae6b97a5d709552bc133"
+          }
+        }
+      },
+      {
+        "TxnFilterDescription": {
+          "txnFilterDef": {
+            "txnFilter": {
+              "TxnFilterAND": {
+                "txnFilters": [
+                  {
+                    "TxnFilterPostingAccount": {
+                      "regex": "^e:.*"
+                    }
+                  },
+                  {
+                    "TxnFilterTxnTSBegin": {
+                      "begin": "2016-01-01T00:00:00Z"
+                    }
+                  },
+                  {
+                    "TxnFilterTxnTSEnd": {
+                      "end": "2016-02-01T00:00:00Z"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        "AccountSelectorChecksum": {
+          "hash": {
+            "algorithm": "SHA-256",
+            "value": "23b3e1d50b27f44e53c0bc66b132028eea2f939fc9ad0d9225f661e41f869b23"
+          },
+          "selectors": [
+            "e:.*"
+          ]
+        }
+      },
+      {
+        "TimeZoneInfo": {
+          "zoneId": "UTC"
+        }
+      }
+    ]
+  },
+  "title": "BALANCE GROUPS",
+  "groups": [
+    {
+      "title": "2016-01",
+      "balances": [
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "136.0000009",
+          "account": "e:ey2016"
+        },
+        {
+          "accountSum": "0.00",
+          "accountTreeSum": "136.0000009",
+          "account": "e:ey2016:em01"
+        },
+        {
+          "accountSum": "1.0000001",
+          "accountTreeSum": "1.0000001",
+          "account": "e:ey2016:em01:ed01"
+        },
+        {
+          "accountSum": "4.0000001",
+          "accountTreeSum": "4.0000001",
+          "account": "e:ey2016:em01:ed04"
+        },
+        {
+          "accountSum": "8.0000001",
+          "accountTreeSum": "8.0000001",
+          "account": "e:ey2016:em01:ed08"
+        },
+        {
+          "accountSum": "11.0000001",
+          "accountTreeSum": "11.0000001",
+          "account": "e:ey2016:em01:ed11"
+        },
+        {
+          "accountSum": "15.0000001",
+          "accountTreeSum": "15.0000001",
+          "account": "e:ey2016:em01:ed15"
+        },
+        {
+          "accountSum": "19.0000001",
+          "accountTreeSum": "19.0000001",
+          "account": "e:ey2016:em01:ed19"
+        },
+        {
+          "accountSum": "22.0000001",
+          "accountTreeSum": "22.0000001",
+          "account": "e:ey2016:em01:ed22"
+        },
+        {
+          "accountSum": "26.0000001",
+          "accountTreeSum": "26.0000001",
+          "account": "e:ey2016:em01:ed26"
+        },
+        {
+          "accountSum": "30.0000001",
+          "accountTreeSum": "30.0000001",
+          "account": "e:ey2016:em01:ed30"
+        }
+      ],
+      "deltas": [
+        {
+          "delta": "136.0000009"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+Git Storage
+      reference : FIXED by commit
+      directory : git-txns
+      extension : txn
+         commit : 3a1622d0c81cd1520f42ee357315d1db8c0e0771
+         author : tackler <accounting@example.com>
+           date : 2019-03-20 19:37:57 +0200
+        subject : test: commit-id-01, step 2
+
+Report Time Zone
+        TZ name : UTC
+
+
+BALANCE GROUPS
+--------------
+2017-02
+-------
+               110.00    110.00  a
+              -110.00   -110.00  e
+=====================
+                 0.00
