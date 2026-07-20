@@ -173,7 +173,7 @@ Changes to accounts export
 * [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
 * [ ] link:../../CHANGELOG[]: add new item
 * [ ] Does it warrant own T3DB file?
-** [ ] update xref:../../suite/tests.adoc[]
+** [ ] update ../../../t3db/README.adoc[]
 ** [ ] update xref:../../suite/check-tests.sh[]
 ** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
 * [ ] User docs

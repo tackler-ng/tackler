@@ -158,24 +158,17 @@ No changes to the accounts export.
 
 === Documentation
 
-* [ ] xref:./readme.adoc[]: Update TEP index
-* [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
-* [ ] link:../../CHANGELOG[]: add new item
-* [ ] Does it warrant own T3DB file?
-** [ ] update xref:../../suite/tests.adoc[]
-** [ ] update xref:../../suite/check-tests.sh[]
-** [ ] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
-* [ ] User docs
-** [ ] User Manual
+* [x] xref:./readme.adoc[]: Update TEP index
+* [x] link:../../CHANGELOG[]: add new item
+* [x] Does it warrant own T3DB file?
+** [x] update T3DB: README.adoc
+** [x] update xref:../../suite/check-tests.sh[]
+** [x] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-XXXX.yml: TEP-XXXX T3DB]
+* [x] User docs
+** [x] User Manual
 *** cli-arguments: No changes
-** [ ] tackler.toml
-*** [ ] `kernel.ext-id.unique`
-** [ ] examples
-* [ ] Developer docs
-** [ ] API changes
-*** [ ] Server API changes
-*** [ ] Client API changes
-*** [ ] JSON Examples
+** [x] tackler.toml
+*** [x] `kernel.ext-id.unique`
 
 
 === Future Plans and Postponed (PP) Features
@@ -265,54 +258,16 @@ features:
       id: 33282cc5-f722-49e4-9f58-c5ff519d18d3
       parent: 4e5f753f-d124-45e9-b703-6e2a588d3e85
       subject: "ext-id basic functionality"
-      tests:
-        errors:
-          - error:
-              id: 6429df98-0353-4378-81ff-e8abb10b0c01
-              name: "todo: name of test class/method or test description file"
-              desc: "empty ext-id"
-        operations:
-          - test:
-              id: 4933b0ba-a325-44b4-a688-a9776b9c42ac
-              name: "todo: name of test class/method or test description file"
-              descriptions:
-                - desc: "basic functionality"
-                - desc: "duplicate ext-id are allowed by default"
-                - desc: "txn without ext-id are ok"
-              references:
-                - ref: register
-          - test:
-              id: 85599f8c-eaff-4001-916c-34c9654ce8cb
-              name: "todo: name of test class/method or test description file"
-              descriptions:
-                - desc: "filtering based on ext-id"
-                - desc: "identity round-trip"
-              references:
-                - ref: register
-                - ref: identity
+
+  - feature:
+      id: 9798c6d8-b07a-47ac-a463-e2e729c39fa6
+      parent: 4e5f753f-d124-45e9-b703-6e2a588d3e85
+      subject: "ext-id filters"
 
   - feature:
       id: 35f8b046-86b6-4acf-9442-437ec150664b
       parent: 4e5f753f-d124-45e9-b703-6e2a588d3e85
       subject: "kernel.ext-id.unique"
-      tests:
-        errors:
-          - error:
-              id: f26c19f6-70b3-47f8-af90-1922fa590bab
-              name: "todo: name of test class/method or test description file"
-              desc: "duplicate ext-ids with unique=true"
-        operations:
-          - test:
-              id: uuid
-              name: "todo: name of test class/method or test description file"
-              descriptions:
-                - desc: "todo: description"
-              references:
-                - ref: balance
-                - ref: balance-group
-                - ref: register
-                - ref: identity
-                - ref: equity
 ....
 
 

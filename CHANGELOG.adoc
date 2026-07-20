@@ -10,10 +10,15 @@
 
 New features:
 
+* Transaction metadata for External IDs
+  ** (link:https://github.com/tackler-ng/tackler/issues/141[Issue #141])
+
 * ...
   ** ...
 
 Changed functionality:
+
+* Replaced `TxnData::from` with `TxnData::try_from`
 
 * ...
   ** ...

@@ -92,6 +92,7 @@ echo ": ok"
 # identity-01
 #
 # test: 0d0bb5f1-4d20-48ff-af64-da80ef9ac039
+# desc: identity round-trip
 rm -f $OUTPUT_DIR/*
 test_name=identity-01
 echo "test: $module/$test_name: "
