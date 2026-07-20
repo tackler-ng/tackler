@@ -8,7 +8,7 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
 [kernel.input]
 storage = "git"
-git = { repo = "audit-repo.git", dir = "txns", ref = "set-1e2", suffix = "txn" }
+git = { repo = "../data/repos/audit-repo.git", dir = "txns", ref = "set-1e2", suffix = "txn" }
 fs  = { path = "txns", dir = "none", suffix = "txn" }
 
 [transaction]

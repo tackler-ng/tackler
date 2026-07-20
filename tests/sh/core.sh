@@ -269,7 +269,7 @@ $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
     --config $SUITE_PATH/$module/git-dir.toml \
-    --input.git.repository $SUITE_PATH/$module/test-data.git \
+    --input.git.repository $SUITE_PATH/data/repos/test-data.git \
     --input.git.dir git-txns/2019 \
     --input.git.ext txn \
     --input.git.ref dirtxn-02

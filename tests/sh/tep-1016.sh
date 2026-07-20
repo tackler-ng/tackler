@@ -24,7 +24,7 @@ $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
     --config $SUITE_PATH/$module/tep1016-01.toml \
-    --input.git.repository $SUITE_PATH/audit/audit-repo.git \
+    --input.git.repository $SUITE_PATH/data/repos/audit-repo.git \
     --input.git.dir "txns" \
     --input.git.ext "txn" \
     --input.git.ref "set-1e2" \
@@ -54,7 +54,7 @@ $TACKLER_SH \
     --output.dir $OUTPUT_DIR \
     --output.prefix $test_name \
     --config $SUITE_PATH/$module/tep1016-02.toml \
-    --input.git.repository $SUITE_PATH/audit/audit-repo.git \
+    --input.git.repository $SUITE_PATH/data/repos/audit-repo.git \
     --input.git.dir "txns" \
     --input.git.ext "txn" \
     --input.git.ref "set-1e2" \

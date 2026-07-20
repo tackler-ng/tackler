@@ -10,7 +10,7 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 storage = "git"
 
 [kernel.input.git]
-repository = "test-data.git"
+repository = "../data/repos/test-data.git"
 dir = "git-txns/2018"
 ref = "dirtxn-02"
 suffix = ".txn"

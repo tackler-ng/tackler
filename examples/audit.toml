@@ -18,7 +18,7 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 input = {
     storage = "git",
     git = {
-        repo = "../suite/audit/audit-repo.git",
+        repo = "../suite/data/repos/audit-repo.git",
         dir = "txns",
         ext = "txn",
         ref = "set-1e1"

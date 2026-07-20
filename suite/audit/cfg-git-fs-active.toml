@@ -8,7 +8,7 @@ timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
 
 [kernel.input]
 storage = "fs"
-git = { repo = "audit-repo.git", dir = "txns", ref = "set-1e1", suffix = "txn" } 
+git = { repo = "../data/repos/audit-repo.git", dir = "txns", ref = "set-1e1", suffix = "txn" } 
 # git is testing with set-1e2 via overlay, and fs audit data is with old UUID scheme
 fs  = { path = "txns", dir = "1E1", suffix = "txn" } 
 

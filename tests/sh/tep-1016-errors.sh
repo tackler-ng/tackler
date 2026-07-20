@@ -20,7 +20,7 @@ echo "test: $module/$test_name: $mode"
 
 $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-01-err.toml \
-    --input.git.repository $SUITE_PATH/$module/audit-repo.git \
+    --input.git.repository $SUITE_PATH/data/repos/audit-repo.git \
     --input.git.ref errs-1E2 \
     --input.git.dir txns/2016/04 \
     --input.git.ext txn \
@@ -37,7 +37,7 @@ echo "test: $module/$test_name: $mode"
 
 $TACKLER_SH \
     --config $SUITE_PATH/$module/tep1016-02-err.toml \
-    --input.git.repository $SUITE_PATH/$module/audit-repo.git \
+    --input.git.repository $SUITE_PATH/data/repos/audit-repo.git \
     --input.git.ref errs-1E2 \
     --input.git.dir txns/2016/04 \
     --input.git.ext txn \

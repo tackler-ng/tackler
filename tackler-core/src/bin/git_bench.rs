@@ -15,7 +15,7 @@ use tackler_core::kernel::settings::GitInputSelector;
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
-const REPO_PATH: &str = "suite/audit/audit-repo.git/";
+const REPO_PATH: &str = "suite/data/repos/audit-repo.git/";
 const TXN_SET_1E1_CHECKSUM: &str =
     "4a0eb2f8836447a025030a87136c047b4a737031162f593cb00f390c6ba113a3";
 const TXN_SET_1E1_COMMIT_ID: &str = "ed6e4b10de2daea8d143569c473d14a9b09c3270";

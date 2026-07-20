@@ -64,7 +64,7 @@ cmp_result_ref () {
 }
 
 check_suite () {
-    if [ ! -e "$SUITE_PATH/audit/audit-repo.git" ] || [ ! -d "$SUITE_PATH/audit/audit-repo.git" ]; then
+    if [ ! -e "$SUITE_PATH/data/repos/audit-repo.git" ] || [ ! -d "$SUITE_PATH/data/repos/audit-repo.git" ]; then
         echo ""
         echo "Tackler-NG test setup error"
         echo ""

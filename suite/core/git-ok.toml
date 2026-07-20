@@ -15,7 +15,7 @@ suffix = "txn"
 
 
 [kernel.input.git]
-repository = "test-data.git"
+repository = "../data/repos/test-data.git"
 dir = "git-txns"
 ref = "master"
 suffix = ".txn"

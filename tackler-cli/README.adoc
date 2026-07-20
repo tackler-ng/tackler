@@ -7,7 +7,7 @@ cargo run -- \
 
 ----
 cargo run  -- \
-    --input.git.repo ../suite/audit/audit-repo.git \
+    --input.git.repo ../suite/data/repos/audit-repo.git \
     --input.git.dir txns \
     --input.git.ref set-1e1 \
     --reports balance
@@ -15,7 +15,7 @@ cargo run  -- \
 
 ----
 cargo run  -- \
-    --input.git.repo ../suite/audit/audit-repo.git \
+    --input.git.repo ../suite/data/repos/audit-repo.git \
     --input.git.dir txns \
     --input.git.ref set-1e1 \
     --reports balance \
@@ -37,7 +37,7 @@ cargo run  -- \
 
 ----
 cargo run  -- \
-	--input.git.repo ../suite/audit/audit-repo.git \
+	--input.git.repo ../suite/data/repos/audit-repo.git \
 	--input.git.dir txns \
 	--input.git.ref set-1e1 \
 	--reports balance \
