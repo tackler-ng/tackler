@@ -41,7 +41,7 @@ lto = true
 codegen-units = 1
 
 [workspace.dependencies]
-base64 = { version = "0.22.1" }
+base64 = { version = "0.23.1" }
 indoc = "2.0.6"
 jiff = { version = "0.2.34", features = [ "serde" ]}
 rust_decimal = { version = "1.42.1", features= ["serde-with-arbitrary-precision" ]}
