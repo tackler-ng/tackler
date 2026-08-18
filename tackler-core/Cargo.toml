@@ -39,7 +39,7 @@ sha3 = "0.12.0"
 digest = "0.11.2"
 
 gix = { version = "0.86.0", default-features = false, features = [ "sha1", "max-performance-safe", "revision" ]} #"auto-chain-error"] }
-toml = "1.1.3"
+toml = "1.1.4"
 winnow = "1.0.4"
 
 mimalloc = { workspace = true }
