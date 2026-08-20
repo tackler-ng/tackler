@@ -4,22 +4,17 @@
 
 == Releases
 
+
 === Tackler release XX.YY.Z
 
 ==== New features and changes
 
 New features:
 
-* A new external id (`ext-id`) txn metadata item
-  ** See xref:docs/tep/tep-1018.adoc[TEP-1018] and
-     link:https://github.com/tackler-ng/tackler/issues/141[GH #141]
-
 * ...
   ** ...
 
 Changed functionality:
-
-* Replaced `TxnData::from` with `TxnData::try_from`
 
 * ...
   ** ...
@@ -34,10 +29,7 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* base64: 0.23.1
-* gix: 0.86.0
-* regex: 1.13.1
-* uuid: 1.24.0
+* ...
 
 ===== Rust toolchain
 
@@ -54,6 +46,58 @@ MSRV:: 1.87.0
 |tackler-core | TODO: No changes
 |tackler-api  | TODO: No changes
 |tackler-rs   | TODO: No changes
+|===
+
+
+'''
+
+=== Tackler release 26.08.1
+
+==== New features and changes
+
+New features:
+
+* A new external id (`ext-id`) txn metadata item
+  ** See xref:docs/tep/tep-1018.adoc[TEP-1018] and
+     link:https://github.com/tackler-ng/tackler/issues/141[GH #141]
+
+Changed functionality:
+
+* Replaced `TxnData::from` with `TxnData::try_from`
+
+==== Fixes
+
+Fixes in this release:
+
+* Missing optimization with cargo publish (b98dd62db33b91ece91a8d341639d6d6ae0943e5)
+
+==== Development
+
+Changed structure of test suite, and added reference vectors natively into tackler's repository. 
+The main git-repositories used as test inputs are still located on separate submodule.
+
+Updated dependencies (major or minor version):
+
+* base64: 0.23.1
+* gix: 0.86.0
+* regex: 1.13.1
+* uuid: 1.24.1
+
+===== Rust toolchain
+
+Rust Edition:: 2024
+MSRV:: 1.87.0
+
+==== Release Artifacts
+
+[cols="1,2",width=50%]
+|===
+|Component    | Version
+
+|Tackler CLI  | 26.08.1
+|tackler-core | 0.18.0
+|tackler-api  | 0.17.0
+|tackler-rs   | 0.13.0
 |===
 
 

@@ -1,10 +1,10 @@
 #
-# Tackler-NG 2022-2025
+# Tackler-NG 2022-2026
 # SPDX-License-Identifier: Apache-2.0
 #
 [package]
 name = "tackler-rs"
-version = "0.12.0"
+version = "0.13.0"
 description = "Rusty Services for Tackler accounting engine with native GIT SCM support"
 edition.workspace = true
 license.workspace = true
