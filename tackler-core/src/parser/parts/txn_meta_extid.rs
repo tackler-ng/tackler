@@ -70,6 +70,6 @@ mod tests {
 
         assert!(res.is_ok());
         let extid = res.unwrap(/*:test:*/);
-        assert_eq!(format!("{extid}"), "hello \t\t there");
+        assert_eq!(extid, "hello \t\t there");
     }
 }

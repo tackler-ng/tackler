@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2022-2025
+ * Tackler-NG 2022-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -73,7 +73,7 @@ impl Text for TxnSetChecksum {
         // echo -n "SHA-512/256" | wc -c => 11
         let pad = MetadataItem::ITEM_PAD;
         vec![
-            format!("Txn Set Checksum"),
+            "Txn Set Checksum".to_string(),
             format!("{:>pad$} : {}", self.hash.algorithm, &self.hash.value),
             format!("{:>pad$} : {}", "set size", self.size),
         ]
@@ -104,7 +104,7 @@ impl Text for AccountSelectorChecksum {
         // echo -n "SHA-512/256" | wc -c => 11
         let pad = MetadataItem::ITEM_PAD;
         let mut t = vec![
-            format!("Account Selector Checksum"),
+            "Account Selector Checksum".to_string(),
             format!("{:>pad$} : {}", self.hash.algorithm, &self.hash.value),
         ];
         if !self.selectors.is_empty() {
@@ -227,7 +227,7 @@ impl Text for GitInputReference {
     fn text(&self, _tz: TimeZone) -> Vec<String> {
         let pad = MetadataItem::ITEM_PAD;
         vec![
-            format!("Git Storage"),
+            "Git Storage".to_string(),
             format!(
                 "{:>pad$} : {}",
                 "reference",
@@ -274,7 +274,7 @@ impl Text for PriceRecord {
             format!(
                 "{:>pad$} : {} {}",
                 "Value",
-                self.rate.clone().map_or("-".to_string(), |v| v),
+                self.rate.clone().unwrap_or("-".to_string()),
                 self.target
             ),
         ]
