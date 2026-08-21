@@ -220,6 +220,15 @@ skip-tree = [
     #{ crate = "ansi_term@0.11.0", depth = 20 },
 ]
 
+# The std-replacements field configures if and how crates.io-sourced crates are checked
+# against std-replacement-data which contains information on crates
+# that have been either partially or fully implemented in std or core.
+[bans.std-replacements]
+scope = "workspace"
+level = "deny"
+rust-version = "1.0"
+
+
 # This section is considered when running `cargo deny check sources`.
 # More documentation about the 'sources' section can be found here:
 # https://embarkstudios.github.io/cargo-deny/checks/sources/cfg.html
