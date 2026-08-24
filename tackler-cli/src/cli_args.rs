@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use clap::builder::{PossibleValue, TypedValueParser};
@@ -43,17 +43,17 @@ impl Cli {
             Commands::Report(self.args.clone())
         };
 
-        if let Commands::Report(report_cmd) = &cmd {
-            if report_cmd.conf_path.is_none() {
-                let mut cmd = Cli::command();
-                let msg = format!(
-                    "config file is not provided, use: \n\n{} --config <path/to/config-file>",
-                    cmd.get_name()
-                );
+        if let Commands::Report(report_cmd) = &cmd
+            && report_cmd.conf_path.is_none()
+        {
+            let mut cmd = Cli::command();
+            let msg = format!(
+                "config file is not provided, use: \n\n{} --config <path/to/config-file>",
+                cmd.get_name()
+            );
 
-                cmd.error(ErrorKind::MissingRequiredArgument, msg.as_str())
-                    .exit();
-            }
+            cmd.error(ErrorKind::MissingRequiredArgument, msg.as_str())
+                .exit();
         }
         cmd
     }

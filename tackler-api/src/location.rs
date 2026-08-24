@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2022-2025
+ * Tackler-NG 2022-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -67,12 +67,12 @@ impl GeoPoint {
             let msg = format!("Value out of specification for Longitude: {lon}");
             return Err(msg.into());
         }
-        if let Some(z) = alt {
-            if z < Decimal::from(-6_378_137) {
-                // Jules Verne: Voyage au centre de la Terre
-                let msg = format!("Value Out of specification for Altitude: {z}");
-                return Err(msg.into());
-            }
+        if let Some(z) = alt
+            && z < Decimal::from(-6_378_137)
+        {
+            // Jules Verne: Voyage au centre de la Terre
+            let msg = format!("Value Out of specification for Altitude: {z}");
+            return Err(msg.into());
         }
         Ok(GeoPoint { lat, lon, alt })
     }

@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::kernel::Settings;
@@ -211,12 +211,12 @@ fn handle_posting_value(
         Some(u) => {
             match &u.1 {
                 Some(pos) => {
-                    if let Some(opening_pos) = &pos.opening {
-                        if opening_pos.value.is_sign_negative() {
-                            //let msg = error_on_line(posting_ctx, "Unit cost '{ ... }' is negative");
-                            let msg = "Unit cost '{ ... }' is negative";
-                            return Err(msg.into());
-                        }
+                    if let Some(opening_pos) = &pos.opening
+                        && opening_pos.value.is_sign_negative()
+                    {
+                        //let msg = error_on_line(posting_ctx, "Unit cost '{ ... }' is negative");
+                        let msg = "Unit cost '{ ... }' is negative";
+                        return Err(msg.into());
                     }
                     match &pos.closing {
                         Some(cp) => {
