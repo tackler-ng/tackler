@@ -29,7 +29,8 @@ Fixes in this release ...
 
 Updated dependencies (major or minor version):
 
-* ...
+* gix: 0.87.1
+* uuid: 0.25.0
 
 ===== Rust toolchain
 
