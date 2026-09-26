@@ -97,7 +97,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "//" \
-    2>&1 | grep 'An error occurred while trying to find a reference'
+    2>&1 | grep 'The ref name or path is not a valid ref name'
 
 echo "check: ok"
 

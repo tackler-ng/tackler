@@ -27,9 +27,11 @@ Fixes in this release ...
 
 ==== Development
 
+MSRV bumped to 1.92.0
+
 Updated dependencies (major or minor version):
 
-* gix: 0.87.1
+* gix: 0.88.0
 * rust_decimal: 0.43.0
 * uuid: 1.26.0
 
