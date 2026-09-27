@@ -16,6 +16,8 @@ New features:
 
 Changed functionality:
 
+* Commands `new` and `init` will default the balance and balance-group to `flat` mode
+
 * ...
   ** ...
 

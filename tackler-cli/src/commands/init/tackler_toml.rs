@@ -76,8 +76,8 @@ commodity = "CAD"
 ###    - `flat` reports balance only for an account
 ###
 ###   You can select between these with `type` option on `balance` and `balance-group`
-balance       = { title = "Balance Report", type = "tree" }
-balance-group = { title = "Balance Group Report", type = "tree", group-by = "month" }
+balance       = { title = "Balance Report", type = "flat" }
+balance-group = { title = "Balance Group Report", type = "flat", group-by = "month" }
 register      = { title = "Register Report", accounts = [ "Welcome(:.*)?", ]}
 
 [export]
