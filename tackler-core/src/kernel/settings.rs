@@ -118,8 +118,7 @@ impl AccountTrees {
             // this breaks recursion
             Ok(())
         } else {
-            let parent_atn =
-                Arc::new(AccountTreeNode::from(parent).expect("IE: synthetic parent is invalid"));
+            let parent_atn = Arc::new(AccountTreeNode::unchecked_from(parent));
             target_account_tree.insert(parent.to_string(), parent_atn.clone());
 
             Self::build_account_tree(target_account_tree, &parent_atn, other_account_tree)
@@ -127,7 +126,7 @@ impl AccountTrees {
     }
 
     fn from(account_names: &[String], strict_mode: bool) -> Result<AccountTrees, tackler::Error> {
-        let defined_accounts =
+        let mut defined_accounts =
             account_names
                 .iter()
                 .try_fold(
@@ -156,6 +155,10 @@ impl AccountTrees {
             }
             sap
         } else {
+            let a: Vec<Arc<AccountTreeNode>> = defined_accounts.values().cloned().collect();
+            for atn in a {
+                Self::build_account_tree(&mut defined_accounts, &atn, None)?;
+            }
             HashMap::new()
         };
         Ok(AccountTrees {
@@ -435,7 +438,7 @@ impl Settings {
     /// Get or create `TxnAccount` by name and commodity
     ///
     /// Both name and commodity must be valid name and ID
-    /// e.g. this is function is supposed to be used by parser.
+    /// e.g. this function is supposed to be used by parser.
     pub(crate) fn get_or_create_txn_account(
         &mut self,
         name: &str,
@@ -443,7 +446,6 @@ impl Settings {
     ) -> Result<TxnAccount, tackler::Error> {
         let comm = self.get_or_create_commodity(Some(commodity.name.as_str()))?;
 
-        let strict_mode = self.strict_mode;
         let atn_opt = self.accounts.defined_accounts.get(name).cloned();
 
         let atn = if let Some(account_tree) = atn_opt {
@@ -464,12 +466,6 @@ impl Settings {
 
             TxnAccount { atn, comm }
         };
-        if !strict_mode {
-            // Not strict mode, so we build the (missing) parents
-            // directly into main Chart of Accounts
-            AccountTrees::build_account_tree(&mut self.accounts.defined_accounts, &atn.atn, None)?;
-        }
-
         Ok(atn)
     }
 
