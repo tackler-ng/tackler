@@ -24,7 +24,12 @@ Changed functionality:
 
 ==== Fixes
 
-Fixes in this release ...
+Fixes in this release:
+
+* Major speed up for Balance family reports
+  ** Balance report in flat-mode is
+    *** 65% faster with typical data
+    *** 85% faster with pathological test data
 
 
 ==== Development

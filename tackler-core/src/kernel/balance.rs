@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -12,7 +12,7 @@ use crate::model::{BalanceTreeNode, Commodity, Transaction, TxnAccount, TxnSet};
 use crate::tackler;
 use itertools::Itertools;
 use rust_decimal::Decimal;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::{collections::HashSet, sync::Arc};
 
 // Deltas must be sorted by Commodity on reports, use BTreeMap
@@ -145,32 +145,24 @@ impl Balance {
         txns: I,
         price_lookup_ctx: &PriceLookupCtx<'_>,
         inverted: bool,
-    ) -> Vec<(TxnAccount, Decimal)>
+    ) -> impl Iterator<Item = (TxnAccount, Decimal)>
     where
         I: Iterator<Item = &'a &'a Transaction>,
     {
-        let inv = Decimal::from(-1);
+        let mut account_sums: HashMap<TxnAccount, Decimal> = HashMap::new();
 
-        // Calculate sum of postings for each account.
-        //
-        // Input size: is "big",    ~ all transactions
-        // Output size: is "small", ~ size of CoA
-        txns.flat_map(|txn| price_lookup_ctx.convert_prices(txn))
-            .sorted_by_key(|(acctn, _, _)| acctn.clone())
-            .chunk_by(|(acctn, _, _)| acctn.clone())
-            .into_iter()
-            .map(|(_, postings)| {
-                let mut ps = postings.peekable();
-                // unwrap: ok: this is inside map, hence there must be at least one element
-                let acctn = ps.peek().unwrap(/*:ok:*/).0.clone();
-                let acc_sum = ps.map(|(_, amount, _)| amount).sum::<Decimal>();
-                if inverted {
-                    (acctn, acc_sum * inv)
-                } else {
-                    (acctn, acc_sum)
-                }
-            })
-            .collect()
+        txns.for_each(|txn| {
+            price_lookup_ctx.convert_prices(txn).for_each(|p| {
+                let val = if inverted { -p.1 } else { p.1 };
+                account_sums
+                    .entry(p.0)
+                    .and_modify(|v| {
+                        *v += val;
+                    })
+                    .or_insert(val);
+            });
+        });
+        account_sums.into_iter()
     }
 
     /// Calculate balance items
@@ -193,7 +185,7 @@ impl Balance {
         // Input size: is "big",    ~ all transactions
         // Output size: is "small", ~ size of CoA
         let account_sums: Vec<(TxnAccount, Decimal)> =
-            Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted);
+            Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted).collect();
 
         // From every account bubble up and insert missing parent AccTNs.
         //
@@ -325,11 +317,9 @@ impl Balance {
     where
         I: Iterator<Item = &'a &'a Transaction>,
     {
-        let account_sums: Vec<(TxnAccount, Decimal)> =
-            Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted);
+        let account_sums = Self::calculate_account_sums(txns, price_lookup_ctx, settings.inverted);
 
         let mut v: Vec<BalanceTreeNode> = account_sums
-            .into_iter()
             .map(|(acctn, acc_sum)| BalanceTreeNode {
                 acctn: acctn.clone(),
                 sub_acc_tree_sum: Decimal::ZERO,
