@@ -67,9 +67,6 @@ impl AccountTreeNode {
     pub(crate) fn is_root(&self) -> bool {
         self.depth == 1
     }
-    pub(crate) fn my_parent_is_root(&self) -> bool {
-        self.depth == 2
-    }
 }
 
 #[derive(Debug, Clone, Eq)]
@@ -105,15 +102,8 @@ impl PartialOrd for TxnAccount {
 }
 
 impl TxnAccount {
-    pub(crate) fn is_parent_of(&self, atn: &TxnAccount) -> bool {
-        self.atn.account == atn.atn.parent && self.comm.name == atn.comm.name
-    }
     pub(crate) fn is_root(&self) -> bool {
         self.atn.is_root()
-    }
-
-    pub(crate) fn my_parent_is_root(&self) -> bool {
-        self.atn.my_parent_is_root()
     }
 }
 
@@ -178,19 +168,47 @@ impl AccountTreeNode {
         Ok(Self::unchecked_from(account))
     }
 
+    /// Create a parent ATN by child ATN
+    ///
+    /// Child can't be a root account
+    ///
+    /// Errors
+    /// If child is root, then this will error out
+    pub(crate) fn make_parent(child: &AccountTreeNode) -> Result<AccountTreeNode, tackler::Error> {
+        if child.depth < 2 {
+            let msg = format!("can't create parent from root account: '{child}'");
+            return Err(msg.into());
+        }
+        let parts = child.parts[..child.depth - 1].to_vec();
+        let depth = parts.len();
+        assert_eq!(depth, child.depth - 1);
+
+        let root = child.root.clone();
+        let parent = parts[..depth - 1].join(":");
+        let account = child.parent.clone();
+        let name = parts.last().unwrap(/*:ok: non-empty*/).clone();
+
+        Ok(AccountTreeNode {
+            depth,
+            root,
+            parent,
+            parts,
+            account,
+            name,
+        })
+    }
+
     pub(crate) fn unchecked_from(account: &str) -> AccountTreeNode {
         let parts: Vec<&str> = account.split(':').collect();
-
         let depth = parts.len();
+        assert!(depth > 0);
+
         let root = String::from(parts[0]);
         let acc_parts = parts.iter().map(ToString::to_string).collect();
 
-        let mut rev_parts = parts;
-        rev_parts.reverse();
-        let name = String::from(rev_parts.remove(0));
+        let name = parts.last().unwrap(/*:ok: non-empty*/).to_string();
 
-        rev_parts.reverse();
-        let parent = rev_parts.join(":");
+        let parent = parts[..depth - 1].join(":");
 
         AccountTreeNode {
             depth,
@@ -270,43 +288,6 @@ mod tests {
         assert_eq!(atn_a.is_root(), true);
         assert_eq!(atn_ab.is_root(), false);
         assert_eq!(atn_abc.is_root(), false);
-    }
-    #[test]
-    fn atn_my_parent_is_root() {
-        let atn_a = TxnAccount {
-            atn: Arc::new(AccountTreeNode::from("a")
-                .unwrap(/*:test:*/)),
-            comm: Arc::new(Commodity::default()),
-        };
-        let atn_ab = TxnAccount {
-            atn: Arc::new(AccountTreeNode::from("a:b")
-                .unwrap(/*:test:*/)),
-            comm: Arc::new(Commodity::default()),
-        };
-        let atn_abc = TxnAccount {
-            atn: Arc::new(AccountTreeNode::from("a:b:c")
-                .unwrap(/*:test:*/)),
-            comm: Arc::new(Commodity::default()),
-        };
-        assert_eq!(atn_a.my_parent_is_root(), false);
-        assert_eq!(atn_ab.my_parent_is_root(), true);
-        assert_eq!(atn_abc.my_parent_is_root(), false);
-    }
-
-    #[test]
-    fn atn_is_parent() {
-        let parent = TxnAccount {
-            atn: Arc::new(AccountTreeNode::from("a:b")
-                .unwrap(/*:test:*/)),
-            comm: Arc::new(Commodity::default()),
-        };
-        let leaf = TxnAccount {
-            atn: Arc::new(AccountTreeNode::from("a:b:c")
-            .unwrap(/*:test:*/)),
-            comm: Arc::new(Commodity::default()),
-        };
-        assert!(parent.is_parent_of(&leaf));
-        assert!(!parent.is_parent_of(&parent));
     }
 
     #[test]

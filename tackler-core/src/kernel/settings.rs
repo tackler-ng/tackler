@@ -118,7 +118,7 @@ impl AccountTrees {
             // this breaks recursion
             Ok(())
         } else {
-            let parent_atn = Arc::new(AccountTreeNode::unchecked_from(parent));
+            let parent_atn = Arc::new(AccountTreeNode::make_parent(atn)?);
             target_account_tree.insert(parent.to_string(), parent_atn.clone());
 
             Self::build_account_tree(target_account_tree, &parent_atn, other_account_tree)

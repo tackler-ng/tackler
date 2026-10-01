@@ -27,10 +27,21 @@ Changed functionality:
 Fixes in this release:
 
 * Major speed up for Balance family reports
-  ** Balance report in flat-mode is
-    *** 65% faster with typical data
-    *** 85% faster with pathological test data
+  ** Balance report is now
+    *** 60% faster with typical data
+    *** 80% faster with pathological test data
+  ** There are no significant performance differences between flat and tree mode
 
+==== Contributions
+
+Thanks to link:https://github.com/simonmichael[Simon Michael] for systematically
+performance testing PTA tools, and gently pointing out the algorithmic problems
+with Tackler's tree mode Balance reports. He also gave a tip about how to efficiently
+calculate the balance report's tree form.
+
+And it was
+link:https://github.com/hledgerorg/hledger[hledger]'s pathological test data,
+which revealed these inefficient algorithms in the first place.
 
 ==== Development
 

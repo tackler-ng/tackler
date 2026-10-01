@@ -240,8 +240,9 @@ link:https://github.com/byron[Byron],
 link:https://github.com/zamazan4ik[zamazan4ik],
 link:https://github.com/epage/[epage],
 link:https://github.com/BurntSushi[BurntSushi],
-link:https://github.com/RagibHasin[RagibHasin] and
-link:https://github.com/VrugteVlieg[VrugteVlieg]
+link:https://github.com/RagibHasin[RagibHasin],
+link:https://github.com/VrugteVlieg[VrugteVlieg] and
+link:https://github.com/simonmichael[Simon Michael]
 
 Thank you!
 
