@@ -20,12 +20,9 @@ This will produce balance and register reports for the demo journal.
 ----
 Balance Report
 --------------
-                 0.00    17.50  Expenses
-                 0.00    12.00  Expenses:Food
-                12.00    12.00  Expenses:Food:Fast-Food
-                 0.00     5.50  Expenses:Sweets
-                 2.50     2.50  Expenses:Sweets:Candy
-                 3.00     3.00  Expenses:Sweets:Ice·Cream
+                12.00    Expenses:Food:Fast-Food
+                 2.50    Expenses:Sweets:Candy
+                 3.00    Expenses:Sweets:Ice·Cream
 =====================
                 17.50
 
@@ -34,8 +31,9 @@ Register Report
 ...
 ----
 
-1) Tackler has excellent performance, it can process 900 000 transactions per second on modern laptop.
-See link:https://tackler.fi/docs/tackler/latest/features/performance/[Performance] for details.
+1) Tackler has excellent performance, it can process
+link:https://tackler.fi/docs/tackler/latest/features/performance/[over 1.2 million txns/s]
+on modern laptop.
 
 2) If you don't have Rust toolchain installed,
 get it link:https://www.rust-lang.org/tools/install[from here].
@@ -43,11 +41,15 @@ get it link:https://www.rust-lang.org/tools/install[from here].
 
 == Project Status
 
-Tackler is reimplementation of 10 years old Scala based system (tackler-mk1),
-and it's the only https://tackler.fi/docs/tackler/latest/governance/[supported version] of tackler.
+Tackler is two years old project, and it's reimplementation of
+10 years old Scala based system.  It is the only
+link:https://tackler.fi/docs/tackler/latest/governance/[supported version]
+of Tackler.
 
-Tackler is beyond link:https://tackler.fi/docs/tackler/latest/features/[feature] parity of the old Scala code base.
-It's using the same foundation of test reference vectors as the original tackler-mk1.
+Tackler is beyond
+link:https://tackler.fi/docs/tackler/latest/features/[feature]
+parity with the old Scala version, and it's using the same base set of test
+reference vectors as the original tackler-mk1.
 
 [NOTE]
 ====

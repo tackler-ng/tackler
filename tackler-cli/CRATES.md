@@ -21,12 +21,9 @@ This will produce balance and register reports for the demo journal.
 ```text
 Balance Report
 --------------
-                 0.00    17.50  Expenses
-                 0.00    12.00  Expenses:Food
-                12.00    12.00  Expenses:Food:Fast-Food
-                 0.00     5.50  Expenses:Sweets
-                 2.50     2.50  Expenses:Sweets:Candy
-                 3.00     3.00  Expenses:Sweets:Ice·Cream
+                12.00    Expenses:Food:Fast-Food
+                 2.50    Expenses:Sweets:Candy
+                 3.00    Expenses:Sweets:Ice·Cream
 =====================
                 17.50
 
@@ -35,18 +32,21 @@ Register Report
 ...
 ```
 
-1) Tackler has excellent performance, it can process 900 000 transactions per second on modern laptop.
-See [Tackler Performance](https://tackler.fi/docs/tackler/latest/features/performance/) for details.
+1) Tackler has excellent performance, it can process
+[over 1.2 million txns/s](https://tackler.fi/docs/tackler/latest/features/performance/)
+on modern laptop.
 
 
 ## Project Status
 
-Tackler is reimplementation of 10 years old Scala based system,
-and it's the basis of all current development activities.
+Tackler is two years old project, and it's reimplementation of
+10 years old Scala based system.  It is the only
+[supported version](https://tackler.fi/docs/tackler/latest/governance/)
+of Tackler.
 
-Tackler is in
-[feature](https://tackler.fi/docs/tackler/latest/features/) parity 
-with and beyond of the old Scala code base. It's using the same set of test
+Tackler is beyond
+[feature](https://tackler.fi/docs/tackler/latest/features/)
+parity with the old Scala version, and it's using the same base set of test
 reference vectors as the original tackler-mk1.
 
 **NOTE: Tackler is tested with 520 [tracked test vectors](https://github.com/tackler-ng/tackler-t3db)**
