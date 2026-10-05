@@ -203,12 +203,12 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
 
                     report_output(prog_writer, paths, "Balance Report")?;
                 } else {
-                    let Some(mut cw) = console_writer.as_mut() else {
+                    let Some(cw) = console_writer.as_mut() else {
                         return Err("IE: Logic error: console output".into());
                     };
 
                     writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                    bal_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    bal_reporter.write_txt_report(settings, &mut *cw, txn_set)?;
                     writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
@@ -228,12 +228,12 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
                     )?;
                     report_output(prog_writer, paths, "Balance Group Report")?;
                 } else {
-                    let Some(mut cw) = console_writer.as_mut() else {
+                    let Some(cw) = console_writer.as_mut() else {
                         return Err("IE: Logic error: console output".into());
                     };
 
                     writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                    bal_group_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    bal_group_reporter.write_txt_report(settings, &mut *cw, txn_set)?;
                     writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
@@ -255,12 +255,12 @@ pub fn write_txt_reports<W: io::Write + ?Sized>(
 
                     report_output(prog_writer, paths, "Register Report")?;
                 } else {
-                    let Some(mut cw) = console_writer.as_mut() else {
+                    let Some(cw) = console_writer.as_mut() else {
                         return Err("IE: Logic error: console output".into());
                     };
 
                     writeln!(cw, "{}", "*".repeat(report_separator_len))?;
-                    reg_reporter.write_txt_report(settings, &mut cw, txn_set)?;
+                    reg_reporter.write_txt_report(settings, &mut *cw, txn_set)?;
                     writeln!(cw, "{}", "#".repeat(report_separator_len))?;
                 }
             }
