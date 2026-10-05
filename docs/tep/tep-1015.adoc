@@ -341,7 +341,7 @@ No changes to Identity Export
 * [ ] xref:../../README.adoc[]: is it a new noteworthy feature?
 * [ ] link:../../CHANGELOG[]: add new item
 * [ ] Does it warrant own T3DB file?
-** [ ] update xref:../../suite/tests.adoc[]
+** [ ] update tackler-t3db/README.adoc
 ** [ ] update xref:../../suite/check-tests.sh[]
 ** [x] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/blob/main/tests-1015.yml[test-1015.yml]
 * [ ] User docs

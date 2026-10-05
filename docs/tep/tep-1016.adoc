@@ -163,7 +163,7 @@ No changes to identity export
 * [x] xref:./readme.adoc[]: Update TEP index
 * [x] link:../../CHANGELOG[]: add new item
 * [x] Does it warrant own T3DB file?
-** [x] update xref:../../suite/tests.adoc[]
+** [x] update tackler-t3db/README.adoc
 ** [x] update xref:../../suite/check-tests.sh[]
 ** [x] Add new T3DB file link:https://github.com/tackler-ng/tackler-t3db/[tests-1016.yml: TEP-1016 T3DB]
 * [ ] User docs
