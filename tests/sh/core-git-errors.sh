@@ -125,7 +125,7 @@ echo "test: $module/$test_name: $mode"
 $TACKLER_SH \
     --config $SUITE_PATH/$module/git-ok.toml \
     --input.git.ref "not-found-ref" \
-    2>&1 | grep 'Tackler error: Txn Data: The ref .* "not-found-ref" .* not be found'
+    2>&1 | grep 'Tackler error: Txn Data: Reference "not-found-ref" could not be found'
 
 echo "check: ok"
 
