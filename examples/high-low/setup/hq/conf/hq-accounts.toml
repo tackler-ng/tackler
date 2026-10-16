@@ -1,0 +1,7 @@
+accounts = [
+    "Assets:Store-A:Cashier",
+    "Assets:Store-B:Cashier",
+    "Warehouse:Store-A",
+    "Warehouse:Store-B",
+    "Equity:Balance",
+]

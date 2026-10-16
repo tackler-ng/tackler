@@ -1,0 +1,5 @@
+2024-12-19 (#003) 'Store-B sales txn
+   # uuid: 075ce01d-fc41-458f-8495-31675801d864
+   # tags: store-b
+   Assets:Store-B:Cashier  123 €
+   Warehouse:Store-B  -1 Unit @ 123 €

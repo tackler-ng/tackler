@@ -1,0 +1,29 @@
+[kernel]
+strict = true
+audit = { mode = true, hash = "SHA-256" }
+ext-id = { unique = false }
+timestamp = { default-time = 00:00:00, timezone = { name = "UTC" } }
+
+[kernel.input]
+storage = "git"
+fs  = { path = "..",      dir = "txns", ext = "txn" }
+git = { repo = "../.git", dir = "txns", ext = "txn", ref = "main" }
+
+[transaction]
+accounts    = { path = "hq-accounts.toml" }
+commodities = { path = "hq-commodities.toml" }
+tags        = { path = "hq-tags.toml" }
+
+[report]
+report-timezone = "UTC"
+scale = { min = 2, max = 2 }
+accounts = [ "Assets(:.*)?", "Warehouse(:.*)?" ]
+targets = [ "balance", "register" ]
+
+balance       = { title = "HQ: Balance Report", type = "tree" }
+balance-group = { title = "HQ: Balance Group Report", type = "tree", group-by = "month" }
+register      = { title = "HQ: Register Report" }
+
+[export]
+targets = [ ]
+equity = { equity-account = "Equity:Balance" }

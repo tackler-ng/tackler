@@ -1,0 +1,5 @@
+2024-12-17 (#001) 'Store-A sales txn
+   # uuid: 9b4523b2-00a9-45ef-8f96-1d30a6626574
+   # tags: store-a
+   Assets:Store-A:Cashier  123 €
+   Warehouse:Store-A  -1 Unit @ 123 €

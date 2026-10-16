@@ -1,0 +1,6 @@
+permit-empty-commodity = false
+
+commodities = [
+    "€",
+    "Unit",
+]
