@@ -43,6 +43,11 @@ per-account metadata has to be configuration.
 
 == Summary of Changes
 
+[WARNING]
+====
+This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
+====
+
 A new `+[[account]]+` array-of-tables key is added to `accounts.toml`. It
 coexists with the existing flat `accounts = [...]` list. Each `+[[account]]+`
 block declares a single (account-name, period) with optional metadata.
@@ -62,6 +67,11 @@ Sub-changes:
 
 
 === Sub-change 1: `+[[account]]+` array-of-tables and storage shape
+
+[WARNING]
+====
+This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #1158]
+====
 
 Open design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
 
@@ -133,8 +143,8 @@ Together they define a half-open interval `[open, close)`. Both fields
 accept the same temporal forms Tackler already accepts in txn headers:
 
 * **Bare date** (`2023-12-31`) — normalized the same way a bare date
-  is normalized in a txn header (midnight UTC by default). The
-  expected shape for the common case: an account closes "on a day."
+  is normalized in a txn header (default configuration value is midnight UTC).
+  The expected shape for the common case: an account closes "on a day."
 * **Local datetime** (`2023-12-31T14:30:00`) — likewise normalized
   the same as in a txn header. Use when sub-day precision matters
   (system cutovers, exchange go-live times, audit-grade events).
@@ -151,7 +161,7 @@ needed costs nothing — just rewrite that single line.
 To support the above, it might be needed to define these time datatypes as string,
 so that they could be parsed with existing machinery, if it get's too complicated
 to support above natively with TOML.
-link:https://github.com/tackler-ng/tackler/blob/b1b2db5c329426e8536147cb53705f7dccdf5765/tackler-core/src/parser/parts/timestamp.rs#L163[tackler-core / parser / parts / timestamp.rs: parse_timestamp]
+link:https://github.com/tackler-ng/tackler/blob/7fc0966274f998bb087f7087279a60d3bd178f04/tackler-core/src/parser/parts/timestamp.rs#L141[tackler-core / parser / parts / timestamp.rs: parse_timestamp]
 
 
 Beancount's mental model carries over: `close` is the moment the
@@ -201,35 +211,28 @@ override outlined in #154 (Sub-change 5) and avoids importing a
 taxonomy this TEP would not be the right place to define.
 
 
-=== Sub-change 5: Reserved `# kind: <value>` posting-tag override
-
-Open Design Question: https://github.com/tackler-ng/tackler/issues/162
+=== Sub-change 5: Reserved `# kind: <value>` posting kindness override
 
 The motivation for `kind` on accounts is enabling *corrective transactions
 on immutable journals*: a posting that flips the natural debit/credit side
 of its account (e.g., crediting a normally-debited asset for a refund
 correction).
 
-This TEP *reserves* the `# kind: debit` / `# kind: credit` posting-tag
+This TEP *reserves* the `# kind:` transaction metadata
 syntax for that purpose but does *not* specify enforcement semantics
-(when it errors, what changes in reports, how it interacts with balance
-assertions). Posting-tag infrastructure already exists from TEP-1011, so
-reserving the name is essentially free; the validation and reporting
-semantics belong in a dedicated follow-up TEP focused on corrective
-entries, not in this one.
+(when it errors, what changes in reports).
 
-Until that follow-up TEP lands, `# kind: …` on a posting is parsed and
-ignored (or warned — implementation choice).
-
+Architecture Decision Records::
+Reserve txn metadata # kind: for latter use, with possible value # kind: revert. +
++
+A use case for that would corrective transaction, when account kindness is enforced (credit, debit). +
++
+ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
 == Journal File Format
 
-No journal file format change. The reserved `# kind: <value>`
-posting-tag syntax (Sub-change 5) reuses the existing posting-tag
-mechanism from TEP-1011 with no syntactic change; only its semantic
-interpretation is reserved for future work.
-
-Open Design Question: https://github.com/tackler-ng/tackler/issues/162
+No journal file format change.  The new metadata `# kind: ...` is only reserved,
+not parsed as valid input by this TEP.
 
 
 == Implementation
@@ -255,19 +258,20 @@ Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
   (see <<validation>>)
 
 Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/162
 
 
 === Filtering Changes
 
-In strict mode, the existing "unknown account" rejection path extends to:
-*account is unknown OR txn date is outside every declared period for that
-account*. Same error class, distinct error message. In relaxed mode the
-period information is ignored entirely.
+No changes to the filtering machinery.
 
 
 [#validation]
 === Validation rules (config load time)
+
+[WARNING]
+====
+This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
+====
 
 * Same name in `accounts = [...]` AND in any `+[[account]]+` block →
   error. The flat form means "always-open, no constraints"; mixing with
@@ -283,8 +287,9 @@ period information is ignored entirely.
 * `open >= close` within a block → error.
 * `kind` value not in {`"debit"`, `"credit"`} → error.
 
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/161
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/162
+Architecture Decision Records::
+ADR: https://github.com/tackler-ng/tackler/issues/161[GH #161] +
+ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
 === Machinery
 
@@ -330,13 +335,17 @@ existing TOML deserializer.
 
 === Reporting
 
+[WARNING]
+====
+This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
+====
+
 By default, balance / balance-group / register reports filter accounts
 to their declared active periods — outside the window the account does
 not appear for that date range. An opt-in CLI flag (see CLI Changes)
 restores the current behavior of including all declared accounts
 regardless of period.
 
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
 
 ==== Balance Report
 
@@ -372,11 +381,19 @@ Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
 
 ==== Accounts Export
 
-Open Desing Question (ODQ): https://github.com/tackler-ng/tackler/issues/160
+1. No existing CoA:
+   * Generate simple CoA for new accounts
+2. Existing CoA, new accounts
+   * Use existing CoA for existing accounts, and export all new accounts as "simple"
+3. Existing CoA, with implicit open, close directives
+   * Use existing CoA, preserve implicit directives
+
+ADR: https://github.com/tackler-ng/tackler/issues/160[GH #160]
 
 * [ ] Round-trip: emit a flat string for accounts with no metadata, an
   `+[[account]]+` block (or N blocks for periodic accounts) for everything
   else. No new flag — output shape is determined by the input data.
+
 
 
 === Documentation
@@ -405,27 +422,16 @@ Open Desing Question (ODQ): https://github.com/tackler-ng/tackler/issues/160
 
 ==== Postponed (PP) Features
 
-5-type / category taxonomy on accounts::
-Asset / liability / equity / income / expense. Orthogonal to `kind`.
-Defer to TEP-1003 (P&L) or whichever feature first needs categorization
-beyond debit/credit. Add as a separate `category` field; non-breaking
-addition.
-
-`# kind: <value>` posting-override enforcement semantics::
-This TEP reserves the syntax (Sub-change 5). When it errors, what it
-changes in reports, and how it interacts with balance assertions
-belong in a dedicated follow-up TEP focused on corrective entries.
+Transaction metadata `# kind: <value>`::
+This TEP reserves the syntax (Sub-change 5). When it errors and what it
+changes in reports belong in a dedicated follow-up TEP focused on corrective entries.
 
 Per-account `commodity` constraint::
-Explicitly owned by TEP-1001 (Units and Commodities) Phase 2, which
-already lists "default commodity per account?" as planned work. Cross-
-reference; do not encroach.
+Explicitly owned by xref:tep-1001.adoc[TEP-1001 - Units and Commodities]: Phase 2, which
+already lists "default commodity per account?" as planned work.
 
 Booking method (Beancount-style FIFO / LIFO / STRICT)::
 Defer until lots / cost-basis exist in Tackler.
-
-Aliases / notes / payees on accounts (Ledger-CLI-style subdirectives)::
-Not requested; not in scope.
 
 Cron-style sporadic period syntax::
 Repeated `+[[account]]+` blocks already cover sporadic / seasonal
@@ -435,6 +441,11 @@ entries mechanism is the underlying model regardless.
 
 
 === Tests
+
+[WARNING]
+====
+This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
+====
 
 Normal, ok-case tests to validate functionality:
 
