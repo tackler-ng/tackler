@@ -232,7 +232,7 @@ impl BalanceReporter {
         BalanceItem {
             account_sum: format_with_scale(0, &btn.account_sum, &report_settings.scale),
             account_tree_sum: acc_sum,
-            account: btn.acctn.atn.account.clone(),
+            account: btn.acctn.atn.account.spec.name.clone(),
             commodity: if btn.acctn.comm.is_any() {
                 Some(btn.acctn.comm.name.clone())
             } else {

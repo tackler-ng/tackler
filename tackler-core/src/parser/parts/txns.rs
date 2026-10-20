@@ -1,14 +1,16 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use itertools::Itertools;
+use std::fmt::Write;
 use winnow::{ModalResult, Parser, seq};
 
 use crate::model::{Transaction, Txns};
 use crate::parser::parts::txn_header::parse_txn_header;
 use crate::parser::parts::txn_postings::parse_txn_postings;
 use crate::parser::{Stream, from_error, make_semantic_error};
+use tackler_api::txn_ts;
 use winnow::ascii::{line_ending, space0};
 use winnow::combinator::alt;
 use winnow::combinator::{cut_err, eof, opt, preceded, repeat, repeat_till};
@@ -33,13 +35,43 @@ fn parse_txn(is: &mut Stream<'_>) -> ModalResult<Transaction> {
     .context(StrContext::Label("Transaction"))
     .parse_next(is)?;
 
+    if is.state.is_strict() {
+        let ts = &txn.0.timestamp;
+        txn.1.iter().try_for_each(|p| {
+            if !p.acctn.atn.is_open(ts) {
+                let mut msg = String::new();
+                let _ = writeln!(msg, "Account '{}' is not open.", p.acctn.atn);
+                let _ = writeln!(msg, "Header of transaction with error:");
+                let _ = writeln!(
+                    msg,
+                    "   {}",
+                    txn.0.to_string_with_indent(
+                        &" ".repeat(6),
+                        |ts, _tz| txn_ts::rfc_3339(ts),
+                        is.state.report.tz.clone()
+                    )
+                );
+                return Err(make_semantic_error(is, msg.as_str()));
+            }
+            Ok(())
+        })?;
+    }
+
     if txn.1.iter().map(|p| &p.txn_commodity.name).unique().count() > 1 {
-        let msg = format!(
-            "Different commodities without value positions are not allowed inside single transaction.{}",
-            txn.0
-                .uuid
-                .map(|u| format!("\n   txn uuid: {u}"))
-                .unwrap_or_default()
+        let mut msg = String::new();
+        let _ = writeln!(
+            msg,
+            "Different commodities without value positions are not allowed inside single transaction."
+        );
+        let _ = writeln!(msg, "Header of transaction with error:\n");
+        let _ = writeln!(
+            msg,
+            "   {}",
+            txn.0.to_string_with_indent(
+                &" ".repeat(6),
+                |ts, _tz| txn_ts::rfc_3339(ts),
+                is.state.report.tz.clone()
+            )
         );
         return Err(make_semantic_error(is, msg.as_str()));
     }

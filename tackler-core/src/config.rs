@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 pub(crate) use items::AccountSelectors;
@@ -15,13 +15,80 @@ pub(crate) use items::Report;
 pub use items::ReportType;
 pub(crate) use items::Scale;
 pub use items::StorageType;
+pub(crate) use items::account::Account;
+use jiff::tz::TimeZone;
+use jiff::{Zoned, tz};
+use toml::value::Offset;
+use toml::value::{Date, Datetime, Time};
 
+use crate::config::items::Timestamp;
 use crate::tackler;
 pub use items::NONE_VALUE;
 
 mod items;
 pub mod overlaps;
-mod raw_items;
+pub(crate) mod raw_items;
+
+#[allow(clippy::cast_possible_wrap)]
+fn toml_time_to_jiff(t: Time) -> Result<jiff::civil::Time, jiff::Error> {
+    jiff::civil::Time::new(
+        t.hour as i8,
+        t.minute as i8,
+        t.second.unwrap_or_default() as i8,
+        t.nanosecond.unwrap_or_default() as i32,
+    )
+}
+#[allow(clippy::cast_possible_wrap)]
+fn toml_date_to_jiff(d: Date) -> Result<jiff::civil::Date, jiff::Error> {
+    jiff::civil::Date::new(d.year as i16, d.month as i8, d.day as i8)
+}
+pub(crate) fn toml_datetime_to_zoned(
+    dt: &Datetime,
+    ts: &Timestamp,
+) -> Result<Zoned, tackler::Error> {
+    let Some(d) = dt.date else {
+        let msg = format!(
+            "\nTOML datetime must have date component. Partial time part of Datetime is: {dt}"
+        );
+        return Err(msg.into());
+    };
+
+    if let Some(t) = dt.time
+        && let Some(ttz) = dt.offset
+    {
+        let jt = toml_time_to_jiff(t)?;
+        let jd = toml_date_to_jiff(d)?.to_datetime(jt);
+
+        let tz = match ttz {
+            Offset::Z => TimeZone::UTC,
+            Offset::Custom { minutes } => {
+                TimeZone::fixed(tz::Offset::from_seconds(i32::from(minutes) * 60)?)
+            }
+        };
+        match jd.to_zoned(tz) {
+            Ok(tsz) => Ok(tsz),
+            Err(err) => {
+                let msg = format!("time is invalid '{err:?}'");
+                Err(msg.into())
+            }
+        }
+    } else {
+        let jd = if let Some(t) = dt.time {
+            let jt = toml_time_to_jiff(t)?;
+            toml_date_to_jiff(d)?.to_datetime(jt)
+        } else {
+            toml_date_to_jiff(d)?.to_datetime(ts.default_time)
+        };
+
+        match jd.to_zoned(ts.timezone.clone()) {
+            Ok(tsz) => Ok(tsz),
+            Err(err) => {
+                let msg = format!("time is invalid '{err:?}'");
+                Err(msg.into())
+            }
+        }
+    }
+}
 
 /// Converter list of strings to report formats
 ///

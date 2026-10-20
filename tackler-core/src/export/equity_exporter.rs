@@ -150,7 +150,7 @@ impl Export for EquityExporter {
                         format!(
                             "{}{}  {}{}",
                             eq_txn_indent,
-                            b.acctn.atn.account,
+                            b.acctn.atn.account.spec.name,
                             b.account_sum,
                             if comm.is_any() { format!(" {}", comm.name) } else { String::new() }
                         )

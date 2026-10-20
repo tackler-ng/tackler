@@ -141,7 +141,7 @@ impl BalanceSelector for BalanceByAccountSelector {}
 
 impl Predicate<BalanceTreeNode> for BalanceByAccountSelector {
     fn eval(&self, btn: &BalanceTreeNode) -> bool {
-        self.regexs.is_match(&btn.acctn.atn.account)
+        self.regexs.is_match(&btn.acctn.atn.account.spec.name)
     }
 }
 
@@ -181,7 +181,7 @@ impl RegisterItemSelector<'_> for RegisterByAccountSelector {}
 
 impl Predicate<RegisterPosting<'_>> for RegisterByAccountSelector {
     fn eval(&self, rep: &RegisterPosting<'_>) -> bool {
-        self.regexs.is_match(&rep.post.acctn.atn.account)
+        self.regexs.is_match(&rep.post.acctn.atn.account.spec.name)
     }
 }
 

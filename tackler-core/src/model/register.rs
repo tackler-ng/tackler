@@ -54,7 +54,7 @@ impl Display for RegisterPosting<'_> {
         write!(
             f,
             "{} {} {}",
-            self.post.acctn.atn.account, self.post.amount, self.amount
+            self.post.acctn.atn.account.spec.name, self.post.amount, self.amount
         )
     }
 }
@@ -113,7 +113,7 @@ impl RegisterEntry<'_> {
             let mut line = format!(
                 "{}{:<33}{:>18}{:<w$} {:>18}{}",
                 indent,
-                p.post.acctn.atn.account,
+                p.post.acctn.atn.account.spec.name,
                 amount_to_string(&p.post.amount, 18),
                 base_comm,
                 amount_to_string(&p.amount, 18),

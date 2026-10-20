@@ -12,7 +12,7 @@ impl Predicate<Transaction> for TxnFilterPostingAmountLess {
     fn eval(&self, txn: &Transaction) -> bool {
         txn.posts
             .iter()
-            .any(|p| p.amount < self.amount && self.regex.is_match(&p.acctn.atn.account))
+            .any(|p| p.amount < self.amount && self.regex.is_match(&p.acctn.atn.account.spec.name))
     }
 }
 

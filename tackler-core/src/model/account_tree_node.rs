@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+use crate::config::Account;
 use crate::parser::{is_valid_identifier, is_valid_name};
 use crate::tackler;
+use jiff::Zoned;
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter};
 use std::hash::{Hash, Hasher};
@@ -49,18 +51,19 @@ impl Commodity {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Clone, Eq)]
+#[derive(Debug, Eq)]
 pub(crate) struct AccountTreeNode {
+    /// Depth of this node in the account tree (distance from root)
+    /// This is computed from account.spec.name
     pub(crate) depth: usize,
-    root: String,
     /// parent account (path)
+    /// This is computed from account.spec.name
     pub(crate) parent: String,
     /// account as sub-accounts
+    /// This is computed from account.spec.name
     parts: Vec<String>,
-    /// account of posting (path)
-    pub(crate) account: String,
-    /// account name (leaf)
-    name: String,
+    /// Account specification
+    pub(crate) account: Arc<Account>,
 }
 
 impl AccountTreeNode {
@@ -77,8 +80,8 @@ pub struct TxnAccount {
 
 impl Hash for TxnAccount {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.atn.account.hash(state);
-        self.comm.name.hash(state);
+        self.atn.hash(state);
+        self.comm.hash(state);
     }
 }
 impl PartialEq for TxnAccount {
@@ -109,20 +112,20 @@ impl TxnAccount {
 
 impl Display for AccountTreeNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.account)
+        write!(f, "{}", self.account.spec.name)
     }
 }
 
 impl Hash for AccountTreeNode {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.account.hash(state);
+        self.account.spec.name.hash(state);
     }
 }
 
 impl PartialEq for AccountTreeNode {
     fn eq(&self, other: &Self) -> bool {
         // depth is used as fast-path checking
-        self.depth == other.depth && self.account == other.account
+        self.depth == other.depth && self.account.spec.name == other.account.spec.name
     }
 }
 
@@ -151,23 +154,29 @@ impl Ord for AccountTreeNode {
 
 #[cfg(test)]
 impl AccountTreeNode {
-    pub(crate) fn get_root(&self) -> &str {
-        self.root.as_str()
+    pub(crate) fn from(name: &str) -> Result<AccountTreeNode, tackler::Error> {
+        AccountTreeNode::try_from(&Arc::new(Account::from(name)))
     }
-    pub(crate) fn get_name(&self) -> &str {
-        self.name.as_str()
+    pub(crate) fn get_root(&self) -> &str {
+        self.parts[0].as_str()
+    }
+    /// Get the name of leaf node, this is not full path
+    pub(crate) fn get_leaf(&self) -> &str {
+        self.parts.last().unwrap(/*:ok: non-empty*/).as_str()
     }
 }
 
 impl AccountTreeNode {
-    pub(crate) fn from(account: &str) -> Result<AccountTreeNode, tackler::Error> {
-        if let Err(e) = is_valid_name(account) {
-            let msg = format!("This is not a valid account name: '{account}', error was: {e}");
+    pub(crate) fn try_from(account: &Arc<Account>) -> Result<AccountTreeNode, tackler::Error> {
+        if let Err(e) = is_valid_name(&account.spec.name) {
+            let msg = format!(
+                "This is not a valid account name: '{}', error was: {e}",
+                account.spec.name
+            );
             return Err(msg.into());
         }
         Ok(Self::unchecked_from(account))
     }
-
     /// Create a parent ATN by child ATN
     ///
     /// Child can't be a root account
@@ -183,41 +192,36 @@ impl AccountTreeNode {
         let depth = parts.len();
         assert_eq!(depth, child.depth - 1);
 
-        let root = child.root.clone();
         let parent = parts[..depth - 1].join(":");
         let account = child.parent.clone();
-        let name = parts.last().unwrap(/*:ok: non-empty*/).clone();
 
         Ok(AccountTreeNode {
             depth,
-            root,
             parent,
             parts,
-            account,
-            name,
+            account: Arc::new(Account::from(&account)),
         })
     }
 
-    pub(crate) fn unchecked_from(account: &str) -> AccountTreeNode {
-        let parts: Vec<&str> = account.split(':').collect();
+    pub(crate) fn unchecked_from(account: &Arc<Account>) -> AccountTreeNode {
+        let parts: Vec<&str> = account.spec.name.split(':').collect();
         let depth = parts.len();
         assert!(depth > 0);
 
-        let root = String::from(parts[0]);
         let acc_parts = parts.iter().map(ToString::to_string).collect();
-
-        let name = parts.last().unwrap(/*:ok: non-empty*/).to_string();
 
         let parent = parts[..depth - 1].join(":");
 
         AccountTreeNode {
             depth,
-            root,
             parent,
             parts: acc_parts,
-            account: account.to_string(),
-            name,
+            account: account.clone(),
         }
+    }
+
+    pub(crate) fn is_open(&self, ts: &Zoned) -> bool {
+        self.account.is_open(ts)
     }
 }
 
@@ -272,17 +276,17 @@ mod tests {
     fn atn_is_root() {
         let atn_a = TxnAccount {
             atn: Arc::new(AccountTreeNode::from("a")
-                .unwrap(/*:test:*/)),
+                    .unwrap(/*:test:*/)),
             comm: Arc::new(Commodity::default()),
         };
         let atn_ab = TxnAccount {
             atn: Arc::new(AccountTreeNode::from("a:b")
-                .unwrap(/*:test:*/)),
+                    .unwrap(/*:test:*/)),
             comm: Arc::new(Commodity::default()),
         };
         let atn_abc = TxnAccount {
             atn: Arc::new(AccountTreeNode::from("a:b:c")
-                .unwrap(/*:test:*/)),
+                    .unwrap(/*:test:*/)),
             comm: Arc::new(Commodity::default()),
         };
         assert_eq!(atn_a.is_root(), true);
@@ -293,7 +297,7 @@ mod tests {
     #[test]
     fn atn_ok_display() {
         let atn = AccountTreeNode::from("a:b:c")
-        .unwrap(/*:test:*/);
+            .unwrap(/*:test:*/);
 
         let atn_str = format!("{atn}");
         assert_eq!(atn_str, String::from("a:b:c"));
@@ -305,10 +309,10 @@ mod tests {
         let atn = AccountTreeNode::from("a").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 1);
-        assert_eq!(atn.root, "a");
+        assert_eq!(atn.parts[0], "a");
         assert_eq!(atn.parent, "");
-        assert_eq!(atn.account, "a");
-        assert_eq!(atn.name, "a");
+        assert_eq!(atn.account.spec.name, "a");
+        assert_eq!(atn.get_leaf(), "a");
     }
 
     #[test]
@@ -317,10 +321,10 @@ mod tests {
         let atn = AccountTreeNode::from("a:b").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 2);
-        assert_eq!(atn.root, "a");
+        assert_eq!(atn.parts[0], "a");
         assert_eq!(atn.parent, "a");
-        assert_eq!(atn.account, "a:b");
-        assert_eq!(atn.name, "b");
+        assert_eq!(atn.account.spec.name, "a:b");
+        assert_eq!(atn.get_leaf(), "b");
     }
 
     #[test]
@@ -329,10 +333,10 @@ mod tests {
         let atn = AccountTreeNode::from("a:b:c").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 3);
-        assert_eq!(atn.root, "a");
+        assert_eq!(atn.parts[0], "a");
         assert_eq!(atn.parent, "a:b");
-        assert_eq!(atn.account, "a:b:c");
-        assert_eq!(atn.name, "c");
+        assert_eq!(atn.account.spec.name, "a:b:c");
+        assert_eq!(atn.get_leaf(), "c");
     }
 
     #[test]
@@ -341,10 +345,10 @@ mod tests {
         let atn = AccountTreeNode::from("a:b:c:leaf").unwrap(/*:test:*/);
 
         assert_eq!(atn.depth, 4);
-        assert_eq!(atn.root, "a");
+        assert_eq!(atn.parts[0], "a");
         assert_eq!(atn.parent, "a:b:c");
-        assert_eq!(atn.account, "a:b:c:leaf");
-        assert_eq!(atn.name, "leaf");
+        assert_eq!(atn.account.spec.name, "a:b:c:leaf");
+        assert_eq!(atn.get_leaf(), "leaf");
     }
 
     #[test]

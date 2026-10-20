@@ -1,11 +1,12 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::overlaps::{InputOverlap, OverlapConfig, StorageOverlap};
+use crate::config::raw_items::AccountSpec;
 use crate::config::{
-    AccountSelectors, Config, Export, ExportType, Kernel, PriceLookupType, Report, ReportType,
-    StorageType,
+    Account, AccountSelectors, Config, Export, ExportType, Kernel, PriceLookupType, Report,
+    ReportType, StorageType,
 };
 use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
@@ -125,15 +126,18 @@ impl AccountTrees {
         }
     }
 
-    fn from(account_names: &[String], strict_mode: bool) -> Result<AccountTrees, tackler::Error> {
+    fn from(
+        account_names: &[Arc<Account>],
+        strict_mode: bool,
+    ) -> Result<AccountTrees, tackler::Error> {
         let mut defined_accounts =
             account_names
                 .iter()
                 .try_fold(
                     HashMap::new(),
-                    |mut accs, account| match AccountTreeNode::from(account) {
+                    |mut accs, account| match AccountTreeNode::try_from(account) {
                         Ok(atn) => {
-                            accs.insert(account.into(), Arc::new(atn));
+                            accs.insert(account.spec.name.clone(), Arc::new(atn));
                             Ok(accs)
                         }
                         Err(e) => {
@@ -269,8 +273,6 @@ impl Settings {
 
         let db_path = overlaps.price.db_path.unwrap_or(cfg.price.db_path.clone());
 
-        let account_trees = AccountTrees::from(&cfg.transaction.accounts.names, strict_mode)?;
-
         let mut commodities = Commodities::from(&cfg)?;
 
         let tags = cfg
@@ -283,16 +285,6 @@ impl Settings {
                 tags.insert(tag.into(), Arc::new(t));
                 tags
             });
-
-        if strict_mode
-            && exports.contains(&ExportType::Equity)
-            && !account_trees
-                .defined_accounts
-                .contains_key(cfg.export.equity.equity_account.as_str())
-        {
-            let msg = "Unknown `equity.equity-account` and `strict` mode is on".to_string();
-            return Err(msg.into());
-        }
 
         let cfg_rpt_commodity = cfg
             .report
@@ -346,11 +338,23 @@ impl Settings {
                 targets: exports,
                 ..cfg.export
             },
-            accounts: account_trees,
+            accounts: AccountTrees::default(), // this is not real, see next one
             commodities,
             tags,
         };
         tmp_settings.report.balance_group.group_by = group_by;
+
+        let account_trees = AccountTrees::from(&cfg.transaction.accounts.items, strict_mode)?;
+
+        if strict_mode
+            && tmp_settings.export.targets.contains(&ExportType::Equity)
+            && !account_trees
+                .defined_accounts
+                .contains_key(tmp_settings.export.equity.equity_account.as_str())
+        {
+            let msg = "Unknown `equity.equity-account` and `strict` mode is on".to_string();
+            return Err(msg.into());
+        }
 
         let given_time = overlaps.price.before_time;
 
@@ -392,11 +396,16 @@ impl Settings {
         Ok(Settings {
             price,
             price_lookup,
+            accounts: account_trees,
             ..tmp_settings
         })
     }
 }
 impl Settings {
+    pub(crate) fn is_strict(&self) -> bool {
+        self.strict_mode
+    }
+
     pub(crate) fn get_hash(&self) -> Option<Hash> {
         if self.audit_mode {
             Some(self.kernel.audit.hash.clone())
@@ -458,7 +467,11 @@ impl Settings {
                 let msg = format!("Unknown account: '{name}'");
                 return Err(msg.into());
             }
-            let atn = Arc::new(AccountTreeNode::unchecked_from(name));
+            let account = Arc::new(Account::try_with(
+                AccountSpec::from_str(name),
+                &self.kernel.timestamp,
+            )?);
+            let atn = Arc::new(AccountTreeNode::unchecked_from(&account));
             self.accounts
                 .defined_accounts
                 .insert(name.into(), atn.clone());
@@ -810,6 +823,8 @@ impl Settings {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::Account;
+    use crate::config::raw_items::AccountSpec;
 
     #[test]
     fn accounts_strict_false() {
@@ -822,8 +837,8 @@ mod tests {
         assert_eq!(txntn_1.atn.depth, 3);
         assert_eq!(txntn_1.atn.get_root(), "a");
         assert_eq!(txntn_1.atn.parent, "a:b");
-        assert_eq!(txntn_1.atn.account, "a:b:c");
-        assert_eq!(txntn_1.atn.get_name(), "c");
+        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
+        assert_eq!(txntn_1.atn.get_leaf(), "c");
 
         let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
@@ -831,8 +846,8 @@ mod tests {
         assert_eq!(txntn_2.atn.depth, 3);
         assert_eq!(txntn_2.atn.get_root(), "a");
         assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account, "a:b:c");
-        assert_eq!(txntn_2.atn.get_name(), "c");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
+        assert_eq!(txntn_2.atn.get_leaf(), "c");
 
         let txntn_3 = settings.get_or_create_txn_account("a:b:b-leaf", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 4);
@@ -840,15 +855,20 @@ mod tests {
         assert_eq!(txntn_3.atn.depth, 3);
         assert_eq!(txntn_3.atn.get_root(), "a");
         assert_eq!(txntn_3.atn.parent, "a:b");
-        assert_eq!(txntn_3.atn.account, "a:b:b-leaf");
-        assert_eq!(txntn_3.atn.get_name(), "b-leaf");
+        assert_eq!(txntn_3.atn.account.spec.name, "a:b:b-leaf");
+        assert_eq!(txntn_3.atn.get_leaf(), "b-leaf");
     }
 
     #[test]
     fn accounts_strict_true() {
         let comm = Arc::new(Commodity::default());
         let mut settings = Settings::default();
-        let accounts = vec!["a:b:c".to_string()];
+        let accounts: Vec<Arc<Account>> = vec!["a:b:c"]
+            .into_iter()
+            .map(|s| {
+                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
+            })
+            .collect();
 
         let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
         settings.accounts = acc_trees;
@@ -864,8 +884,8 @@ mod tests {
         assert_eq!(txntn_1.atn.depth, 3);
         assert_eq!(txntn_1.atn.get_root(), "a");
         assert_eq!(txntn_1.atn.parent, "a:b");
-        assert_eq!(txntn_1.atn.account, "a:b:c");
-        assert_eq!(txntn_1.atn.get_name(), "c");
+        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
+        assert_eq!(txntn_1.atn.get_leaf(), "c");
 
         let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 1);
@@ -874,8 +894,8 @@ mod tests {
         assert_eq!(txntn_2.atn.depth, 3);
         assert_eq!(txntn_2.atn.get_root(), "a");
         assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account, "a:b:c");
-        assert_eq!(txntn_2.atn.get_name(), "c");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
+        assert_eq!(txntn_2.atn.get_leaf(), "c");
 
         // Check that it won't create a synthetic account as real one
         assert!(settings.get_or_create_txn_account("a:b", &comm).is_err());
@@ -890,8 +910,8 @@ mod tests {
         assert_eq!(txntn_3.atn.depth, 2);
         assert_eq!(txntn_3.atn.get_root(), "a");
         assert_eq!(txntn_3.atn.parent, "a");
-        assert_eq!(txntn_3.atn.account, "a:b");
-        assert_eq!(txntn_3.atn.get_name(), "b");
+        assert_eq!(txntn_3.atn.account.spec.name, "a:b");
+        assert_eq!(txntn_3.atn.get_leaf(), "b");
 
         // Check synthetic account
         let txntn_4 = settings.get_txn_account("a", &comm).unwrap(/*:test:*/);
@@ -901,15 +921,20 @@ mod tests {
         assert_eq!(txntn_4.atn.depth, 1);
         assert_eq!(txntn_4.atn.get_root(), "a");
         assert_eq!(txntn_4.atn.parent, "");
-        assert_eq!(txntn_4.atn.account, "a");
-        assert_eq!(txntn_4.atn.get_name(), "a");
+        assert_eq!(txntn_4.atn.account.spec.name, "a");
+        assert_eq!(txntn_4.atn.get_leaf(), "a");
     }
 
     #[test]
     fn accounts_strict_true_child_first() {
         let comm = Arc::new(Commodity::default());
         let mut settings = Settings::default();
-        let accounts = vec!["a:b:c".to_string(), "a:b".to_string(), "a".to_string()];
+        let accounts: Vec<Arc<Account>> = vec!["a:b:c", "a:b", "a"]
+            .into_iter()
+            .map(|s| {
+                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
+            })
+            .collect();
 
         let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
         settings.accounts = acc_trees;
@@ -921,24 +946,29 @@ mod tests {
         let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_1.atn.account, "a:b:c");
+        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
 
         let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_2.atn.account, "a:b");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
 
         let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_2.atn.account, "a");
+        assert_eq!(txntn_2.atn.account.spec.name, "a");
     }
 
     #[test]
     fn accounts_strict_true_gap() {
         let comm = Arc::new(Commodity::default());
         let mut settings = Settings::default();
-        let accounts = vec!["a:b:c:d".to_string(), "a:b".to_string(), "a".to_string()];
+        let accounts: Vec<Arc<Account>> = vec!["a:b:c:d", "a:b", "a"]
+            .into_iter()
+            .map(|s| {
+                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
+            })
+            .collect();
 
         let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
         settings.accounts = acc_trees;
@@ -953,16 +983,16 @@ mod tests {
         let txntn_synth = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_synth.atn.account, "a:b:c");
+        assert_eq!(txntn_synth.atn.account.spec.name, "a:b:c");
 
         let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_2.atn.account, "a:b");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
 
         let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
         assert_eq!(settings.accounts.defined_accounts.len(), 3);
         assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_2.atn.account, "a");
+        assert_eq!(txntn_2.atn.account.spec.name, "a");
     }
 }

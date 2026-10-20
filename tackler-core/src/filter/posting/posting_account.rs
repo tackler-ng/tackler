@@ -12,7 +12,7 @@ impl Predicate<Transaction> for TxnFilterPostingAccount {
     fn eval(&self, txn: &Transaction) -> bool {
         txn.posts
             .iter()
-            .any(|p| self.regex.is_match(&p.acctn.atn.account))
+            .any(|p| self.regex.is_match(&p.acctn.atn.account.spec.name))
     }
 }
 

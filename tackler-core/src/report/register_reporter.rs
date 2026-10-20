@@ -108,7 +108,7 @@ fn register_entry_to_api(
             };
 
             RegisterPosting {
-                account: p.post.acctn.atn.account.clone(),
+                account: p.post.acctn.atn.account.spec.name.clone(),
                 amount: format_with_scale(0, a, scale),
                 running_total: format_with_scale(0, rt, scale),
                 comment: p.post.comment.clone(),

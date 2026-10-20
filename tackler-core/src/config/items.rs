@@ -1,14 +1,15 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
+use crate::config::items::account::Account;
 use crate::config::raw_items::{
     AccountsPathRaw, AccountsRaw, AuditRaw, BalanceGroupRaw, BalanceRaw, CommoditiesPathRaw,
     CommoditiesRaw, ConfigRaw, EquityRaw, ExportRaw, ExtIdRaw, FsRaw, GitRaw, InputRaw, KernelRaw,
     PriceRaw, RegisterRaw, ReportRaw, ScaleRaw, TagsPathRaw, TagsRaw, TimestampRaw, TimezoneRaw,
     TransactionRaw,
 };
-use crate::config::{to_export_targets, to_report_formats, to_report_targets};
+use crate::config::{to_export_targets, to_report_formats, to_report_targets, toml_time_to_jiff};
 use crate::kernel::hash::Hash;
 use crate::model::Commodity;
 use crate::tackler;
@@ -24,6 +25,8 @@ use tackler_rs::get_abs_path;
 
 /// UI/CFG key value for none
 pub const NONE_VALUE: &str = "none";
+
+pub(crate) mod account;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub enum StorageType {
@@ -250,13 +253,16 @@ impl Config {
     pub fn try_from<P: AsRef<Path>>(cfg_path: P) -> Result<Config, tackler::Error> {
         let cfg_raw: ConfigRaw = toml::from_str(fs::read_to_string(&cfg_path)?.as_str())?;
 
+        let kernel = Kernel::try_from(&cfg_raw.kernel)?;
+        let transaction = Transaction::from(&cfg_path, &cfg_raw.transaction, &kernel.timestamp)?;
+
         Ok(Config {
             path: cfg_path.as_ref().to_path_buf(),
-            kernel: Kernel::try_from(&cfg_raw.kernel)?,
+            kernel,
             price: cfg_raw.price.map_or(Ok(Price::default()), |raw_price| {
                 Price::try_from(&cfg_path, &raw_price)
             })?,
-            transaction: Transaction::from(&cfg_path, &cfg_raw.transaction)?,
+            transaction,
             report: Report::from(&cfg_raw.report)?,
             export: { Export::from(&cfg_raw.export, &cfg_raw.report)? },
         })
@@ -304,17 +310,11 @@ impl Default for Timestamp {
 }
 
 impl Timestamp {
-    #[allow(clippy::cast_possible_wrap)]
     fn from(ts_raw: &TimestampRaw) -> Result<Timestamp, tackler::Error> {
         let ts = Timestamp {
             default_time: {
                 let t = ts_raw.default_time;
-                jiff::civil::Time::new(
-                    t.hour as i8,
-                    t.minute as i8,
-                    t.second.map_or(0, |s| s as i8),
-                    t.nanosecond.map_or(0, |s| s as i32),
-                )?
+                toml_time_to_jiff(t)?
             },
             timezone: { Timezone::from(&ts_raw.timezone)? },
         };
@@ -520,7 +520,7 @@ impl Price {
     }
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub(crate) struct Transaction {
     pub(crate) accounts: Accounts,
     pub(crate) commodities: Commodities,
@@ -531,45 +531,56 @@ impl Transaction {
     fn from<P: AsRef<Path>>(
         path: P,
         txn_raw: &TransactionRaw,
+        ts: &Timestamp,
     ) -> Result<Transaction, tackler::Error> {
         Ok(Transaction {
-            accounts: Accounts::from(&path, &txn_raw.accounts)?,
+            accounts: Accounts::from(&path, &txn_raw.accounts, ts)?,
             commodities: Commodities::from(&path, &txn_raw.commodities)?,
             tags: Tags::from(&path, &txn_raw.tags)?,
         })
     }
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub(crate) struct Accounts {
-    pub names: Vec<String>,
+    pub items: Vec<Arc<Account>>,
 }
 impl Accounts {
+    fn from_str(s: &str, ts: &Timestamp) -> Result<Accounts, tackler::Error> {
+        let acc_raw: AccountsRaw = toml::from_str(s)?;
+        let accounts: Result<Vec<Arc<Account>>, tackler::Error> = acc_raw
+            .items
+            .into_iter()
+            .map(|name| -> Result<Arc<Account>, tackler::Error> {
+                let a = Arc::new(Account::try_with(name, ts)?);
+                Ok(a)
+            })
+            .collect();
+        Ok(Accounts { items: accounts? })
+    }
+
     fn from<P: AsRef<Path>>(
         path: P,
         accs_path_raw: &AccountsPathRaw,
+        ts: &Timestamp,
     ) -> Result<Accounts, tackler::Error> {
         let accs_path_str = accs_path_raw.path.as_str();
         if accs_path_str == NONE_VALUE {
             Ok(Accounts::default())
         } else {
             let accs_path = get_abs_path(&path, accs_path_str)?;
-            let acc_raw: AccountsRaw = match fs::read_to_string(&accs_path) {
-                Ok(s) => toml::from_str(s.as_str())?,
+            match fs::read_to_string(&accs_path) {
+                Ok(s) => Self::from_str(s.as_str(), ts),
                 Err(err) => {
                     let msg = format!(
                         "Accounts configuration error while reading file '{accs_path_str}': {err}"
                     );
-                    return Err(msg.into());
+                    Err(msg.into())
                 }
-            };
-            Ok(Accounts {
-                names: acc_raw.names,
-            })
+            }
         }
     }
 }
-
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Commodities {
     pub(crate) permit_empty_commodity: Option<bool>,

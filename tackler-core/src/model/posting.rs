@@ -33,7 +33,10 @@ impl Posting {
         comment: Option<String>,
     ) -> Result<Posting, tackler::Error> {
         if amount.is_zero() {
-            let msg = format!("Zero sum postings are not allowed: {}", acctn.atn.account);
+            let msg = format!(
+                "Zero sum postings are not allowed: {}",
+                acctn.atn.account.spec.name
+            );
             return Err(msg.into());
         }
 
