@@ -1,8 +1,7 @@
 = TEP-1017: Advanced Chart of Accounts
 
-Advanced Chart of Accounts definitions: per-account lifecycle (open / close),
-periodicity, and a `kind` (debit / credit) attribute, expressed in
-`accounts.toml`.
+Advanced Chart of Accounts specifications: per-account lifecycle (open / close),
+and support periodicity (multiple time spans).
 
 Github issue: https://github.com/tackler-ng/tackler/issues/154
 
@@ -36,9 +35,9 @@ used). Bringing this into Tackler removes the need for app-layer wrappers to
 invent their own archived-accounts sidecar.
 
 This TEP proposes per-account lifecycle and metadata expressed in
-`accounts.toml`, *not* as journal directives. Tackler cannot reliably attach
-directives to the txn stream because txn filters can drop them out of view;
-per-account metadata has to be configuration.
+`accounts.toml`, *not* as journal directives. Semantically Tackler cannot
+attach temporal directives to the txn stream because txn filters can drop them
+out of view.
 
 
 == Summary of Changes
@@ -48,25 +47,19 @@ per-account metadata has to be configuration.
 This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
 ====
 
-A new `+[[account]]+` array-of-tables key is added to `accounts.toml`. It
-coexists with the existing flat `accounts = [...]` list. Each `+[[account]]+`
-block declares a single (account-name, period) with optional metadata.
+Support for mixed-type arrays is added to `accounts.toml`. Each `accounts`
+item declares either a plain old account name (`String`) or an Account Specification.
 
 Sub-changes:
 
-* New `+[[account]]+` array-of-tables key in `accounts.toml`
-* Per-account `open` and `close` dates (half-open interval `[open, close)`)
-* Periods via repeated entries (multiple disjoint `+[[account]]+` blocks for
-  the same name)
-* New per-account `kind` attribute (`"debit"` | `"credit"`), cascading down
-  the account tree
-* Reserved `# kind: <value>` posting-tag syntax for future corrective-entry
-  override (semantics specified in a later TEP)
+* New `AccountSpec` element type for `accounts` arrays in `accounts.toml`
+** Per-account `open` and `close` dates (half-open interval `[open, close)`)
+** Per-account array of open-close pairs (spans)
 * Strict-mode enforcement of period membership; relaxed mode unchanged
-* Reports and exports respect declared periods
+* TBD: Reports and exports respect declared periods
 
 
-=== Sub-change 1: `+[[account]]+` array-of-tables and storage shape
+=== Sub-change 1: mixed-type array of `accounts` and storage shape
 
 [WARNING]
 ====
@@ -75,56 +68,33 @@ This section must be clean up, especially ref https://github.com/tackler-ng/tack
 
 Open design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
 
-`accounts.toml` accepts two coexisting top-level keys:
-
-`accounts = ["Foo", "Bar", ...]`::
-The existing flat list, unchanged. Means "always-open, no metadata."
-Continues to be the right shape for users who do not need lifecycle or
-`kind` data. No deprecation.
-
-`+[[account]]+`::
-New in TEP-1017. An array of tables, one block per (account-name, period).
-Each block declares one account name with its optional metadata.
-
-Both keys may appear in the same file. An account name appears in *at most
-one* of them — see <<validation>>.
-
 .accounts.toml example
 ----
-# legacy / shorthand — unchanged behavior
+
 accounts = [
+    # shorthand: unchanged behavior, always open
     "Income:Salary",
-    "Expenses:Food",
+    {
+        # Account Specification: account with single validity period
+        name = "Income:Salary:Acme·Inc",
+        open = 2025-01-01,  # Optional, if missing open from the beginning of time
+        close = 2026-01-01, # Optional, if missing, open 'til the end of time
+    },
+    {
+        # Account Specification: both open and close are optional, account is always open
+        name = "Expenses:Food",
+    },
+    {
+        # Account Specification: sporadic open with defined time spans
+        name = "Expenses:Tax",
+        spans = [
+            # both open and close must be defined
+            { open = 2025-01-01, close = 2025-01-31 },
+            { open = 2026-01-31, close = 2026-01-31 },
+        ],
+    },
 ]
-
-# advanced — close an old account, with kind
-[[account]]
-name  = "Assets:Banks:OldBank:Savings"
-open  = 2018-03-01
-close = 2023-12-31
-kind  = "debit"
-
-# advanced — sporadic open (one block per period, same name)
-# kind must agree across periods (see Sub-change 3)
-[[account]]
-name  = "Assets:HolidayCash"
-open  = 2024-12-01
-close = 2025-01-15
-kind  = "debit"
-
-[[account]]
-name  = "Assets:HolidayCash"
-open  = 2025-12-01
-close = 2026-01-15
-kind  = "debit"
 ----
-
-This is the first use of TOML array-of-tables in Tackler config; existing
-`accounts.toml`, `commodities.toml`, `tags.toml` only use flat
-`key = [...]` lists. The two-key shape (`accounts` + `+[[account]]+`)
-preserves that shape for the simple case and reaches for array-of-tables
-only when per-account metadata is needed.
-
 
 === Sub-change 2: `open` and `close` timestamps
 
@@ -135,63 +105,50 @@ timestamp < `open` are rejected in strict mode.
 
 `close` (optional, TOML date or datetime)::
 First *invalid* timestamp for postings to this account — postings at
-or after this timestamp are rejected. Implicit value: `+infinity`.
+or after this timestamp are rejected. Implicit value: `+infinity`. +
++
 Convention is to precede a `close` with a zero-balance assertion,
 however, tackler doesn't support balance assertions at the moment.
+ref: ODQ: https://github.com/tackler-ng/tackler/issues/158[GH158]
 
 Together they define a half-open interval `[open, close)`. Both fields
 accept the same temporal forms Tackler already accepts in txn headers:
 
 * **Bare date** (`2023-12-31`) — normalized the same way a bare date
-  is normalized in a txn header (default configuration value is midnight UTC).
+  is normalized in a txn header (configured time and timezone are used).
   The expected shape for the common case: an account closes "on a day."
 * **Local datetime** (`2023-12-31T14:30:00`) — likewise normalized
-  the same as in a txn header. Use when sub-day precision matters
-  (system cutovers, exchange go-live times, audit-grade events).
+  the same as in a txn header (configured timezone is used).
+  Use when sub-day precision matters  (system cutovers,
+  exchange go-live times, audit-grade events).
 * **Offset datetime** (`2023-12-31T14:30:00+02:00` or `…Z`) — used
   as-is.
 
-The point is to reuse the existing timestamp parser and conventions
-verbatim, so an `open` / `close` value behaves identically to a txn
-timestamp written the same way. No new timezone-resolution rules to
-specify. It also keeps forward compatibility: writing
-`close = 2023-12-31` today and later deciding sub-day precision is
-needed costs nothing — just rewrite that single line.
+The existing timestamp conventions are reused, so an `open` / `close` value
+behaves identically to a txn timestamp written the same way.
 
-To support the above, it might be needed to define these time datatypes as string,
-so that they could be parsed with existing machinery, if it get's too complicated
-to support above natively with TOML.
-link:https://github.com/tackler-ng/tackler/blob/7fc0966274f998bb087f7087279a60d3bd178f04/tackler-core/src/parser/parts/timestamp.rs#L141[tackler-core / parser / parts / timestamp.rs: parse_timestamp]
+It also keeps forward compatibility: writing `close = 2023-12-31` today
+and later changing systems sub-day precision cut-off time (configured default time) is no-cost operation, just single setting has to be changed.
 
-
-Beancount's mental model carries over: `close` is the moment the
-account became inactive; postings at or after that moment are no
-longer accepted.
+Above can be supported natively with TOML datetime type.
 
 
 === Sub-change 3: Periods via repeated entries
 
-Multiple `+[[account]]+` blocks with the same `name` are *allowed* and
+A spans array of open-close pairs is  *allowed* and
 represent disjoint periods for that account. A posting to `name` is valid
 iff its date falls in some declared period.
 
-This single mechanism subsumes:
-
-* one-shot retirement (one block with `close` set)
+This single mechanism supports following use cases:
 * sporadic opens, e.g. seasonal accounts (N blocks with gaps)
 * close-then-reopen (two blocks with a gap)
 
-No nested `periods = [...]` syntax is needed. Implementation: group
-blocks by name, sort by `open`, validate non-overlap, lookup is binary
-search by date.
-
-`open` and `close` naturally vary per block. `kind` (Sub-change 4) must
-be identical across all periods of the same name — changing the kind
-mid-life would mean it is effectively a different account; the user
-should choose a different name.
+No nested spans are needed. Implementation: sort by `open` and validate non-overlap. Lookup could be optimized as binary search by date.
 
 
 === Sub-change 4: `kind` attribute
+
+This change is postponed for separate TEP.
 
 `kind` (optional, `"debit"` | `"credit"`)::
 The account's natural balance side. Optional everywhere; if unset, no
@@ -225,7 +182,7 @@ syntax for that purpose but does *not* specify enforcement semantics
 Architecture Decision Records::
 Reserve txn metadata # kind: for latter use, with possible value # kind: revert. +
 +
-A use case for that would corrective transaction, when account kindness is enforced (credit, debit). +
+A use case for that would be a corrective transaction, when account kindness is enforced (credit, debit). +
 +
 ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
@@ -239,25 +196,27 @@ not parsed as valid input by this TEP.
 
 === CLI Changes
 
+[WARNING]
+====
+This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
+====
+
 Reports and exports gain an opt-in flag to include accounts outside their
 declared active periods (default behavior is to filter them):
 
 * [ ] `--include-closed` (or equivalent on the existing accounts-filter
   CLI surface — to be confirmed during implementation)
 
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/159
-
 === CONF Changes
 
-* [ ] New `+[[account]]+` array-of-tables key in `accounts.toml`
-  (Sub-change 1)
-* [ ] Per-block fields: `name` (required, string), `open` (optional,
-  TOML date or datetime), `close` (optional, TOML date or datetime),
-  `kind` (optional, `"debit"` \| `"credit"`)
-* [ ] Coexistence rules with the existing `accounts = [...]` flat list
-  (see <<validation>>)
+* [ ] mixed-type array support
+* [ ] `AccountSpec`
+** [ ] `name` required, string),
+** [ ] `open` optional, TOML date or datetime),
+** [ ] `close` optional, TOML date or datetime), (see <<validation>>)
+** [ ] `spans` optional, arrays of `open`-`close` pairs
 
-Open Design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
+ADR:: https://github.com/tackler-ng/tackler/issues/158[GH 158]
 
 
 === Filtering Changes
@@ -266,42 +225,31 @@ No changes to the filtering machinery.
 
 
 [#validation]
-=== Validation rules (config load time)
+=== Validation rules
 
-[WARNING]
-====
-This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
-====
+This rules are enforced once, at config load time.
 
-* Same name in `accounts = [...]` AND in any `+[[account]]+` block →
-  error. The flat form means "always-open, no constraints"; mixing with
-  a windowed entry is ambiguous.
-* Same name in two `accounts = [...]` entries → error (already implicit
-  today).
-* Multiple `+[[account]]+` blocks with the same name and *overlapping*
-  periods → error.
-* Multiple `+[[account]]+` blocks with the same name and *disjoint*
-  periods → allowed (this is the periods feature, Sub-change 3).
-* Multiple `+[[account]]+` blocks with the same name but *disagreeing
-  `kind`* → error (Sub-change 4).
-* `open >= close` within a block → error.
-* `kind` value not in {`"debit"`, `"credit"`} → error.
+* Same name in two `accounts = [...]` entries -> error
+* Multiple `spans` items with *overlapping* periods -> error
+* Multiple `spans` items with *disjoint* periods -> allowed
+  This is the periods feature, Sub-change 3.
+* Any `open >= close` pair -> error.
 
 Architecture Decision Records::
+ADR: https://github.com/tackler-ng/tackler/issues/158[GH #158] +
 ADR: https://github.com/tackler-ng/tackler/issues/161[GH #161] +
 ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
 === Machinery
 
+* [ ] Change plain name to AccountSpec for `Accounts`
 * [ ] Extend `Accounts` config struct (currently
-  `tackler-core/src/config/items.rs`) to hold both the flat list and a
-  `Vec<AccountSpec>` parsed from `+[[account]]+` blocks.
-* [ ] TOML deserialization for `+[[account]]+` in
+  `tackler-core/src/config/items.rs`) to hold  and a
+  `Vec<AccountSpec>`
+* [ ] TOML deserialization for mixed type arrays in
   `tackler-core/src/config/raw_items.rs`.
-* [ ] `AccountTrees` (in `tackler-core/src/kernel/settings.rs`) gains a
-  by-name → sorted-periods map and a by-name → `kind` resolution.
-* [ ] `get_or_create_txn_account()` checks the txn date against the
-  periods when strict mode is on.
+* [ ] Reference to AccountSpec into `AccountTreeNode`
+* [ ] New `is_open` method to check if account is open or not
 * [ ] Synthetic parent-account behavior unchanged.
 
 
@@ -329,9 +277,7 @@ JSON report output unless a future TEP adds them.
 
 ==== New Dependencies
 
-None anticipated. TOML array-of-tables is already supported by the
-existing TOML deserializer.
-
+None anticipated. Mixed type arrays already supported by TOML.
 
 === Reporting
 
@@ -405,17 +351,15 @@ ADR: https://github.com/tackler-ng/tackler/issues/160[GH #160]
 * [ ] User docs
 ** [ ] User Manual
 *** [ ] cli-arguments
-**** [ ] `--include-closed` (or equivalent)
+**** [ ] `--include-closed` (or equivalent) ref: ODQ: https://github.com/tackler-ng/tackler/issues/159[GH #159]
 ** [ ] tackler.toml — none
-** [ ] accounts.toml — document `+[[account]]+` shape, fields, validation,
-       periods, coexistence with flat `accounts = [...]`
+** [ ] accounts.toml — document `AccountSpec` shape, fields, validation, spans
 ** [ ] commodities.toml — none
 ** [ ] tags.toml — none
-** [ ] examples — add an `accounts.toml` example showing flat +
-       `+[[account]]+` coexistence and a periods example
+** [ ] examples — add an `accounts.toml` example showing flat
+       `AccountSpecs` coexistence and a spans example
 * [ ] Developer docs
-** [ ] Note that `+[[account]]+` is the first array-of-tables config in
-       Tackler
+** [ ] Note this is first use of mixed-arrays in config systems
 
 
 === Future Plans and Postponed (PP) Features
@@ -476,23 +420,20 @@ Normal, ok-case tests to validate functionality:
 
 Various error cases:
 
-* [ ] e: same name in `accounts = [...]` and `+[[account]]+`
-* [ ] e: same name in two `accounts = [...]` entries
-* [ ] e: two `+[[account]]+` blocks for same name with overlapping
-  periods
-* [ ] e: two `+[[account]]+` blocks for same name with disagreeing `kind`
-* [ ] e: `open >= close` within a block
+* [ ] e: same name as plain entry and as `AccountSpec` entry
+* [ ] e: two `spans` items  with overlapping periods
+* [ ] e: `open >= close` within a span
 * [ ] e: `kind` value not in {`"debit"`, `"credit"`}
 * [ ] e: posting with date outside all declared periods (strict mode)
 
 * [ ] e: Additional tests based on (ODQ): https://github.com/tackler-ng/tackler/issues/161
-* [ ] e: if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
+* [ ] e: if `open` / `close` time format parsing is done with TOML + custom logic, then this must be tested
 
 ==== Perf
 
-* [ ] period lookup is per posting; binary search over per-account
-  sorted periods should be negligible. Measure on a large journal to
-  confirm no regression.
+* [ ] period lookup is per posting; if needed, this could be implemented as
+      binary search over per-account sorted periods should be negligible.
+      Measure on a large journal to confirm no regression.
 
 
 ==== Feature and Test Coverage Tracking
