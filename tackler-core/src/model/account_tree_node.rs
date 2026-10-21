@@ -177,7 +177,10 @@ impl AccountTreeNode {
         }
         Ok(Self::unchecked_from(account))
     }
-    /// Create a parent ATN by child ATN
+    /// Create a virtual parent ATN by child ATN
+    ///
+    /// This is supposed to be used only in case
+    /// the parent is missing from Chart of Accounts
     ///
     /// Child can't be a root account
     ///
@@ -193,13 +196,12 @@ impl AccountTreeNode {
         assert_eq!(depth, child.depth - 1);
 
         let parent = parts[..depth - 1].join(":");
-        let account = child.parent.clone();
 
         Ok(AccountTreeNode {
             depth,
             parent,
             parts,
-            account: Arc::new(Account::from(&account)),
+            account: Arc::new(Account::from(&child.parent)),
         })
     }
 
