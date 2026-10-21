@@ -48,7 +48,7 @@ pub(crate) fn toml_datetime_to_zoned(
 ) -> Result<Zoned, tackler::Error> {
     let Some(d) = dt.date else {
         let msg = format!(
-            "\nTOML datetime must have date component. Partial time part of Datetime is: {dt}"
+            "\nTOML datetime must have date component. Partial time part of datetime is: {dt}"
         );
         return Err(msg.into());
     };

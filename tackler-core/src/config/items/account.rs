@@ -143,7 +143,8 @@ mod tests {
 
     #[test]
     // test: 153b0817-7c48-4050-980f-7a39cf68ced3
-    // desc: test valid AccountSpec combinations
+    // desc: AccountSpec combinations
+    #[allow(clippy::too_many_lines)]
     fn test_ok_conf() {
         let confs = [
             (
@@ -205,6 +206,20 @@ mod tests {
             (
                 r#"
                 name = "a:b:c"
+                spans = [
+                    { open = 2025-01-01, close = 2026-01-01 },
+                    { open = 2026-01-01, close = 2027-01-01 },
+                ]
+                "#,
+                vec![
+                    ("2024-12-31T00:00:00[UTC]", false),
+                    ("2026-01-01T00:00:00[UTC]", true),
+                    ("2027-01-01T00:00:00[UTC]", false),
+                ],
+            ),
+            (
+                r#"
+                name = "a:b:c"
                 open = 2026-10-20 12:13:14.999
                 close = 2026-10-21
                 "#,
@@ -227,15 +242,100 @@ mod tests {
                 ],
             ),
         ];
-        for conf in confs {
+        for (count, conf) in (1..).zip(confs) {
             let acc_spec: AccountSpec = toml::from_str(conf.0).unwrap(/*:test:*/);
             let res = Account::try_with(acc_spec, &Timestamp::default());
 
             let acc = res.unwrap(/*:test:*/);
 
-            for span in &conf.1 {
+            for (span_number, span) in (1..).zip(&conf.1) {
                 let ts: Zoned = span.0.parse().unwrap(/*:test:*/);
-                assert_eq!(acc.is_open(&ts), span.1);
+                assert_eq!(
+                    acc.is_open(&ts),
+                    span.1,
+                    "\nOffending test number: {count}, span number: {span_number}\n",
+                );
+            }
+        }
+    }
+    #[test]
+    // test: 444f381b-7d23-420b-a7ab-614f1b9075f0
+    // desc: AccountSpecs with logic errors
+    #[allow(clippy::too_many_lines)]
+    fn test_err_conf() {
+        let confs = [
+            (
+                r#"
+                name = "a:b:c"
+                open = 2026-10-21
+                close = 12:13:14.999
+                "#,
+                "datetime",
+            ),
+            (
+                r#"
+                name = "a:b:c"
+                open = 2026-10-21
+                close = 2026-10-20
+                "#,
+                "inverted",
+            ),
+            (
+                r#"
+                name = "a:b:c"
+                spans = [
+                    { open = 2024-01-01, close = 2024-02-01 },
+                    { open = 2025-02-01, close = 2025-01-01 },
+                    { open = 2026-01-01, close = 2026-02-01 },
+                ]
+                "#,
+                "inverted",
+            ),
+            (
+                r#"
+                name = "a:b:c"
+                spans = [
+                    { open = 2024-01-01, close = 2024-02-01 },
+                    { open = 2026-01-01, close = 2026-02-01 },
+                    { open = 2025-01-01, close = 2026-02-01 },
+                ]
+                "#,
+                "overlapping",
+            ),
+            (
+                r#"
+                name = "a:b:c"
+                spans = [
+                    { open = 2024-01-01, close = 2024-02-01 },
+                    { open = 2026-01-01, close = 2026-02-01 },
+                    { open = 2024-01-01, close = 2025-02-01 },
+                ]
+                "#,
+                "overlapping",
+            ),
+            (
+                r#"
+                name = "a:b:c"
+                spans = [
+                    { open = 2025-01-01, close = 2025-02-01 },
+                    { open = 2026-01-01, close = 2026-02-01 },
+                    { open = 2026-01-02, close = 2026-01-03 },
+                ]
+                "#,
+                "overlapping",
+            ),
+        ];
+        for (count, conf) in (1..).zip(confs) {
+            let acc_spec: AccountSpec = toml::from_str(conf.0).unwrap(/*:test:*/);
+            let res = Account::try_with(acc_spec, &Timestamp::default());
+
+            if let Err(e) = res {
+                assert!(
+                    e.to_string().contains(conf.1),
+                    "\nOffending test number: {count}\n",
+                );
+            } else {
+                panic!("Test case should be Err");
             }
         }
     }

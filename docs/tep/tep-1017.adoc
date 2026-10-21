@@ -209,15 +209,15 @@ declared active periods (default behavior is to filter them):
 
 === CONF Changes
 
-* [ ] mixed-type array support
-* [ ] `AccountSpec`
-** [ ] `name` required, string),
-** [ ] `open` optional, TOML date or datetime),
-** [ ] `close` optional, TOML date or datetime), (see <<validation>>)
-** [ ] `spans` optional, arrays of `open`-`close` pairs
+* [x] mixed-type array support
+* [x] `AccountSpec`
+** [x] `name` required, string),
+** [x] time span, see <<validation>>
+*** [x] `open` optional, TOML datetime (e.g. date, datetime or offset)
+*** [x] `close` optional, TOML datetime (e.g. date, datetime or offset)
+*** [x] `spans` optional, arrays of `open`-`close` pairs
 
 ADR:: https://github.com/tackler-ng/tackler/issues/158[GH 158]
-
 
 === Filtering Changes
 
@@ -242,15 +242,16 @@ ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
 === Machinery
 
-* [ ] Change plain name to AccountSpec for `Accounts`
-* [ ] Extend `Accounts` config struct (currently
+* [x] Change plain name to AccountSpec for `Accounts`
+* [x] Extend `Accounts` config struct (currently
   `tackler-core/src/config/items.rs`) to hold  and a
   `Vec<AccountSpec>`
-* [ ] TOML deserialization for mixed type arrays in
+* [x] TOML deserialization for mixed type arrays in
   `tackler-core/src/config/raw_items.rs`.
-* [ ] Reference to AccountSpec into `AccountTreeNode`
-* [ ] New `is_open` method to check if account is open or not
+* [x] Reference to AccountSpec into `AccountTreeNode`
+* [x] New `is_open` method to check if account is open or not
 * [ ] Synthetic parent-account behavior unchanged.
+** [ ] Populate AccountSpec open-close based on parents, if missing for node
 
 
 ==== API Changes
@@ -337,7 +338,7 @@ regardless of period.
 ADR: https://github.com/tackler-ng/tackler/issues/160[GH #160]
 
 * [ ] Round-trip: emit a flat string for accounts with no metadata, an
-  `+[[account]]+` block (or N blocks for periodic accounts) for everything
+  `AccountSpec` block (or N blocks for periodic accounts) for everything
   else. No new flag — output shape is determined by the input data.
 
 
@@ -378,7 +379,7 @@ Booking method (Beancount-style FIFO / LIFO / STRICT)::
 Defer until lots / cost-basis exist in Tackler.
 
 Cron-style sporadic period syntax::
-Repeated `+[[account]]+` blocks already cover sporadic / seasonal
+Repeated `AccountSpec` blocks already cover sporadic / seasonal
 accounts with explicit dates. If verbosity becomes a real complaint
 later, add sugar (`every-q1 = true` or similar) then. The repeated-
 entries mechanism is the underlying model regardless.
@@ -393,41 +394,42 @@ This section must be clean up, especially ref https://github.com/tackler-ng/tack
 
 Normal, ok-case tests to validate functionality:
 
-* [ ] flat `accounts = [...]` only, unchanged behavior
-* [ ] single `+[[account]]+` block with no metadata, equivalent to flat
-* [ ] `+[[account]]+` with `open` (date): posting at `open` accepted,
+* [x] flat `accounts = [...]` only, unchanged behavior (existing tests)
+* [x] mixed-mode arrays (flat and `AccountSpec` for different accounts)
+* [x] single `AccountSpec` block with no metadata, equivalent to flat
+* [x] `AccountSpec` with `open` (date): posting at `open` accepted,
   posting one moment earlier rejected (strict)
-* [ ] `+[[account]]+` with `close` (date): posting one moment before
+* [x] `` with `close` (date): posting one moment before
   `close` accepted, posting at `close` rejected (strict)
-* [ ] `+[[account]]+` with both `open` and `close`: half-open `[open,
+* [x] `AccountSpec` with both `open` and `close`: half-open `[open,
   close)` membership
-* [ ] `+[[account]]+` with datetime `open` / `close`: sub-day boundary
+* [x] `AccountSpec` with datetime `open` / `close`: sub-day boundary
   semantics
-* [ ] `+[[account]]+` with bare-date `open` / `close` is normalized
+* [x] `AccountSpec` with bare-date `open` / `close` is normalized
   identically to a bare-date txn timestamp
-* [ ] `+[[account]]+` with offset-datetime `open` / `close` is used
+* [x] `AccountSpec` with offset-datetime `open` / `close` is used
   as-is
-* [ ] multi-period (two `+[[account]]+` blocks for same name): posting in
+* [x] multi-period (two `AccountSpec` blocks for same name): posting in
   either window accepted, posting in the gap rejected (strict)
-* [ ] `kind` cascade: posting to `Assets:Sub:Sub` resolves `kind` from
-  declared `Assets`
-* [ ] `kind` override on subaccount overrides ancestor's `kind`
-* [ ] flat list and `+[[account]]+` block coexist for different names
-* [ ] relaxed mode ignores all period and `kind` constraints
-* [ ] if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
+* [x] if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
+* [ ] Additional Ok tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
+* [ ] Acounts export round trip
+** [ ] flat and AccountSpec
+** [ ] AccountSpec: open = None or close = None
+** [ ] AccountSpec: spans
+
 
 ==== Errors
 
 Various error cases:
 
 * [ ] e: same name as plain entry and as `AccountSpec` entry
-* [ ] e: two `spans` items  with overlapping periods
-* [ ] e: `open >= close` within a span
-* [ ] e: `kind` value not in {`"debit"`, `"credit"`}
-* [ ] e: posting with date outside all declared periods (strict mode)
+* [x] e: two `spans` items  with overlapping periods
+* [x] e: `open >= close` within a span
+* [x] e: posting with date outside all declared periods (strict mode)
 
-* [ ] e: Additional tests based on (ODQ): https://github.com/tackler-ng/tackler/issues/161
-* [ ] e: if `open` / `close` time format parsing is done with TOML + custom logic, then this must be tested
+* [ ] e: Additional Err tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
+* [x] e: if `open` / `close` time format parsing is done with TOML + custom logic, then this must be tested
 
 ==== Perf
 
