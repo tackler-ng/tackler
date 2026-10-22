@@ -3,19 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::overlaps::{InputOverlap, OverlapConfig, StorageOverlap};
-use crate::config::raw_items::AccountSpec;
 use crate::config::{
-    Account, AccountSelectors, Config, Export, ExportType, Kernel, PriceLookupType, Report,
-    ReportType, StorageType,
+    AccountSelectors, Config, Export, ExportType, Kernel, PriceLookupType, Report, ReportType,
+    StorageType,
 };
 use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
-use crate::model::TxnAccount;
+use crate::kernel::state::State;
+use crate::kernel::state::account_tree::{AccountTree, Commodities, Tags};
 use crate::model::price_entry::PriceDb;
-use crate::model::{AccountTreeNode, Commodity};
+use crate::model::{Commodity, TxnAccount};
 use crate::{config, parser, tackler};
 use jiff::Zoned;
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tackler_api::txn_header::Tag;
@@ -61,125 +60,13 @@ impl Default for InputSettings {
 }
 
 #[derive(Debug, Default)]
-struct Commodities {
-    names: HashMap<String, Arc<Commodity>>,
-    permit_empty_commodity: bool,
-}
-
-impl Commodities {
-    fn default_empty_ok() -> Self {
-        Commodities {
-            names: HashMap::new(),
-            permit_empty_commodity: true,
-        }
-    }
-
-    fn from(cfg: &Config) -> Result<Commodities, tackler::Error> {
-        let cfg_comm = &cfg.transaction.commodities;
-        let permit_empty_commodity = cfg_comm.permit_empty_commodity.unwrap_or(false);
-
-        let comms =
-            cfg_comm.names.iter().try_fold(
-                HashMap::new(),
-                |mut chm, comm| match Commodity::from(comm) {
-                    Ok(c) => {
-                        chm.insert(comm.into(), Arc::new(c));
-                        Ok(chm)
-                    }
-                    Err(e) => {
-                        let msg = format!("Invalid Chart of Commodities: {e}");
-                        Err(msg)
-                    }
-                },
-            )?;
-        Ok(Commodities {
-            names: comms,
-            permit_empty_commodity,
-        })
-    }
-}
-
-#[derive(Debug, Default)]
-struct AccountTrees {
-    defined_accounts: HashMap<String, Arc<AccountTreeNode>>,
-    synthetic_parents: HashMap<String, Arc<AccountTreeNode>>,
-}
-
-impl AccountTrees {
-    fn build_account_tree(
-        target_account_tree: &mut HashMap<String, Arc<AccountTreeNode>>,
-        atn: &Arc<AccountTreeNode>,
-        other_account_tree: Option<&HashMap<String, Arc<AccountTreeNode>>>,
-    ) -> Result<(), tackler::Error> {
-        let parent = atn.parent.as_str();
-        let has_parent = other_account_tree.is_some_and(|a| a.contains_key(parent))
-            || target_account_tree.contains_key(parent);
-
-        if has_parent || atn.is_root() {
-            // this breaks recursion
-            Ok(())
-        } else {
-            let parent_atn = Arc::new(AccountTreeNode::make_parent(atn)?);
-            target_account_tree.insert(parent.to_string(), parent_atn.clone());
-
-            Self::build_account_tree(target_account_tree, &parent_atn, other_account_tree)
-        }
-    }
-
-    fn from(
-        account_names: &[Arc<Account>],
-        strict_mode: bool,
-    ) -> Result<AccountTrees, tackler::Error> {
-        let mut defined_accounts =
-            account_names
-                .iter()
-                .try_fold(
-                    HashMap::new(),
-                    |mut accs, account| match AccountTreeNode::try_from(account) {
-                        Ok(atn) => {
-                            accs.insert(account.spec.name.clone(), Arc::new(atn));
-                            Ok(accs)
-                        }
-                        Err(e) => {
-                            let msg = format!("Invalid Chart of Accounts: {e}");
-                            Err(msg)
-                        }
-                    },
-                )?;
-
-        let synthetic_parents = if strict_mode {
-            // Synthetic Account Parents are only needed in strict mode
-            let mut sap = HashMap::new();
-            for atn_entry in &defined_accounts {
-                if !&defined_accounts.contains_key(atn_entry.1.parent.as_str()) {
-                    // Parent is missing -> Let's build synthetic tree
-                    let (_, atn) = atn_entry;
-                    Self::build_account_tree(&mut sap, atn, Some(&defined_accounts))?;
-                }
-            }
-            sap
-        } else {
-            let a: Vec<Arc<AccountTreeNode>> = defined_accounts.values().cloned().collect();
-            for atn in a {
-                Self::build_account_tree(&mut defined_accounts, &atn, None)?;
-            }
-            HashMap::new()
-        };
-        Ok(AccountTrees {
-            defined_accounts,
-            synthetic_parents,
-        })
-    }
-}
-
-#[derive(Debug, Default)]
 pub struct Price {
     // todo: fix visibility
     pub price_db: PriceDb,
     pub lookup_type: PriceLookupType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Settings {
     pub(crate) audit_mode: bool,
     pub(crate) report: Report,
@@ -191,28 +78,36 @@ pub struct Settings {
     pub price: Price,
     price_lookup: PriceLookup,
     global_acc_sel: Option<AccountSelectors>,
-    accounts: AccountTrees,
-    commodities: Commodities,
-    tags: HashMap<String, Arc<Tag>>,
+    state: State,
 }
 
-impl Default for Settings {
-    fn default() -> Self {
-        Settings {
-            strict_mode: false,
-            audit_mode: false,
-            inverted: false,
-            input_config: InputSettings::default(),
-            report: Report::default(),
-            export: Export::default(),
-            kernel: Kernel::default(),
-            price: Price::default(),
-            price_lookup: PriceLookup::default(),
-            global_acc_sel: None,
-            accounts: AccountTrees::default(),
-            commodities: Commodities::default_empty_ok(),
-            tags: HashMap::new(),
-        }
+impl Settings {
+    #[inline]
+    pub(crate) fn get_txn_account(
+        &self,
+        name: &str,
+        commodity: &Arc<Commodity>,
+    ) -> Result<TxnAccount, tackler::Error> {
+        self.state.get_txn_account(name, commodity)
+    }
+    #[inline]
+    pub(crate) fn get_or_create_txn_account(
+        &mut self,
+        name: &str,
+        commodity: &Arc<Commodity>,
+    ) -> Result<TxnAccount, tackler::Error> {
+        self.state.get_or_create_txn_account(name, commodity)
+    }
+    #[inline]
+    pub(crate) fn get_or_create_tag(&mut self, name: &str) -> Result<Arc<Tag>, tackler::Error> {
+        self.state.get_or_create_tag(name)
+    }
+    #[inline]
+    pub(crate) fn get_or_create_commodity(
+        &mut self,
+        name: Option<&str>,
+    ) -> Result<Arc<Commodity>, tackler::Error> {
+        self.state.get_or_create_commodity(name)
     }
 }
 
@@ -249,7 +144,6 @@ impl Settings {
             }
             Ok(())
         }
-
         let strict_mode = overlaps.strict.mode.unwrap_or(cfg.kernel.strict);
         let audit_mode = overlaps.audit.mode.unwrap_or(cfg.kernel.audit.mode);
 
@@ -273,37 +167,27 @@ impl Settings {
 
         let db_path = overlaps.price.db_path.unwrap_or(cfg.price.db_path.clone());
 
-        let mut commodities = Commodities::from(&cfg)?;
+        let account_trees = AccountTree::from(&cfg.transaction.accounts.items, strict_mode)?;
 
-        let tags = cfg
-            .transaction
-            .tags
-            .names
-            .iter()
-            .fold(HashMap::new(), |mut tags, tag| {
-                let t = Tag::from(tag.clone());
-                tags.insert(tag.into(), Arc::new(t));
-                tags
-            });
+        let commodities = Commodities::from(&cfg)?;
 
+        let tags = Tags::from(&cfg)?;
+
+        let mut state = State {
+            strict_mode,
+            time_defaults: cfg.kernel.timestamp.clone(),
+            accounts: account_trees,
+            commodities,
+            tags,
+        };
         let cfg_rpt_commodity = cfg
             .report
             .commodity
-            .map(|c| {
-                Self::inner_get_or_create_commodity(
-                    &mut commodities,
-                    strict_mode,
-                    Some(c.name.as_str()),
-                )
-            })
+            .map(|c| state.get_or_create_commodity(Some(c.name.as_str())))
             .transpose()?;
 
         let report_commodity = match overlaps.report.commodity {
-            Some(c) => Some(Self::inner_get_or_create_commodity(
-                &mut commodities,
-                strict_mode,
-                Some(c.as_str()),
-            )?),
+            Some(c) => Some(state.get_or_create_commodity(Some(c.as_str()))?),
             None => cfg_rpt_commodity,
         };
 
@@ -338,19 +222,16 @@ impl Settings {
                 targets: exports,
                 ..cfg.export
             },
-            accounts: AccountTrees::default(), // this is not real, see next one
-            commodities,
-            tags,
+            state,
         };
         tmp_settings.report.balance_group.group_by = group_by;
 
-        let account_trees = AccountTrees::from(&cfg.transaction.accounts.items, strict_mode)?;
-
         if strict_mode
             && tmp_settings.export.targets.contains(&ExportType::Equity)
-            && !account_trees
-                .defined_accounts
-                .contains_key(tmp_settings.export.equity.equity_account.as_str())
+            && !tmp_settings
+                .state
+                .accounts
+                .is_defined(tmp_settings.export.equity.equity_account.as_str())
         {
             let msg = "Unknown `equity.equity-account` and `strict` mode is on".to_string();
             return Err(msg.into());
@@ -396,7 +277,6 @@ impl Settings {
         Ok(Settings {
             price,
             price_lookup,
-            accounts: account_trees,
             ..tmp_settings
         })
     }
@@ -416,153 +296,6 @@ impl Settings {
 
     pub(crate) fn is_extid_unique(&self) -> bool {
         self.kernel.extid.unique
-    }
-
-    pub(crate) fn get_txn_account(
-        &self,
-        name: &str,
-        commodity: &Arc<Commodity>,
-    ) -> Result<TxnAccount, tackler::Error> {
-        let comm = self.get_commodity(commodity.name.as_str())?;
-
-        match self.accounts.defined_accounts.get(name) {
-            Some(account_tree) => Ok(TxnAccount {
-                atn: account_tree.clone(),
-                comm,
-            }),
-            None => {
-                if let Some(acc_parent) = self.accounts.synthetic_parents.get(name) {
-                    Ok(TxnAccount {
-                        atn: acc_parent.clone(),
-                        comm,
-                    })
-                } else {
-                    let msg = format!("Unknown account: '{name}'");
-                    Err(msg.into())
-                }
-            }
-        }
-    }
-
-    /// Get or create `TxnAccount` by name and commodity
-    ///
-    /// Both name and commodity must be valid name and ID
-    /// e.g. this function is supposed to be used by parser.
-    pub(crate) fn get_or_create_txn_account(
-        &mut self,
-        name: &str,
-        commodity: &Arc<Commodity>,
-    ) -> Result<TxnAccount, tackler::Error> {
-        let comm = self.get_or_create_commodity(Some(commodity.name.as_str()))?;
-
-        let atn_opt = self.accounts.defined_accounts.get(name).cloned();
-
-        let atn = if let Some(account_tree) = atn_opt {
-            TxnAccount {
-                atn: account_tree.clone(),
-                comm,
-            }
-        } else {
-            if self.strict_mode {
-                let msg = format!("Unknown account: '{name}'");
-                return Err(msg.into());
-            }
-            let account = Arc::new(Account::try_with(
-                AccountSpec::from_str(name),
-                &self.kernel.timestamp,
-            )?);
-            let atn = Arc::new(AccountTreeNode::unchecked_from(&account));
-            self.accounts
-                .defined_accounts
-                .insert(name.into(), atn.clone());
-            AccountTrees::build_account_tree(&mut self.accounts.defined_accounts, &atn, None)?;
-
-            TxnAccount { atn, comm }
-        };
-        Ok(atn)
-    }
-
-    /// # Errors
-    /// Returns reference for commodity, error if it doesn't exist
-    pub fn get_commodity(&self, name: &str) -> Result<Arc<Commodity>, tackler::Error> {
-        if let Some(comm) = self.commodities.names.get(name) {
-            Ok(comm.clone())
-        } else {
-            let msg = format!("Unknown commodity: '{name}'");
-            Err(msg.into())
-        }
-    }
-
-    /// Get or create `Commodity` by name
-    ///
-    /// The name must be a valid ID
-    /// e.g. this is function is supposed to be used by parser.
-    pub(crate) fn get_or_create_commodity(
-        &mut self,
-        name: Option<&str>,
-    ) -> Result<Arc<Commodity>, tackler::Error> {
-        Self::inner_get_or_create_commodity(&mut self.commodities, self.strict_mode, name)
-    }
-
-    fn inner_get_or_create_commodity(
-        commodities: &mut Commodities,
-        strict_mode: bool,
-        name: Option<&str>,
-    ) -> Result<Arc<Commodity>, tackler::Error> {
-        if let Some(n) = name {
-            if n.is_empty() {
-                let res = if commodities.permit_empty_commodity {
-                    if let Some(c) = commodities.names.get(n) {
-                        Ok(c.clone())
-                    } else {
-                        let comm = Arc::new(Commodity::default());
-                        commodities.names.insert(n.into(), comm.clone());
-
-                        Ok(comm)
-                    }
-                } else {
-                    let msg = "Empty commodity and 'permit-empty-commodity' is not set".to_string();
-                    Err(msg.into())
-                };
-                return res;
-            }
-            match commodities.names.get(n) {
-                Some(comm) => Ok(comm.clone()),
-                None => {
-                    if strict_mode {
-                        let msg = format!("Unknown commodity: '{n}'");
-                        Err(msg.into())
-                    } else {
-                        let comm = Arc::new(Commodity::unchecked_from(n));
-                        commodities.names.insert(n.into(), comm.clone());
-                        Ok(comm)
-                    }
-                }
-            }
-        } else {
-            let comm = Arc::new(Commodity::default());
-            Ok(comm)
-        }
-    }
-
-    pub(crate) fn get_or_create_tag(&mut self, name: &str) -> Result<Arc<Tag>, tackler::Error> {
-        if name.is_empty() {
-            let msg = "Tag name is empty string".to_string();
-            return Err(msg.into());
-        }
-        match self.tags.get(name) {
-            Some(tag) => Ok(tag.clone()),
-            None => {
-                if self.strict_mode {
-                    let msg = format!("Unknown tag: '{name}'");
-                    Err(msg.into())
-                } else {
-                    let tag = Arc::new(Tag::from(name));
-                    self.tags.insert(name.into(), tag.clone());
-                    Ok(tag)
-                }
-            }
-        }
     }
 
     #[must_use]
@@ -817,182 +550,5 @@ impl Settings {
     #[must_use]
     pub fn get_equity_ras(&self) -> AccountSelectors {
         self.get_account_selector(&self.export.equity.acc_sel)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::config::Account;
-    use crate::config::raw_items::AccountSpec;
-
-    #[test]
-    fn accounts_strict_false() {
-        let comm = Arc::new(Commodity::default());
-        let mut settings = Settings::default();
-
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-
-        assert_eq!(txntn_1.atn.depth, 3);
-        assert_eq!(txntn_1.atn.get_root(), "a");
-        assert_eq!(txntn_1.atn.parent, "a:b");
-        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_1.atn.get_leaf(), "c");
-
-        let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-
-        assert_eq!(txntn_2.atn.depth, 3);
-        assert_eq!(txntn_2.atn.get_root(), "a");
-        assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_2.atn.get_leaf(), "c");
-
-        let txntn_3 = settings.get_or_create_txn_account("a:b:b-leaf", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 4);
-
-        assert_eq!(txntn_3.atn.depth, 3);
-        assert_eq!(txntn_3.atn.get_root(), "a");
-        assert_eq!(txntn_3.atn.parent, "a:b");
-        assert_eq!(txntn_3.atn.account.spec.name, "a:b:b-leaf");
-        assert_eq!(txntn_3.atn.get_leaf(), "b-leaf");
-    }
-
-    #[test]
-    fn accounts_strict_true() {
-        let comm = Arc::new(Commodity::default());
-        let mut settings = Settings::default();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c"]
-            .into_iter()
-            .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
-            })
-            .collect();
-
-        let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
-        settings.accounts = acc_trees;
-        settings.strict_mode = true;
-
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        assert_eq!(txntn_1.atn.depth, 3);
-        assert_eq!(txntn_1.atn.get_root(), "a");
-        assert_eq!(txntn_1.atn.parent, "a:b");
-        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_1.atn.get_leaf(), "c");
-
-        let txntn_2 = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        assert_eq!(txntn_2.atn.depth, 3);
-        assert_eq!(txntn_2.atn.get_root(), "a");
-        assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_2.atn.get_leaf(), "c");
-
-        // Check that it won't create a synthetic account as real one
-        assert!(settings.get_or_create_txn_account("a:b", &comm).is_err());
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        // Check synthetic account
-        let txntn_3 = settings.get_txn_account("a:b", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        assert_eq!(txntn_3.atn.depth, 2);
-        assert_eq!(txntn_3.atn.get_root(), "a");
-        assert_eq!(txntn_3.atn.parent, "a");
-        assert_eq!(txntn_3.atn.account.spec.name, "a:b");
-        assert_eq!(txntn_3.atn.get_leaf(), "b");
-
-        // Check synthetic account
-        let txntn_4 = settings.get_txn_account("a", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 1);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 2);
-
-        assert_eq!(txntn_4.atn.depth, 1);
-        assert_eq!(txntn_4.atn.get_root(), "a");
-        assert_eq!(txntn_4.atn.parent, "");
-        assert_eq!(txntn_4.atn.account.spec.name, "a");
-        assert_eq!(txntn_4.atn.get_leaf(), "a");
-    }
-
-    #[test]
-    fn accounts_strict_true_child_first() {
-        let comm = Arc::new(Commodity::default());
-        let mut settings = Settings::default();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c", "a:b", "a"]
-            .into_iter()
-            .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
-            })
-            .collect();
-
-        let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
-        settings.accounts = acc_trees;
-        settings.strict_mode = true;
-
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-
-        let txntn_1 = settings.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
-
-        let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
-
-        let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 0);
-        assert_eq!(txntn_2.atn.account.spec.name, "a");
-    }
-
-    #[test]
-    fn accounts_strict_true_gap() {
-        let comm = Arc::new(Commodity::default());
-        let mut settings = Settings::default();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c:d", "a:b", "a"]
-            .into_iter()
-            .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &settings.kernel.timestamp).unwrap(/*:test:*/))
-            })
-            .collect();
-
-        let acc_trees = AccountTrees::from(&accounts, true).unwrap(/*:test:*/);
-        settings.accounts = acc_trees;
-        settings.strict_mode = true;
-
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-
-        // Check that it won't create a synthetic account as real one
-        assert!(settings.get_or_create_txn_account("a:b:c", &comm).is_err());
-
-        let txntn_synth = settings.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_synth.atn.account.spec.name, "a:b:c");
-
-        let txntn_2 = settings.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
-
-        let txntn_2 = settings.get_or_create_txn_account("a", &comm).unwrap(/*:test:*/);
-        assert_eq!(settings.accounts.defined_accounts.len(), 3);
-        assert_eq!(settings.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_2.atn.account.spec.name, "a");
     }
 }

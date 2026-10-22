@@ -43,7 +43,7 @@ impl Commodity {
         }
     }
 
-    pub fn unchecked_from(name: &str) -> Commodity {
+    pub(crate) fn unchecked_from(name: &str) -> Commodity {
         Commodity {
             name: name.to_string(),
         }

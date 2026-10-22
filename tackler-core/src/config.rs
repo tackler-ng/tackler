@@ -21,7 +21,7 @@ use jiff::{Zoned, tz};
 use toml::value::Offset;
 use toml::value::{Date, Datetime, Time};
 
-use crate::config::items::Timestamp;
+pub(crate) use crate::config::items::Timestamp;
 use crate::tackler;
 pub use items::NONE_VALUE;
 

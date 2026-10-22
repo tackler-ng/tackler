@@ -11,6 +11,7 @@ pub mod price_lookup;
 pub mod report_item_selector;
 pub mod report_settings;
 pub mod settings;
+pub mod state;
 
 pub use report_settings::BalanceGroupSettings;
 pub use report_settings::BalanceSettings;
