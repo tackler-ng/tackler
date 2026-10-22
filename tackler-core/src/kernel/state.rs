@@ -6,7 +6,7 @@ use crate::config::raw_items::AccountSpec;
 use crate::config::{Account, Timestamp};
 use crate::kernel::state::account_tree::{AccountTree, Commodities, Tags};
 use crate::model::{AccountTreeNode, Commodity, TxnAccount};
-use crate::tackler;
+use crate::{config, tackler};
 use std::sync::Arc;
 use tackler_api::txn_header::Tag;
 
@@ -14,11 +14,28 @@ pub(crate) mod account_tree;
 
 #[derive(Debug, Default)]
 pub(crate) struct State {
-    pub(crate) strict_mode: bool,
-    pub(crate) time_defaults: Timestamp,
     pub(crate) accounts: AccountTree,
     pub(crate) commodities: Commodities,
     pub(crate) tags: Tags,
+    pub(crate) strict_mode: bool,
+    pub(crate) time_defaults: Timestamp,
+}
+impl State {
+    pub(crate) fn try_from(
+        acc_spec: &config::Accounts,
+        comm_spec: &config::Commodities,
+        tags_spec: &config::Tags,
+        strict_mode: bool,
+        time_def: &config::Timestamp,
+    ) -> Result<State, tackler::Error> {
+        Ok(State {
+            accounts: AccountTree::from(&acc_spec.items, strict_mode)?,
+            commodities: Commodities::from(comm_spec)?,
+            tags: Tags::from(tags_spec)?,
+            strict_mode,
+            time_defaults: time_def.clone(),
+        })
+    }
 }
 
 impl State {

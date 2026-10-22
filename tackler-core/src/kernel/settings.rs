@@ -10,7 +10,6 @@ use crate::config::{
 use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::kernel::state::State;
-use crate::kernel::state::account_tree::{AccountTree, Commodities, Tags};
 use crate::model::price_entry::PriceDb;
 use crate::model::{Commodity, TxnAccount};
 use crate::{config, parser, tackler};
@@ -167,19 +166,14 @@ impl Settings {
 
         let db_path = overlaps.price.db_path.unwrap_or(cfg.price.db_path.clone());
 
-        let account_trees = AccountTree::from(&cfg.transaction.accounts.items, strict_mode)?;
-
-        let commodities = Commodities::from(&cfg)?;
-
-        let tags = Tags::from(&cfg)?;
-
-        let mut state = State {
+        let mut state = State::try_from(
+            &cfg.transaction.accounts,
+            &cfg.transaction.commodities,
+            &cfg.transaction.tags,
             strict_mode,
-            time_defaults: cfg.kernel.timestamp.clone(),
-            accounts: account_trees,
-            commodities,
-            tags,
-        };
+            &cfg.kernel.timestamp,
+        )?;
+
         let cfg_rpt_commodity = cfg
             .report
             .commodity

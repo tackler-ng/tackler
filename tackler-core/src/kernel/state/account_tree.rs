@@ -2,9 +2,9 @@
  * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::{Account, Config};
+use crate::config::Account;
 use crate::model::{AccountTreeNode, Commodity};
-use crate::tackler;
+use crate::{config, tackler};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tackler_api::txn_header::Tag;
@@ -16,17 +16,12 @@ pub(crate) struct Tags {
 
 impl Tags {
     #[allow(clippy::unnecessary_wraps)]
-    pub(crate) fn from(cfg: &Config) -> Result<Tags, tackler::Error> {
-        let names = cfg
-            .transaction
-            .tags
-            .names
-            .iter()
-            .fold(HashMap::new(), |mut tags, tag| {
-                let t = Tag::from(tag.clone());
-                tags.insert(tag.into(), Arc::new(t));
-                tags
-            });
+    pub(crate) fn from(cfg_tags: &config::Tags) -> Result<Tags, tackler::Error> {
+        let names = cfg_tags.names.iter().fold(HashMap::new(), |mut tags, tag| {
+            let t = Tag::from(tag.clone());
+            tags.insert(tag.into(), Arc::new(t));
+            tags
+        });
         Ok(Tags { names })
     }
 }
@@ -38,8 +33,7 @@ pub(crate) struct Commodities {
 }
 
 impl Commodities {
-    pub(crate) fn from(cfg: &Config) -> Result<Commodities, tackler::Error> {
-        let cfg_comm = &cfg.transaction.commodities;
+    pub(crate) fn from(cfg_comm: &config::Commodities) -> Result<Commodities, tackler::Error> {
         let mandatory_commodity = !cfg_comm.permit_empty_commodity.unwrap_or(false);
 
         let comms =
