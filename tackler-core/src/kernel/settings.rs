@@ -77,7 +77,7 @@ pub struct Settings {
     pub price: Price,
     price_lookup: PriceLookup,
     global_acc_sel: Option<AccountSelectors>,
-    state: State,
+    pub(crate) state: State,
 }
 
 impl Settings {

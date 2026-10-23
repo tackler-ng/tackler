@@ -29,7 +29,7 @@ impl State {
         time_def: &config::Timestamp,
     ) -> Result<State, tackler::Error> {
         Ok(State {
-            accounts: AccountTree::from(&acc_spec.items, strict_mode)?,
+            accounts: AccountTree::from(&acc_spec.items)?,
             commodities: Commodities::from(comm_spec)?,
             tags: Tags::from(tags_spec)?,
             strict_mode,
@@ -76,11 +76,9 @@ impl State {
     ) -> Result<TxnAccount, tackler::Error> {
         let comm = self.get_or_create_commodity(Some(commodity.name.as_str()))?;
 
-        let atn_opt = self.accounts.defined_accounts.get(name).cloned();
-
-        let atn = if let Some(account_tree) = atn_opt {
+        let txn_acc = if let Some(atn) = self.accounts.defined_accounts.get(name) {
             TxnAccount {
-                atn: account_tree.clone(),
+                atn: atn.clone(),
                 comm,
             }
         } else {
@@ -93,14 +91,11 @@ impl State {
                 &self.time_defaults,
             )?);
             let atn = Arc::new(AccountTreeNode::unchecked_from(&account));
-            self.accounts
-                .defined_accounts
-                .insert(name.into(), atn.clone());
-            AccountTree::build_account_tree(&mut self.accounts.defined_accounts, &atn, None)?;
+            self.accounts.insert(&atn)?;
 
             TxnAccount { atn, comm }
         };
-        Ok(atn)
+        Ok(txn_acc)
     }
 
     /// # Errors
@@ -195,7 +190,8 @@ mod tests {
         let comm = Arc::new(Commodity::default());
 
         let txntn_1 = state.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(state.accounts.defined_accounts.len(), 3);
+        assert_eq!(state.accounts.defined_accounts.len(), 1);
+        assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
         assert_eq!(txntn_1.atn.depth, 3);
         assert_eq!(txntn_1.atn.get_root(), "a");
@@ -204,7 +200,8 @@ mod tests {
         assert_eq!(txntn_1.atn.get_leaf(), "c");
 
         let txntn_2 = state.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
-        assert_eq!(state.accounts.defined_accounts.len(), 3);
+        assert_eq!(state.accounts.defined_accounts.len(), 1);
+        assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
         assert_eq!(txntn_2.atn.depth, 3);
         assert_eq!(txntn_2.atn.get_root(), "a");
@@ -213,7 +210,8 @@ mod tests {
         assert_eq!(txntn_2.atn.get_leaf(), "c");
 
         let txntn_3 = state.get_or_create_txn_account("a:b:b-leaf", &comm).unwrap(/*:test:*/);
-        assert_eq!(state.accounts.defined_accounts.len(), 4);
+        assert_eq!(state.accounts.defined_accounts.len(), 2);
+        assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
         assert_eq!(txntn_3.atn.depth, 3);
         assert_eq!(txntn_3.atn.get_root(), "a");
@@ -237,7 +235,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts, state.strict_mode).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
@@ -305,7 +303,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts, state.strict_mode).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 3);
         assert_eq!(state.accounts.synthetic_parents.len(), 0);
@@ -341,7 +339,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts, state.strict_mode).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 3);
         assert_eq!(state.accounts.synthetic_parents.len(), 1);

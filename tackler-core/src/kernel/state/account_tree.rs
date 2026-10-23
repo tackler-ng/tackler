@@ -5,6 +5,7 @@
 use crate::config::Account;
 use crate::model::{AccountTreeNode, Commodity};
 use crate::{config, tackler};
+use itertools::Itertools;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tackler_api::txn_header::Tag;
@@ -62,16 +63,38 @@ pub(crate) struct AccountTree {
     pub(super) defined_accounts: HashMap<String, Arc<AccountTreeNode>>,
     pub(super) synthetic_parents: HashMap<String, Arc<AccountTreeNode>>,
 }
-
 impl AccountTree {
-    /// Is account defined by Chart of Accounts
-    ///
-    /// Virtual accounts won't count
+    /// Is account defined by Chart of Accounts?
     pub(crate) fn is_defined(&self, name: &str) -> bool {
         self.defined_accounts.contains_key(name)
     }
 
-    pub(super) fn build_account_tree(
+    /// Get sorted iterator of defined accounts
+    pub(crate) fn defined_accounts(
+        &self,
+    ) -> impl Iterator<Item = (&String, &Arc<AccountTreeNode>)> {
+        // This can't be a String (account name) based sort, as natural sort won't work with numerical accounts
+        // Below is natural sort order for account names with numbers:
+        //    "E:01234567:Sweets:Ice·Cream",
+        //    "E:0123:567:Sweets:Ice·Cream",
+        // which is in wrong order, as "E:0123:5..." should sort before "E:012345"
+        self.defined_accounts.iter().sorted_by(|a, b| a.1.cmp(b.1))
+    }
+
+    /// Insert new account in non-CoA mode
+    pub(super) fn insert(&mut self, atn: &Arc<AccountTreeNode>) -> Result<(), tackler::Error> {
+        self.defined_accounts
+            .insert(atn.account.spec.name.clone(), atn.clone());
+        AccountTree::build_account_tree(
+            &mut self.synthetic_parents,
+            atn,
+            Some(&self.defined_accounts),
+        )
+    }
+}
+
+impl AccountTree {
+    fn build_account_tree(
         target_account_tree: &mut HashMap<String, Arc<AccountTreeNode>>,
         atn: &Arc<AccountTreeNode>,
         other_account_tree: Option<&HashMap<String, Arc<AccountTreeNode>>>,
@@ -91,45 +114,29 @@ impl AccountTree {
         }
     }
 
-    pub(crate) fn from(
-        account_names: &[Arc<Account>],
-        strict_mode: bool,
-    ) -> Result<AccountTree, tackler::Error> {
-        let mut defined_accounts =
-            account_names
-                .iter()
-                .try_fold(
-                    HashMap::new(),
-                    |mut accs, account| match AccountTreeNode::try_from(account) {
-                        Ok(atn) => {
-                            accs.insert(account.spec.name.clone(), Arc::new(atn));
-                            Ok(accs)
-                        }
-                        Err(e) => {
-                            let msg = format!("Invalid Chart of Accounts: {e}");
-                            Err(msg)
-                        }
-                    },
-                )?;
-
-        let synthetic_parents = if strict_mode {
-            // Synthetic Account Parents are only needed in strict mode
-            let mut sap = HashMap::new();
-            for atn_entry in &defined_accounts {
-                if !&defined_accounts.contains_key(atn_entry.1.parent.as_str()) {
-                    // Parent is missing -> Let's build synthetic tree
-                    let (_, atn) = atn_entry;
-                    Self::build_account_tree(&mut sap, atn, Some(&defined_accounts))?;
+    pub(crate) fn from(account_names: &[Arc<Account>]) -> Result<AccountTree, tackler::Error> {
+        let mut defined_accounts = HashMap::new();
+        for account in account_names {
+            match AccountTreeNode::try_from(account) {
+                Ok(atn) => {
+                    defined_accounts.insert(account.spec.name.clone(), Arc::new(atn));
+                }
+                Err(e) => {
+                    let msg = format!("Invalid Chart of Accounts: {e}");
+                    return Err(msg.into());
                 }
             }
-            sap
-        } else {
-            let a: Vec<Arc<AccountTreeNode>> = defined_accounts.values().cloned().collect();
-            for atn in a {
-                Self::build_account_tree(&mut defined_accounts, &atn, None)?;
+        }
+
+        let mut synthetic_parents = HashMap::new();
+        for atn_entry in &defined_accounts {
+            if !&defined_accounts.contains_key(atn_entry.1.parent.as_str()) {
+                // Parent is missing from CoA-> Let's build synthetic tree
+                let (_, atn) = atn_entry;
+                Self::build_account_tree(&mut synthetic_parents, atn, Some(&defined_accounts))?;
             }
-            HashMap::new()
-        };
+        }
+
         Ok(AccountTree {
             defined_accounts,
             synthetic_parents,
