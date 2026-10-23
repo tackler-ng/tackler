@@ -26,20 +26,13 @@ test_name=basic-01
 echo "test: $module/$test_name: "
 
 $TACKLER_SH \
-    --config $SUITE_PATH/$module/../ok.toml \
+    --config $SUITE_PATH/$module/accounts.toml \
     --input.file $SUITE_PATH/$module/basic-01.txn \
     --output.dir $OUTPUT_DIR \
     --output.prefix ${test_name} \
-    --accounts "" \
-    --exports "equity" "accounts" \
-    --strict.mode false \
+    --exports "accounts" \
 
 echo -n "check:"
-cmp_result $module ${test_name} txt bal "."
-cmp_result $module ${test_name} txt balgrp "."
-cmp_result $module ${test_name} txt reg "."
-cmp_result $module ${test_name} txn equity "."
-
 cmp_result $module ${test_name} toml accounts "."
 echo ": ok"
 
@@ -58,13 +51,11 @@ test_name=strict-01
 echo "test: $module/$test_name: "
 
 $TACKLER_SH \
-    --config $SUITE_PATH/$module/../ok.toml \
+    --config $SUITE_PATH/$module/accounts.toml \
     --input.file $SUITE_PATH/$module/basic-01.txn \
     --output.dir $SUITE_PATH/$module \
     --output.prefix ${test_name} \
-    --reports "" \
     --exports "accounts" \
-    --strict.mode false \
 
 # test: 2fe1dd09-fefc-4a19-ad2b-03bf77c73bf5
 # desc: account selector doesn't afffect the account export

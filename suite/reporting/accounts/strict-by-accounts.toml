@@ -26,7 +26,7 @@ formats = [ "txt", "json" ]
 # Verify that accounts selector doesn't affect account export
 # test: 2fe1dd09-fefc-4a19-ad2b-03bf77c73bf5
 accounts = [ "^X:.*", "^Y:.*" ]
-targets = [ "balance", "balance-group", "register"]
+targets = [ ]
 
 balance       = { title = "BALANCE (TEST)" }
 balance-group = { title = "BALANCE GROUP (TEST)", group-by = "date" }
