@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::items::Timestamp;
-use crate::config::raw_items::AccountSpec;
+use crate::config::spec_items::AccountSpec;
 use crate::config::toml_datetime_to_zoned;
 use crate::tackler;
 use jiff::Zoned;

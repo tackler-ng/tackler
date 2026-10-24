@@ -2,49 +2,51 @@
  * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
+mod account_spec;
+
 use crate::config::AccountSelectors;
-use crate::tackler;
+pub(crate) use crate::config::spec_items::account_spec::AccountSpec;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct ConfigRaw {
-    pub(super) kernel: KernelRaw,
-    pub(super) price: Option<PriceRaw>,
-    pub(super) transaction: TransactionRaw,
-    pub(super) report: ReportRaw,
-    pub(super) export: ExportRaw,
+pub(super) struct ConfigSpec {
+    pub(super) kernel: KernelSpec,
+    pub(super) price: Option<PriceSpec>,
+    pub(super) transaction: TransactionSpec,
+    pub(super) report: ReportSpec,
+    pub(super) export: ExportSpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct KernelRaw {
+pub(super) struct KernelSpec {
     pub(super) strict: bool,
-    pub(super) timestamp: TimestampRaw,
-    pub(super) audit: AuditRaw,
+    pub(super) timestamp: TimestampSpec,
+    pub(super) audit: AuditSpec,
     #[serde(rename = "ext-id")]
-    pub(super) extid: Option<ExtIdRaw>,
-    pub(super) input: InputRaw,
+    pub(super) extid: Option<ExtIdSpec>,
+    pub(super) input: InputSpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct TimestampRaw {
+pub(super) struct TimestampSpec {
     #[serde(rename = "default-time")]
     pub(super) default_time: toml::value::Time,
-    pub(super) timezone: TimezoneRaw,
+    pub(super) timezone: TimezoneSpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct TimezoneRaw {
+pub(super) struct TimezoneSpec {
     pub(super) name: Option<String>,
     pub(super) offset: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct AuditRaw {
+pub(super) struct AuditSpec {
     pub(super) hash: String,
     pub(super) mode: bool,
 }
@@ -52,21 +54,21 @@ pub(super) struct AuditRaw {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename = "ext-id")]
-pub(super) struct ExtIdRaw {
+pub(super) struct ExtIdSpec {
     pub(super) unique: bool,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct InputRaw {
+pub(super) struct InputSpec {
     pub(super) storage: String,
-    pub(super) fs: Option<FsRaw>,
-    pub(super) git: Option<GitRaw>,
+    pub(super) fs: Option<FsSpec>,
+    pub(super) git: Option<GitSpec>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct FsRaw {
+pub(super) struct FsSpec {
     // new key
     pub(super) path: Option<String>,
     pub(super) dir: String,
@@ -78,7 +80,7 @@ pub(super) struct FsRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct GitRaw {
+pub(super) struct GitSpec {
     // old key
     pub(super) repository: Option<String>,
     // new key
@@ -94,7 +96,7 @@ pub(super) struct GitRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct PriceRaw {
+pub(super) struct PriceSpec {
     #[serde(rename = "db-path")]
     pub(super) db_path: String,
     #[serde(rename = "lookup-type")]
@@ -103,102 +105,40 @@ pub(super) struct PriceRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct TransactionRaw {
-    pub(super) accounts: AccountsPathRaw,
-    pub(super) commodities: CommoditiesPathRaw,
-    pub(super) tags: TagsPathRaw,
+pub(super) struct TransactionSpec {
+    pub(super) accounts: AccountsPathSpec,
+    pub(super) commodities: CommoditiesPathSpec,
+    pub(super) tags: TagsPathSpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct AccountsPathRaw {
+pub(super) struct AccountsPathSpec {
     pub(super) path: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct CommoditiesPathRaw {
+pub(super) struct CommoditiesPathSpec {
     pub(super) path: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct TagsPathRaw {
+pub(super) struct TagsPathSpec {
     pub(super) path: String,
-}
-
-#[derive(Debug, Default, Eq, PartialEq, Deserialize)]
-#[serde(try_from = "toml::Value")]
-pub(crate) struct AccountSpec {
-    pub(crate) name: String,
-    pub(crate) open: Option<toml::value::Datetime>,
-    pub(crate) close: Option<toml::value::Datetime>,
-    pub(crate) spans: Option<Vec<SpanSpec>>,
-}
-
-impl AccountSpec {
-    pub(crate) fn from_str(s: &str) -> Self {
-        AccountSpec {
-            name: s.to_string(),
-            ..AccountSpec::default()
-        }
-    }
-}
-
-#[derive(Debug, Clone, Eq, PartialEq, Deserialize)]
-pub(crate) struct SpanSpec {
-    pub(crate) open: toml::value::Datetime,
-    pub(crate) close: toml::value::Datetime,
-}
-
-#[derive(Deserialize)]
-struct AccountT {
-    name: String,
-    open: Option<toml::value::Datetime>,
-    close: Option<toml::value::Datetime>,
-    spans: Option<Vec<SpanSpec>>,
-}
-
-impl TryFrom<toml::Value> for AccountSpec {
-    type Error = tackler::Error;
-    fn try_from(value: toml::Value) -> Result<Self, Self::Error> {
-        match value {
-            toml::Value::Table(t) => {
-                let at: AccountT = t.try_into()?;
-                if at.spans.is_some() && (at.open.is_some() || at.close.is_some()) {
-                    let msg = format!(
-                        "Account '{}' has main open-close section and spans defined",
-                        at.name
-                    );
-                    Err(msg.into())
-                } else {
-                    let a = AccountSpec {
-                        name: at.name,
-                        open: at.open,
-                        close: at.close,
-                        spans: at.spans,
-                    };
-                    Ok(a)
-                }
-            }
-            toml::Value::String(s) => Ok(AccountSpec::from_str(&s)),
-            _ => Err("IE: TOML deserializing error - unexpected Value type"
-                .to_string()
-                .into()),
-        }
-    }
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct AccountsRaw {
+pub(super) struct AccountsSpec {
     #[serde(rename = "accounts")]
     pub(super) items: Vec<AccountSpec>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct CommoditiesRaw {
+pub(super) struct CommoditiesSpec {
     #[serde(rename = "permit-empty-commodity")]
     pub(crate) permit_empty_commodity: Option<bool>,
 
@@ -208,37 +148,37 @@ pub(super) struct CommoditiesRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct TagsRaw {
+pub(super) struct TagsSpec {
     #[serde(rename = "tags")]
     pub(crate) names: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct ReportRaw {
+pub(super) struct ReportSpec {
     #[serde(rename = "report-timezone")]
     pub(super) report_tz: String,
     pub(super) targets: Vec<String>,
     pub(super) formats: Option<Vec<String>>,
     pub(super) accounts: Option<Vec<String>>,
-    pub(super) scale: ScaleRaw,
+    pub(super) scale: ScaleSpec,
     pub(super) commodity: Option<String>,
-    pub(super) register: RegisterRaw,
+    pub(super) register: RegisterSpec,
     #[serde(rename = "balance-group")]
-    pub(super) balance_group: BalanceGroupRaw,
-    pub(super) balance: BalanceRaw,
+    pub(super) balance_group: BalanceGroupSpec,
+    pub(super) balance: BalanceSpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct ScaleRaw {
+pub(super) struct ScaleSpec {
     pub(super) min: u32,
     pub(super) max: u32,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct BalanceRaw {
+pub(super) struct BalanceSpec {
     pub(super) title: String,
     #[serde(rename = "type")]
     pub(super) bal_type: Option<String>,
@@ -248,7 +188,7 @@ pub(super) struct BalanceRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct BalanceGroupRaw {
+pub(super) struct BalanceGroupSpec {
     pub(super) title: String,
     #[serde(rename = "type")]
     pub(super) bal_type: Option<String>,
@@ -260,7 +200,7 @@ pub(super) struct BalanceGroupRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct RegisterRaw {
+pub(super) struct RegisterSpec {
     pub(super) title: String,
     #[serde(rename = "timestamp-style")]
     pub(super) timestamp_style: Option<String>,
@@ -270,15 +210,15 @@ pub(super) struct RegisterRaw {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct ExportRaw {
+pub(super) struct ExportSpec {
     pub(super) targets: Vec<String>,
 
-    pub(super) equity: EquityRaw,
+    pub(super) equity: EquitySpec,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct EquityRaw {
+pub(super) struct EquitySpec {
     #[serde(rename = "equity-account")]
     pub(super) equity_account: String,
     #[serde(rename = "accounts")]

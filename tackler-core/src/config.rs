@@ -30,7 +30,7 @@ pub use items::NONE_VALUE;
 
 mod items;
 pub mod overlaps;
-pub(crate) mod raw_items;
+pub(crate) mod spec_items;
 
 #[allow(clippy::cast_possible_wrap)]
 fn toml_time_to_jiff(t: Time) -> Result<jiff::civil::Time, jiff::Error> {

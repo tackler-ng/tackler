@@ -2,7 +2,7 @@
  * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::raw_items::AccountSpec;
+use crate::config::spec_items::AccountSpec;
 use crate::config::{Account, Timestamp};
 use crate::kernel::state::account_tree::{AccountTree, Commodities, Tags};
 use crate::model::{AccountTreeNode, Commodity, TxnAccount};
@@ -181,7 +181,7 @@ impl State {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::raw_items::AccountSpec;
+    use crate::config::spec_items::AccountSpec;
     use crate::config::{Account, Timestamp};
 
     #[test]

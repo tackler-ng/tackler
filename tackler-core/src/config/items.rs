@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::items::account::Account;
-use crate::config::raw_items::{
-    AccountsPathRaw, AccountsRaw, AuditRaw, BalanceGroupRaw, BalanceRaw, CommoditiesPathRaw,
-    CommoditiesRaw, ConfigRaw, EquityRaw, ExportRaw, ExtIdRaw, FsRaw, GitRaw, InputRaw, KernelRaw,
-    PriceRaw, RegisterRaw, ReportRaw, ScaleRaw, TagsPathRaw, TagsRaw, TimestampRaw, TimezoneRaw,
-    TransactionRaw,
+use crate::config::spec_items::{
+    AccountsPathSpec, AccountsSpec, AuditSpec, BalanceGroupSpec, BalanceSpec, CommoditiesPathSpec,
+    CommoditiesSpec, ConfigSpec, EquitySpec, ExportSpec, ExtIdSpec, FsSpec, GitSpec, InputSpec,
+    KernelSpec, PriceSpec, RegisterSpec, ReportSpec, ScaleSpec, TagsPathSpec, TagsSpec,
+    TimestampSpec, TimezoneSpec, TransactionSpec,
 };
 use crate::config::{to_export_targets, to_report_formats, to_report_targets, toml_time_to_jiff};
 use crate::kernel::hash::Hash;
@@ -251,7 +251,7 @@ impl Config {
     /// # Errors
     /// Returns `Err` in case there are syntactical or semantic errors with config
     pub fn try_from<P: AsRef<Path>>(cfg_path: P) -> Result<Config, tackler::Error> {
-        let cfg_raw: ConfigRaw = toml::from_str(fs::read_to_string(&cfg_path)?.as_str())?;
+        let cfg_raw: ConfigSpec = toml::from_str(fs::read_to_string(&cfg_path)?.as_str())?;
 
         let kernel = Kernel::try_from(&cfg_raw.kernel)?;
         let transaction = Transaction::from(&cfg_path, &cfg_raw.transaction, &kernel.timestamp)?;
@@ -282,7 +282,7 @@ pub(crate) struct Kernel {
     pub input: Input,
 }
 impl Kernel {
-    fn try_from(k_raw: &KernelRaw) -> Result<Kernel, tackler::Error> {
+    fn try_from(k_raw: &KernelSpec) -> Result<Kernel, tackler::Error> {
         let k = Kernel {
             strict: k_raw.strict,
             timestamp: Timestamp::from(&k_raw.timestamp)?,
@@ -310,7 +310,7 @@ impl Default for Timestamp {
 }
 
 impl Timestamp {
-    fn from(ts_raw: &TimestampRaw) -> Result<Timestamp, tackler::Error> {
+    fn from(ts_raw: &TimestampSpec) -> Result<Timestamp, tackler::Error> {
         let ts = Timestamp {
             default_time: {
                 let t = ts_raw.default_time;
@@ -323,7 +323,7 @@ impl Timestamp {
 }
 
 impl Timezone {
-    fn from(tz_raw: &TimezoneRaw) -> Result<jiff::tz::TimeZone, tackler::Error> {
+    fn from(tz_raw: &TimezoneSpec) -> Result<jiff::tz::TimeZone, tackler::Error> {
         let tz = match (&tz_raw.name, &tz_raw.offset) {
             (Some(_), Some(_)) => {
                 let msg = "timezone: 'name' and 'offset' are both defined".to_string();
@@ -350,7 +350,7 @@ pub(crate) struct Audit {
     pub(crate) mode: bool,
 }
 impl Audit {
-    fn from(a_raw: &AuditRaw) -> Result<Audit, tackler::Error> {
+    fn from(a_raw: &AuditSpec) -> Result<Audit, tackler::Error> {
         let a = Audit {
             hash: Hash::from(&a_raw.hash)?,
             mode: a_raw.mode,
@@ -365,7 +365,7 @@ pub(crate) struct ExtId {
 }
 
 impl ExtId {
-    fn from(a_raw: Option<&ExtIdRaw>) -> ExtId {
+    fn from(a_raw: Option<&ExtIdSpec>) -> ExtId {
         ExtId {
             unique: a_raw.is_some_and(|extid| extid.unique),
         }
@@ -379,7 +379,7 @@ pub struct Input {
     pub git: Option<Git>,
 }
 impl Input {
-    fn try_from(input_raw: &InputRaw) -> Result<Input, tackler::Error> {
+    fn try_from(input_raw: &InputSpec) -> Result<Input, tackler::Error> {
         // todo: checks
         let i = Input {
             storage: StorageType::try_from(input_raw.storage.as_str())?,
@@ -403,7 +403,7 @@ pub struct FS {
     pub ext: String,
 }
 impl FS {
-    fn try_from(fs_raw: &FsRaw) -> Result<FS, tackler::Error> {
+    fn try_from(fs_raw: &FsSpec) -> Result<FS, tackler::Error> {
         let extension = match &fs_raw.ext {
             Some(ext) => {
                 if fs_raw.suffix.is_some() {
@@ -442,7 +442,7 @@ pub struct Git {
     pub ext: String,
 }
 impl Git {
-    fn try_from(git_raw: &GitRaw) -> Result<Git, tackler::Error> {
+    fn try_from(git_raw: &GitSpec) -> Result<Git, tackler::Error> {
         let repo = match &git_raw.repo {
             Some(repo) => {
                 if git_raw.repository.is_some() {
@@ -498,7 +498,7 @@ pub(crate) struct Price {
 impl Price {
     fn try_from<P: AsRef<Path>>(
         base_path: P,
-        price_raw: &PriceRaw,
+        price_raw: &PriceSpec,
     ) -> Result<Price, tackler::Error> {
         let db_path_str = price_raw.db_path.as_str();
         let lookup_type = PriceLookupType::try_from(price_raw.lookup_type.as_str())?;
@@ -530,7 +530,7 @@ pub(crate) struct Transaction {
 impl Transaction {
     fn from<P: AsRef<Path>>(
         path: P,
-        txn_raw: &TransactionRaw,
+        txn_raw: &TransactionSpec,
         ts: &Timestamp,
     ) -> Result<Transaction, tackler::Error> {
         Ok(Transaction {
@@ -547,7 +547,7 @@ pub(crate) struct Accounts {
 }
 impl Accounts {
     fn from_str(s: &str, ts: &Timestamp) -> Result<Accounts, tackler::Error> {
-        let acc_raw: AccountsRaw = toml::from_str(s)?;
+        let acc_raw: AccountsSpec = toml::from_str(s)?;
         let accounts: Result<Vec<Arc<Account>>, tackler::Error> = acc_raw
             .items
             .into_iter()
@@ -561,7 +561,7 @@ impl Accounts {
 
     fn from<P: AsRef<Path>>(
         path: P,
-        accs_path_raw: &AccountsPathRaw,
+        accs_path_raw: &AccountsPathSpec,
         ts: &Timestamp,
     ) -> Result<Accounts, tackler::Error> {
         let accs_path_str = accs_path_raw.path.as_str();
@@ -590,7 +590,7 @@ pub(crate) struct Commodities {
 impl Commodities {
     fn from<P: AsRef<Path>>(
         path: P,
-        comm_path_raw: &CommoditiesPathRaw,
+        comm_path_raw: &CommoditiesPathSpec,
     ) -> Result<Commodities, tackler::Error> {
         let comm_path_str = comm_path_raw.path.as_str();
         if comm_path_str == NONE_VALUE {
@@ -600,7 +600,7 @@ impl Commodities {
             })
         } else {
             let comm_path = get_abs_path(&path, comm_path_str)?;
-            let comm_raw: CommoditiesRaw = match fs::read_to_string(&comm_path) {
+            let comm_raw: CommoditiesSpec = match fs::read_to_string(&comm_path) {
                 Ok(s) => toml::from_str(s.as_str())?,
                 Err(err) => {
                     let msg = format!(
@@ -623,13 +623,13 @@ pub(crate) struct Tags {
 }
 
 impl Tags {
-    fn from<P: AsRef<Path>>(path: P, tags_path_raw: &TagsPathRaw) -> Result<Tags, tackler::Error> {
+    fn from<P: AsRef<Path>>(path: P, tags_path_raw: &TagsPathSpec) -> Result<Tags, tackler::Error> {
         let tags_path_str = tags_path_raw.path.as_str();
         if tags_path_str == NONE_VALUE {
             Ok(Tags::default())
         } else {
             let tags_path = get_abs_path(&path, tags_path_str)?;
-            let tags_raw: TagsRaw = match fs::read_to_string(&tags_path) {
+            let tags_raw: TagsSpec = match fs::read_to_string(&tags_path) {
                 Ok(s) => toml::from_str(s.as_str())?,
                 Err(err) => {
                     let msg = format!(
@@ -673,7 +673,7 @@ impl Default for Report {
 }
 
 impl Report {
-    fn from(report_raw: &ReportRaw) -> Result<Report, tackler::Error> {
+    fn from(report_raw: &ReportSpec) -> Result<Report, tackler::Error> {
         let targets = to_report_targets(&report_raw.targets)?;
         let formats = to_report_formats(report_raw.formats.as_deref())?;
 
@@ -718,7 +718,7 @@ impl Scale {
         }
         Ok(())
     }
-    fn from(scale_raw: &ScaleRaw) -> Result<Scale, tackler::Error> {
+    fn from(scale_raw: &ScaleSpec) -> Result<Scale, tackler::Error> {
         Self::check_range(scale_raw.min, scale_raw.max)?;
         Ok(Scale {
             min: scale_raw.min,
@@ -738,7 +738,7 @@ impl Default for Scale {
 
 fn get_account_selector(
     acc_sel: Option<&AccountSelectors>,
-    report: &ReportRaw,
+    report: &ReportSpec,
 ) -> AccountSelectors {
     match acc_sel {
         Some(av) => av.clone(),
@@ -757,7 +757,7 @@ pub(crate) struct Register {
 }
 
 impl Register {
-    fn from(reg_raw: &RegisterRaw, report: &ReportRaw) -> Result<Register, tackler::Error> {
+    fn from(reg_raw: &RegisterSpec, report: &ReportSpec) -> Result<Register, tackler::Error> {
         Ok(Register {
             title: reg_raw.title.clone(),
             timestamp_style: match &reg_raw.timestamp_style {
@@ -779,8 +779,8 @@ pub(crate) struct BalanceGroup {
 
 impl BalanceGroup {
     fn from(
-        balgrp_raw: &BalanceGroupRaw,
-        report: &ReportRaw,
+        balgrp_raw: &BalanceGroupSpec,
+        report: &ReportSpec,
     ) -> Result<BalanceGroup, tackler::Error> {
         Ok(BalanceGroup {
             title: balgrp_raw.title.clone(),
@@ -802,7 +802,7 @@ pub(crate) struct Balance {
 }
 
 impl Balance {
-    fn from(bal_raw: &BalanceRaw, report: &ReportRaw) -> Result<Balance, tackler::Error> {
+    fn from(bal_raw: &BalanceSpec, report: &ReportSpec) -> Result<Balance, tackler::Error> {
         Ok(Balance {
             title: bal_raw.title.clone(),
             bal_type: match &bal_raw.bal_type {
@@ -820,7 +820,7 @@ pub(crate) struct Export {
     pub equity: Equity,
 }
 impl Export {
-    fn from(export_raw: &ExportRaw, report: &ReportRaw) -> Result<Export, tackler::Error> {
+    fn from(export_raw: &ExportSpec, report: &ReportSpec) -> Result<Export, tackler::Error> {
         let trgs = to_export_targets(&export_raw.targets)?;
         Ok(Export {
             targets: trgs,
@@ -836,7 +836,7 @@ pub(crate) struct Equity {
 }
 
 impl Equity {
-    fn from(eq_raw: &EquityRaw, report: &ReportRaw) -> Equity {
+    fn from(eq_raw: &EquitySpec, report: &ReportSpec) -> Equity {
         Equity {
             equity_account: eq_raw.equity_account.clone(),
             acc_sel: get_account_selector(eq_raw.acc_sel.as_ref(), report),
@@ -847,7 +847,7 @@ impl Equity {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::raw_items::ScaleRaw;
+    use crate::config::spec_items::ScaleSpec;
 
     #[test]
     // test: 195971d7-f16f-4c1c-a761-6764b28fd4db
@@ -858,7 +858,7 @@ mod tests {
     #[test]
     // test: 2cc212bb-f167-4d42-a0e8-8124b3704e1c
     fn scale_big_min() {
-        let sr = ScaleRaw { min: 29, max: 30 };
+        let sr = ScaleSpec { min: 29, max: 30 };
         let scale = Scale::from(&sr);
         assert!(scale.is_err());
     }
@@ -866,7 +866,7 @@ mod tests {
     #[test]
     // test: 698ef5a8-2d4c-4d5a-87b1-9df12051e2d7
     fn scale_big_max() {
-        let sr = ScaleRaw { min: 1, max: 29 };
+        let sr = ScaleSpec { min: 1, max: 29 };
         let scale = Scale::from(&sr);
         assert!(scale.is_err());
     }
@@ -874,7 +874,7 @@ mod tests {
     #[test]
     // test: 999044e8-b3e6-447e-a15d-22e23cfdee1b
     fn scale_max_min() {
-        let sr = ScaleRaw { min: 2, max: 1 };
+        let sr = ScaleSpec { min: 2, max: 1 };
         let scale = Scale::from(&sr);
         assert!(scale.is_err());
     }
@@ -882,7 +882,7 @@ mod tests {
     #[test]
     // test: 1076287b-22f2-4601-8e7e-f2899b71533d
     fn scale_zeros() {
-        let sr = ScaleRaw { min: 0, max: 0 };
+        let sr = ScaleSpec { min: 0, max: 0 };
         let scale = Scale::from(&sr);
         assert!(scale.is_ok());
     }
@@ -890,7 +890,7 @@ mod tests {
     #[test]
     // test: 02663b5d-1471-471a-befc-5f093e6993ee
     fn scale_valid_values() {
-        let sr = ScaleRaw { min: 2, max: 4 };
+        let sr = ScaleSpec { min: 2, max: 4 };
         let scale = Scale::from(&sr);
         assert!(scale.is_ok());
     }
