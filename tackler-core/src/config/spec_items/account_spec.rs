@@ -301,7 +301,7 @@ mod tests {
             let spec: Result<AccountSpec, _> = toml::from_str(test.0);
             assert!(spec.is_ok());
             let spec = spec.unwrap(/*:test:*/);
-            let spec_str = format!("{}", spec);
+            let spec_str = format!("{spec}");
             assert_eq!(spec_str, test.1);
         }
     }
