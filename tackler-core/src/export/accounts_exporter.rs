@@ -16,7 +16,7 @@ impl Export for AccountsExporter {
     ) -> Result<(), tackler::Error> {
         writeln!(writer, "accounts = [")?;
         for a in cfg.state.accounts.defined_accounts() {
-            writeln!(writer, "   \"{}\",", a.1)?;
+            writeln!(writer, "{},", a.1.account.spec)?;
         }
         writeln!(writer, "]")?;
         Ok(())
