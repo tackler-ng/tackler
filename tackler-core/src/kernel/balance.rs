@@ -55,8 +55,7 @@ impl Balance {
             Ok(())
         } else {
             // Not on top => find parent for this node
-            let new_parent_atn =
-                settings.get_txn_account(my_acctn.atn.parent.as_str(), &my_acctn.comm)?;
+            let new_parent_atn = settings.parent_txn_account(&my_acctn.atn, &my_acctn.comm)?;
 
             let parent = acc_sums.get_key_value(&new_parent_atn);
             if parent.is_some() {
@@ -139,7 +138,7 @@ impl Balance {
         let mut bal_tns: HashMap<TxnAccount, BalanceTreeNode> = HashMap::new();
         complete_acctn_sums
             .iter()
-            .sorted_by(|a, b| a.0.atn.depth.cmp(&b.0.atn.depth).reverse())
+            .sorted_unstable_by(|a, b| a.0.atn.depth_first(&b.0.atn))
             .try_for_each(|atn_val| -> Result<(), tackler::Error> {
                 // me: insert or update
                 let me = bal_tns
@@ -161,7 +160,7 @@ impl Balance {
                 // If I'm not root, then insert or update parent
                 if !atn_val.0.is_root() {
                     let parent_atn =
-                        settings.get_txn_account(atn_val.0.atn.parent.as_str(), &atn_val.0.comm)?;
+                        settings.parent_txn_account(&atn_val.0.atn, &atn_val.0.comm)?;
 
                     bal_tns
                         .entry(parent_atn.clone())
@@ -182,7 +181,7 @@ impl Balance {
         let bal: Vec<BalanceTreeNode> = bal_tns
             .into_iter()
             .map(|c| c.1)
-            .sorted_by(ord_by_btn)
+            .sorted_unstable_by(ord_by_btn)
             .collect();
 
         Ok(bal)
@@ -279,7 +278,7 @@ impl Balance {
             })
             .collect();
 
-        v.sort_by(ord_by_btn);
+        v.sort_unstable_by(ord_by_btn);
         v
     }
 }

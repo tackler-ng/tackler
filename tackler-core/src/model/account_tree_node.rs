@@ -12,6 +12,47 @@ use std::fmt::{Display, Formatter};
 use std::hash::{Hash, Hasher};
 use std::sync::Arc;
 
+#[derive(Debug, Clone, Eq)]
+pub struct TxnAccount {
+    pub(crate) atn: Arc<AccountTreeNode>,
+    pub(crate) comm: Arc<Commodity>,
+}
+
+impl Hash for TxnAccount {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.atn.hash(state);
+        self.comm.hash(state);
+    }
+}
+impl PartialEq for TxnAccount {
+    fn eq(&self, other: &Self) -> bool {
+        // ATN first, it has fast path eq
+        self.atn == other.atn && self.comm == other.comm
+    }
+}
+impl Ord for TxnAccount {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.comm.cmp(&other.comm) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Equal => self.atn.cmp(&other.atn),
+        }
+    }
+}
+impl PartialOrd for TxnAccount {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl TxnAccount {
+    #[must_use]
+    #[inline]
+    pub(crate) fn is_root(&self) -> bool {
+        self.atn.is_root()
+    }
+}
+
 #[derive(Debug, Clone, Default, Hash, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Commodity {
     pub name: String,
@@ -67,46 +108,10 @@ pub(crate) struct AccountTreeNode {
 }
 
 impl AccountTreeNode {
+    #[must_use]
+    #[inline]
     pub(crate) fn is_root(&self) -> bool {
         self.depth == 1
-    }
-}
-
-#[derive(Debug, Clone, Eq)]
-pub struct TxnAccount {
-    pub(crate) atn: Arc<AccountTreeNode>,
-    pub(crate) comm: Arc<Commodity>,
-}
-
-impl Hash for TxnAccount {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.atn.hash(state);
-        self.comm.hash(state);
-    }
-}
-impl PartialEq for TxnAccount {
-    fn eq(&self, other: &Self) -> bool {
-        self.atn == other.atn && self.comm == other.comm
-    }
-}
-impl Ord for TxnAccount {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.comm.cmp(&other.comm) {
-            Ordering::Less => Ordering::Less,
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Equal => self.atn.cmp(&other.atn),
-        }
-    }
-}
-impl PartialOrd for TxnAccount {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl TxnAccount {
-    pub(crate) fn is_root(&self) -> bool {
-        self.atn.is_root()
     }
 }
 
@@ -149,6 +154,13 @@ impl Ord for AccountTreeNode {
         }
         // So far subcomponents are equal, but which one has more subcomponents?
         self.depth.cmp(&other.depth)
+    }
+}
+
+impl AccountTreeNode {
+    #[must_use]
+    pub(crate) fn depth_first(&self, other: &Self) -> Ordering {
+        self.depth.cmp(&other.depth).reverse()
     }
 }
 
@@ -195,11 +207,11 @@ impl AccountTreeNode {
         let depth = parts.len();
         assert_eq!(depth, child.depth - 1);
 
-        let parent = parts[..depth - 1].join(":");
+        let parents_parent = parts[..depth - 1].join(":");
 
         Ok(AccountTreeNode {
             depth,
-            parent,
+            parent: parents_parent,
             parts,
             account: Arc::new(Account::from(&child.parent)),
         })

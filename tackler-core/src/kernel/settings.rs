@@ -11,7 +11,7 @@ use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::kernel::state::State;
 use crate::model::price_entry::PriceDb;
-use crate::model::{Commodity, TxnAccount};
+use crate::model::{AccountTreeNode, Commodity, TxnAccount};
 use crate::{config, parser, tackler};
 use jiff::Zoned;
 use std::path::PathBuf;
@@ -82,12 +82,12 @@ pub struct Settings {
 
 impl Settings {
     #[inline]
-    pub(crate) fn get_txn_account(
+    pub(crate) fn parent_txn_account(
         &self,
-        name: &str,
+        atn: &Arc<AccountTreeNode>,
         commodity: &Arc<Commodity>,
     ) -> Result<TxnAccount, tackler::Error> {
-        self.state.get_txn_account(name, commodity)
+        self.state.parent_txn_account(atn, commodity)
     }
     #[inline]
     pub(crate) fn get_or_create_txn_account(

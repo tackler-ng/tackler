@@ -13,6 +13,7 @@ use crate::config::{to_export_targets, to_report_formats, to_report_targets, tom
 use crate::kernel::hash::Hash;
 use crate::model::Commodity;
 use crate::tackler;
+use itertools::Itertools;
 use jiff::fmt::strtime::BrokenDownTime;
 use jiff::tz::TimeZone;
 use rust_decimal::Decimal;
@@ -546,17 +547,30 @@ pub(crate) struct Accounts {
     pub items: Vec<Arc<Account>>,
 }
 impl Accounts {
-    fn from_str(s: &str, ts: &Timestamp) -> Result<Accounts, tackler::Error> {
+    pub(crate) fn from_str(s: &str, ts: &Timestamp) -> Result<Accounts, tackler::Error> {
         let acc_raw: AccountsSpec = toml::from_str(s)?;
-        let accounts: Result<Vec<Arc<Account>>, tackler::Error> = acc_raw
+        let accounts: Vec<Arc<Account>> = acc_raw
             .items
             .into_iter()
             .map(|name| -> Result<Arc<Account>, tackler::Error> {
                 let a = Arc::new(Account::try_with(name, ts)?);
                 Ok(a)
             })
-            .collect();
-        Ok(Accounts { items: accounts? })
+            .collect::<Result<Vec<Arc<Account>>, tackler::Error>>()?;
+
+        let dups = accounts
+            .iter()
+            .duplicates_by(|a| &a.spec.name)
+            .collect::<Vec<_>>();
+        if !dups.is_empty() {
+            let msg = format!(
+                "\nFollowing accounts have duplicate definitions: \n   {}",
+                dups.iter().map(|i| i.spec.name.clone()).join(", ")
+            );
+            return Err(msg.into());
+        }
+
+        Ok(Accounts { items: accounts })
     }
 
     fn from<P: AsRef<Path>>(

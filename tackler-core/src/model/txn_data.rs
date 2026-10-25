@@ -67,7 +67,7 @@ impl TxnData {
         }
 
         let mut t = txns;
-        t.sort_by(transaction::ord_by_txn);
+        t.sort_unstable_by(transaction::ord_by_txn);
 
         Ok(TxnData {
             metadata,
@@ -234,7 +234,7 @@ fn calc_txn_checksum(txns: &TxnRefs<'_>, hasher: &Hash) -> Result<Checksum, tack
         .collect();
     let mut uuids = u?;
 
-    uuids.sort();
+    uuids.sort_unstable();
 
     let cs = hasher.checksum(&uuids, "\n".as_bytes());
     Ok(cs)

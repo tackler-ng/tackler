@@ -14,6 +14,10 @@ pub(crate) struct Account {
     pub(crate) spec: AccountSpec,
 }
 impl Account {
+    pub(crate) fn is_temporal(&self) -> bool {
+        self.spans.is_some()
+    }
+
     pub(crate) fn from(name: &str) -> Self {
         Account {
             spans: None,
@@ -34,7 +38,7 @@ impl Account {
                 })
                 .collect::<Result<Vec<(Zoned, Zoned)>, tackler::Error>>()?;
 
-            v.sort_by(|a, b| a.0.cmp(&b.0));
+            v.sort_unstable_by(|a, b| a.0.cmp(&b.0));
 
             let overlapping = v
                 .iter()

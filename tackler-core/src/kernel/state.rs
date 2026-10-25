@@ -28,41 +28,40 @@ impl State {
         strict_mode: bool,
         time_def: &config::Timestamp,
     ) -> Result<State, tackler::Error> {
-        Ok(State {
+        let state = State {
             accounts: AccountTree::from(&acc_spec.items)?,
             commodities: Commodities::from(comm_spec)?,
             tags: Tags::from(tags_spec)?,
             strict_mode,
             time_defaults: time_def.clone(),
-        })
+        };
+
+        if strict_mode {
+            state.validate()?;
+        }
+        Ok(state)
+    }
+
+    fn validate(&self) -> Result<(), tackler::Error> {
+        self.accounts.validate()
     }
 }
 
 impl State {
-    pub(crate) fn get_txn_account(
+    /// Get parent account of child
+    ///
+    /// Errors
+    /// Error if child is root
+    pub(crate) fn parent_txn_account(
         &self,
-        name: &str,
+        child: &Arc<AccountTreeNode>,
         commodity: &Arc<Commodity>,
     ) -> Result<TxnAccount, tackler::Error> {
+        let parent = self.accounts.parent_account(child)?;
+
         let comm = self.get_commodity(commodity.name.as_str())?;
 
-        match self.accounts.defined_accounts.get(name) {
-            Some(account_tree) => Ok(TxnAccount {
-                atn: account_tree.clone(),
-                comm,
-            }),
-            None => {
-                if let Some(acc_parent) = self.accounts.synthetic_parents.get(name) {
-                    Ok(TxnAccount {
-                        atn: acc_parent.clone(),
-                        comm,
-                    })
-                } else {
-                    let msg = format!("Unknown account: '{name}'");
-                    Err(msg.into())
-                }
-            }
-        }
+        Ok(TxnAccount { atn: parent, comm })
     }
 
     /// Get or create `TxnAccount` by name and commodity
@@ -199,15 +198,16 @@ mod tests {
         assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
         assert_eq!(txntn_1.atn.get_leaf(), "c");
 
-        let txntn_2 = state.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
+        let child = Arc::new(AccountTreeNode::from("a:b:c").unwrap(/*:test*:*/));
+        let txntn_2 = state.parent_txn_account(&child, &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
-        assert_eq!(txntn_2.atn.depth, 3);
+        assert_eq!(txntn_2.atn.depth, 2);
         assert_eq!(txntn_2.atn.get_root(), "a");
-        assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_2.atn.get_leaf(), "c");
+        assert_eq!(txntn_2.atn.parent, "a");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
+        assert_eq!(txntn_2.atn.get_leaf(), "b");
 
         let txntn_3 = state.get_or_create_txn_account("a:b:b-leaf", &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 2);
@@ -250,15 +250,16 @@ mod tests {
         assert_eq!(txntn_1.atn.account.spec.name, "a:b:c");
         assert_eq!(txntn_1.atn.get_leaf(), "c");
 
-        let txntn_2 = state.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
+        let child_2 = Arc::new(AccountTreeNode::from("a:b:c").unwrap(/*:test*:*/));
+        let txntn_2 = state.parent_txn_account(&child_2, &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
-        assert_eq!(txntn_2.atn.depth, 3);
+        assert_eq!(txntn_2.atn.depth, 2);
         assert_eq!(txntn_2.atn.get_root(), "a");
-        assert_eq!(txntn_2.atn.parent, "a:b");
-        assert_eq!(txntn_2.atn.account.spec.name, "a:b:c");
-        assert_eq!(txntn_2.atn.get_leaf(), "c");
+        assert_eq!(txntn_2.atn.parent, "a");
+        assert_eq!(txntn_2.atn.account.spec.name, "a:b");
+        assert_eq!(txntn_2.atn.get_leaf(), "b");
 
         // Check that it won't create a synthetic account as real one
         assert!(state.get_or_create_txn_account("a:b", &comm).is_err());
@@ -266,26 +267,22 @@ mod tests {
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
         // Check synthetic account
-        let txntn_3 = state.get_txn_account("a:b", &comm).unwrap(/*:test:*/);
+        let child_3 = Arc::new(AccountTreeNode::from("a:b").unwrap(/*:test*:*/));
+        let txntn_3 = state.parent_txn_account(&child_3, &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
 
-        assert_eq!(txntn_3.atn.depth, 2);
+        assert_eq!(txntn_3.atn.depth, 1);
         assert_eq!(txntn_3.atn.get_root(), "a");
-        assert_eq!(txntn_3.atn.parent, "a");
-        assert_eq!(txntn_3.atn.account.spec.name, "a:b");
-        assert_eq!(txntn_3.atn.get_leaf(), "b");
+        assert_eq!(txntn_3.atn.parent, "");
+        assert_eq!(txntn_3.atn.account.spec.name, "a");
+        assert_eq!(txntn_3.atn.get_leaf(), "a");
 
         // Check synthetic account
-        let txntn_4 = state.get_txn_account("a", &comm).unwrap(/*:test:*/);
+        let child_4 = Arc::new(AccountTreeNode::from("a").unwrap(/*:test*:*/));
+        assert!(state.parent_txn_account(&child_4, &comm).is_err());
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
-
-        assert_eq!(txntn_4.atn.depth, 1);
-        assert_eq!(txntn_4.atn.get_root(), "a");
-        assert_eq!(txntn_4.atn.parent, "");
-        assert_eq!(txntn_4.atn.account.spec.name, "a");
-        assert_eq!(txntn_4.atn.get_leaf(), "a");
     }
 
     #[test]
@@ -347,10 +344,11 @@ mod tests {
         // Check that it won't create a synthetic account as real one
         assert!(state.get_or_create_txn_account("a:b:c", &comm).is_err());
 
-        let txntn_synth = state.get_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
+        let child = Arc::new(AccountTreeNode::from("a:b:c").unwrap(/*:test*:*/));
+        let txntn_synth = state.parent_txn_account(&child, &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 3);
         assert_eq!(state.accounts.synthetic_parents.len(), 1);
-        assert_eq!(txntn_synth.atn.account.spec.name, "a:b:c");
+        assert_eq!(txntn_synth.atn.account.spec.name, "a:b");
 
         let txntn_2 = state.get_or_create_txn_account("a:b", &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 3);

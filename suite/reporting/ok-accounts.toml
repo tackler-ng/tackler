@@ -3,7 +3,6 @@ accounts = [
 "Equity:Balance",
 "a",
 "a:b",
-"a:b",
 "a:b:c",
 "a:by:not",
 "e",
@@ -11,7 +10,6 @@ accounts = [
 "e:e0101",
 "not:a:b",
 "not:e:b",
-"not:e:e0101",
 "not:e:e0101",
 
 "a0",

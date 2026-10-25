@@ -131,7 +131,7 @@ pub(super) struct TagsPathSpec {
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct AccountsSpec {
+pub(crate) struct AccountsSpec {
     #[serde(rename = "accounts")]
     pub(super) items: Vec<AccountSpec>,
 }
