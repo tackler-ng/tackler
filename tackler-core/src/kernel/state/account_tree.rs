@@ -226,16 +226,12 @@ impl AccountTree {
             writeln!(msg, "   Child  : {}", child.account.spec.name)?;
             writeln!(msg, "Nested temporal settings are not allowed.")?;
             Err(msg.into())
+        } else if let Some(temporal) = self.check_temporality(&parent, child_with_temporal)? {
+            Ok(Some(temporal))
+        } else if parent.account.spans.is_some() {
+            Ok(parent.account.spans.clone())
         } else {
-            if let Some(temporal) = self.check_temporality(&parent, child_with_temporal)? {
-                Ok(Some(temporal))
-            } else {
-                if parent.account.spans.is_some() {
-                    Ok(parent.account.spans.clone())
-                } else {
-                    Ok(None)
-                }
-            }
+            Ok(None)
         }
     }
 }
