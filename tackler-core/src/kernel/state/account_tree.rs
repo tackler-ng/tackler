@@ -63,9 +63,13 @@ impl Commodities {
 pub(crate) struct AccountTree {
     pub(super) defined_accounts: HashMap<String, Arc<AccountTreeNode>>,
     pub(super) synthetic_parents: HashMap<String, Arc<AccountTreeNode>>,
+    strict_mode: bool,
 }
 impl AccountTree {
-    pub(crate) fn from(account_names: &[Arc<Account>]) -> Result<AccountTree, tackler::Error> {
+    pub(crate) fn from(
+        account_names: &[Arc<Account>],
+        strict_mode: bool,
+    ) -> Result<AccountTree, tackler::Error> {
         let mut defined_accounts = HashMap::with_capacity(account_names.len());
         for account in account_names {
             match AccountTreeNode::try_from(account) {
@@ -88,21 +92,33 @@ impl AccountTree {
             }
         }
 
-        Ok(AccountTree {
+        let at = AccountTree {
             defined_accounts,
             synthetic_parents,
-        })
+            strict_mode,
+        };
+        if strict_mode {
+            at.check_temporals()?;
+        }
+        Ok(at)
     }
 
-    /// Insert new account in non-CoA mode
-    pub(crate) fn insert(&mut self, atn: &Arc<AccountTreeNode>) -> Result<(), tackler::Error> {
+    /// Check temporal settings for `AccountTree`
+    ///
+    /// This checks logic of temporal definitions for account tree,
+    /// e.g. that there isn't nested parent-child definitions.
+    fn check_temporals(&self) -> Result<(), tackler::Error> {
         self.defined_accounts
-            .insert(atn.account.spec.name.clone(), atn.clone());
-        AccountTree::build_account_tree(
-            &mut self.synthetic_parents,
-            atn,
-            Some(&self.defined_accounts),
-        )
+            .iter()
+            .sorted_unstable_by(|a, b| a.1.depth_first(b.1))
+            .try_for_each(|kv| -> Result<(), tackler::Error> {
+                if kv.1.account.is_temporal() {
+                    self.check_temporality(kv.1, Some(kv.1.clone()))
+                } else {
+                    self.check_temporality(kv.1, None)
+                }
+            })?;
+        Ok(())
     }
 
     /// Is account defined by Chart of Accounts?
@@ -122,7 +138,26 @@ impl AccountTree {
         self.defined_accounts.iter().sorted_by(|a, b| a.1.cmp(b.1))
     }
 
-    pub(crate) fn parent_account(
+    /// Insert new account in non-CoA mode
+    pub(super) fn insert(&mut self, atn: &Arc<AccountTreeNode>) -> Result<(), tackler::Error> {
+        if self.strict_mode {
+            let msg = format!("IE: AccountTree: insert in strict mode, account: '{atn}'");
+            return Err(msg.into());
+        }
+        self.defined_accounts
+            .insert(atn.account.spec.name.clone(), atn.clone());
+        AccountTree::build_account_tree(
+            &mut self.synthetic_parents,
+            atn,
+            Some(&self.defined_accounts),
+        )
+    }
+
+    /// Get parent `AccountTreeNode` of child
+    ///
+    /// # Errors
+    /// Error if child is root
+    pub(super) fn parent_account(
         &self,
         child: &Arc<AccountTreeNode>,
     ) -> Result<Arc<AccountTreeNode>, tackler::Error> {
@@ -133,10 +168,10 @@ impl AccountTree {
         let parent = child.parent.as_str();
 
         match self.defined_accounts.get(parent) {
-            Some(account_tree) => Ok(account_tree.clone()),
+            Some(atn) => Ok(atn.clone()),
             None => {
-                if let Some(acc_parent) = self.synthetic_parents.get(parent) {
-                    Ok(acc_parent.clone())
+                if let Some(synth_atn) = self.synthetic_parents.get(parent) {
+                    Ok(synth_atn.clone())
                 } else {
                     let msg = format!("Unknown parent account: '{parent}'");
                     Err(msg.into())
@@ -161,28 +196,11 @@ impl AccountTree {
             writeln!(msg, "Account validity is set for both parent and child.")?;
             writeln!(msg, "   Parent : {}", parent.account.spec.name)?;
             writeln!(msg, "   Child  : {}", child.account.spec.name)?;
-            writeln!(
-                msg,
-                "Nested temporal settings for accounts are not allowed."
-            )?;
+            writeln!(msg, "Nested temporal settings are not allowed.")?;
             Err(msg.into())
         } else {
             self.check_temporality(&parent, child_with_temporal)
         }
-    }
-
-    pub(crate) fn validate(&self) -> Result<(), tackler::Error> {
-        self.defined_accounts
-            .iter()
-            .sorted_unstable_by(|a, b| a.1.depth_first(b.1))
-            .try_for_each(|kv| -> Result<(), tackler::Error> {
-                if kv.1.account.is_temporal() {
-                    self.check_temporality(kv.1, Some(kv.1.clone()))
-                } else {
-                    self.check_temporality(kv.1, None)
-                }
-            })?;
-        Ok(())
     }
 }
 
@@ -235,8 +253,11 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items).unwrap(/*:test:*/);
-        assert!(acc_tree.validate().is_ok());
+        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.check_temporals().is_ok());
+
+        let acc_strict = AccountTree::from(&accounts.items, true);
+        assert!(acc_strict.is_ok());
     }
 
     // test: 971eac87-ea36-4bba-bc27-22c50f2e3454
@@ -262,8 +283,11 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items).unwrap(/*:test:*/);
-        assert!(acc_tree.validate().is_err());
+        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.check_temporals().is_err());
+
+        let acc_strict = AccountTree::from(&accounts.items, true);
+        assert!(acc_strict.is_err());
     }
 
     // test: 2c180bf9-bf27-4e52-a17e-966e579e2b99
@@ -289,8 +313,11 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items).unwrap(/*:test:*/);
-        assert!(acc_tree.validate().is_err());
+        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.check_temporals().is_err());
+
+        let acc_strict = AccountTree::from(&accounts.items, true);
+        assert!(acc_strict.is_err());
     }
 
     // test: bf45205f-7373-4eaf-89c4-bc619748d329

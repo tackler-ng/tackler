@@ -10,13 +10,12 @@ use crate::config::{
 use crate::kernel::hash::Hash;
 use crate::kernel::price_lookup::PriceLookup;
 use crate::kernel::state::State;
+use crate::model::Commodity;
 use crate::model::price_entry::PriceDb;
-use crate::model::{AccountTreeNode, Commodity, TxnAccount};
 use crate::{config, parser, tackler};
 use jiff::Zoned;
 use std::path::PathBuf;
 use std::sync::Arc;
-use tackler_api::txn_header::Tag;
 use tackler_api::txn_ts::GroupBy;
 use tackler_rs::normalize_extension;
 
@@ -78,36 +77,6 @@ pub struct Settings {
     price_lookup: PriceLookup,
     global_acc_sel: Option<AccountSelectors>,
     pub(crate) state: State,
-}
-
-impl Settings {
-    #[inline]
-    pub(crate) fn parent_txn_account(
-        &self,
-        atn: &Arc<AccountTreeNode>,
-        commodity: &Arc<Commodity>,
-    ) -> Result<TxnAccount, tackler::Error> {
-        self.state.parent_txn_account(atn, commodity)
-    }
-    #[inline]
-    pub(crate) fn get_or_create_txn_account(
-        &mut self,
-        name: &str,
-        commodity: &Arc<Commodity>,
-    ) -> Result<TxnAccount, tackler::Error> {
-        self.state.get_or_create_txn_account(name, commodity)
-    }
-    #[inline]
-    pub(crate) fn get_or_create_tag(&mut self, name: &str) -> Result<Arc<Tag>, tackler::Error> {
-        self.state.get_or_create_tag(name)
-    }
-    #[inline]
-    pub(crate) fn get_or_create_commodity(
-        &mut self,
-        name: Option<&str>,
-    ) -> Result<Arc<Commodity>, tackler::Error> {
-        self.state.get_or_create_commodity(name)
-    }
 }
 
 impl Settings {
@@ -177,11 +146,11 @@ impl Settings {
         let cfg_rpt_commodity = cfg
             .report
             .commodity
-            .map(|c| state.get_or_create_commodity(Some(c.name.as_str())))
+            .map(|c| state.get_or_create_commodity(c.name.as_str()))
             .transpose()?;
 
         let report_commodity = match overlaps.report.commodity {
-            Some(c) => Some(state.get_or_create_commodity(Some(c.as_str()))?),
+            Some(c) => Some(state.get_or_create_commodity(c.as_str())?),
             None => cfg_rpt_commodity,
         };
 

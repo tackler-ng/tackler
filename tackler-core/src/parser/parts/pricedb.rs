@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2025
+ * Tackler-NG 2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -40,12 +40,14 @@ pub(crate) fn parse_price_entry(is: &mut Stream<'_>) -> ModalResult<PriceEntry> 
 
     let base_commodity = is
         .state
-        .get_or_create_commodity(Some(base_commodity))
+        .state
+        .get_or_create_commodity(base_commodity)
         .map_err(|e| from_error(is, &*e))?;
 
     let eq_commodity = is
         .state
-        .get_or_create_commodity(Some(eq_commodity))
+        .state
+        .get_or_create_commodity(eq_commodity)
         .map_err(|e| from_error(is, &*e))?;
 
     let comments = comments.map(String::from);

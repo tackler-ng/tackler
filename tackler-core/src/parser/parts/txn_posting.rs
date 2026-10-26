@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::kernel::Settings;
@@ -63,7 +63,7 @@ fn handle_posting(
     settings: &mut Settings,
 ) -> Result<Posting, tackler::Error> {
     let comm = vp.post_commodity;
-    let acctn = settings.get_or_create_txn_account(acc_id, &comm)?;
+    let acctn = settings.state.get_or_create_txn_account(acc_id, &comm)?;
 
     Posting::from(
         acctn,

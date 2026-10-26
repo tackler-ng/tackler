@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2024-2025
+ * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::model::posting::txn_sum;
@@ -24,7 +24,7 @@ pub(crate) fn parse_txn_postings(is: &mut Stream<'_>) -> ModalResult<Posts> {
         let amount = txn_sum(&postings.0).neg();
         let comm = postings.0[0].txn_commodity.clone();
 
-        let acctn = match is.state.get_or_create_txn_account(p.0, &comm) {
+        let acctn = match is.state.state.get_or_create_txn_account(p.0, &comm) {
             Ok(acctn) => acctn,
             Err(err) => return Err(from_error(is, err.as_ref())),
         };

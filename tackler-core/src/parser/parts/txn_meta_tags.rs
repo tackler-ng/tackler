@@ -19,11 +19,12 @@ fn handle_tags(v: Vec<&str>, settings: &mut Settings) -> Result<Tags, tackler::E
     let mut tags = Vec::with_capacity(v.len());
 
     for t in v {
-        let at = settings.get_or_create_tag(t)?; // todo: fix
+        let at = settings.state.get_or_create_tag(t)?;
         tags.push(at);
     }
 
     if tags.len() != tags.iter().unique().count() {
+        // todo: change unique to duplicate, and report duplicates
         let msg = if tags.len() < 1024 {
             format!("txn tags contains duplicate tags: {tags:?}")
         } else {

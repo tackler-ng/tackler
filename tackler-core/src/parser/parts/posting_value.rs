@@ -168,8 +168,8 @@ fn handle_posting_value(
     settings: &mut Settings,
 ) -> Result<ValuePosition, tackler::Error> {
     let post_commodity = match &opt_unit {
-        Some(u) => settings.get_or_create_commodity(Some(u.0))?,
-        None => settings.get_or_create_commodity(None)?,
+        Some(u) => settings.state.get_or_create_commodity(u.0)?,
+        None => settings.state.get_or_create_commodity("")?,
     };
 
     let txn_commodity = match &opt_unit {
@@ -181,7 +181,7 @@ fn handle_posting_value(
                             // Ok, we have position, so there must be closing position
                             // so, we have closing position, use its commodity
                             let val_pos_commodity =
-                                settings.get_or_create_commodity(Some(cp.1.commodity))?;
+                                settings.state.get_or_create_commodity(cp.1.commodity)?;
 
                             if post_commodity.name == val_pos_commodity.name {
                                 let em = format!(
@@ -193,16 +193,16 @@ fn handle_posting_value(
                             }
                             val_pos_commodity
                         }
-                        None => settings.get_or_create_commodity(None)?,
+                        None => settings.state.get_or_create_commodity("")?,
                     }
                 }
                 None => {
                     // no position, use original unit
-                    settings.get_or_create_commodity(Some(u.0))?
+                    settings.state.get_or_create_commodity(u.0)?
                 }
             }
         }
-        None => settings.get_or_create_commodity(None)?,
+        None => settings.state.get_or_create_commodity("")?,
     };
 
     let post_amount = amount;

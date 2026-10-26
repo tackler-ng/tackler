@@ -2,8 +2,8 @@
  * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
+use crate::config::Account;
 use crate::config::spec_items::AccountSpec;
-use crate::config::{Account, Timestamp};
 use crate::kernel::state::account_tree::{AccountTree, Commodities, Tags};
 use crate::model::{AccountTreeNode, Commodity, TxnAccount};
 use crate::{config, tackler};
@@ -18,7 +18,7 @@ pub(crate) struct State {
     pub(crate) commodities: Commodities,
     pub(crate) tags: Tags,
     pub(crate) strict_mode: bool,
-    pub(crate) time_defaults: Timestamp,
+    pub(crate) time_defaults: config::Timestamp,
 }
 impl State {
     pub(crate) fn try_from(
@@ -29,28 +29,21 @@ impl State {
         time_def: &config::Timestamp,
     ) -> Result<State, tackler::Error> {
         let state = State {
-            accounts: AccountTree::from(&acc_spec.items)?,
+            accounts: AccountTree::from(&acc_spec.items, strict_mode)?,
             commodities: Commodities::from(comm_spec)?,
             tags: Tags::from(tags_spec)?,
             strict_mode,
             time_defaults: time_def.clone(),
         };
 
-        if strict_mode {
-            state.validate()?;
-        }
         Ok(state)
-    }
-
-    fn validate(&self) -> Result<(), tackler::Error> {
-        self.accounts.validate()
     }
 }
 
 impl State {
-    /// Get parent account of child
+    /// Get parent `TxnAccount` of child
     ///
-    /// Errors
+    /// # Errors
     /// Error if child is root
     pub(crate) fn parent_txn_account(
         &self,
@@ -59,12 +52,13 @@ impl State {
     ) -> Result<TxnAccount, tackler::Error> {
         let parent = self.accounts.parent_account(child)?;
 
-        let comm = self.get_commodity(commodity.name.as_str())?;
-
-        Ok(TxnAccount { atn: parent, comm })
+        Ok(TxnAccount {
+            atn: parent,
+            comm: commodity.clone(),
+        })
     }
 
-    /// Get or create `TxnAccount` by name and commodity
+    /// Get or create `TxnAccount` by name and `Commodity`
     ///
     /// Both name and commodity must be valid name and ID
     /// e.g. this function is supposed to be used by parser.
@@ -73,12 +67,10 @@ impl State {
         name: &str,
         commodity: &Arc<Commodity>,
     ) -> Result<TxnAccount, tackler::Error> {
-        let comm = self.get_or_create_commodity(Some(commodity.name.as_str()))?;
-
         let txn_acc = if let Some(atn) = self.accounts.defined_accounts.get(name) {
             TxnAccount {
                 atn: atn.clone(),
-                comm,
+                comm: commodity.clone(),
             }
         } else {
             if self.strict_mode {
@@ -92,20 +84,12 @@ impl State {
             let atn = Arc::new(AccountTreeNode::unchecked_from(&account));
             self.accounts.insert(&atn)?;
 
-            TxnAccount { atn, comm }
+            TxnAccount {
+                atn,
+                comm: commodity.clone(),
+            }
         };
         Ok(txn_acc)
-    }
-
-    /// # Errors
-    /// Returns reference for commodity, error if it doesn't exist
-    pub(crate) fn get_commodity(&self, name: &str) -> Result<Arc<Commodity>, tackler::Error> {
-        if let Some(comm) = self.commodities.names.get(name) {
-            Ok(comm.clone())
-        } else {
-            let msg = format!("Unknown commodity: '{name}'");
-            Err(msg.into())
-        }
     }
 
     /// Get or create `Commodity` by name
@@ -114,46 +98,33 @@ impl State {
     /// e.g. this is function is supposed to be used by parser.
     pub(crate) fn get_or_create_commodity(
         &mut self,
-        name: Option<&str>,
+        name: &str,
     ) -> Result<Arc<Commodity>, tackler::Error> {
-        Self::inner_get_or_create_commodity(&mut self.commodities, self.strict_mode, name)
-    }
-
-    fn inner_get_or_create_commodity(
-        commodities: &mut Commodities,
-        strict_mode: bool,
-        name: Option<&str>,
-    ) -> Result<Arc<Commodity>, tackler::Error> {
-        if let Some(n) = name {
-            if n.is_empty() {
-                let res = if commodities.mandatory_commodity {
-                    let msg = "Empty commodity and 'permit-empty-commodity' is not set".to_string();
-                    Err(msg.into())
-                } else if let Some(c) = commodities.names.get(n) {
-                    Ok(c.clone())
-                } else {
-                    let comm = Arc::new(Commodity::default());
-                    commodities.names.insert(n.into(), comm.clone());
-                    Ok(comm)
-                };
-                return res;
+        if name.is_empty() {
+            if self.commodities.mandatory_commodity {
+                let msg = "Empty commodity and 'permit-empty-commodity' is not set".to_string();
+                Err(msg.into())
+            } else if let Some(c) = self.commodities.names.get(name) {
+                Ok(c.clone())
+            } else {
+                let comm = Arc::new(Commodity::default());
+                self.commodities.names.insert(name.into(), comm.clone());
+                Ok(comm)
             }
-            match commodities.names.get(n) {
+        } else {
+            match self.commodities.names.get(name) {
                 Some(comm) => Ok(comm.clone()),
                 None => {
-                    if strict_mode {
-                        let msg = format!("Unknown commodity: '{n}'");
+                    if self.strict_mode {
+                        let msg = format!("Unknown commodity: '{name}'");
                         Err(msg.into())
                     } else {
-                        let comm = Arc::new(Commodity::unchecked_from(n));
-                        commodities.names.insert(n.into(), comm.clone());
+                        let comm = Arc::new(Commodity::unchecked_from(name));
+                        self.commodities.names.insert(name.into(), comm.clone());
                         Ok(comm)
                     }
                 }
             }
-        } else {
-            let comm = Arc::new(Commodity::default());
-            Ok(comm)
         }
     }
 
@@ -186,7 +157,7 @@ mod tests {
     #[test]
     fn accounts_strict_false() {
         let mut state = State::default();
-        let comm = Arc::new(Commodity::default());
+        let comm = state.get_or_create_commodity("").unwrap();
 
         let txntn_1 = state.get_or_create_txn_account("a:b:c", &comm).unwrap(/*:test:*/);
         assert_eq!(state.accounts.defined_accounts.len(), 1);
@@ -227,7 +198,7 @@ mod tests {
             ..Default::default()
         };
 
-        let comm = Arc::new(Commodity::default());
+        let comm = state.get_or_create_commodity("").unwrap();
         let accounts: Vec<Arc<Account>> = vec!["a:b:c"]
             .into_iter()
             .map(|s| {
@@ -235,7 +206,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts, true).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 1);
         assert_eq!(state.accounts.synthetic_parents.len(), 2);
@@ -292,7 +263,7 @@ mod tests {
             ..Default::default()
         };
 
-        let comm = Arc::new(Commodity::default());
+        let comm = state.get_or_create_commodity("").unwrap();
         let accounts: Vec<Arc<Account>> = vec!["a:b:c", "a:b", "a"]
             .into_iter()
             .map(|s| {
@@ -300,7 +271,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts, true).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 3);
         assert_eq!(state.accounts.synthetic_parents.len(), 0);
@@ -328,7 +299,7 @@ mod tests {
             ..Default::default()
         };
 
-        let comm = Arc::new(Commodity::default());
+        let comm = state.get_or_create_commodity("").unwrap();
         let accounts: Vec<Arc<Account>> = vec!["a:b:c:d", "a:b", "a"]
             .into_iter()
             .map(|s| {
@@ -336,7 +307,7 @@ mod tests {
             })
             .collect();
 
-        state.accounts = AccountTree::from(&accounts).unwrap(/*:test:*/);
+        state.accounts = AccountTree::from(&accounts, true).unwrap(/*:test:*/);
 
         assert_eq!(state.accounts.defined_accounts.len(), 3);
         assert_eq!(state.accounts.synthetic_parents.len(), 1);

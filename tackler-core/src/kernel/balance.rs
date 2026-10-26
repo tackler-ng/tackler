@@ -55,7 +55,9 @@ impl Balance {
             Ok(())
         } else {
             // Not on top => find parent for this node
-            let new_parent_atn = settings.parent_txn_account(&my_acctn.atn, &my_acctn.comm)?;
+            let new_parent_atn = settings
+                .state
+                .parent_txn_account(&my_acctn.atn, &my_acctn.comm)?;
 
             let parent = acc_sums.get_key_value(&new_parent_atn);
             if parent.is_some() {
@@ -159,8 +161,9 @@ impl Balance {
 
                 // If I'm not root, then insert or update parent
                 if !atn_val.0.is_root() {
-                    let parent_atn =
-                        settings.parent_txn_account(&atn_val.0.atn, &atn_val.0.comm)?;
+                    let parent_atn = settings
+                        .state
+                        .parent_txn_account(&atn_val.0.atn, &atn_val.0.comm)?;
 
                     bal_tns
                         .entry(parent_atn.clone())
