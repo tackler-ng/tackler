@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::config::Account;
+use crate::config::Spans;
 use crate::model::{AccountTreeNode, Commodity};
 use crate::{config, tackler};
 use itertools::Itertools;
@@ -67,7 +68,7 @@ pub(crate) struct AccountTree {
 }
 impl AccountTree {
     pub(crate) fn from(
-        account_names: &[Arc<Account>],
+        account_names: &[Account],
         strict_mode: bool,
     ) -> Result<AccountTree, tackler::Error> {
         let mut defined_accounts = HashMap::with_capacity(account_names.len());
@@ -92,32 +93,59 @@ impl AccountTree {
             }
         }
 
-        let at = AccountTree {
+        let mut at = AccountTree {
             defined_accounts,
             synthetic_parents,
             strict_mode,
         };
         if strict_mode {
-            at.check_temporals()?;
+            at.finalize_temporals()?;
         }
         Ok(at)
     }
 
-    /// Check temporal settings for `AccountTree`
+    /// Check and finalize temporal settings for `AccountTree`
     ///
-    /// This checks logic of temporal definitions for account tree,
+    /// This checks the logic of temporal definitions for account tree,
     /// e.g. that there isn't nested parent-child definitions.
-    fn check_temporals(&self) -> Result<(), tackler::Error> {
-        self.defined_accounts
+    ///
+    /// Then it updates children's temporals based on parent's temporals,
+    /// if they don't have their owns.
+    fn finalize_temporals(&mut self) -> Result<(), tackler::Error> {
+        // Todo: revisit this mess at some sunny day
+        //
+        // a) Check temporal settings (this is about ok)
+        // b) Update ATN if it's missing temporal and parent have one
+        // b.1) This is mess, find a better way to update while folding references etc.
+        let spans: Vec<Option<(String, Spans)>> = self
+            .defined_accounts
             .iter()
             .sorted_unstable_by(|a, b| a.1.depth_first(b.1))
-            .try_for_each(|kv| -> Result<(), tackler::Error> {
+            .map(|kv| -> Result<Option<(String, Spans)>, tackler::Error> {
                 if kv.1.account.is_temporal() {
-                    self.check_temporality(kv.1, Some(kv.1.clone()))
+                    let _ = self.check_temporality(kv.1, Some(kv.1.clone()))?;
+                    // No need to update: I already have my own temporal definition
+                    Ok(None)
+                } else if let Some(temporal) = self.check_temporality(kv.1, None)? {
+                    // Temporal for me has to be updated: One of my parents had temporal definition
+                    Ok(Some((kv.1.account.spec.name.clone(), temporal)))
                 } else {
-                    self.check_temporality(kv.1, None)
+                    // No need to update: Neither me, nor any of my parents have temporal definition
+                    Ok(None)
                 }
-            })?;
+            })
+            .try_collect()?;
+
+        spans.into_iter().flatten().for_each(|i| {
+            let a = self
+                .defined_accounts
+                .get_mut(i.0.as_str())
+                .expect("IE: hashmap missing item");
+            Arc::get_mut(a)
+                .expect("IE: ATN with temporal check")
+                .account
+                .spans = Some(i.1);
+        });
         Ok(())
     }
 
@@ -184,9 +212,9 @@ impl AccountTree {
         &self,
         atn: &Arc<AccountTreeNode>,
         child_with_temporal: Option<Arc<AccountTreeNode>>,
-    ) -> Result<(), tackler::Error> {
+    ) -> Result<Option<Spans>, tackler::Error> {
         if atn.is_root() {
-            return Ok(());
+            return Ok(None);
         }
         let parent = self.parent_account(atn)?;
         if let Some(child) = &child_with_temporal
@@ -199,7 +227,15 @@ impl AccountTree {
             writeln!(msg, "Nested temporal settings are not allowed.")?;
             Err(msg.into())
         } else {
-            self.check_temporality(&parent, child_with_temporal)
+            if let Some(temporal) = self.check_temporality(&parent, child_with_temporal)? {
+                Ok(Some(temporal))
+            } else {
+                if parent.account.spans.is_some() {
+                    Ok(parent.account.spans.clone())
+                } else {
+                    Ok(None)
+                }
+            }
         }
     }
 }
@@ -253,8 +289,8 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
-        assert!(acc_tree.check_temporals().is_ok());
+        let mut acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.finalize_temporals().is_ok());
 
         let acc_strict = AccountTree::from(&accounts.items, true);
         assert!(acc_strict.is_ok());
@@ -283,8 +319,8 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
-        assert!(acc_tree.check_temporals().is_err());
+        let mut acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.finalize_temporals().is_err());
 
         let acc_strict = AccountTree::from(&accounts.items, true);
         assert!(acc_strict.is_err());
@@ -313,8 +349,8 @@ accounts = [
 ]
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default()).unwrap(/*:test:*/);
-        let acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
-        assert!(acc_tree.check_temporals().is_err());
+        let mut acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+        assert!(acc_tree.finalize_temporals().is_err());
 
         let acc_strict = AccountTree::from(&accounts.items, true);
         assert!(acc_strict.is_err());

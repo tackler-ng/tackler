@@ -2,7 +2,7 @@
  * Tackler-NG 2024-2026
  * SPDX-License-Identifier: Apache-2.0
  */
-use crate::config::items::account::Account;
+pub(crate) use crate::config::items::account::{Account, Spans};
 use crate::config::spec_items::{
     AccountsPathSpec, AccountsSpec, AuditSpec, BalanceGroupSpec, BalanceSpec, CommoditiesPathSpec,
     CommoditiesSpec, ConfigSpec, EquitySpec, ExportSpec, ExtIdSpec, FsSpec, GitSpec, InputSpec,
@@ -544,19 +544,19 @@ impl Transaction {
 
 #[derive(Debug, Default)]
 pub(crate) struct Accounts {
-    pub items: Vec<Arc<Account>>,
+    pub items: Vec<Account>,
 }
 impl Accounts {
     pub(crate) fn from_str(s: &str, ts: &Timestamp) -> Result<Accounts, tackler::Error> {
         let acc_raw: AccountsSpec = toml::from_str(s)?;
-        let accounts: Vec<Arc<Account>> = acc_raw
+        let accounts: Vec<Account> = acc_raw
             .items
             .into_iter()
-            .map(|name| -> Result<Arc<Account>, tackler::Error> {
-                let a = Arc::new(Account::try_with(name, ts)?);
+            .map(|name| -> Result<Account, tackler::Error> {
+                let a = Account::try_with(name, ts)?;
                 Ok(a)
             })
-            .collect::<Result<Vec<Arc<Account>>, tackler::Error>>()?;
+            .collect::<Result<Vec<Account>, tackler::Error>>()?;
 
         let dups = accounts
             .iter()

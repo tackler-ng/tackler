@@ -199,10 +199,10 @@ mod tests {
         };
 
         let comm = state.get_or_create_commodity("").unwrap();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c"]
+        let accounts: Vec<Account> = vec!["a:b:c"]
             .into_iter()
             .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/))
+                Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/)
             })
             .collect();
 
@@ -264,10 +264,10 @@ mod tests {
         };
 
         let comm = state.get_or_create_commodity("").unwrap();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c", "a:b", "a"]
+        let accounts: Vec<Account> = vec!["a:b:c", "a:b", "a"]
             .into_iter()
             .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/))
+                Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/)
             })
             .collect();
 
@@ -300,10 +300,10 @@ mod tests {
         };
 
         let comm = state.get_or_create_commodity("").unwrap();
-        let accounts: Vec<Arc<Account>> = vec!["a:b:c:d", "a:b", "a"]
+        let accounts: Vec<Account> = vec!["a:b:c:d", "a:b", "a"]
             .into_iter()
             .map(|s| {
-                Arc::new(Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/))
+                Account::try_with(AccountSpec::from_str(s), &Timestamp::default()).unwrap(/*:test:*/)
             })
             .collect();
 

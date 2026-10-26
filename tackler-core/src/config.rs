@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 pub(crate) use items::AccountSelectors;
-pub(crate) use items::Accounts;
 pub use items::BalanceType;
 pub(crate) use items::Commodities;
 pub use items::Config;
@@ -19,6 +18,7 @@ pub(crate) use items::Scale;
 pub use items::StorageType;
 pub(crate) use items::Tags;
 pub(crate) use items::account::Account;
+pub(crate) use items::{Accounts, Spans};
 use jiff::tz::TimeZone;
 use jiff::{Zoned, tz};
 use toml::value::Offset;

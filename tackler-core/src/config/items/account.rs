@@ -8,9 +8,11 @@ use crate::config::toml_datetime_to_zoned;
 use crate::tackler;
 use jiff::Zoned;
 
-#[derive(Debug, Eq, PartialEq, Default)]
+pub(crate) type Spans = Vec<(Option<Zoned>, Option<Zoned>)>;
+
+#[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub(crate) struct Account {
-    spans: Option<Vec<(Option<Zoned>, Option<Zoned>)>>,
+    pub(crate) spans: Option<Spans>,
     pub(crate) spec: AccountSpec,
 }
 impl Account {

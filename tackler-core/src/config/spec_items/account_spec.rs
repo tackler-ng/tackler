@@ -25,7 +25,7 @@ fn datetime_pretty_string(dt: &toml::value::Datetime) -> Result<String, std::fmt
     Ok(s)
 }
 
-#[derive(Debug, Default, Eq, PartialEq, Deserialize)]
+#[derive(Debug, Clone, Default, Eq, PartialEq, Deserialize)]
 #[serde(try_from = "toml::Value")]
 #[serde(deny_unknown_fields)]
 pub(crate) struct AccountSpec {

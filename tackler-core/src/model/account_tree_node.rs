@@ -53,7 +53,7 @@ impl TxnAccount {
     }
 }
 
-#[derive(Debug, Clone, Default, Hash, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Debug, Default, Hash, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Commodity {
     pub name: String,
 }
@@ -104,7 +104,7 @@ pub(crate) struct AccountTreeNode {
     /// This is computed from account.spec.name
     parts: Vec<String>,
     /// Account specification
-    pub(crate) account: Arc<Account>,
+    pub(crate) account: Account,
 }
 
 impl AccountTreeNode {
@@ -179,7 +179,7 @@ impl AccountTreeNode {
 }
 
 impl AccountTreeNode {
-    pub(crate) fn try_from(account: &Arc<Account>) -> Result<AccountTreeNode, tackler::Error> {
+    pub(crate) fn try_from(account: &Account) -> Result<AccountTreeNode, tackler::Error> {
         if let Err(e) = is_valid_name(&account.spec.name) {
             let msg = format!(
                 "This is not a valid account name: '{}', error was: {e}",
@@ -213,11 +213,11 @@ impl AccountTreeNode {
             depth,
             parent: parents_parent,
             parts,
-            account: Arc::new(Account::from(&child.parent)),
+            account: Account::from(&child.parent),
         })
     }
 
-    pub(crate) fn unchecked_from(account: &Arc<Account>) -> AccountTreeNode {
+    pub(crate) fn unchecked_from(account: &Account) -> AccountTreeNode {
         let parts: Vec<&str> = account.spec.name.split(':').collect();
         let depth = parts.len();
         assert!(depth > 0);
