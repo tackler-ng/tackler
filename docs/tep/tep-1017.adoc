@@ -1,7 +1,8 @@
 = TEP-1017: Advanced Chart of Accounts
 
-Advanced Chart of Accounts specifications: per-account lifecycle (open / close),
-and support periodicity (multiple time spans).
+Advanced Chart of Accounts specifications: support for temporal settings
+per-account (open / close time specification, and support for multiple time
+spans).
 
 Github issue: https://github.com/tackler-ng/tackler/issues/154
 
@@ -22,10 +23,7 @@ only practical workaround, and it leaves no signal that the account has been
 retired.
 
 Opening is fine today: at parse time Tackler reads the current
-`accounts.toml`, so adding a name at commit X means Tackler accepts postings
-from X onward. "Opened on X" emerges naturally from git history without any
-explicit directive. The symmetric problem — closing — does not solve itself
-the same way, because validation is always against HEAD's config.
+`accounts.toml`.
 
 A first-class close mechanism is also a de-facto convention in the broader
 plain-text-accounting ecosystem (Beancount has a journal `close` directive;
@@ -35,7 +33,7 @@ used). Bringing this into Tackler removes the need for app-layer wrappers to
 invent their own archived-accounts sidecar.
 
 This TEP proposes per-account lifecycle and metadata expressed in
-`accounts.toml`, *not* as journal directives. Semantically Tackler cannot
+`accounts.toml`, not as journal directives. Semantically Tackler cannot
 attach temporal directives to the txn stream because txn filters can drop them
 out of view.
 
@@ -48,44 +46,44 @@ This section must be clean up, especially ref https://github.com/tackler-ng/tack
 ====
 
 Support for mixed-type arrays is added to `accounts.toml`. Each `accounts`
-item declares either a plain old account name (`String`) or an Account Specification.
+item declares either a plain old account name (`String`) or an Account
+Specification (`AccountSpec`).
 
 Sub-changes:
 
 * New `AccountSpec` element type for `accounts` arrays in `accounts.toml`
-** Per-account `open` and `close` dates (half-open interval `[open, close)`)
-** Per-account array of open-close pairs (spans)
-* Strict-mode enforcement of period membership; relaxed mode unchanged
+* Accounts with temporal validity definitions
+** Per-account `open` and `close` times (half-open interval `[open, close)`)
+** Per-account list of open-close pairs (spans)
+* Strict-mode enforcement of temporal settings; relaxed mode is unchanged
 * TBD: Reports and exports respect declared periods
 
 
-=== Sub-change 1: mixed-type array of `accounts` and storage shape
+=== Sub-change 1: Support for mixed-type array of `accounts`
 
-[WARNING]
-====
-This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #1158]
-====
+This change add support for TOML's
+https://toml.io/en/v1.1.0#array[mixed-array] format. This is a backward
+compatible change, e.g.  current accounts.toml definitions are still valid
+after this change.
 
-Open design Question (ODQ): https://github.com/tackler-ng/tackler/issues/158
-
-.accounts.toml example
+.mixed-array example of accounts.toml
 ----
 
 accounts = [
-    # shorthand: unchanged behavior, always open
+    # plain account name: unchanged behavior, always open
     "Income:Salary",
     {
-        # Account Specification: account with single validity period
+        # Account Specification: account with single, fully defined '[)' validity period
         name = "Income:Salary:Acme·Inc",
-        open = 2025-01-01,  # Optional, if missing open from the beginning of time
-        close = 2026-01-01, # Optional, if missing, open 'til the end of time
+        open = 2025-01-01,  # this is optional, if missing, then open from the beginning of time
+        close = 2026-01-01, # this is optional, if missing, then open 'til the end of time
     },
     {
-        # Account Specification: both open and close are optional, account is always open
+        # Account Specification: only name is specified, account is always open
         name = "Expenses:Food",
     },
     {
-        # Account Specification: sporadic open with defined time spans
+        # Account Specification: sporadic open with time spans
         name = "Expenses:Tax",
         spans = [
             # both open and close must be defined
@@ -93,104 +91,104 @@ accounts = [
             { open = 2026-01-31, close = 2026-01-31 },
         ],
     },
+    {
+        # Account Specification: account with sub-date precision
+        name = "Expenses:New·Years·Eve:Fireworks",
+        open = 2025-01-01 00:00:00,  # with time, timezone offset is based on configured default
+        close = 2026-01-01 02:00:00+02:00, # with time and offset
+    },
 ]
 ----
 
 === Sub-change 2: `open` and `close` timestamps
 
-`open` (optional, TOML date or datetime)::
-First valid timestamp for postings to this account. Implicit value:
-`-infinity` (the account has always been open). Postings with
-timestamp < `open` are rejected in strict mode.
+`open` (optional, TOML date, datetime or datetime with offset)::
+First valid transaction time to have postings to this account. If `open` is
+missing, then implicit value (`-infinity`) is used (the account has always
+been open).  Postings to the account with txn timestamp before  `open` cause
+an error in strict mode.
 
-`close` (optional, TOML date or datetime)::
-First *invalid* timestamp for postings to this account — postings at
-or after this timestamp are rejected. Implicit value: `+infinity`. +
-+
-Convention is to precede a `close` with a zero-balance assertion,
-however, tackler doesn't support balance assertions at the moment.
-ref: ODQ: https://github.com/tackler-ng/tackler/issues/158[GH158]
+
+`close` (optional, TOML date, datetime or datetime with offset)::
+First invalid transaction time for postings to this account. If `close` is
+missing, then implicit value (`+infinity`) is used (the account will be close
+forever, starting from that time). Postings at or after this time cause an
+error in strict mode.
 
 Together they define a half-open interval `[open, close)`. Both fields
 accept the same temporal forms Tackler already accepts in txn headers:
 
-* **Bare date** (`2023-12-31`) — normalized the same way a bare date
+* **Bare date** (`2023-12-31`) - normalized the same way a bare date
   is normalized in a txn header (configured time and timezone are used).
-  The expected shape for the common case: an account closes "on a day."
-* **Local datetime** (`2023-12-31T14:30:00`) — likewise normalized
+  This is the expected form for the common case, account closes "on a day."
+* **Local datetime** (`2023-12-31T14:30:00`) - likewise normalized
   the same as in a txn header (configured timezone is used).
-  Use when sub-day precision matters  (system cutovers,
+  Use when sub-day precision matters  (e.g. system cutovers,
   exchange go-live times, audit-grade events).
-* **Offset datetime** (`2023-12-31T14:30:00+02:00` or `…Z`) — used
+* **Offset datetime** (`2023-12-31T14:30:00+02:00` or `…Z`) - used
   as-is.
 
 The existing timestamp conventions are reused, so an `open` / `close` value
-behaves identically to a txn timestamp written the same way.
+behaves identically to a txn timestamp written in the same way.
 
 It also keeps forward compatibility: writing `close = 2023-12-31` today
-and later changing systems sub-day precision cut-off time (configured default time) is no-cost operation, just single setting has to be changed.
+and later changing systems configured sub-day precision cut-off time
+(configured default time) is no-cost operation, and it won't change the
+internal temporal logic of journal (e.g. moving the cut-off time from midnight
+to midday), it's just single setting change.
 
 Above can be supported natively with TOML datetime type.
 
 
 === Sub-change 3: Periods via repeated entries
 
-A spans array of open-close pairs is  *allowed* and
-represent disjoint periods for that account. A posting to `name` is valid
-iff its date falls in some declared period.
+A spans e.g. (array of open-close pairs) is allowed and
+represent disjoint periods for that account. A posting to an account
+is valid only if its txn time falls into some declared time span.
 
-This single mechanism supports following use cases:
-* sporadic opens, e.g. seasonal accounts (N blocks with gaps)
-* close-then-reopen (two blocks with a gap)
+This temporal time span mechanism supports following use cases:
+* sporadic opens, e.g. seasonal accounts
+* close-then-reopen
 
-No nested spans are needed. Implementation: sort by `open` and validate non-overlap. Lookup could be optimized as binary search by date.
+No nested spans are allowed, and spans are also not allowed with
+account's main open-close definitions.
 
-
-=== Sub-change 4: `kind` attribute
-
-This change is postponed for separate TEP.
-
-`kind` (optional, `"debit"` | `"credit"`)::
-The account's natural balance side. Optional everywhere; if unset, no
-constraint. Cascades down the account tree: subaccounts inherit the
-nearest declared ancestor's `kind` unless they declare their own.
-
-We deliberately do *not* import a 5-type plain-text-accounting taxonomy
-(asset / liability / equity / income / expense). Tackler today does not
-parse account types from the `Assets:` / `Income:` prefix — those are
-convention, not semantics — and importing a taxonomy in this TEP invents
-structure for no current consumer. The future P&L work (TEP-1003) may
-want categorization with different splits; if so it adds an orthogonal
-`category` field later without conflicting with `kind`.
-
-The two-value `kind` is the minimum that supports the posting-level
-override outlined in #154 (Sub-change 5) and avoids importing a
-taxonomy this TEP would not be the right place to define.
+Implementation: sort by `open` and validate non-overlap.
+Lookup could be optimized as binary search by date if needed.
 
 
-=== Sub-change 5: Reserved `# kind: <value>` posting kindness override
+=== Sub-change 4: tree-aware temporal definitions
 
-The motivation for `kind` on accounts is enabling *corrective transactions
-on immutable journals*: a posting that flips the natural debit/credit side
-of its account (e.g., crediting a normally-debited asset for a refund
-correction).
+Child account inherits temporal definition from parent, if parent have one.
 
-This TEP *reserves* the `# kind:` transaction metadata
-syntax for that purpose but does *not* specify enforcement semantics
-(when it errors, what changes in reports).
+In following example, accounts `a` and `a:b` are always open.
+Account `a:b:c` has temporal definition,  which is inherited by `a:b:c:d`
+and `a:b:c:d:e`. All of these three accounts have temporal definition
+`open = 2026-01-01`, `close = 2026-01-02`.
 
-Architecture Decision Records::
-Reserve txn metadata # kind: for latter use, with possible value # kind: revert. +
-+
-A use case for that would be a corrective transaction, when account kindness is enforced (credit, debit). +
-+
-ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
+[source, toml]
+----
+accounts = [
+    "a",
+    "a:b",
+    {
+        name = "a:b:c",
+        open = 2026-01-01,
+        close = 2026-01-02,
+    },
+    "a:b:c:d",
+    "a:b:c:d:e",
+]
+----
+
+Both parent and child can not have a temporal definition. In other words,
+there can be only one temporal definition from the root to the leaf for
+the account.
+
 
 == Journal File Format
 
-No journal file format change.  The new metadata `# kind: ...` is only reserved,
-not parsed as valid input by this TEP.
-
+No journal file format changes.
 
 == Implementation
 
@@ -205,7 +203,7 @@ Reports and exports gain an opt-in flag to include accounts outside their
 declared active periods (default behavior is to filter them):
 
 * [ ] `--include-closed` (or equivalent on the existing accounts-filter
-  CLI surface — to be confirmed during implementation)
+  CLI surface - to be confirmed during implementation)
 
 === CONF Changes
 
@@ -250,8 +248,8 @@ ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
   `tackler-core/src/config/raw_items.rs`.
 * [x] Reference to AccountSpec into `AccountTreeNode`
 * [x] New `is_open` method to check if account is open or not
-* [ ] Synthetic parent-account behavior unchanged.
-** [ ] Populate AccountSpec open-close based on parents, if missing for node
+* [x] Synthetic parent-account behavior unchanged.
+** [x] Populate AccountSpec open-close based on parents, if missing for node
 
 
 ==== API Changes
@@ -263,17 +261,17 @@ JSON report output unless a future TEP adds them.
 
 ===== Server API Changes
 
-* [ ] none anticipated
+None anticipated.
 
 
 ===== Client API Changes
 
-* [ ] none anticipated
+None anticipated.
 
 
 ===== JSON Model
 
-* [ ] none anticipated
+None anticipated.
 
 
 ==== New Dependencies
@@ -323,7 +321,7 @@ regardless of period.
 
 ==== Identity Export
 
-* [ ] No change anticipated; identity is a faithful copy of input.
+No changes
 
 
 ==== Accounts Export
@@ -353,19 +351,57 @@ ADR: https://github.com/tackler-ng/tackler/issues/160[GH #160]
 ** [ ] User Manual
 *** [ ] cli-arguments
 **** [ ] `--include-closed` (or equivalent) ref: ODQ: https://github.com/tackler-ng/tackler/issues/159[GH #159]
-** [ ] tackler.toml — none
-** [ ] accounts.toml — document `AccountSpec` shape, fields, validation, spans
-** [ ] commodities.toml — none
-** [ ] tags.toml — none
-** [ ] examples — add an `accounts.toml` example showing flat
+** [ ] accounts.toml - document `AccountSpec` shape, fields, validation, spans
+** [ ] examples - add an `accounts.toml` example showing flat
        `AccountSpecs` coexistence and a spans example
-* [ ] Developer docs
-** [ ] Note this is first use of mixed-arrays in config systems
 
 
 === Future Plans and Postponed (PP) Features
 
 ==== Postponed (PP) Features
+
+The new transaction metadata `# kind: ...` is only reserved,
+not parsed as valid input by this TEP.
+
+===== Sub-change 5: `kind` attribute
+
+This change is postponed for separate TEP.
+
+`kind` (optional, `"debit"` | `"credit"`)::
+The account's natural balance side. Optional everywhere; if unset, no
+constraint. Cascades down the account tree: subaccounts inherit the
+nearest declared ancestor's `kind` unless they declare their own.
+
+We deliberately do *not* import a 5-type plain-text-accounting taxonomy
+(asset / liability / equity / income / expense). Tackler today does not
+parse account types from the `Assets:` / `Income:` prefix - those are
+convention, not semantics - and importing a taxonomy in this TEP invents
+structure for no current consumer. The future P&L work (TEP-1003) may
+want categorization with different splits; if so it adds an orthogonal
+`category` field later without conflicting with `kind`.
+
+The two-value `kind` is the minimum that supports the posting-level
+override outlined in #154 (Sub-change 5) and avoids importing a
+taxonomy this TEP would not be the right place to define.
+
+
+===== Sub-change 5: Reserved `# kind: <value>` posting kindness override
+
+The motivation for `kind` on accounts is enabling *corrective transactions
+on immutable journals*: a posting that flips the natural debit/credit side
+of its account (e.g., crediting a normally-debited asset for a refund
+correction).
+
+This TEP *reserves* the `# kind:` transaction metadata
+syntax for that purpose but does *not* specify enforcement semantics
+(when it errors, what changes in reports).
+
+Architecture Decision Records::
+Reserve txn metadata # kind: for latter use, with possible value # kind: revert. +
++
+A use case for that would be a corrective transaction, when account kindness is enforced (credit, debit). +
++
+ADR: https://github.com/tackler-ng/tackler/issues/162[GH #162]
 
 Transaction metadata `# kind: <value>`::
 This TEP reserves the syntax (Sub-change 5). When it errors and what it
@@ -412,23 +448,27 @@ Normal, ok-case tests to validate functionality:
 * [x] multi-period (two `AccountSpec` blocks for same name): posting in
   either window accepted, posting in the gap rejected (strict)
 * [x] if `open` / `close` timeformat parsing is done with TOML + custom logic, then this must be tested
-* [ ] Additional Ok tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
-* [ ] Acounts export round trip
+* [x] Additional Ok tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
+* [ ] Accounts export round trip
 ** [ ] flat and AccountSpec
-** [ ] AccountSpec: open = None or close = None
-** [ ] AccountSpec: spans
+** [x] AccountSpec: open = None or close = None
+** [x] AccountSpec: spans
+** [x] AccountSpec: open|close
+*** [x] date
+*** [x] datetime
+*** [x] datetime with offset
 
 
 ==== Errors
 
 Various error cases:
 
-* [ ] e: same name as plain entry and as `AccountSpec` entry
+* [x] e: same name as plain entry and as `AccountSpec` entry
 * [x] e: two `spans` items  with overlapping periods
 * [x] e: `open >= close` within a span
 * [x] e: posting with date outside all declared periods (strict mode)
 
-* [ ] e: Additional Err tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
+* [x] e: Additional Err tests based on account trees https://github.com/tackler-ng/tackler/issues/161[ADR (GH 161)]
 * [x] e: if `open` / `close` time format parsing is done with TOML + custom logic, then this must be tested
 
 ==== Perf
