@@ -149,7 +149,7 @@ mod tests {
 
     #[test]
     // test: 153b0817-7c48-4050-980f-7a39cf68ced3
-    // desc: AccountSpec combinations
+    // desc: AccountSpec combinations (plain, open, open-close, close, spans)
     #[allow(clippy::too_many_lines)]
     fn test_ok_conf() {
         let confs = [
@@ -210,6 +210,8 @@ mod tests {
                 ],
             ),
             (
+                // test: a73002a6-6483-43a7-bafb-959577d42633
+                // desc: provided date, default time and offset
                 r#"
                 name = "a:b:c"
                 spans = [
@@ -224,6 +226,8 @@ mod tests {
                 ],
             ),
             (
+                // test: 0dafdf9e-382b-4e82-b8ce-868b7adfcc6d
+                // desc: provided date and time, default offset
                 r#"
                 name = "a:b:c"
                 open = 2026-10-20 12:13:14.999
@@ -236,6 +240,8 @@ mod tests {
                 ],
             ),
             (
+                // test: 603463f7-9502-4878-bb7b-ba4c2c5f88c7
+                // desc: provided date, time and offset
                 r#"
                 name = "a:b:c"
                 open = 2026-10-20T12:13:14.999+02:00

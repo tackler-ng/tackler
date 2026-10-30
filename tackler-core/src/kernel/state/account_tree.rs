@@ -262,6 +262,20 @@ impl AccountTree {
 mod tests {
     use super::*;
     use crate::config::{Accounts, Timestamp};
+    use indoc::indoc;
+    use jiff::Zoned;
+    use tackler_rs::IndocUtils;
+
+    impl AccountTree {
+        fn get_account(&self, name: &str) -> Arc<AccountTreeNode> {
+            // naive implementation for testing (no errors)
+            if let Some(atn) = self.defined_accounts.get(name) {
+                atn.clone()
+            } else {
+                self.synthetic_parents[name].clone()
+            }
+        }
+    }
 
     // test: 92c1a607-1420-44c0-9c9a-8544359538da
     // desc: parent without temporal
@@ -373,5 +387,133 @@ accounts = [
 "#;
         let accounts = Accounts::from_str(value, &Timestamp::default());
         assert!(accounts.is_err());
+    }
+
+    // test: e965b18c-df84-46e9-a8d3-b323ca5a872f
+    // desc: tree aware temporals: {top, middle, leaf} x {top, adjacent, leaf }
+    #[test]
+    #[allow(clippy::too_many_lines)]
+    fn test_tree_temporals() {
+        let confs = vec![
+            (
+                indoc!(
+                    r#"
+                    |accounts = [
+                    |    {
+                    |        name = "a",
+                    |        open = 2026-01-01,
+                    |        close = 2026-01-02,
+                    |    },
+                    |    "a:b",
+                    |    "a:b:c",
+                    |    "a:b:c:d",
+                    |    "a:b:c:d:e",
+                    |]"#
+                )
+                .strip_margin(),
+                vec![
+                    ("a", "2025-12-31T00:00:00[UTC]", false),
+                    ("a", "2026-01-01T00:00:00[UTC]", true),
+                    ("a", "2026-01-02T00:00:00[UTC]", false),
+                    //
+                    ("a:b", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b", "2026-01-02T00:00:00[UTC]", false),
+                    //
+                    ("a:b:c:d:e", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b:c:d:e", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c:d:e", "2026-01-02T00:00:00[UTC]", false),
+                ],
+            ),
+            (
+                indoc!(
+                    r#"
+                    |accounts = [
+                    |    "a",
+                    |    "a:b",
+                    |    {
+                    |        name = "a:b:c",
+                    |        open = 2026-01-01,
+                    |        close = 2026-01-02,
+                    |    },
+                    |    "a:b:c:d",
+                    |    "a:b:c:d:e",
+                    |]"#
+                )
+                .strip_margin(),
+                vec![
+                    ("a", "2025-12-31T00:00:00[UTC]", true),
+                    ("a", "2026-01-01T00:00:00[UTC]", true),
+                    ("a", "2026-01-02T00:00:00[UTC]", true),
+                    //
+                    ("a:b", "2025-12-31T00:00:00[UTC]", true),
+                    ("a:b", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b", "2026-01-02T00:00:00[UTC]", true),
+                    //
+                    ("a:b:c", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b:c", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c", "2026-01-02T00:00:00[UTC]", false),
+                    //
+                    ("a:b:c:d", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b:c:d", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c:d", "2026-01-02T00:00:00[UTC]", false),
+                    //
+                    ("a:b:c:d:e", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b:c:d:e", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c:d:e", "2026-01-02T00:00:00[UTC]", false),
+                ],
+            ),
+            (
+                indoc!(
+                    r#"
+                    |accounts = [
+                    |    "a",
+                    |    "a:b",
+                    |    "a:b:c",
+                    |    "a:b:c:d",
+                    |    {
+                    |        name = "a:b:c:d:e",
+                    |        open = 2026-01-01,
+                    |        close = 2026-01-02,
+                    |    },
+                    |]"#
+                )
+                .strip_margin(),
+                vec![
+                    ("a", "2025-12-31T00:00:00[UTC]", true),
+                    ("a", "2026-01-01T00:00:00[UTC]", true),
+                    ("a", "2026-01-02T00:00:00[UTC]", true),
+                    //
+                    ("a:b:c:d", "2025-12-31T00:00:00[UTC]", true),
+                    ("a:b:c:d", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c:d", "2026-01-02T00:00:00[UTC]", true),
+                    //
+                    ("a:b:c:d:e", "2025-12-31T00:00:00[UTC]", false),
+                    ("a:b:c:d:e", "2026-01-01T00:00:00[UTC]", true),
+                    ("a:b:c:d:e", "2026-01-02T00:00:00[UTC]", false),
+                ],
+            ),
+        ];
+
+        for (count, conf) in (1..).zip(confs) {
+            let accounts =
+                Accounts::from_str(conf.0.as_str(), &Timestamp::default()).unwrap(/*:test:*/);
+            let mut acc_tree = AccountTree::from(&accounts.items, false).unwrap(/*:test:*/);
+
+            assert!(
+                acc_tree.finalize_temporals().is_ok(),
+                "\nOffending conf number: {count}"
+            );
+
+            for (t_c, t) in (1..).zip(conf.1) {
+                let atn_a = acc_tree.get_account(t.0);
+                let ts: Zoned = t.1.parse().unwrap(/*:test:*/);
+                assert_eq!(
+                    atn_a.is_open(&ts),
+                    t.2,
+                    "\nOffending conf number: {count} : test number {t_c}\n"
+                );
+            }
+        }
     }
 }
