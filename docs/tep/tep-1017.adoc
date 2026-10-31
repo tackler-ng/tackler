@@ -40,10 +40,6 @@ out of view.
 
 == Summary of Changes
 
-[WARNING]
-====
-This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
-====
 
 Support for mixed-type arrays is added to `accounts.toml`. Each `accounts`
 item declares either a plain old account name (`String`) or an Account
@@ -280,39 +276,52 @@ None anticipated. Mixed type arrays already supported by TOML.
 
 === Reporting
 
-[WARNING]
-====
-This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
-====
+By default, balance, balance-group and register reports postings for
+selected accounts. These reports don't have any concept of time,
+and especially the don't have any concept of "the current time"
+for the report.  They just generate reports for transactions seen,
+possible after applying
+https://tackler.fi/docs/tackler/latest/usage/txn-filters/[transaction filters].
 
-By default, balance / balance-group / register reports filter accounts
-to their declared active periods — outside the window the account does
-not appear for that date range. An opt-in CLI flag (see CLI Changes)
-restores the current behavior of including all declared accounts
-regardless of period.
+For balance family reports, closed accounts should show up as empty
+(e.g. with zero values for both account and account tree sums).
+This is true especially when account has been closed "cleanly"
+and/or txn stream has not been filtered.
+
+To suppress these empty account's from balance family reports, this TEP adds
+functionality to hide these zero-sum accounts from balance family reports.
+
+For register report it's natural to report all transactions, closed or not.
 
 
 ==== Balance Report
 
-* [ ] Filter accounts by declared periods relative to the report date
-  range.
+* [x] Add an option to filter accounts by non-empty status
 
 
 ==== Balance Group Report
 
-* [ ] As Balance Report.
+* [x] As Balance Report.
 
 
 ==== Register Report
 
-* [ ] Postings to a closed account are valid for dates inside its
-  declared periods and rejected outside them (in strict mode); the
-  register itself naturally surfaces only postings that are present.
+No need for changes.
+
+Postings to a closed account are valid for dates inside its
+declared periods and rejected outside them (in strict mode).
+The register report shows only postings that are present,
+hence no need for register report changes.
 
 
 === Exporting
 
 ==== Equity Export
+
+[WARNING]
+====
+This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
+====
 
 * [ ] Equity export must respect periods so re-running equity at a date
   past a `close` produces the right opening balance for downstream
