@@ -18,6 +18,7 @@ pub struct BalanceSettings {
     pub(crate) ras: Vec<String>,
     pub(crate) scale: Scale,
     pub(crate) inverted: bool,
+    pub(crate) hide_empty: bool,
     pub(crate) report_commodity: Option<Arc<Commodity>>,
     pub(crate) price_lookup: PriceLookup,
 }
@@ -32,6 +33,7 @@ impl TryFrom<&Settings> for BalanceSettings {
             ras: settings.get_balance_ras(),
             scale: settings.report.scale.clone(),
             inverted: settings.inverted,
+            hide_empty: false, // TODO: from settings
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
         })
@@ -47,6 +49,7 @@ pub struct BalanceGroupSettings {
     pub report_tz: TimeZone,
     pub scale: Scale,
     pub inverted: bool,
+    pub hide_empty: bool,
     pub report_commodity: Option<Arc<Commodity>>,
     pub price_lookup: PriceLookup,
 }
@@ -63,6 +66,7 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
             report_tz: settings.report.tz.clone(),
             scale: settings.report.scale.clone(),
             inverted: settings.inverted,
+            hide_empty: false, // TODO: from settings
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
         };
@@ -78,6 +82,7 @@ impl From<BalanceGroupSettings> for BalanceSettings {
             ras: bgs.ras.clone(),
             scale: bgs.scale.clone(),
             inverted: bgs.inverted,
+            hide_empty: bgs.hide_empty,
             report_commodity: bgs.report_commodity.clone(),
             price_lookup: bgs.price_lookup.clone(),
         }

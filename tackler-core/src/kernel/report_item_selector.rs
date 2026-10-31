@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -113,11 +113,49 @@ impl BalanceNonZeroByAccountSelector {
     /// # Errors
     /// Returns `Err` in case of invalid pattern
     pub fn try_from(patterns: &[&str]) -> Result<BalanceNonZeroByAccountSelector, tackler::Error> {
-        let bfa = BalanceByAccountSelector {
-            regexs: new_full_haystack_regex_set(patterns)?,
-        };
-        let bnza = BalanceNonZeroByAccountSelector { acc_sel: bfa };
-        Ok(bnza)
+        let acc_sel = BalanceByAccountSelector::try_from(patterns)?;
+        Ok(BalanceNonZeroByAccountSelector { acc_sel })
+    }
+}
+
+pub struct BalanceNonEmptyByAccountSelector {
+    acc_sel: Box<dyn BalanceSelector>,
+}
+impl Default for BalanceNonEmptyByAccountSelector {
+    fn default() -> Self {
+        BalanceNonEmptyByAccountSelector {
+            acc_sel: Box::new(BalanceAllSelector::default()),
+        }
+    }
+}
+impl BalanceSelector for BalanceNonEmptyByAccountSelector {}
+impl BalanceItemSelector for BalanceNonEmptyByAccountSelector {}
+
+impl ReportItemSelector for BalanceNonEmptyByAccountSelector {
+    fn selectors(&self) -> Vec<String> {
+        let mut s = Vec::new();
+        s.push("non-empty accounts".to_string());
+        s.append(&mut self.acc_sel.selectors());
+        s
+    }
+
+    fn checksum(&self, hash: Hash) -> Checksum {
+        self.acc_sel.checksum(hash)
+    }
+}
+
+impl Predicate<BalanceTreeNode> for BalanceNonEmptyByAccountSelector {
+    fn eval(&self, btn: &BalanceTreeNode) -> bool {
+        (!btn.account_sum.is_zero() || !btn.sub_acc_tree_sum.is_zero()) && self.acc_sel.eval(btn)
+    }
+}
+
+impl BalanceNonEmptyByAccountSelector {
+    /// # Errors
+    /// Returns `Err` in case of invalid pattern
+    pub fn try_from(patterns: &[&str]) -> Result<BalanceNonEmptyByAccountSelector, tackler::Error> {
+        let acc_sel = Box::new(BalanceByAccountSelector::try_from(patterns)?);
+        Ok(BalanceNonEmptyByAccountSelector { acc_sel })
     }
 }
 

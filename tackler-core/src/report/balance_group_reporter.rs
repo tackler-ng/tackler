@@ -1,5 +1,5 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -10,6 +10,7 @@ use crate::kernel::{BalanceGroupSettings, accumulator};
 use crate::kernel::{BalanceSettings, Settings};
 use crate::model::{Transaction, TxnSet};
 use crate::report::Report;
+use crate::report::balance_reporter::GenericBalanceReporter;
 use crate::report::{BalanceReporter, FormatWriter, report_timezone};
 use crate::tackler;
 use crate::tackler::Error;
@@ -26,9 +27,11 @@ pub struct BalanceGroupReporter {
     pub report_settings: BalanceGroupSettings,
 }
 
+impl GenericBalanceReporter for BalanceGroupReporter {}
+
 impl BalanceGroupReporter {
     fn get_acc_selector(&self) -> Result<Box<dyn BalanceSelector>, tackler::Error> {
-        BalanceReporter::acc_selector(&self.report_settings.ras)
+        Self::acc_selector(&self.report_settings.ras, self.report_settings.hide_empty)
     }
 
     fn get_group_by_op(&self) -> TxnGroupByOp<'_> {

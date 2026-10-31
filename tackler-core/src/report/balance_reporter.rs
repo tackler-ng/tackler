@@ -1,12 +1,12 @@
 /*
- * Tackler-NG 2023-2025
+ * Tackler-NG 2023-2026
  * SPDX-License-Identifier: Apache-2.0
  */
 
 use crate::config::BalanceType;
 use crate::kernel::balance::{BTNs, Balance, Deltas};
 use crate::kernel::report_item_selector::{
-    BalanceAllSelector, BalanceByAccountSelector, BalanceSelector,
+    BalanceAllSelector, BalanceByAccountSelector, BalanceNonEmptyByAccountSelector, BalanceSelector,
 };
 use crate::kernel::{BalanceSettings, Settings};
 use crate::math::format::format_with_scale;
@@ -23,10 +23,36 @@ use tackler_api::metadata::Metadata;
 use tackler_api::metadata::items::{CreditAccountReport, MetadataItem};
 use tackler_api::reports::balance_report::{BalanceItem, BalanceReport, Delta};
 
+pub(crate) trait GenericBalanceReporter {
+    fn acc_selector(
+        ras: &[String],
+        hide_empty: bool,
+    ) -> Result<Box<dyn BalanceSelector>, tackler::Error> {
+        if ras.is_empty() {
+            let bs: Box<dyn BalanceSelector> = if hide_empty {
+                Box::<BalanceNonEmptyByAccountSelector>::default()
+            } else {
+                Box::<BalanceAllSelector>::default()
+            };
+            Ok(bs)
+        } else {
+            let s: Vec<_> = ras.iter().map(String::as_str).collect();
+            let bs: Box<dyn BalanceSelector> = if hide_empty {
+                Box::new(BalanceNonEmptyByAccountSelector::try_from(&s)?)
+            } else {
+                Box::new(BalanceByAccountSelector::try_from(&s)?)
+            };
+            Ok(bs)
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BalanceReporter {
     pub report_settings: BalanceSettings,
 }
+
+impl GenericBalanceReporter for BalanceReporter {}
 
 impl TryFrom<&Settings> for BalanceReporter {
     type Error = tackler::Error;
@@ -39,18 +65,8 @@ impl TryFrom<&Settings> for BalanceReporter {
 }
 
 impl BalanceReporter {
-    pub(crate) fn acc_selector(ras: &[String]) -> Result<Box<dyn BalanceSelector>, tackler::Error> {
-        if ras.is_empty() {
-            Ok(Box::<BalanceAllSelector>::default())
-        } else {
-            let s: Vec<_> = ras.iter().map(String::as_str).collect();
-            let ras = BalanceByAccountSelector::try_from(&s)?;
-            Ok(Box::new(ras))
-        }
-    }
-
     fn get_acc_selector(&self) -> Result<Box<dyn BalanceSelector>, tackler::Error> {
-        BalanceReporter::acc_selector(&self.report_settings.ras)
+        Self::acc_selector(&self.report_settings.ras, self.report_settings.hide_empty)
     }
 }
 
