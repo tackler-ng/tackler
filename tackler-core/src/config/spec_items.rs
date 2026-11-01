@@ -182,6 +182,8 @@ pub(super) struct BalanceSpec {
     pub(super) title: String,
     #[serde(rename = "type")]
     pub(super) bal_type: Option<String>,
+    #[serde(rename = "hide-empty")]
+    pub(super) hide_empty: Option<bool>,
     #[serde(rename = "accounts")]
     pub(super) acc_sel: Option<AccountSelectors>,
 }
@@ -192,6 +194,8 @@ pub(super) struct BalanceGroupSpec {
     pub(super) title: String,
     #[serde(rename = "type")]
     pub(super) bal_type: Option<String>,
+    #[serde(rename = "hide-empty")]
+    pub(super) hide_empty: Option<bool>,
     #[serde(rename = "group-by")]
     pub(super) group_by: String,
     #[serde(rename = "accounts")]

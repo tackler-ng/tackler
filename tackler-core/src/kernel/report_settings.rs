@@ -33,7 +33,7 @@ impl TryFrom<&Settings> for BalanceSettings {
             ras: settings.get_balance_ras(),
             scale: settings.report.scale.clone(),
             inverted: settings.inverted,
-            hide_empty: false, // TODO: from settings
+            hide_empty: settings.report.balance.hide_empty,
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
         })
@@ -66,7 +66,7 @@ impl TryFrom<&Settings> for BalanceGroupSettings {
             report_tz: settings.report.tz.clone(),
             scale: settings.report.scale.clone(),
             inverted: settings.inverted,
-            hide_empty: false, // TODO: from settings
+            hide_empty: settings.report.balance_group.hide_empty,
             report_commodity: settings.get_report_commodity(),
             price_lookup: settings.get_price_lookup(),
         };

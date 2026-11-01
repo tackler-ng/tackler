@@ -189,6 +189,11 @@ impl Settings {
         };
         tmp_settings.report.balance_group.group_by = group_by;
 
+        if let Some(hide_empty) = overlaps.report.hide_empty {
+            tmp_settings.report.balance.hide_empty = hide_empty;
+            tmp_settings.report.balance_group.hide_empty = hide_empty;
+        }
+
         if strict_mode
             && tmp_settings.export.targets.contains(&ExportType::Equity)
             && !tmp_settings

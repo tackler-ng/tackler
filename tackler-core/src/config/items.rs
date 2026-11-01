@@ -787,6 +787,7 @@ impl Register {
 pub(crate) struct BalanceGroup {
     pub title: String,
     pub bal_type: BalanceType,
+    pub hide_empty: bool,
     pub group_by: GroupBy,
     pub acc_sel: AccountSelectors,
 }
@@ -802,6 +803,7 @@ impl BalanceGroup {
                 Some(t) => BalanceType::try_from(t.as_str())?,
                 None => BalanceType::default(),
             },
+            hide_empty: balgrp_raw.hide_empty.unwrap_or(false),
             group_by: GroupBy::from(balgrp_raw.group_by.as_str())?,
             acc_sel: get_account_selector(balgrp_raw.acc_sel.as_ref(), report),
         })
@@ -812,6 +814,7 @@ impl BalanceGroup {
 pub(crate) struct Balance {
     pub title: String,
     pub bal_type: BalanceType,
+    pub hide_empty: bool,
     pub acc_sel: AccountSelectors,
 }
 
@@ -823,6 +826,7 @@ impl Balance {
                 Some(t) => BalanceType::try_from(t.as_str())?,
                 None => BalanceType::default(),
             },
+            hide_empty: bal_raw.hide_empty.unwrap_or(false),
             acc_sel: get_account_selector(bal_raw.acc_sel.as_ref(), report),
         })
     }

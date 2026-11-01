@@ -190,16 +190,9 @@ No journal file format changes.
 
 === CLI Changes
 
-[WARNING]
-====
-This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
-====
+New cli settings to hide empty (zero-sum) accounts with Balance and Balance Group Reports.
 
-Reports and exports gain an opt-in flag to include accounts outside their
-declared active periods (default behavior is to filter them):
-
-* [ ] `--include-closed` (or equivalent on the existing accounts-filter
-  CLI surface - to be confirmed during implementation)
+* [ ] `--hide-empty=[<true|false>]`
 
 === CONF Changes
 
@@ -210,6 +203,10 @@ declared active periods (default behavior is to filter them):
 *** [x] `open` optional, TOML datetime (e.g. date, datetime or offset)
 *** [x] `close` optional, TOML datetime (e.g. date, datetime or offset)
 *** [x] `spans` optional, arrays of `open`-`close` pairs
+* [x] Hide-emtpy for Balance family reports
+** [x] Balance Report
+** [x] Balance Group Report
+
 
 ADR:: https://github.com/tackler-ng/tackler/issues/158[GH 158]
 
@@ -359,8 +356,11 @@ ADR: https://github.com/tackler-ng/tackler/issues/160[GH #160]
 * [ ] User docs
 ** [ ] User Manual
 *** [ ] cli-arguments
-**** [ ] `--include-closed` (or equivalent) ref: ODQ: https://github.com/tackler-ng/tackler/issues/159[GH #159]
-** [ ] accounts.toml - document `AccountSpec` shape, fields, validation, spans
+**** [ ] `--hide-emtpy`
+** [ ] accounts.toml - document `AccountSpec`,
+*** [ ] fields,
+*** [ ] spans
+*** [ ] validation,
 ** [ ] examples - add an `accounts.toml` example showing flat
        `AccountSpecs` coexistence and a spans example
 
@@ -432,11 +432,6 @@ entries mechanism is the underlying model regardless.
 
 === Tests
 
-[WARNING]
-====
-This section must be clean up, especially ref https://github.com/tackler-ng/tackler/issues/158[GH #158]
-====
-
 Normal, ok-case tests to validate functionality:
 
 * [x] flat `accounts = [...]` only, unchanged behavior (existing tests)
@@ -466,7 +461,14 @@ Normal, ok-case tests to validate functionality:
 *** [x] date
 *** [x] datetime
 *** [x] datetime with offset
-
+* [ ] `hide-empty`
+** [ ] CONF:
+*** [ ] balance
+*** [ ] balance-group
+** [ ] CLI: --hide-empty override
+*** [ ] --hide-empty
+*** [ ] --hide-empty=true
+*** [ ] --hide-empty=false
 
 ==== Errors
 

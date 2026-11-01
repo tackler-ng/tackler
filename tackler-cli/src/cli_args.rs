@@ -417,6 +417,18 @@ pub(crate) struct DefaultModeArgs {
     #[arg(long = "invert")]
     pub(crate) invert: bool,
 
+    /// Hide empty (e.g. zero-sum) accounts
+    ///
+    /// This is useful to hide closed and empty
+    /// accounts from balance and balance-group reports
+    #[arg(long = "hide-empty",
+        value_name = "true|false",
+        num_args = 0..=1,
+        require_equals = true,
+        default_missing_value = "true",
+    )]
+    pub(crate) hide_empty: Option<bool>,
+
     /// Path to `PriceDB` file
     #[arg(
         long = "pricedb",
@@ -450,9 +462,9 @@ pub(crate) struct DefaultModeArgs {
 
     /// Txn Filter definition in JSON
     ///
-    /// This could be ascii armored with base64 encoding
+    /// This could be ASCII armored with base64 encoding
     ///
-    /// The ascii armor must have prefix 'base64:'
+    /// The ASCII armor must have prefix 'base64:'
     ///
     /// e.g. "base64:eyJ0eG5GaWx0ZXIiOnsiTnVsbGFyeVRSVUUiOnt9fX0K"
     #[arg(long = "api-filter-def", value_name = "txn_filter")]
@@ -543,6 +555,7 @@ impl DefaultModeArgs {
                 account_overlap: self.accounts.clone(),
                 group_by: self.group_by.clone(),
                 inverted: self.invert,
+                hide_empty: self.hide_empty,
             },
             target: TargetOverlap {
                 reports: self.reports.clone(),

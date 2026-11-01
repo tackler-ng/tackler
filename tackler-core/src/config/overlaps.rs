@@ -97,6 +97,8 @@ pub struct ReportOverlap {
     pub group_by: Option<String>,
     /// Are the report values inverted?
     pub inverted: bool,
+    /// Hide empty accounts
+    pub hide_empty: Option<bool>,
 }
 
 /// Target (reports, exports) overlap configuration
