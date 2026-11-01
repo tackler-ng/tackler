@@ -315,15 +315,9 @@ hence no need for register report changes.
 
 ==== Equity Export
 
-[WARNING]
-====
-This section must be clean up, ref https://github.com/tackler-ng/tackler/issues/159[GH #159]
-====
-
-* [ ] Equity export must respect periods so re-running equity at a date
-  past a `close` produces the right opening balance for downstream
-  journals (no "phantom" postings to a closed account).
-
+Equity export filters by default empty (zero-sum) accounts away.
+If there is a closed account with value, then this is an error which user must
+correct, when the equity transaction is used (if it's still error then).
 
 ==== Identity Export
 
